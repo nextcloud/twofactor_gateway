@@ -1,52 +1,26 @@
 # Two Factor Sms
-Place this app in **owncloud/apps/**
+A two-factor auth provider for ownCloud 9.1. See [my blog post](http://blog.wuc.me/2016/05/30/adding-two-factor-auth-to-owncloud.html) on more info about ownCloud's internal 2FA.
 
-## Building the app
+![](https://cloud.githubusercontent.com/assets/1374172/15873103/4791254a-2cfd-11e6-9951-c693535fcea9.png)
+![](https://cloud.githubusercontent.com/assets/1374172/15873104/47bccc5e-2cfd-11e6-904c-ea40f323e619.png)
 
-The app can be built by using the provided Makefile by running:
+## Supported SMS services
+This app uses external SMS services for sending the code. Currently there is only one provider, but the idea is to support multiple as different countries have their specific providers.
 
-    make
-
-This requires the following things to be present:
-* make
-* which
-* tar: for building the archive
-* curl: used if phpunit and composer are not installed to fetch them from the web
-* npm: for building and testing everything JS, only required if a package.json is placed inside the **js/** folder
-
-The make command will install or update Composer dependencies if a composer.json is present and also **npm run build** if a package.json is present in the **js/** folder. The npm **build** script should use local paths for build systems and package managers, so people that simply want to build the app won't need to install npm libraries globally, e.g.:
-
-**package.json**:
-```json
-"scripts": {
-    "test": "node node_modules/gulp-cli/bin/gulp.js karma",
-    "prebuild": "npm install && node_modules/bower/bin/bower install && node_modules/bower/bin/bower update",
-    "build": "node node_modules/gulp-cli/bin/gulp.js"
-}
+### websms.de
+URL: https://websms.de/
+Admin configuration:
+```bash
+./occ config:app:set twofactor_sms sms_provider --value "websms.de"
+./occ config:app:set twofactor_sms websms_de_user --value "yourusername"
+./occ config:app:set twofactor_sms websms_de_password --value "websms.de"
 ```
 
-
-## Publish to App Store
-
-First get an account for the [App Store](http://apps.owncloud.com/) then run:
-
-    make appstore
-
-The archive is located in build/artifacts/appstore and can then be uploaded to the App Store.
-
-## Running tests
-You can use the provided Makefile to run all tests by using:
-
-    make test
-
-This will run the PHP unit and integration tests and if a package.json is present in the **js/** folder will execute **npm run test**
-
-Of course you can also install [PHPUnit](http://phpunit.de/getting-started.html) and use the configurations directly:
-
-    phpunit -c phpunit.xml
-
-or:
-
-    phpunit -c phpunit.integration.xml
-
-for integration tests
+User configuration:
+(no GUI yet, you have to write to the DB directly :speak_no_evil:)
+Table: ``oc_preferences``
+Data:
+- userid: your ownCloud user UID
+- appid: ``twofactor_sms``
+- configkey: ``phone``
+- configvalue: your phone number in the [MSISDN format](https://en.wikipedia.org/wiki/MSISDN). E.g. +4912345678 is 4912345678
