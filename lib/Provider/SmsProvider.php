@@ -101,12 +101,11 @@ class SmsProvider implements IProvider {
 	 */
 	public function getTemplate(IUser $user) {
 		$otp = new Otp();
-		//$secret = $this->random->generate(16);
 		$secret = GoogleAuthenticator::generateRandom();
 		$this->session->set('twofactor_sms_secret', $secret);
 		$totp = $otp->totp(Base32::decode($secret));
 
-		$phoneNumber = (int) $this->config->getUserValue('admin', 'twofactor_sms', 'phone');
+		$phoneNumber = (int) $this->config->getUserValue($user->getUID(), 'twofactor_sms', 'phone');
 		try {
 			$this->smsService->send($phoneNumber, "Your ownCloud code is $totp");
 		} catch (SmsTransmissionException $ex) {
@@ -141,7 +140,7 @@ class SmsProvider implements IProvider {
 	 * @return boolean
 	 */
 	public function isTwoFactorAuthEnabledForUser(IUser $user) {
-		return true;
+		return $this->config->getUserValue($user->getUID(), 'twofactor_sms', null) !== null;
 	}
 
 }
