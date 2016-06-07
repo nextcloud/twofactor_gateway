@@ -19,10 +19,11 @@
  *
  */
 
-namespace OCA\TwoFactorSms\Service\SmsProvider;
+namespace OCA\TwoFactor_Sms\Service\SmsProvider;
 
 use Exception;
-use OCA\TwoFactorSms\Service\ISmsService;
+use OCA\TwoFactor_Sms\Exception\SmsTransmissionException;
+use OCA\TwoFactor_Sms\Service\ISmsService;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
@@ -35,6 +36,10 @@ class WebSmsDe implements ISmsService {
 	/** @var IConfig */
 	private $config;
 
+	/**
+	 * @param IClientService $clientService
+	 * @param IConfig $config
+	 */
 	public function __construct(IClientService $clientService, IConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
@@ -44,7 +49,7 @@ class WebSmsDe implements ISmsService {
 		$user = $this->config->getAppValue('twofactor_sms', 'websms_de_user');
 		$password = $this->config->getAppValue('twofactor_sms', 'websms_de_password');
 		try {
-			$resp = $this->client->post('https://api.websms.com/rest/smsmessaging/text', [
+			$this->client->post('https://api.websms.com/rest/smsmessaging/text', [
 				'headers' => [
 					'Authorization' => 'Basic ' . base64_encode("$user:$password"),
 					'Content-Type' => 'application/json',
@@ -56,7 +61,7 @@ class WebSmsDe implements ISmsService {
 				],
 			]);
 		} catch (Exception $ex) {
-			
+			throw new SmsTransmissionException();
 		}
 	}
 

@@ -19,9 +19,14 @@
  *
  */
 
-namespace OCA\TwoFactorSms\Service;
+namespace OCA\TwoFactor_Sms\Service;
 
 interface ISmsService {
 
+	/**
+	 * @param string $recipient
+	 * @param string $message
+	 * @throws SmsTransmissionException
+	 */
 	public function send($recipient, $message);
 }

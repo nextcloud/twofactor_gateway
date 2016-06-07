@@ -5,15 +5,15 @@
 	<description>A Two-Factor-Auth Provider for ownCloud 9.1</description>
 	<licence>AGPL</licence>
 	<author>Christoph Wurst</author>
-	<version>0.0.1</version>
-	<namespace>TwoFactorSms</namespace>
+	<version>0.1.0</version>
+	<namespace>TwoFactor_Sms</namespace>
 	<category>other</category>
 	<types>
 		<authentication/>
 	</types>
 
 	<two-factor-providers>
-		<provider>OCA\TwoFactorSms\Provider\SmsProvider</provider>
+		<provider>OCA\TwoFactor_Sms\Provider\SmsProvider</provider>
 	</two-factor-providers>
 
 	<dependencies>

@@ -19,11 +19,11 @@
  *
  */
 
-namespace OCA\TwoFactorSms\Provider;
+namespace OCA\TwoFactor_Sms\Provider;
 
 use Base32\Base32;
-use OCA\TwoFactorSms\Service\ISmsService;
-use OCA\TwoFactorSms\Service\SmsProvider\WebSmsDe;
+use OCA\TwoFactor_Sms\Exception\SmsTransmissionException;
+use OCA\TwoFactor_Sms\Service\ISmsService;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\IConfig;
 use OCP\ISession;
@@ -43,7 +43,12 @@ class SmsProvider implements IProvider {
 	/** @var IConfig */
 	private $config;
 
-	public function __construct(WebSmsDe $smsService, ISession $session, IConfig $config) {
+	/**
+	 * @param ISmsService $smsService
+	 * @param ISession $session
+	 * @param IConfig $config
+	 */
+	public function __construct(ISmsService $smsService, ISession $session, IConfig $config) {
 		$this->smsService = $smsService;
 		$this->session = $session;
 		$this->config = $config;
@@ -102,7 +107,11 @@ class SmsProvider implements IProvider {
 		$totp = $otp->totp(Base32::decode($secret));
 
 		$phoneNumber = (int) $this->config->getUserValue('admin', 'twofactor_sms', 'phone');
-		$this->smsService->send($phoneNumber, "Your ownCloud code is $totp");
+		try {
+			$this->smsService->send($phoneNumber, "Your ownCloud code is $totp");
+		} catch (SmsTransmissionException $ex) {
+			
+		}
 
 		$tmpl = new Template('twofactor_sms', 'challenge');
 		$tmpl->assign('secret', $totp);

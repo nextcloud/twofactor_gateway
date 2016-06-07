@@ -19,3 +19,5 @@
  *
  */
 include_once __DIR__ . '/../vendor/autoload.php';
+
+$app = new OCA\TwoFactor_Sms\AppInfo\Application();

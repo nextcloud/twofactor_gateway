@@ -1,7 +1,5 @@
 <?php
 
-namespace OCA\TwoFactorSms\AppInfo;
-
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
@@ -20,14 +18,11 @@ namespace OCA\TwoFactorSms\AppInfo;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
  */
-use OCP\AppFramework\App;
 
-class Application extends App {
+namespace OCA\TwoFactor_Sms\Exception;
 
-	public function __construct($urlParams = []) {
-		parent::__construct('twofactor_sms', $urlParams);
+use Exception;
 
-		$container = $this->getContainer();
-	}
+class SmsTransmissionException extends Exception {
 
 }
