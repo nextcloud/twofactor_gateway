@@ -9,11 +9,12 @@ This app uses external SMS services for sending the code. Currently there is onl
 
 ### websms.de
 URL: https://websms.de/
+
 Admin configuration:
 ```bash
 ./occ config:app:set twofactor_sms sms_provider --value "websms.de"
 ./occ config:app:set twofactor_sms websms_de_user --value "yourusername"
-./occ config:app:set twofactor_sms websms_de_password --value "websms.de"
+./occ config:app:set twofactor_sms websms_de_password --value "yourpassword"
 ```
 
 User configuration:
