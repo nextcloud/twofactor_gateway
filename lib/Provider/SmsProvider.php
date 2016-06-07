@@ -109,12 +109,29 @@ class SmsProvider implements IProvider {
 		try {
 			$this->smsService->send($phoneNumber, "Your ownCloud code is $totp");
 		} catch (SmsTransmissionException $ex) {
-			
+			$tmpl = new Template('twofactor_sms', 'error');
+			return $tmpl;
 		}
 
 		$tmpl = new Template('twofactor_sms', 'challenge');
-		$tmpl->assign('secret', $totp);
+		$tmpl->assign('phone', $this->protectPhoneNumber($phoneNumber));
+		if ($this->config->getSystemValue('debug', false)) {
+			$tmpl->assign('secret', $totp);
+		}
 		return $tmpl;
+	}
+
+	/**
+	 * convert 123456789 to ******789
+	 *
+	 * @param string $number
+	 * @return string
+	 */
+	private function protectPhoneNumber($number) {
+		$length = strlen($number);
+		$start = $length - 3;
+
+		return str_repeat('*', $start) . substr($number, $start);
 	}
 
 	/**
