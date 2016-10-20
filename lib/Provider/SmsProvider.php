@@ -3,7 +3,7 @@
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
- * ownCloud - Two-factor SMS
+ * Nextcloud - Two-factor SMS
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -107,7 +107,7 @@ class SmsProvider implements IProvider {
 
 		$phoneNumber = (int) $this->config->getUserValue($user->getUID(), 'twofactor_sms', 'phone');
 		try {
-			$this->smsService->send($phoneNumber, "Your ownCloud code is $totp");
+			$this->smsService->send($phoneNumber, "$totp is your Nextcloud authentication code");
 		} catch (SmsTransmissionException $ex) {
 			$tmpl = new Template('twofactor_sms', 'error');
 			return $tmpl;

@@ -1,5 +1,5 @@
 # Two Factor Sms
-A two-factor auth provider for ownCloud 9.1. See [my blog post](http://blog.wuc.me/2016/05/30/adding-two-factor-auth-to-owncloud.html) on more info about ownCloud's internal 2FA.
+A two-factor auth provider for Nextcloud 11. See [my blog post](http://blog.wuc.me/2016/05/30/adding-two-factor-auth-to-owncloud.html) on more info about Nextcloud's internal 2FA.
 
 ![](https://cloud.githubusercontent.com/assets/1374172/15873103/4791254a-2cfd-11e6-9951-c693535fcea9.png)
 ![](https://cloud.githubusercontent.com/assets/1374172/15873104/47bccc5e-2cfd-11e6-904c-ea40f323e619.png)
@@ -21,7 +21,7 @@ User configuration:
 (no GUI yet, you have to write to the DB directly :speak_no_evil:)
 Table: ``oc_preferences``
 Data:
-- userid: your ownCloud user UID
+- userid: your Nextcloud user UID
 - appid: ``twofactor_sms``
 - configkey: ``phone``
 - configvalue: your phone number in the [MSISDN format](https://en.wikipedia.org/wiki/MSISDN). E.g. +4912345678 is 4912345678
