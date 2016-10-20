@@ -45,6 +45,11 @@ class WebSmsDe implements ISmsService {
 		$this->config = $config;
 	}
 
+	/**
+	 * @param string $recipient
+	 * @param string $message
+	 * @throws SmsTransmissionException
+	 */
 	public function send($recipient, $message) {
 		$user = $this->config->getAppValue('twofactor_sms', 'websms_de_user');
 		$password = $this->config->getAppValue('twofactor_sms', 'websms_de_password');
