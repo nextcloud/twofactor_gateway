@@ -60,9 +60,8 @@ before_script:
 
   # Set up app
   - php -f core/occ app:enable twofactor_sms
-  # Enable app twice to check occ errors of registered commands
-  - php -f core/occ app:enable twofactor_sms
-  - cd core/apps/twoafactor_sms
+
+  - cd core/apps/twofactor_sms
 
 script:
   # Check PHP syntax errors
