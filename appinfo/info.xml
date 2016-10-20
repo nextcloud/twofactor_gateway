@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
-<info>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>twofactor_sms</id>
 	<name>Two Factor SMS Provider</name>
-	<description>A Two-Factor-Auth Provider for ownCloud 9.1</description>
-	<licence>AGPL</licence>
+	<summary>sms two-factor provider</summary>
+	<description>A two-factor-auth provider for Nextcloud 11+</description>
+	<version>0.2.0</version>
+	<licence>agpl</licence>
 	<author>Christoph Wurst</author>
-	<version>0.1.0</version>
 	<namespace>TwoFactor_Sms</namespace>
-	<category>other</category>
-	<types>
-		<authentication/>
-	</types>
+	<category>auth</category>
+
+	<dependencies>
+		<owncloud min-version="20" max-version="20" />
+		<nextcloud min-version="11" max-version="11"/>
+	</dependencies>
 
 	<two-factor-providers>
 		<provider>OCA\TwoFactor_Sms\Provider\SmsProvider</provider>
 	</two-factor-providers>
-
-	<dependencies>
-		<owncloud min-version="9.1" max-version="9.1" />
-	</dependencies>
 </info>
