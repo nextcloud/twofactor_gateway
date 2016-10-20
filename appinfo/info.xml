@@ -10,6 +10,8 @@
 	<author>Christoph Wurst</author>
 	<namespace>TwoFactorSms</namespace>
 	<category>auth</category>
+	<screenshot>https://raw.githubusercontent.com/ChristophWurst/twofactor_sms/24a9ef4ec5acf6fa00958008118479c759147384/screenshots/challenge1.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/ChristophWurst/twofactor_sms/24a9ef4ec5acf6fa00958008118479c759147384/screenshots/challenge2.png</screenshot>
 
 	<dependencies>
 		<nextcloud min-version="11" max-version="11"/>
