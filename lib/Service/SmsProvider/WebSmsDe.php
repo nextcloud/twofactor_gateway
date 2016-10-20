@@ -61,7 +61,7 @@ class WebSmsDe implements ISmsService {
 				],
 				'json' => [
 					'messageContent' => $message,
-					'test' => false,
+					'test' => true,
 					'recipientAddressList' => [$recipient],
 				],
 			]);

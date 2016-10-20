@@ -26,6 +26,7 @@ use OCA\TwoFactorSms\Exception\SmsTransmissionException;
 use OCA\TwoFactorSms\Service\ISmsService;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\IConfig;
+use OCP\IL10N;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\Template;
@@ -43,21 +44,24 @@ class SmsProvider implements IProvider {
 	/** @var IConfig */
 	private $config;
 
+	/** @var IL10N */
+	private $l10n;
+
 	/**
 	 * @param ISmsService $smsService
 	 * @param ISession $session
 	 * @param IConfig $config
+	 * @param IL10N $l10n
 	 */
-	public function __construct(ISmsService $smsService, ISession $session, IConfig $config) {
+	public function __construct(ISmsService $smsService, ISession $session, IConfig $config, IL10N $l10n) {
 		$this->smsService = $smsService;
 		$this->session = $session;
 		$this->config = $config;
+		$this->l10n = $l10n;
 	}
 
 	/**
 	 * Get unique identifier of this 2FA provider
-	 *
-	 * @since 9.1.0
 	 *
 	 * @return string
 	 */
@@ -68,33 +72,23 @@ class SmsProvider implements IProvider {
 	/**
 	 * Get the display name for selecting the 2FA provider
 	 *
-	 * Example: "Email"
-	 *
-	 * @since 9.1.0
-	 *
 	 * @return string
 	 */
 	public function getDisplayName() {
-		return 'SMS';
+		return $this->l10n->t('SMS verification');
 	}
 
 	/**
 	 * Get the description for selecting the 2FA provider
 	 *
-	 * Example: "Get a token via e-mail"
-	 *
-	 * @since 9.1.0
-	 *
 	 * @return string
 	 */
 	public function getDescription() {
-		return 'Get a token via SMS';
+		return 'Send a authentication code via SMS';
 	}
 
 	/**
 	 * Get the template for rending the 2FA provider view
-	 *
-	 * @since 9.1.0
 	 *
 	 * @param IUser $user
 	 * @return Template
@@ -137,8 +131,6 @@ class SmsProvider implements IProvider {
 	/**
 	 * Verify the given challenge
 	 *
-	 * @since 9.1.0
-	 *
 	 * @param IUser $user
 	 * @param string $challenge
 	 */
@@ -150,8 +142,6 @@ class SmsProvider implements IProvider {
 
 	/**
 	 * Decides whether 2FA is enabled for the given user
-	 *
-	 * @since 9.1.0
 	 *
 	 * @param IUser $user
 	 * @return boolean
