@@ -19,7 +19,7 @@
  *
  */
 
-namespace OCA\TwoFactor_Sms\Service;
+namespace OCA\TwoFactorSms\Service;
 
 interface ISmsService {
 

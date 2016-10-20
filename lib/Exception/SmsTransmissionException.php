@@ -19,7 +19,7 @@
  *
  */
 
-namespace OCA\TwoFactor_Sms\Exception;
+namespace OCA\TwoFactorSms\Exception;
 
 use Exception;
 

@@ -19,11 +19,11 @@
  *
  */
 
-namespace OCA\TwoFactor_Sms\Service\SmsProvider;
+namespace OCA\TwoFactorSms\Service\SmsProvider;
 
 use Exception;
-use OCA\TwoFactor_Sms\Exception\SmsTransmissionException;
-use OCA\TwoFactor_Sms\Service\ISmsService;
+use OCA\TwoFactorSms\Exception\SmsTransmissionException;
+use OCA\TwoFactorSms\Service\ISmsService;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;

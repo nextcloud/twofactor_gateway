@@ -19,11 +19,11 @@
  *
  */
 
-namespace OCA\TwoFactor_Sms\Provider;
+namespace OCA\TwoFactorSms\Provider;
 
 use Base32\Base32;
-use OCA\TwoFactor_Sms\Exception\SmsTransmissionException;
-use OCA\TwoFactor_Sms\Service\ISmsService;
+use OCA\TwoFactorSms\Exception\SmsTransmissionException;
+use OCA\TwoFactorSms\Service\ISmsService;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\IConfig;
 use OCP\ISession;

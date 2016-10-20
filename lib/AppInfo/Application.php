@@ -19,7 +19,7 @@
  *
  */
 
-namespace OCA\TwoFactor_Sms\AppInfo;
+namespace OCA\TwoFactorSms\AppInfo;
 
 use OCP\AppFramework\App;
 use OCP\IConfig;
@@ -38,7 +38,7 @@ class Application extends App {
 		$config = $container->query('\OCP\IConfig');
 		$provider = $config->getAppValue('twofactor_sms', 'sms_provider', 'websms.de');
 
-		$container->registerAlias('\OCA\TwoFactor_Sms\Service\ISmsService', $this->getSmsProviderClass($provider));
+		$container->registerAlias('\OCA\TwoFactorSms\Service\ISmsService', $this->getSmsProviderClass($provider));
 	}
 
 	/**
@@ -48,7 +48,7 @@ class Application extends App {
 	private function getSmsProviderClass($name) {
 		switch ($name) {
 			case 'websms.de':
-				return '\OCA\TwoFactor_Sms\Service\SmsProvider\WebSmsDe';
+				return '\OCA\TwoFactorSms\Service\SmsProvider\WebSmsDe';
 		}
 	}
 

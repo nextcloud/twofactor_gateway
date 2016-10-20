@@ -8,15 +8,14 @@
 	<version>0.2.0</version>
 	<licence>agpl</licence>
 	<author>Christoph Wurst</author>
-	<namespace>TwoFactor_Sms</namespace>
+	<namespace>TwoFactorSms</namespace>
 	<category>auth</category>
 
 	<dependencies>
-		<owncloud min-version="20" max-version="20" />
 		<nextcloud min-version="11" max-version="11"/>
 	</dependencies>
 
 	<two-factor-providers>
-		<provider>OCA\TwoFactor_Sms\Provider\SmsProvider</provider>
+		<provider>OCA\TwoFactorSms\Provider\SmsProvider</provider>
 	</two-factor-providers>
 </info>
