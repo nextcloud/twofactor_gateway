@@ -1,6 +1,8 @@
 # Two Factor Sms
 A two-factor auth provider for Nextcloud 11. See [my blog post](http://blog.wuc.me/2016/05/30/adding-two-factor-auth-to-owncloud.html) on more info about Nextcloud's internal 2FA.
 
+[![Build Status](https://travis-ci.org/ChristophWurst/twofactor_sms.svg?branch=master)](https://travis-ci.org/ChristophWurst/twofactor_sms)
+
 ![](https://cloud.githubusercontent.com/assets/1374172/15873103/4791254a-2cfd-11e6-9951-c693535fcea9.png)
 ![](https://cloud.githubusercontent.com/assets/1374172/15873104/47bccc5e-2cfd-11e6-904c-ea40f323e619.png)
 
