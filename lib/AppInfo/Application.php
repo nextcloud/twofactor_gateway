@@ -49,6 +49,8 @@ class Application extends App {
 		switch ($name) {
 			case 'websms.de':
 				return '\OCA\TwoFactor_Sms\Service\SmsProvider\WebSmsDe';
+			// case 'mail2sms':
+			// 	return '\OCA\TwoFactor_Sms\Service\SmsProvider\Mail2Sms';
 		}
 	}
 
