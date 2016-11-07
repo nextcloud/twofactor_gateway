@@ -1,0 +1,9 @@
+[main]
+host = https://www.transifex.com
+lang_map = ja_JP: ja
+
+[nextcloud.twofactor_sms]
+file_filter = <lang>/twofactor_sms.po
+source_file = templates/twofactor_sms.pot
+source_lang = en
+type = PO
