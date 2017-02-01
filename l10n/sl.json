@@ -1,0 +1,8 @@
+{ "translations": {
+    "SMS verification" : "SMS preverjanje",
+    "Send a authentication code via SMS" : "Pošlji šifro za preverjanje preko SMS",
+    "%s is your Nextcloud authentication code" : "%s je tvoja Nextcloud prijavna šifra",
+    "Authentication code" : "Prijavna šifra",
+    "An access code has been sent to %s" : "Prijavna šifra je bila poslana %s"
+},"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"
+}
