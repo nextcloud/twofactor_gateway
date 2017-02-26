@@ -27,3 +27,6 @@ Data:
 - appid: ``twofactor_sms``
 - configkey: ``phone``
 - configvalue: your phone number in the [MSISDN format](https://en.wikipedia.org/wiki/MSISDN). E.g. +4912345678 is 4912345678
+
+## Login with external apps
+Once you enable Two Factor SMS, your aplications (for example your Android app or your GNOME app) will need to login using device passwords. To manage it, [know more here](https://docs.nextcloud.com/server/11/user_manual/session_management.html#managing-devices)
