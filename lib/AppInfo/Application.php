@@ -51,6 +51,8 @@ class Application extends App {
 		switch ($name) {
 			case 'websms.de':
 				return WebSmsDe::class;
+			case 'playsms':
+				return PlaySMS::class;
 		}
 	}
 
