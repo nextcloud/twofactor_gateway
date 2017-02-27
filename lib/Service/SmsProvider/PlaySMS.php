@@ -59,7 +59,7 @@ class PlaySMS implements ISmsService {
 				'query' => [
 					'app' => 'ws',
 					'u' => $user,
-					'h' => $password',
+					'h' => $password,
 					'op' => 'pv',
 					'to' => $recipient,
 					'msg' => $message,
