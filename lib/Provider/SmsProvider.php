@@ -147,7 +147,7 @@ class SmsProvider implements IProvider {
 	 * @return boolean
 	 */
 	public function isTwoFactorAuthEnabledForUser(IUser $user) {
-		return $this->config->getUserValue($user->getUID(), 'twofactor_sms', null) !== null;
+		return !is_null($this->config->getUserValue($user->getUID(), 'twofactor_sms', 'phone', null));
 	}
 
 }
