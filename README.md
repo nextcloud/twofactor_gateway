@@ -28,5 +28,18 @@ Data:
 - configkey: ``phone``
 - configvalue: your phone number in the [MSISDN format](https://en.wikipedia.org/wiki/MSISDN). E.g. +4912345678 is 4912345678
 
+### playSMS
+URL: https://playsms.org/
+
+Use the Webservices provided by playSMS for sending SMS.
+
+Admin configuration:
+```bash
+./occ config:app:set twofactor_sms sms_provider --value "playsms"
+./occ config:app:set twofactor_sms playsms_url --value "playsmswebservicesurl"
+./occ config:app:set twofactor_sms playsms_user --value "yourusername"
+./occ config:app:set twofactor_sms playsms_password --value "yourpassword"
+```
+
 ## Login with external apps
 Once you enable Two Factor SMS, your aplications (for example your Android app or your GNOME app) will need to login using device passwords. To manage it, [know more here](https://docs.nextcloud.com/server/11/user_manual/session_management.html#managing-devices)
