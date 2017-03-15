@@ -26,6 +26,9 @@ cache:
 
 before_install:
   - php --info
+  # Download phpunit 5.7
+  - wget https://phar.phpunit.de/phpunit-5.7.phar -O phpunit
+  - chmod u+x phpunit
 
   # XDebug is only needed if we report coverage -> speeds up other builds
   - phpenv config-rm xdebug.ini
@@ -37,7 +40,6 @@ before_install:
   - mv twofactor_sms core/apps/
 
 before_script:
-
   # Set up core
   - php -f core/occ maintenance:install --database-name oc_autotest --database-user oc_autotest --admin-user admin --admin-pass admin --database $DB --database-pass=''
 
@@ -55,8 +57,9 @@ script:
 
   # Run PHP tests
   - cd tests
-  - phpunit --configuration phpunit.xml
-  - phpunit --configuration phpunit.integration.xml
+  - ../phpunit --configuration phpunit.xml
+  - ../phpunit --configuration phpunit.integration.xml
 
 matrix:
   fast_finish: true
+
