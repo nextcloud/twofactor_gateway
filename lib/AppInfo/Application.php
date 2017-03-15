@@ -23,6 +23,7 @@ namespace OCA\TwoFactorSms\AppInfo;
 
 use OCA\TwoFactorSms\Service\ISmsService;
 use OCA\TwoFactorSms\Service\SmsProvider\WebSmsDe;
+use OCA\TwoFactorSms\Service\SmsProvider\PlaySMS;
 use OCP\AppFramework\App;
 use OCP\IConfig;
 
