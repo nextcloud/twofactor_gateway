@@ -84,7 +84,7 @@ class SmsProvider implements IProvider {
 	 * @return string
 	 */
 	public function getDescription() {
-		return $this->l10n->t('Send a authentication code via SMS');
+		return $this->l10n->t('Send an authentication code via SMS');
 	}
 
 	/**
