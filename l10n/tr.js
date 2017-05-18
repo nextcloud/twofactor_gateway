@@ -2,7 +2,6 @@ OC.L10N.register(
     "twofactor_sms",
     {
     "SMS verification" : "SMS doğrulaması",
-    "Send a authentication code via SMS" : "SMS ile doğrulama kodu gönder",
     "%s is your Nextcloud authentication code" : "Nextcloud doğrulama kodunuz: %s",
     "Two Factor SMS Provider" : "İki Aşamalı Kimlik Doğrulama SMS Hizmeti Sağlayıcı",
     "Authentication code" : "Doğrulama kodu",

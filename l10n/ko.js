@@ -2,7 +2,6 @@ OC.L10N.register(
     "twofactor_sms",
     {
     "SMS verification" : "SMS 인증",
-    "Send a authentication code via SMS" : "SMS로 인증 코드 보내기",
     "%s is your Nextcloud authentication code" : "%s: Nextcloud 인증 코드입니다",
     "Authentication code" : "인증 코드",
     "An access code has been sent to %s" : "접근 코드를 %s(으)로 보냄",

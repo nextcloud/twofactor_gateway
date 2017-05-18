@@ -2,7 +2,6 @@ OC.L10N.register(
     "twofactor_sms",
     {
     "SMS verification" : "SMS ellenőrzés",
-    "Send a authentication code via SMS" : "Hitelesítő kód küldése SMS-ben",
     "%s is your Nextcloud authentication code" : "%s a Nextcloud hitelesítő kódod",
     "Authentication code" : "Hitelesítő kód",
     "An access code has been sent to %s" : "Egy hozzáférési kód el lett küldve ide: %s",

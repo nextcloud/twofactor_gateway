@@ -2,7 +2,6 @@ OC.L10N.register(
     "twofactor_sms",
     {
     "SMS verification" : "SMS verifikācija",
-    "Send a authentication code via SMS" : "Sūtīt autentifikācijas kodu, izmantojot SMS",
     "%s is your Nextcloud authentication code" : "%s ir jūsu Nextcloud autentifikācijas kods",
     "Authentication code" : "Autentifikācijas kods",
     "An access code has been sent to %s" : "Piekļuves kods ir nosūtīts %s",

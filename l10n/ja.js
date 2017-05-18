@@ -2,7 +2,6 @@ OC.L10N.register(
     "twofactor_sms",
     {
     "SMS verification" : "SMS 認証",
-    "Send a authentication code via SMS" : "SMS経由で認証コードを送信する",
     "%s is your Nextcloud authentication code" : "%sはあなたのNextcloud認証コードです",
     "Authentication code" : "認証コード",
     "An access code has been sent to %s" : "アクセスコードが %s に送信されました",

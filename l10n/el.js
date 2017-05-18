@@ -2,7 +2,6 @@ OC.L10N.register(
     "twofactor_sms",
     {
     "SMS verification" : "Επιβεβαίωση με SMS",
-    "Send a authentication code via SMS" : "Αποστολή κωδικού πιστοποίησης με μήνυμα",
     "%s is your Nextcloud authentication code" : "%s είναι ο κωδικός πιστοποίησης του Nextcloud",
     "Two Factor SMS Provider" : "Διπλός Παράγοντας Παροχής SMS",
     "Authentication code" : "Κωδικός πιστοποίησης",
