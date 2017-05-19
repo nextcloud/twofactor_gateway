@@ -2,6 +2,7 @@ OC.L10N.register(
     "twofactor_sms",
     {
     "SMS verification" : "SMS-sannvottun",
+    "Send an authentication code via SMS" : "Senda auðkenningarkóða með SMS",
     "%s is your Nextcloud authentication code" : "%s er auðkenningarkóðinn þinn á Nextcloud",
     "Two Factor SMS Provider" : "Veituaðili tveggja-þrepa SMS-vottunar",
     "Authentication code" : "Auðkenningarkóði",

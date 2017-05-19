@@ -1,5 +1,6 @@
 { "translations": {
     "SMS verification" : "SMS-Bestätigung",
+    "Send an authentication code via SMS" : "Authentifizierungscode per SMS versenden",
     "%s is your Nextcloud authentication code" : "%s ist Ihr Nextcloud-Authentifizierungscode",
     "Two Factor SMS Provider" : "Zwei-Faktor SMS-Anbieter",
     "Authentication code" : "Authentifizierungscode",
