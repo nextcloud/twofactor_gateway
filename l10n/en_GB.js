@@ -2,7 +2,9 @@ OC.L10N.register(
     "twofactor_sms",
     {
     "SMS verification" : "SMS verification",
+    "Send an authentication code via SMS" : "Send an authentication code via SMS",
     "%s is your Nextcloud authentication code" : "%s is your Nextcloud authentication code",
+    "Two Factor SMS Provider" : "Two Factor SMS Provider",
     "Authentication code" : "Authentication code",
     "An access code has been sent to %s" : "An access code has been sent to %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Error while sending the Message. Please try again later or contact the administrator."
