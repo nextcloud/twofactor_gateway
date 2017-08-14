@@ -1,0 +1,5 @@
+{ "translations": {
+    "SMS verification" : "SMS kontroll",
+    "Send an authentication code via SMS" : "Saada autentimiskood SMS teel"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
