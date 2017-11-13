@@ -54,6 +54,8 @@ class Application extends App {
 				return WebSmsDe::class;
 			case 'playsms':
 				return PlaySMS::class;
+			case 'telegram'
+				return Telegram::class;
 		}
 	}
 
