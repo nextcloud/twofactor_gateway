@@ -49,12 +49,13 @@ class Application extends App {
 	 * @return string fully qualified class name
 	 */
 	private function getSmsProviderClass($name) {
+#		echo "Ik kom wel in Application.php";
 		switch ($name) {
 			case 'websms.de':
 				return WebSmsDe::class;
 			case 'playsms':
 				return PlaySMS::class;
-			case 'telegram'
+			case 'telegram':
 				return Telegram::class;
 		}
 	}
