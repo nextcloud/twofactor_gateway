@@ -14,7 +14,7 @@
 	<screenshot>https://raw.githubusercontent.com/ChristophWurst/twofactor_sms/24a9ef4ec5acf6fa00958008118479c759147384/screenshots/challenge2.png</screenshot>
 
 	<dependencies>
-		<nextcloud min-version="11" max-version="12"/>
+		<nextcloud min-version="11" max-version="13"/>
 		<php min-version="5.6" max-version="7.1"/>
 	</dependencies>
 
