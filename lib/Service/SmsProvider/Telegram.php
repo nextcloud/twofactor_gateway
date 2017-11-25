@@ -53,7 +53,7 @@ class Telegram implements ISmsService {
 	public function send($recipient, $message) {
 		$telegram_url = $this->config->getAppValue('twofactor_sms', 'telegram_url');
 		$telegram_bot_token = $this->config->getAppValue('twofactor_sms', 'telegram_bot_token');
-		$telegram_user_id = ""; # hard coded. I don't know where to store the Telegram User ID
+		$telegram_user_id = "111111111"; # hard coded. I don't know where to store the Telegram User ID
 		try {
        			$url = $telegram_url.$telegram_bot_token."/sendMessage?chat_id=".$telegram_user_id."&disable_web_page_preview=1&text=".$message;
 			file_get_contents($url);
@@ -64,3 +64,4 @@ class Telegram implements ISmsService {
 	}
 
 }
+
