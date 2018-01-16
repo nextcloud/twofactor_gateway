@@ -1,11 +1,12 @@
 OC.L10N.register(
     "twofactor_sms",
     {
-    "SMS verification" : "التحقق من SMS",
-    "Send an authentication code via SMS" : "أرسل رمز تحقق عبر SMS",
-    "%s is your Nextcloud authentication code" : "%sهو رمز  الدخول لNextcloud",
-    "Authentication code" : "رمز الدخول",
-    "An access code has been sent to %s" : "رمز الدخول تم إرساله الى %s",
+    "SMS verification" : "التحقق عبر نظام الرسائل القصيرة",
+    "Send an authentication code via SMS" : "أرسل رمز مصادقة عبر رسالة SMS قصيرة",
+    "%s is your Nextcloud authentication code" : "%s هو رمز المصادقة الخاص بناكست كلاود",
+    "Two Factor SMS Provider" : "مزود خدمة المصادقة بخطوتين عبر الرسائل القصيرة",
+    "Authentication code" : "رمز المصادقة",
+    "An access code has been sent to %s" : "تم إرسال رمزٍ للنفاذ إلى %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "حدث خطأ أثناء إرسال الرسالة. الرجاء إعادة المحاولة لاحقا أو الاتصال بالمشرف."
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");
