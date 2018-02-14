@@ -1,5 +1,5 @@
 # Two Factor Sms
-A two-factor auth provider for Nextcloud 11. See [my blog post](http://blog.wuc.me/2016/05/30/adding-two-factor-auth-to-owncloud.html) on more info about Nextcloud's internal 2FA.
+A two-factor auth provider for Nextcloud 11 and higher. See [my blog post](http://blog.wuc.me/2016/05/30/adding-two-factor-auth-to-owncloud.html) on more info about Nextcloud's internal 2FA.
 
 [![Build Status](https://travis-ci.org/nextcloud/twofactor_sms.svg?branch=master)](https://travis-ci.org/nextcloud/twofactor_sms)
 
@@ -40,6 +40,33 @@ Admin configuration:
 ./occ config:app:set twofactor_sms playsms_user --value "yourusername"
 ./occ config:app:set twofactor_sms playsms_password --value "yourpassword"
 ```
+
+### Telegram
+URL: https://www.telegram.org/
+
+Uses Telegram messages for sending a 2fa code to log in in Nextcloud
+
+Admin configuration:
+```bash
+./occ config:app:set twofactor_sms sms_provider --value "telegram"
+./occ config:app:set twofactor_sms telegram_bot_token --value "your telegram bot api token"
+./occ config:app:set twofactor_sms telegram_url --value "https://api.telegram.org/bot"
+```
+User configuration:
+(no GUI yet, you have to write to the DB directly :speak_no_evil:)
+Table: ``oc_preferences``
+
+Data row 1:
+- userid: your Nextcloud user UID
+- appid: ``twofactor_sms``
+- configkey: ``phone``
+- configvalue: your phone number in the [MSISDN format](https://en.wikipedia.org/wiki/MSISDN). E.g. +4912345678 is 4912345678
+
+Data row 2:
+- userid: your Nextcloud user UID
+- appid: ``twofactor_sms``
+- configkey: ``telegram_id``
+- configvalue: your telegram id. You can get your telegram id by searching the user <b>What's my Telegram ID?</b> in Telegram and start the conversation.
 
 ## Login with external apps
 Once you enable Two Factor SMS, your aplications (for example your Android app or your GNOME app) will need to login using device passwords. To manage it, [know more here](https://docs.nextcloud.com/server/11/user_manual/session_management.html#managing-devices)

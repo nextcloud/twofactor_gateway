@@ -24,6 +24,7 @@ namespace OCA\TwoFactorSms\AppInfo;
 use OCA\TwoFactorSms\Service\ISmsService;
 use OCA\TwoFactorSms\Service\SmsProvider\WebSmsDe;
 use OCA\TwoFactorSms\Service\SmsProvider\PlaySMS;
+use OCA\TwoFactorSms\Service\SmsProvider\Telegram;
 use OCP\AppFramework\App;
 use OCP\IConfig;
 
@@ -54,6 +55,8 @@ class Application extends App {
 				return WebSmsDe::class;
 			case 'playsms':
 				return PlaySMS::class;
+			case 'telegram':
+				return Telegram::class;
 		}
 	}
 
