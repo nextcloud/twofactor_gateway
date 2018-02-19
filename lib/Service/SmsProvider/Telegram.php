@@ -52,17 +52,15 @@ class Telegram implements ISmsService {
 	 * @throws SmsTransmissionException
 	 */
 	public function send($recipient, $message) {
-		$telegram_url = $this->config->getAppValue('twofactor_sms', 'telegram_url');
-		$telegram_bot_token = $this->config->getAppValue('twofactor_sms', 'telegram_bot_token');
-		$telegram_user_id = $this->config->getUserValue('nextclouddev', 'twofactor_sms', 'telegram_id');
+		$telegramUrl = $this->config->getAppValue('twofactor_sms', 'telegram_url');
+		$telegramBotToken = $this->config->getAppValue('twofactor_sms', 'telegram_bot_token');
+		$telegramUserId = $this->config->getUserValue('nextclouddev', 'twofactor_sms', 'telegram_id');
 		try {
-       			$url = $telegram_url.$telegram_bot_token."/sendMessage?chat_id=".$telegram_user_id."&disable_web_page_preview=1&text=".$message;
-			file_get_contents($url);
-
+			$url = $telegramUrl . $telegramBotToken . "/sendMessage?chat_id=$telegramUserId&disable_web_page_preview=1&text=" . urlencode($message);
+			$this->client->get($url);
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
 	}
 
 }
-
