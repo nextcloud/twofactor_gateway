@@ -41,6 +41,33 @@ Admin configuration:
 ./occ config:app:set twofactor_sms playsms_password --value "yourpassword"
 ```
 
+### Telegram
+URL: https://www.telegram.org/
+
+Uses Telegram messages for sending a 2fa code to log in in Nextcloud
+
+Admin configuration:
+```bash
+./occ config:app:set twofactor_sms sms_provider --value "telegram"
+./occ config:app:set twofactor_sms telegram_bot_token --value "your telegram bot api token"
+./occ config:app:set twofactor_sms telegram_url --value "https://api.telegram.org/bot"
+```
+User configuration:
+(no GUI yet, you have to write to the DB directly :speak_no_evil:)
+Table: ``oc_preferences``
+
+Data row 1:
+- userid: your Nextcloud user UID
+- appid: ``twofactor_sms``
+- configkey: ``phone``
+- configvalue: your phone number in the [MSISDN format](https://en.wikipedia.org/wiki/MSISDN). E.g. +4912345678 is 4912345678
+
+Data row 2:
+- userid: your Nextcloud user UID
+- appid: ``twofactor_sms``
+- configkey: ``telegram_id``
+- configvalue: your telegram id. You can get your telegram id by searching the user <b>What's my Telegram ID?</b> in Telegram and start the conversation.
+
 ## Login with external apps
 All modern applications communicating with Nextcloud now use Login flow so you will be able to log in just like you would on the web, including, but not limited to SMS-based authentication.
 
