@@ -1,5 +1,5 @@
 # Two Factor Sms
-A two-factor auth provider for Nextcloud 11 and up. See [my blog post](http://blog.wuc.me/2016/05/30/adding-two-factor-auth-to-owncloud.html) on more info about Nextcloud's internal 2FA.
+A two-factor auth provider for Nextcloud 14 and up. See [my blog post](http://blog.wuc.me/2016/05/30/adding-two-factor-auth-to-owncloud.html) on more info about Nextcloud's internal 2FA.
 
 [![Build Status](https://travis-ci.org/nextcloud/twofactor_sms.svg?branch=master)](https://travis-ci.org/nextcloud/twofactor_sms)
 
@@ -45,4 +45,4 @@ Admin configuration:
 All modern applications communicating with Nextcloud now use Login flow so you will be able to log in just like you would on the web, including, but not limited to SMS-based authentication.
 
 Absent support for the Login flow, after enabling Two Factor SMS, your legacy applications will accept device passwords.
-To manage them, [see more here](https://docs.nextcloud.com/server/11/user_manual/session_management.html#managing-devices)
+To manage them, [see more here](https://docs.nextcloud.com/server/14/user_manual/session_management.html#managing-devices)
