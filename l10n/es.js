@@ -1,7 +1,7 @@
 OC.L10N.register(
     "twofactor_sms",
     {
-    "SMS verification" : "Verificación SMS",
+    "SMS verification" : "Verificación con SMS",
     "Send an authentication code via SMS" : "Enviar un código de autenticación vía SMS",
     "%s is your Nextcloud authentication code" : "%s es tu código de atenficación para Nextcloud",
     "Two Factor SMS Provider" : "Proveedor en dos pasos SMS",
