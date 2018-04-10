@@ -5,16 +5,16 @@
 	<name>Two Factor SMS Provider</name>
 	<summary>sms two-factor provider</summary>
 	<description>A message-based two-factor-auth provider</description>
-	<version>0.4.0</version>
+	<version>0.5.0</version>
 	<licence>agpl</licence>
 	<author>Christoph Wurst</author>
 	<namespace>TwoFactorSms</namespace>
 	<category>security</category>
-	<screenshot>https://raw.githubusercontent.com/ChristophWurst/twofactor_sms/24a9ef4ec5acf6fa00958008118479c759147384/screenshots/challenge1.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/ChristophWurst/twofactor_sms/24a9ef4ec5acf6fa00958008118479c759147384/screenshots/challenge2.png</screenshot>
+	<website>https://github.com/nextcloud/twofactor_sms</website>
+	<bugs>https://github.com/nextcloud/twofactor_sms/issues</bugs>
 	<dependencies>
-		<nextcloud min-version="14" max-version="14"/>
 		<php min-version="7.0" max-version="7.2"/>
+		<nextcloud min-version="14" max-version="14"/>
 	</dependencies>
 
 	<two-factor-providers>
