@@ -4,5 +4,12 @@
 	},
 	"require-dev": {
 		"christophwurst/nextcloud_testing": "^0.3.1"
+	},
+	"config": {
+		"optimize-autoloader": true,
+		"classmap-authoritative": true,
+		"platform": {
+			"php": "7.0"
+		}
 	}
 }
