@@ -47,12 +47,6 @@ class SmsProvider implements IProvider {
 	/** @var IL10N */
 	private $l10n;
 
-	/**
-	 * @param ISmsService $smsService
-	 * @param ISession $session
-	 * @param IConfig $config
-	 * @param IL10N $l10n
-	 */
 	public function __construct(ISmsService $smsService, ISession $session, IConfig $config, IL10N $l10n) {
 		$this->smsService = $smsService;
 		$this->session = $session;
@@ -62,38 +56,29 @@ class SmsProvider implements IProvider {
 
 	/**
 	 * Get unique identifier of this 2FA provider
-	 *
-	 * @return string
 	 */
-	public function getId() {
+	public function getId(): string {
 		return 'sms';
 	}
 
 	/**
 	 * Get the display name for selecting the 2FA provider
-	 *
-	 * @return string
 	 */
-	public function getDisplayName() {
+	public function getDisplayName(): string {
 		return $this->l10n->t('SMS verification');
 	}
 
 	/**
 	 * Get the description for selecting the 2FA provider
-	 *
-	 * @return string
 	 */
-	public function getDescription() {
+	public function getDescription(): string {
 		return $this->l10n->t('Send an authentication code via SMS');
 	}
 
 	/**
 	 * Get the template for rending the 2FA provider view
-	 *
-	 * @param IUser $user
-	 * @return Template
 	 */
-	public function getTemplate(IUser $user) {
+	public function getTemplate(IUser $user): Template {
 		$otp = new Otp();
 		$secret = GoogleAuthenticator::generateRandom();
 		$this->session->set('twofactor_sms_secret', $secret);
@@ -117,11 +102,8 @@ class SmsProvider implements IProvider {
 
 	/**
 	 * convert 123456789 to ******789
-	 *
-	 * @param string $number
-	 * @return string
 	 */
-	private function protectPhoneNumber($number) {
+	private function protectPhoneNumber(string $number): string {
 		$length = strlen($number);
 		$start = $length - 3;
 
@@ -130,11 +112,8 @@ class SmsProvider implements IProvider {
 
 	/**
 	 * Verify the given challenge
-	 *
-	 * @param IUser $user
-	 * @param string $challenge
 	 */
-	public function verifyChallenge(IUser $user, $challenge) {
+	public function verifyChallenge(IUser $user, string $challenge): bool {
 		$otp = new Otp();
 		$secret = $this->session->get('twofactor_sms_secret');
 		return $otp->checkTotp(Base32::decode($secret), $challenge);
@@ -142,11 +121,8 @@ class SmsProvider implements IProvider {
 
 	/**
 	 * Decides whether 2FA is enabled for the given user
-	 *
-	 * @param IUser $user
-	 * @return boolean
 	 */
-	public function isTwoFactorAuthEnabledForUser(IUser $user) {
+	public function isTwoFactorAuthEnabledForUser(IUser $user): bool {
 		return !is_null($this->config->getUserValue($user->getUID(), 'twofactor_sms', 'phone', null));
 	}
 

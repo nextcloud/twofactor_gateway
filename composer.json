@@ -1,5 +1,15 @@
 {
 	"require": {
 		"christian-riesen/otp": "1.*"
+	},
+	"require-dev": {
+		"christophwurst/nextcloud_testing": "^0.3.1"
+	},
+	"config": {
+		"optimize-autoloader": true,
+		"classmap-authoritative": true,
+		"platform": {
+			"php": "7.0"
+		}
 	}
 }
