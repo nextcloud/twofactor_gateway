@@ -52,14 +52,14 @@ class Application extends App {
 	 */
 	private function getSmsProviderClass(string $name): string {
 		switch ($name) {
-			case 'websms.de':
-				return WebSmsDe::class;
 			case 'playsms':
 				return PlaySMS::class;
 			case 'signal':
 				return SignalGateway::class;
 			case 'telegram':
 				return Telegram::class;
+			case 'websms.de':
+				return WebSmsDe::class;
 		}
 	}
 
