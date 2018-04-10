@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f6e65a653bfd1546407f3e471f90f15c",
+    "content-hash": "963c3300aa6205fe5237beb326652e0f",
     "packages": [
         {
             "name": "christian-riesen/base32",
@@ -110,6 +110,39 @@
                 "totp"
             ],
             "time": "2015-10-08T08:17:59+00:00"
+        },
+        {
+            "name": "christophwurst/nextcloud",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
+                "reference": "c4b343928d31e404ee0be279c0c1e8a9b1ed3799"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/c4b343928d31e404ee0be279c0c1e8a9b1ed3799",
+                "reference": "c4b343928d31e404ee0be279c0c1e8a9b1ed3799",
+                "shasum": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "14.0.0-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Christoph Wurst",
+                    "email": "christoph@winzerhof-wurst.at"
+                }
+            ],
+            "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
+            "time": "2018-04-06T16:48:54+00:00"
         }
     ],
     "packages-dev": [
@@ -1582,7 +1615,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "christophwurst/nextcloud": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
