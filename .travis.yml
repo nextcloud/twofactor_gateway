@@ -4,11 +4,11 @@ language: php
 php:
   - 7.0
   - 7.1
-  - 7.2
 
 env:
   global:
   - CORE_BRANCH=master
+  - PHP_COVERAGE=FALSE
   matrix:
   - DB=sqlite
 
@@ -31,7 +31,7 @@ before_install:
   - chmod u+x phpunit
 
   # XDebug is only needed if we report coverage -> speeds up other builds
-  - phpenv config-rm xdebug.ini
+  - if [[ "$PHP_COVERAGE" = "FALSE" ]]; then phpenv config-rm xdebug.ini; fi
 
   - composer self-update
   - composer install
@@ -56,10 +56,16 @@ script:
   - php ../../occ app:check-code twofactor_sms
 
   # Run PHP tests
-  - cd tests
-  - ../phpunit --configuration phpunit.xml
-  - ../phpunit --configuration phpunit.integration.xml
+  - ./phpunit --configuration tests/phpunit.xml
+  - ./phpunit --configuration tests/phpunit.integration.xml
+
+  # Upload coverage report to Scrutinizer
+  - if [[ "$PHP_COVERAGE" = "TRUE" ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
+  - if [[ "$PHP_COVERAGE" = "TRUE" ]]; then php ocular.phar code-coverage:upload --format=php-clover tests/clover.xml; fi
 
 matrix:
+  include:
+    - php: 7.2
+      env: "PHP_COVERAGE=TRUE"
   fast_finish: true
 
