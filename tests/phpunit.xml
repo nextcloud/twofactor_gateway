@@ -1,16 +1,16 @@
-<phpunit bootstrap="bootstrap.php" colors="true">
+<phpunit bootstrap="bootstrap.php" colors="true" verbose="true">
 	<testsuites>
-		<testsuite name="TOTP 2FA Provider">
+		<testsuite name="twofactor_sms tests">
 			<directory suffix="Test.php">.</directory>
 			<exclude>./vendor</exclude>
 		</testsuite>
 		<!-- filters for code coverage -->
 		<filter>
 			<whitelist>
-				<directory suffix=".php">../</directory>
+				<directory suffix=".php">./</directory>
 				<exclude>
-					<directory suffix=".php">../l10n</directory>
-					<directory suffix=".php">../tests</directory>
+					<directory suffix=".php">./l10n</directory>
+					<directory suffix=".php">./tests</directory>
 				</exclude>
 			</whitelist>
 		</filter>
