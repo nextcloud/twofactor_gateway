@@ -21,10 +21,12 @@
 
 namespace OCA\TwoFactorSms\AppInfo;
 
+use OCA\TwoFactorSms\Exception\InvalidConfigurationException;
 use OCA\TwoFactorSms\Service\ISmsService;
-use OCA\TwoFactorSms\Service\SmsProvider\WebSmsDe;
 use OCA\TwoFactorSms\Service\SmsProvider\PlaySMS;
+use OCA\TwoFactorSms\Service\SmsProvider\SignalGateway;
 use OCA\TwoFactorSms\Service\SmsProvider\Telegram;
+use OCA\TwoFactorSms\Service\SmsProvider\WebSmsDe;
 use OCP\AppFramework\App;
 use OCP\IConfig;
 
@@ -33,7 +35,7 @@ class Application extends App {
 	/**
 	 * @param array $urlParams
 	 */
-	public function __construct($urlParams = []) {
+	public function __construct(array $urlParams = []) {
 		parent::__construct('twofactor_sms', $urlParams);
 
 		$container = $this->getContainer();
@@ -49,12 +51,14 @@ class Application extends App {
 	 * @param string $name
 	 * @return string fully qualified class name
 	 */
-	private function getSmsProviderClass($name) {
+	private function getSmsProviderClass(string $name): string {
 		switch ($name) {
 			case 'websms.de':
 				return WebSmsDe::class;
 			case 'playsms':
 				return PlaySMS::class;
+			case 'signal':
+				return SignalGateway::class;
 			case 'telegram':
 				return Telegram::class;
 		}
