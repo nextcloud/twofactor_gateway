@@ -21,6 +21,7 @@
 
 namespace OCA\TwoFactorSms\AppInfo;
 
+use Exception;
 use OCA\TwoFactorSms\Service\ISmsService;
 use OCA\TwoFactorSms\Service\SmsProvider\PlaySMS;
 use OCA\TwoFactorSms\Service\SmsProvider\SignalGateway;
@@ -61,6 +62,7 @@ class Application extends App {
 			case 'websms.de':
 				return WebSmsDe::class;
 		}
+		throw new Exception('invalid configuration for twofactor_sms app');
 	}
 
 }
