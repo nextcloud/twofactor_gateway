@@ -4,19 +4,19 @@
 			<directory suffix="Test.php">.</directory>
 			<exclude>./vendor</exclude>
 		</testsuite>
-		<!-- filters for code coverage -->
-		<filter>
-			<whitelist>
-				<directory suffix=".php">./</directory>
-				<exclude>
-					<directory suffix=".php">./l10n</directory>
-					<directory suffix=".php">./tests</directory>
-				</exclude>
-			</whitelist>
-		</filter>
-		<logging>
-			<!-- and this is where your report will be written -->
-			<log type="coverage-clover" target="./clover.xml"/>
-		</logging>
 	</testsuites>
+	<!-- filters for code coverage -->
+	<filter>
+		<whitelist>
+			<directory suffix=".php">./</directory>
+			<exclude>
+				<directory suffix=".php">./l10n</directory>
+				<directory suffix=".php">./tests</directory>
+			</exclude>
+		</whitelist>
+	</filter>
+	<logging>
+		<!-- and this is where your report will be written -->
+		<log type="coverage-clover" target="./clover.xml"/>
+	</logging>
 </phpunit>
