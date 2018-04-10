@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * @author Pascal Clémot <pascal.clemot@free.fr>
  *
@@ -36,21 +38,15 @@ class PlaySMS implements ISmsService {
 	/** @var IConfig */
 	private $config;
 
-	/**
-	 * @param IClientService $clientService
-	 * @param IConfig $config
-	 */
 	public function __construct(IClientService $clientService, IConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}
 
 	/**
-	 * @param string $recipient
-	 * @param string $message
 	 * @throws SmsTransmissionException
 	 */
-	public function send($recipient, $message) {
+	public function send(string $recipient, string $message) {
 		$url = $this->config->getAppValue('twofactor_sms', 'playsms_url');
 		$user = $this->config->getAppValue('twofactor_sms', 'playsms_user');
 		$password = $this->config->getAppValue('twofactor_sms', 'playsms_password');
