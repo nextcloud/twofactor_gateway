@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "aefb08cecd114fd275d343ec5218d162",
+    "content-hash": "963c3300aa6205fe5237beb326652e0f",
     "packages": [
         {
             "name": "christian-riesen/base32",
@@ -113,19 +113,24 @@
         },
         {
             "name": "christophwurst/nextcloud",
-            "version": "v13.0.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "a998a1f6c0d6577e5780d9d4b2837b65579de662"
+                "reference": "c4b343928d31e404ee0be279c0c1e8a9b1ed3799"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/a998a1f6c0d6577e5780d9d4b2837b65579de662",
-                "reference": "a998a1f6c0d6577e5780d9d4b2837b65579de662",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/c4b343928d31e404ee0be279c0c1e8a9b1ed3799",
+                "reference": "c4b343928d31e404ee0be279c0c1e8a9b1ed3799",
                 "shasum": ""
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "14.0.0-dev"
+                }
+            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "AGPL-3.0-or-later"
@@ -137,7 +142,7 @@
                 }
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
-            "time": "2018-03-17T10:08:50+00:00"
+            "time": "2018-04-06T16:48:54+00:00"
         }
     ],
     "packages-dev": [
@@ -1610,7 +1615,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "christophwurst/nextcloud": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
