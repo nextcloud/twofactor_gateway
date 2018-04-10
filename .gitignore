@@ -1,4 +1,6 @@
 composer.phar
 
+/build
+
 vendor/
 /nbproject/
