@@ -28,6 +28,7 @@ use OCA\TwoFactorSms\Service\ISmsService;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ISession;
+use OCP\Security\ISecureRandom;
 use PHPUnit_Framework_MockObject_MockObject;
 
 class SmsProviderTest extends TestCase {
@@ -37,6 +38,9 @@ class SmsProviderTest extends TestCase {
 
 	/** @var ISession|PHPUnit_Framework_MockObject_MockObject */
 	private $session;
+
+	/** @var ISecureRandom|PHPUnit_Framework_MockObject_MockObject */
+	private $random;
 
 	/** @var IConfig|PHPUnit_Framework_MockObject_MockObject */
 	private $config;
@@ -52,10 +56,11 @@ class SmsProviderTest extends TestCase {
 
 		$this->smsService = $this->createMock(ISmsService::class);
 		$this->session = $this->createMock(ISession::class);
+		$this->random = $this->createMock(ISecureRandom::class);
 		$this->config = $this->createMock(IConfig::class);
 		$this->l10n = $this->createMock(IL10N::class);
 
-		$this->provider = new SmsProvider($this->smsService, $this->session, $this->config, $this->l10n);
+		$this->provider = new SmsProvider($this->smsService, $this->session, $this->random, $this->config, $this->l10n);
 	}
 
 	public function testSomething() {
