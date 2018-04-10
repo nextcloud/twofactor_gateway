@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
@@ -44,11 +46,9 @@ class SignalGateway implements ISmsService {
 	}
 
 	/**
-	 * @param string $recipient
-	 * @param string $message
 	 * @throws SmsTransmissionException
 	 */
-	public function send($recipient, $message) {
+	public function send(string $recipient, string $message) {
 		// TODO: make configurable
 		$endpoint = 'http://localhost:5000';
 

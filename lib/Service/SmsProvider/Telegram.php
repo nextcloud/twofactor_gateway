@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author André Fondse <andre@hetnetwerk.org>
@@ -37,21 +39,15 @@ class Telegram implements ISmsService {
 	/** @var IConfig */
 	private $config;
 
-	/**
-	 * @param IClientService $clientService
-	 * @param IConfig $config
-	 */
 	public function __construct(IClientService $clientService, IConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}
 
 	/**
-	 * @param string $recipient
-	 * @param string $message
 	 * @throws SmsTransmissionException
 	 */
-	public function send($recipient, $message) {
+	public function send(string $recipient, string $message) {
 		$telegramUrl = $this->config->getAppValue('twofactor_sms', 'telegram_url');
 		$telegramBotToken = $this->config->getAppValue('twofactor_sms', 'telegram_bot_token');
 		$telegramUserId = $this->config->getUserValue('nextclouddev', 'twofactor_sms', 'telegram_id');
