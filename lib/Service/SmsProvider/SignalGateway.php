@@ -60,10 +60,11 @@ class SignalGateway implements ISmsService {
 			],
 		]);
 		$body = $response->getBody();
-		$json = json_decode($body);
+		$json = json_decode($body, true);
 
 		if ($response->getStatusCode() !== 200 || is_null($json) || !is_array($json) || !isset($json['success']) || json['success'] !== true) {
-			throw new SmsTransmissionException("error reported by Signal gateway, status=${$response->getStatusCode}, body=${$response->getBody()}");
+			$status = $response->getStatusCode();
+			throw new SmsTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
 		}
 	}
 

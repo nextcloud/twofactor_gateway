@@ -1,6 +1,5 @@
 {
 	"require": {
-		"christian-riesen/otp": "1.*",
 		"christophwurst/nextcloud": "dev-master"
 	},
 	"require-dev": {
