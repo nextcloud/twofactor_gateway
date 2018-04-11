@@ -27,6 +27,7 @@ namespace OCA\TwoFactorSms\Service;
 use Exception;
 use OC\Accounts\AccountManager;
 use OCA\TwoFactorSms\AppInfo\Application;
+use OCA\TwoFactorSms\Exception\PhoneNumberMismatchException;
 use OCA\TwoFactorSms\Exception\PhoneNumberMissingException;
 use OCA\TwoFactorSms\Exception\SmsTransmissionException;
 use OCA\TwoFactorSms\Exception\VerificationException;
@@ -60,14 +61,31 @@ class SetupService {
 	/**
 	 * @throws PhoneNumberMissingException
 	 */
-	private function getPhoneNumber(IUser $user): string {
+	public function getChallengePhoneNumber(IUser $user): string {
+		$numerFromUserData = $this->getVerificationPhoneNumber($user);
+		$verifiedNumber = $this->config->getUserValue($user->getUID(), 'twofactor_sms', 'phone', null);
+		if (is_null($verifiedNumber)) {
+			throw new PhoneNumberMissingException('verified phone number is missing');
+		}
+
+		if ($numerFromUserData !== $verifiedNumber) {
+			throw new PhoneNumberMismatchException('user\'s phone number has change');
+		}
+
+		return $verifiedNumber;
+	}
+
+	/**
+	 * @throws PhoneNumberMissingException
+	 */
+	private function getVerificationPhoneNumber(IUser $user): string {
 		$userData = $this->accountManager->getUser($user);
 
 		if (!isset($userData[AccountManager::PROPERTY_PHONE]) || empty($userData[AccountManager::PROPERTY_PHONE])) {
-			throw new PhoneNumberMissingException();
+			throw new PhoneNumberMissingException('user did not set a phone number');
 		}
 
-		return $userData[AccountManager::PROPERTY_PHONE];
+		return $userData[AccountManager::PROPERTY_PHONE]['value'];
 	}
 
 	/**
@@ -77,7 +95,7 @@ class SetupService {
 	 * @throws PhoneNumberMissingException
 	 */
 	public function startSetup(IUser $user) {
-		$phoneNumber = $this->getPhoneNumber($user);
+		$phoneNumber = $this->getVerificationPhoneNumber($user);
 
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
 		try {
@@ -87,7 +105,7 @@ class SetupService {
 		}
 		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'phone', $phoneNumber);
 		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'verification_code', $verificationNumber);
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'verified', false);
+		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'verified', 'false');
 	}
 
 	public function finishSetup(IUser $user, string $token) {
@@ -100,7 +118,7 @@ class SetupService {
 			throw new VerificationException('verification token mismatch');
 		}
 
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'verified', true);
+		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'verified', 'true');
 	}
 
 }

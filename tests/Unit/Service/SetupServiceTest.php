@@ -92,7 +92,9 @@ class SetupServiceTest extends TestCase {
 			->method('getUser')
 			->with($user)
 			->willReturn([
-				AccountManager::PROPERTY_PHONE => '0123456789',
+				AccountManager::PROPERTY_PHONE => [
+					'value' => '0123456789',
+				],
 		]);
 		$this->smsService->expects($this->once())
 			->method('send')
@@ -108,7 +110,9 @@ class SetupServiceTest extends TestCase {
 			->method('getUser')
 			->with($user)
 			->willReturn([
-				AccountManager::PROPERTY_PHONE => '0123456789',
+				AccountManager::PROPERTY_PHONE => [
+					'value' => '0123456789',
+				],
 		]);
 		$this->smsService->expects($this->once())
 			->method('send');
@@ -124,7 +128,7 @@ class SetupServiceTest extends TestCase {
 			->with('user123', 'twofactor_sms', 'verification_code', '963852');
 		$this->config->expects($this->at(2))
 			->method('setUserValue')
-			->with('user123', 'twofactor_sms', 'verified', false);
+			->with('user123', 'twofactor_sms', 'verified', 'false');
 
 		$this->setupService->startSetup($user);
 	}
@@ -162,7 +166,7 @@ class SetupServiceTest extends TestCase {
 			->willReturn('123456');
 		$this->config->expects($this->once())
 			->method('setUserValue')
-			->with('user123', 'twofactor_sms', 'verified', true);
+			->with('user123', 'twofactor_sms', 'verified', 'true');
 
 		$this->setupService->finishSetup($user, '123456');
 	}

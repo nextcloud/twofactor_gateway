@@ -23,8 +23,10 @@ declare(strict_types = 1);
 
 namespace OCA\TwoFactorSms\Provider;
 
+use OCA\TwoFactorSms\Exception\PhoneNumberMismatchException;
 use OCA\TwoFactorSms\Exception\SmsTransmissionException;
 use OCA\TwoFactorSms\Service\ISmsService;
+use OCA\TwoFactorSms\Service\SetupService;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -40,6 +42,9 @@ class SmsProvider implements IProvider {
 	/** @var ISmsService */
 	private $smsService;
 
+	/** @var SetupService */
+	private $setupService;
+
 	/** @var ISession */
 	private $session;
 
@@ -52,9 +57,10 @@ class SmsProvider implements IProvider {
 	/** @var IL10N */
 	private $l10n;
 
-	public function __construct(ISmsService $smsService, ISession $session, ISecureRandom $secureRandom, IConfig $config,
-		IL10N $l10n) {
+	public function __construct(ISmsService $smsService, SetupService $setupService, ISession $session,
+		ISecureRandom $secureRandom, IConfig $config, IL10N $l10n) {
 		$this->smsService = $smsService;
+		$this->setupService = $setupService;
 		$this->session = $session;
 		$this->secureRandom = $secureRandom;
 		$this->config = $config;
@@ -99,11 +105,13 @@ class SmsProvider implements IProvider {
 	public function getTemplate(IUser $user): Template {
 		$secret = $this->getSecret();
 
-		$phoneNumber = (int) $this->config->getUserValue($user->getUID(), 'twofactor_sms', 'phone');
 		try {
+			$phoneNumber = $this->setupService->getChallengePhoneNumber($user);
 			$this->smsService->send($phoneNumber, $this->l10n->t('%s is your Nextcloud authentication code', [$secret]));
 		} catch (SmsTransmissionException $ex) {
 			return new Template('twofactor_sms', 'error');
+		} catch (PhoneNumberMismatchException $ex) {
+			return new Template('twofactor_sms', 'error_mismatch');
 		}
 
 		$tmpl = new Template('twofactor_sms', 'challenge');
@@ -141,7 +149,7 @@ class SmsProvider implements IProvider {
 	 * Decides whether 2FA is enabled for the given user
 	 */
 	public function isTwoFactorAuthEnabledForUser(IUser $user): bool {
-		return $this->config->getUserValue($user->getUID(), 'twofactor_sms', 'verified', false);
+		return $this->config->getUserValue($user->getUID(), 'twofactor_sms', 'verified', 'false') === 'true';
 	}
 
 }
