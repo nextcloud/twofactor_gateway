@@ -34,11 +34,13 @@ use OCP\IConfig;
 
 class Application extends App {
 
+	const APP_NAME = 'twofactor_sms';
+
 	/**
 	 * @param array $urlParams
 	 */
 	public function __construct(array $urlParams = []) {
-		parent::__construct('twofactor_sms', $urlParams);
+		parent::__construct(self::APP_NAME, $urlParams);
 
 		$container = $this->getContainer();
 
