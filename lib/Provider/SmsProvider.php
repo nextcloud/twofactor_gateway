@@ -23,7 +23,6 @@ declare(strict_types = 1);
 
 namespace OCA\TwoFactorSms\Provider;
 
-use Base32\Base32;
 use OCA\TwoFactorSms\Exception\SmsTransmissionException;
 use OCA\TwoFactorSms\Service\ISmsService;
 use OCP\Authentication\TwoFactorAuth\IProvider;
@@ -31,11 +30,12 @@ use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\IUser;
+use OCP\Security\ISecureRandom;
 use OCP\Template;
-use Otp\GoogleAuthenticator;
-use Otp\Otp;
 
 class SmsProvider implements IProvider {
+
+	const SESSION_KEY = 'twofactor_sms_secret';
 
 	/** @var ISmsService */
 	private $smsService;
@@ -43,15 +43,20 @@ class SmsProvider implements IProvider {
 	/** @var ISession */
 	private $session;
 
+	/** @var ISecureRandom */
+	private $secureRandom;
+
 	/** @var IConfig */
 	private $config;
 
 	/** @var IL10N */
 	private $l10n;
 
-	public function __construct(ISmsService $smsService, ISession $session, IConfig $config, IL10N $l10n) {
+	public function __construct(ISmsService $smsService, ISession $session, ISecureRandom $secureRandom, IConfig $config,
+		IL10N $l10n) {
 		$this->smsService = $smsService;
 		$this->session = $session;
+		$this->secureRandom = $secureRandom;
 		$this->config = $config;
 		$this->l10n = $l10n;
 	}
@@ -77,27 +82,34 @@ class SmsProvider implements IProvider {
 		return $this->l10n->t('Send an authentication code via SMS');
 	}
 
+	private function getSecret(): string {
+		if ($this->session->exists(self::SESSION_KEY)) {
+			return $this->session->get(self::SESSION_KEY);
+		}
+
+		$secret = $this->secureRandom->generate(6, ISecureRandom::CHAR_DIGITS);
+		$this->session->set(self::SESSION_KEY, $secret);
+
+		return $secret;
+	}
+
 	/**
 	 * Get the template for rending the 2FA provider view
 	 */
 	public function getTemplate(IUser $user): Template {
-		$otp = new Otp();
-		$secret = GoogleAuthenticator::generateRandom();
-		$this->session->set('twofactor_sms_secret', $secret);
-		$totp = $otp->totp(Base32::decode($secret));
+		$secret = $this->getSecret();
 
 		$phoneNumber = (int) $this->config->getUserValue($user->getUID(), 'twofactor_sms', 'phone');
 		try {
-			$this->smsService->send($phoneNumber, $this->l10n->t('%s is your Nextcloud authentication code', [$totp]));
+			$this->smsService->send($phoneNumber, $this->l10n->t('%s is your Nextcloud authentication code', [$secret]));
 		} catch (SmsTransmissionException $ex) {
-			$tmpl = new Template('twofactor_sms', 'error');
-			return $tmpl;
+			return new Template('twofactor_sms', 'error');
 		}
 
 		$tmpl = new Template('twofactor_sms', 'challenge');
 		$tmpl->assign('phone', $this->protectPhoneNumber($phoneNumber));
 		if ($this->config->getSystemValue('debug', false)) {
-			$tmpl->assign('secret', $totp);
+			$tmpl->assign('secret', $secret);
 		}
 		return $tmpl;
 	}
@@ -116,9 +128,13 @@ class SmsProvider implements IProvider {
 	 * Verify the given challenge
 	 */
 	public function verifyChallenge(IUser $user, string $challenge): bool {
-		$otp = new Otp();
-		$secret = $this->session->get('twofactor_sms_secret');
-		return $otp->checkTotp(Base32::decode($secret), $challenge);
+		$valid = $this->session->exists(self::SESSION_KEY) && $this->session->get(self::SESSION_KEY) === $challenge;
+
+		if ($valid) {
+			$this->session->remove(self::SESSION_KEY);
+		}
+
+		return $valid;
 	}
 
 	/**
