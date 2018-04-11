@@ -28,6 +28,7 @@ use OCA\TwoFactorSms\Service\ISmsService;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ISession;
+use OCP\IUser;
 use OCP\Security\ISecureRandom;
 use PHPUnit_Framework_MockObject_MockObject;
 
@@ -63,8 +64,17 @@ class SmsProviderTest extends TestCase {
 		$this->provider = new SmsProvider($this->smsService, $this->session, $this->random, $this->config, $this->l10n);
 	}
 
-	public function testSomething() {
-		$this->assertTrue(true);
+	public function testIsTwoFactorAuthEnabledForUser() {
+		$user = $this->createMock(IUser::class);
+		$user->method('getUID')->willReturn('user123');
+		$this->config->expects($this->once())
+			->method('getUserValue')
+			->with('user123', 'twofactor_sms', 'verified', false)
+			->willReturn(true);
+
+		$enabled = $this->provider->isTwoFactorAuthEnabledForUser($user);
+
+		$this->assertTrue($enabled);
 	}
 
 }

@@ -141,7 +141,7 @@ class SmsProvider implements IProvider {
 	 * Decides whether 2FA is enabled for the given user
 	 */
 	public function isTwoFactorAuthEnabledForUser(IUser $user): bool {
-		return !is_null($this->config->getUserValue($user->getUID(), 'twofactor_sms', 'phone', null));
+		return $this->config->getUserValue($user->getUID(), 'twofactor_sms', 'verified', false);
 	}
 
 }
