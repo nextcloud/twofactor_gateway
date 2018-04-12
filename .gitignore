@@ -1,7 +1,9 @@
 composer.phar
 
 /build
+/js/build
 
+/node_modules
 vendor/
 /nbproject/
 
