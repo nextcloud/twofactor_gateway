@@ -24,37 +24,50 @@
 
 <script>
 import l10n from "view/l10n.vue";
-import { startVerification, tryVerification } from "service/registration";
+import {
+  getState,
+  startVerification,
+  tryVerification
+} from "service/registration";
 
 export default {
   data() {
     return {
-      loading: false,
+      loading: true,
       state: 0,
       phoneNumber: "12344556",
       confirmationCode: ""
     };
   },
+  mounted: function() {
+    getState()
+      .then(res => {
+        this.state = res.state;
+        this.phoneNumber = res.phoneNumber;
+        this.loading = false;
+      })
+      .catch(console.error.bind(this));
+  },
   methods: {
     enable: function() {
       this.loading = true;
-      startVerification().then(
-        function() {
+      startVerification()
+        .then(res => {
           this.state = 1;
+          this.phoneNumber = res.phoneNumber;
           this.loading = false;
-        }.bind(this)
-      );
+        })
+        .catch(console.error.bind(this));
     },
     confirm: function() {
       this.loading = true;
-      console.error(this.confirmationCode);
 
-      tryVerification().then(
-        function() {
+      tryVerification(this.confirmationCode)
+        .then(res => {
           this.state = 2;
           this.loading = false;
-        }.bind(this)
-      );
+        })
+        .catch(console.error.bind(this));
     }
   },
   components: {

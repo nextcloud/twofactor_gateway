@@ -32,6 +32,8 @@ use OCA\TwoFactorSms\Exception\PhoneNumberMissingException;
 use OCA\TwoFactorSms\Exception\SmsTransmissionException;
 use OCA\TwoFactorSms\Exception\VerificationException;
 use OCA\TwoFactorSms\Exception\VerificationTransmissionException;
+use OCA\TwoFactorSms\Provider\SmsProvider;
+use OCA\TwoFactorSms\Provider\State;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
@@ -50,12 +52,21 @@ class SetupService {
 	/** @var ISecureRandom */
 	private $random;
 
-	public function __construct(IConfig $config, AccountManager $accountManager, ISmsService $smsService,
-		ISecureRandom $random) {
+	public function __construct(IConfig $config, AccountManager $accountManager,
+		ISmsService $smsService, ISecureRandom $random) {
 		$this->config = $config;
 		$this->accountManager = $accountManager;
 		$this->smsService = $smsService;
 		$this->random = $random;
+	}
+
+	public function getState(IUser $user): State {
+		$state = $this->config->getUserValue($user->getUID(), Application::APP_NAME,
+				'verified', 'false') === 'true' ? SmsProvider::STATE_ENABLED : SmsProvider::STATE_DISABLED;
+		$verifiedNumber = $this->config->getUserValue($user->getUID(),
+			'twofactor_sms', 'phone', null);
+
+		return new State($state, $verifiedNumber);
 	}
 
 	/**
@@ -63,7 +74,8 @@ class SetupService {
 	 */
 	public function getChallengePhoneNumber(IUser $user): string {
 		$numerFromUserData = $this->getVerificationPhoneNumber($user);
-		$verifiedNumber = $this->config->getUserValue($user->getUID(), 'twofactor_sms', 'phone', null);
+		$verifiedNumber = $this->config->getUserValue($user->getUID(),
+			'twofactor_sms', 'phone', null);
 		if (is_null($verifiedNumber)) {
 			throw new PhoneNumberMissingException('verified phone number is missing');
 		}
@@ -85,31 +97,43 @@ class SetupService {
 			throw new PhoneNumberMissingException('user did not set a phone number');
 		}
 
-		return $userData[AccountManager::PROPERTY_PHONE]['value'];
+		$num = $userData[AccountManager::PROPERTY_PHONE]['value'];
+		
+		if (is_null($num) || empty($num)) {
+			throw new PhoneNumberMissingException('phone number is empty');
+		}
+
+		return $num;
 	}
 
 	/**
 	 * Send out confirmation message and save current phone number in user settings
 	 *
-	 * @param IUser $user
 	 * @throws PhoneNumberMissingException
 	 */
-	public function startSetup(IUser $user) {
+	public function startSetup(IUser $user): string {
 		$phoneNumber = $this->getVerificationPhoneNumber($user);
 
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
 		try {
-			$this->smsService->send($phoneNumber, "$verificationNumber is your Nextcloud verification code.");
+			$this->smsService->send($phoneNumber,
+				"$verificationNumber is your Nextcloud verification code.");
 		} catch (SmsTransmissionException $ex) {
 			throw new VerificationTransmissionException('could not send verification code');
 		}
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'phone', $phoneNumber);
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'verification_code', $verificationNumber);
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'verified', 'false');
+		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'phone',
+			$phoneNumber);
+		$this->config->setUserValue($user->getUID(), Application::APP_NAME,
+			'verification_code', $verificationNumber);
+		$this->config->setUserValue($user->getUID(), Application::APP_NAME,
+			'verified', 'false');
+
+		return $phoneNumber;
 	}
 
 	public function finishSetup(IUser $user, string $token) {
-		$verificationNumber = $this->config->getUserValue($user->getUID(), Application::APP_NAME, 'verification_code', null);
+		$verificationNumber = $this->config->getUserValue($user->getUID(),
+			Application::APP_NAME, 'verification_code', null);
 		if (is_null($verificationNumber)) {
 			throw new Exception('no verification code set');
 		}
@@ -118,7 +142,8 @@ class SetupService {
 			throw new VerificationException('verification token mismatch');
 		}
 
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'verified', 'true');
+		$this->config->setUserValue($user->getUID(), Application::APP_NAME,
+			'verified', 'true');
 	}
 
 }

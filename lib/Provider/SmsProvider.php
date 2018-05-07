@@ -25,6 +25,7 @@ namespace OCA\TwoFactorSms\Provider;
 
 use OCA\TwoFactorSms\Exception\PhoneNumberMismatchException;
 use OCA\TwoFactorSms\Exception\SmsTransmissionException;
+use OCA\TwoFactorSms\PhoneNumberMask;
 use OCA\TwoFactorSms\Service\ISmsService;
 use OCA\TwoFactorSms\Service\SetupService;
 use OCP\Authentication\TwoFactorAuth\IProvider;
@@ -37,6 +38,9 @@ use OCP\Template;
 
 class SmsProvider implements IProvider {
 
+	const STATE_DISABLED = 0;
+	const STATE_VERIFYING = 1;
+	const STATE_ENABLED = 2;
 	const SESSION_KEY = 'twofactor_sms_secret';
 
 	/** @var ISmsService */
@@ -115,21 +119,11 @@ class SmsProvider implements IProvider {
 		}
 
 		$tmpl = new Template('twofactor_sms', 'challenge');
-		$tmpl->assign('phone', $this->protectPhoneNumber($phoneNumber));
+		$tmpl->assign('phone', PhoneNumberMask::maskNumber($phoneNumber));
 		if ($this->config->getSystemValue('debug', false)) {
 			$tmpl->assign('secret', $secret);
 		}
 		return $tmpl;
-	}
-
-	/**
-	 * convert 123456789 to ******789
-	 */
-	private function protectPhoneNumber(string $number): string {
-		$length = strlen($number);
-		$start = $length - 3;
-
-		return str_repeat('*', $start) . substr($number, $start);
 	}
 
 	/**
