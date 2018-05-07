@@ -2,7 +2,7 @@
     <div class="section">
         <h2 data-anchor-name="sms-second-factor-auth"><l10n text="SMS second-factor auth"></l10n></h2>
         <div v-if="loading">
-              <span class="icon-loading"></span>
+              <span class="icon-loading-small"></span>
         </div>
         <div v-else>
           <p v-if="state === 0">
@@ -62,3 +62,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.icon-loading-small {
+  padding-left: 15px;
+}
+</style>

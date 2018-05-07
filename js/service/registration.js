@@ -4,7 +4,7 @@ export function startVerification() {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             resolve();
-        }, 400);
+        }, 2000);
     })
 }
 
@@ -12,6 +12,6 @@ export function tryVerification() {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             resolve();
-        }, 400);
+        }, 2000);
     })
 }
