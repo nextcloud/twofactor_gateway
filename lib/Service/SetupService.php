@@ -98,7 +98,7 @@ class SetupService {
 		}
 
 		$num = $userData[AccountManager::PROPERTY_PHONE]['value'];
-		
+
 		if (is_null($num) || empty($num)) {
 			throw new PhoneNumberMissingException('phone number is empty');
 		}
@@ -144,6 +144,15 @@ class SetupService {
 
 		$this->config->setUserValue($user->getUID(), Application::APP_NAME,
 			'verified', 'true');
+	}
+
+	public function disable(IUser $user) {
+		$this->config->deleteUserValue($user->getUID(), Application::APP_NAME,
+			'verified');
+		$this->config->deleteUserValue($user->getUID(), Application::APP_NAME,
+			'verification_code');
+
+		return $this->getState($user);
 	}
 
 }

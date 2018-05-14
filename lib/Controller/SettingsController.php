@@ -108,7 +108,7 @@ class SettingsController extends Controller {
 			return new JSONResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		return new JSONResponse([]);
+		return new JSONResponse($this->setup->disable($user));
 	}
 
 }

@@ -40,3 +40,16 @@ export function tryVerification(code) {
         throw resp;
     })
 }
+
+export function disable() {
+    let url = OC.generateUrl('/apps/twofactor_sms/settings/verification')
+
+    return nc_fetch_json(url, {
+        method: 'DELETE'
+    }).then(function (resp) {
+        if (resp.ok) {
+            return resp.json();
+        }
+        throw resp;
+    })
+}

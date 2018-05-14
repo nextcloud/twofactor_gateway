@@ -17,6 +17,7 @@
           </p>
           <p v-if="state === 2">
               <l10n text="SMS-based two-factor authentication is enabled for your account."></l10n>
+              <button @click="disable"><l10n text="Disable"></l10n></button>
           </p>
         </div>
     </div>
@@ -27,7 +28,8 @@ import l10n from "view/l10n.vue";
 import {
   getState,
   startVerification,
-  tryVerification
+  tryVerification,
+  disable
 } from "service/registration";
 
 export default {
@@ -65,6 +67,18 @@ export default {
       tryVerification(this.confirmationCode)
         .then(res => {
           this.state = 2;
+          this.loading = false;
+        })
+        .catch(console.error.bind(this));
+    },
+
+    disable: function() {
+      this.loading = true;
+
+      disable()
+        .then(res => {
+          this.state = res.state;
+          this.phoneNumber = res.phoneNumber;
           this.loading = false;
         })
         .catch(console.error.bind(this));
