@@ -75,7 +75,7 @@ class SettingsController extends Controller {
 		$num = $this->setup->startSetup($user);
 
 		return new JSONResponse([
-			'phoneNumber' => PhoneNumberMask::maskNumber($num),
+			'phoneNumber' => $num,
 		]);
 	}
 

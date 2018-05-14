@@ -6,6 +6,7 @@
         </div>
         <div v-else>
           <p v-if="state === 0">
+              <strong v-if="verificationError === true"><l10n text="Could not verify your code. Please try again."></l10n></strong>
               <l10n text="You are not using SMS-based two-factor authentication at the moment"></l10n>
               <button @click="enable"><l10n text="Enable"></l10n></button>
           </p>
@@ -37,8 +38,9 @@ export default {
     return {
       loading: true,
       state: 0,
-      phoneNumber: "12344556",
-      confirmationCode: ""
+      phoneNumber: "",
+      confirmationCode: "",
+      verificationError: false
     };
   },
   mounted: function() {
@@ -53,6 +55,7 @@ export default {
   methods: {
     enable: function() {
       this.loading = true;
+      this.verificationError = false;
       startVerification()
         .then(res => {
           this.state = 1;
@@ -69,7 +72,11 @@ export default {
           this.state = 2;
           this.loading = false;
         })
-        .catch(console.error.bind(this));
+        .catch(res => {
+          this.state = 0;
+          this.verificationError = true;
+          this.loading = false;
+        });
     },
 
     disable: function() {
