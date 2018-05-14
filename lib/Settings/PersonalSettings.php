@@ -1,5 +1,7 @@
 <?php
 
+declare (strict_types = 1);
+
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
@@ -19,9 +21,36 @@
  *
  */
 
-define('PHPUNIT_RUN', 1);
+namespace OCA\TwoFactorSms\Settings;
 
-require_once __DIR__.'/../../../lib/base.php';
-require_once __DIR__.'/../vendor/autoload.php';
+use OCP\AppFramework\Http\TemplateResponse;
+use OCP\Settings\ISettings;
 
-\OC_App::loadApp('twofactor_sms');
+class PersonalSettings implements ISettings
+{
+
+    /**
+     * @return TemplateResponse
+     */
+    public function getForm()
+    {
+        return new TemplateResponse('twofactor_sms', 'personal_settings');
+    }
+
+    /**
+     * @return string
+     */
+    public function getSection()
+    {
+        return 'security';
+    }
+
+    /**
+     * @return int
+     */
+    public function getPriority()
+    {
+        return 50;
+    }
+
+}

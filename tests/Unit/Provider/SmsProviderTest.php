@@ -25,9 +25,11 @@ namespace OCA\TwoFactorSms\Tests\Unit\Provider;
 use ChristophWurst\Nextcloud\Testing\TestCase;
 use OCA\TwoFactorSms\Provider\SmsProvider;
 use OCA\TwoFactorSms\Service\ISmsService;
+use OCA\TwoFactorSms\Service\SetupService;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ISession;
+use OCP\IUser;
 use OCP\Security\ISecureRandom;
 use PHPUnit_Framework_MockObject_MockObject;
 
@@ -35,6 +37,9 @@ class SmsProviderTest extends TestCase {
 
 	/** @var ISmsService|PHPUnit_Framework_MockObject_MockObject */
 	private $smsService;
+
+	/** @var SetupService|PHPUnit_Framework_MockObject_MockObject */
+	private $setupService;
 
 	/** @var ISession|PHPUnit_Framework_MockObject_MockObject */
 	private $session;
@@ -55,16 +60,26 @@ class SmsProviderTest extends TestCase {
 		parent::setUp();
 
 		$this->smsService = $this->createMock(ISmsService::class);
+		$this->setupService = $this->createMock(SetupService::class);
 		$this->session = $this->createMock(ISession::class);
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->config = $this->createMock(IConfig::class);
 		$this->l10n = $this->createMock(IL10N::class);
 
-		$this->provider = new SmsProvider($this->smsService, $this->session, $this->random, $this->config, $this->l10n);
+		$this->provider = new SmsProvider($this->smsService, $this->setupService, $this->session, $this->random, $this->config, $this->l10n);
 	}
 
-	public function testSomething() {
-		$this->assertTrue(true);
+	public function testIsTwoFactorAuthEnabledForUser() {
+		$user = $this->createMock(IUser::class);
+		$user->method('getUID')->willReturn('user123');
+		$this->config->expects($this->once())
+			->method('getUserValue')
+			->with('user123', 'twofactor_sms', 'verified', 'false')
+			->willReturn('true');
+
+		$enabled = $this->provider->isTwoFactorAuthEnabledForUser($user);
+
+		$this->assertTrue($enabled);
 	}
 
 }

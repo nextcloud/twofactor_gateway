@@ -28,17 +28,20 @@ use OCA\TwoFactorSms\Service\ISmsService;
 use OCA\TwoFactorSms\Service\SmsProvider\PlaySMS;
 use OCA\TwoFactorSms\Service\SmsProvider\SignalGateway;
 use OCA\TwoFactorSms\Service\SmsProvider\Telegram;
+use OCA\TwoFactorSms\Service\SmsProvider\TestGateway;
 use OCA\TwoFactorSms\Service\SmsProvider\WebSmsDe;
 use OCP\AppFramework\App;
 use OCP\IConfig;
 
 class Application extends App {
 
+	const APP_NAME = 'twofactor_sms';
+
 	/**
 	 * @param array $urlParams
 	 */
 	public function __construct(array $urlParams = []) {
-		parent::__construct('twofactor_sms', $urlParams);
+		parent::__construct(self::APP_NAME, $urlParams);
 
 		$container = $this->getContainer();
 
@@ -61,6 +64,8 @@ class Application extends App {
 				return SignalGateway::class;
 			case 'telegram':
 				return Telegram::class;
+			case 'test':
+				return TestGateway::class;
 			case 'websms.de':
 				return WebSmsDe::class;
 		}

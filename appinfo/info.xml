@@ -20,4 +20,7 @@
 	<two-factor-providers>
 		<provider>OCA\TwoFactorSms\Provider\SmsProvider</provider>
 	</two-factor-providers>
+	<settings>
+		<personal>OCA\TwoFactorSms\Settings\PersonalSettings</personal>
+	</settings>
 </info>
