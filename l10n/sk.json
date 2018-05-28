@@ -6,5 +6,5 @@
     "Authentication code" : "Autentifikačný kód",
     "An access code has been sent to %s" : "Prístupový kód bol odoslaný na %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Chyba počas odosielania správy. Skúste to znovu alebo kontaktujte správcu."
-},"pluralForm" :"nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;"
+},"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }

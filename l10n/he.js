@@ -9,4 +9,4 @@ OC.L10N.register(
     "An access code has been sent to %s" : "קוד גישה נשלח אל %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "אירעה שגיאה בעת שליחת ההודעה. נא לנסות שוב מאוחר יותר או ליצור קשר עם ההנהלה."
 },
-"nplurals=2; plural=(n != 1);");
+"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

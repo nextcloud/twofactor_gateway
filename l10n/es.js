@@ -7,6 +7,7 @@ OC.L10N.register(
     "Two Factor SMS Provider" : "Proveedor en dos pasos SMS",
     "Authentication code" : "Código de autentificación",
     "An access code has been sent to %s" : "Un código acceso ha sido enviado a %s",
-    "Error while sending the Message. Please try again later or contact the administrator." : "Error al enviar el mensaje. Por favor, inténtelo de nuevo más tarde o póngase en contacto con el administrador."
+    "Error while sending the Message. Please try again later or contact the administrator." : "Error al enviar el mensaje. Por favor, inténtelo de nuevo más tarde o póngase en contacto con el administrador.",
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Tu número de teléfono ha cambiado y no ha sido reverificado. Usa un mecanismo de dos factores diferente o contacta con tu administrador."
 },
 "nplurals=2; plural=(n != 1);");
