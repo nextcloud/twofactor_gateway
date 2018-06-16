@@ -6,6 +6,7 @@ OC.L10N.register(
     "%s is your Nextcloud authentication code" : "%s это ваш код аутентификации для Nextcloud",
     "Two Factor SMS Provider" : "Второй фактор — получение SMS",
     "sms two-factor provider" : "SMS провайдер с двухфакторной авторизацией",
+    "A message-based two-factor-auth provider" : "A message-based two-factor-auth provider",
     "Authentication code" : "Код аутентификации",
     "An access code has been sent to %s" : "Код доступа был отправлен %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Ошибка при отправке сообщения. Пожалуйста попробуйте позже или свяжитесь с администратором.",
