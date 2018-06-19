@@ -11,6 +11,8 @@ A two-factor auth provider for Nextcloud 14 and up. See [my blog post](http://bl
 ## Supported SMS services
 This app uses external SMS services for sending the code. Currently there are only two providers, but the idea is to support multiple as different countries have their specific providers.
 
+See the [admin documentation](/doc/admin#providers) on how to configure the specific providers.
+
 ## Login with external apps
 All modern applications communicating with Nextcloud now use Login flow so you will be able to log in just like you would on the web, including, but not limited to SMS-based authentication.
 
