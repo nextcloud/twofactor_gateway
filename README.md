@@ -11,65 +11,6 @@ A two-factor auth provider for Nextcloud 14 and up. See [my blog post](http://bl
 ## Supported SMS services
 This app uses external SMS services for sending the code. Currently there are only two providers, but the idea is to support multiple as different countries have their specific providers.
 
-### websms.de
-URL: https://websms.de/
-
-Admin configuration:
-```bash
-./occ config:app:set twofactor_gateway sms_provider --value "websms.de"
-./occ config:app:set twofactor_gateway websms_de_user --value "yourusername"
-./occ config:app:set twofactor_gateway websms_de_password --value "yourpassword"
-```
-
-User configuration:
-(no GUI yet, you have to write to the DB directly :speak_no_evil:)
-Table: ``oc_preferences``
-Data:
-- userid: your Nextcloud user UID
-- appid: ``twofactor_gateway``
-- configkey: ``phone``
-- configvalue: your phone number in the [MSISDN format](https://en.wikipedia.org/wiki/MSISDN). E.g. +4912345678 is 4912345678
-
-### playSMS
-URL: https://playsms.org/
-
-Use the Webservices provided by playSMS for sending SMS.
-
-Admin configuration:
-```bash
-./occ config:app:set twofactor_gateway sms_provider --value "playsms"
-./occ config:app:set twofactor_gateway playsms_url --value "playsmswebservicesurl"
-./occ config:app:set twofactor_gateway playsms_user --value "yourusername"
-./occ config:app:set twofactor_gateway playsms_password --value "yourpassword"
-```
-
-### Telegram
-URL: https://www.telegram.org/
-
-Uses Telegram messages for sending a 2fa code to log in in Nextcloud
-
-Admin configuration:
-```bash
-./occ config:app:set twofactor_gateway sms_provider --value "telegram"
-./occ config:app:set twofactor_gateway telegram_bot_token --value "your telegram bot api token"
-./occ config:app:set twofactor_gateway telegram_url --value "https://api.telegram.org/bot"
-```
-User configuration:
-(no GUI yet, you have to write to the DB directly :speak_no_evil:)
-Table: ``oc_preferences``
-
-Data row 1:
-- userid: your Nextcloud user UID
-- appid: ``twofactor_gateway``
-- configkey: ``phone``
-- configvalue: your phone number in the [MSISDN format](https://en.wikipedia.org/wiki/MSISDN). E.g. +4912345678 is 4912345678
-
-Data row 2:
-- userid: your Nextcloud user UID
-- appid: ``twofactor_gateway``
-- configkey: ``telegram_id``
-- configvalue: your telegram id. You can get your telegram id by searching the user <b>What's my Telegram ID?</b> in Telegram and start the conversation.
-
 ## Login with external apps
 All modern applications communicating with Nextcloud now use Login flow so you will be able to log in just like you would on the web, including, but not limited to SMS-based authentication.
 
