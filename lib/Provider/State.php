@@ -22,7 +22,7 @@
  *
  */
 
-namespace OCA\TwoFactorSms\Provider;
+namespace OCA\TwoFactorGateawy\Provider;
 
 use JsonSerializable;
 

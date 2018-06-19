@@ -5,7 +5,7 @@ declare (strict_types = 1);
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
- * Nextcloud - Two-factor SMS
+ * Nextcloud - Two-factor Gateway
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -21,7 +21,7 @@ declare (strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorSms\Settings;
+namespace OCA\TwoFactorGateawy\Settings;
 
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\Settings\ISettings;
@@ -34,7 +34,7 @@ class PersonalSettings implements ISettings
      */
     public function getForm()
     {
-        return new TemplateResponse('twofactor_sms', 'personal_settings');
+        return new TemplateResponse('twofactor_gateway', 'personal_settings');
     }
 
     /**

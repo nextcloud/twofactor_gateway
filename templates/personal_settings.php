@@ -1,5 +1,5 @@
 <?php
-script('twofactor_sms', 'build/build');
+script('twofactor_gateway', 'build/build');
 ?>
 
 <div class="section" id="twofactor-sms-section"></div>

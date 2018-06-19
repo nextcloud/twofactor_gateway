@@ -22,18 +22,18 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorSms\Service;
+namespace OCA\TwoFactorGateawy\Service;
 
 use Exception;
 use OC\Accounts\AccountManager;
-use OCA\TwoFactorSms\AppInfo\Application;
-use OCA\TwoFactorSms\Exception\PhoneNumberMismatchException;
-use OCA\TwoFactorSms\Exception\PhoneNumberMissingException;
-use OCA\TwoFactorSms\Exception\SmsTransmissionException;
-use OCA\TwoFactorSms\Exception\VerificationException;
-use OCA\TwoFactorSms\Exception\VerificationTransmissionException;
-use OCA\TwoFactorSms\Provider\SmsProvider;
-use OCA\TwoFactorSms\Provider\State;
+use OCA\TwoFactorGateawy\AppInfo\Application;
+use OCA\TwoFactorGateawy\Exception\PhoneNumberMismatchException;
+use OCA\TwoFactorGateawy\Exception\PhoneNumberMissingException;
+use OCA\TwoFactorGateawy\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateawy\Exception\VerificationException;
+use OCA\TwoFactorGateawy\Exception\VerificationTransmissionException;
+use OCA\TwoFactorGateawy\Provider\SmsProvider;
+use OCA\TwoFactorGateawy\Provider\State;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
@@ -64,7 +64,7 @@ class SetupService {
 		$state = $this->config->getUserValue($user->getUID(), Application::APP_NAME,
 				'verified', 'false') === 'true' ? SmsProvider::STATE_ENABLED : SmsProvider::STATE_DISABLED;
 		$verifiedNumber = $this->config->getUserValue($user->getUID(),
-			'twofactor_sms', 'phone', null);
+			'twofactor_gateway', 'phone', null);
 
 		return new State($state, $verifiedNumber);
 	}
@@ -75,7 +75,7 @@ class SetupService {
 	public function getChallengePhoneNumber(IUser $user): string {
 		$numerFromUserData = $this->getVerificationPhoneNumber($user);
 		$verifiedNumber = $this->config->getUserValue($user->getUID(),
-			'twofactor_sms', 'phone', null);
+			'twofactor_gateway', 'phone', null);
 		if (is_null($verifiedNumber)) {
 			throw new PhoneNumberMissingException('verified phone number is missing');
 		}

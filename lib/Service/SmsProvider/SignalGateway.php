@@ -22,10 +22,10 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorSms\Service\SmsProvider;
+namespace OCA\TwoFactorGateawy\Service\SmsProvider;
 
-use OCA\TwoFactorSms\Exception\SmsTransmissionException;
-use OCA\TwoFactorSms\Service\ISmsService;
+use OCA\TwoFactorGateawy\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateawy\Service\ISmsService;
 use OCP\Http\Client\IClientService;
 use OCP\ILogger;
 

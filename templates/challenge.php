@@ -1,5 +1,5 @@
 <?php
-style('twofactor_sms', 'style');
+style('twofactor_gateway', 'style');
 ?>
 
 <form method="POST" class="sms-2fa-form">

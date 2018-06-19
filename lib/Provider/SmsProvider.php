@@ -5,7 +5,7 @@ declare(strict_types = 1);
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
- * Nextcloud - Two-factor SMS
+ * Nextcloud - Two-factor Gateway
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -21,13 +21,13 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorSms\Provider;
+namespace OCA\TwoFactorGateawy\Provider;
 
-use OCA\TwoFactorSms\Exception\PhoneNumberMismatchException;
-use OCA\TwoFactorSms\Exception\SmsTransmissionException;
-use OCA\TwoFactorSms\PhoneNumberMask;
-use OCA\TwoFactorSms\Service\ISmsService;
-use OCA\TwoFactorSms\Service\SetupService;
+use OCA\TwoFactorGateawy\Exception\PhoneNumberMismatchException;
+use OCA\TwoFactorGateawy\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateawy\PhoneNumberMask;
+use OCA\TwoFactorGateawy\Service\ISmsService;
+use OCA\TwoFactorGateawy\Service\SetupService;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -41,7 +41,7 @@ class SmsProvider implements IProvider {
 	const STATE_DISABLED = 0;
 	const STATE_VERIFYING = 1;
 	const STATE_ENABLED = 2;
-	const SESSION_KEY = 'twofactor_sms_secret';
+	const SESSION_KEY = 'twofactor_gateway_secret';
 
 	/** @var ISmsService */
 	private $smsService;
@@ -113,12 +113,12 @@ class SmsProvider implements IProvider {
 			$phoneNumber = $this->setupService->getChallengePhoneNumber($user);
 			$this->smsService->send($phoneNumber, $this->l10n->t('%s is your Nextcloud authentication code', [$secret]));
 		} catch (SmsTransmissionException $ex) {
-			return new Template('twofactor_sms', 'error');
+			return new Template('twofactor_gateway', 'error');
 		} catch (PhoneNumberMismatchException $ex) {
-			return new Template('twofactor_sms', 'error_mismatch');
+			return new Template('twofactor_gateway', 'error_mismatch');
 		}
 
-		$tmpl = new Template('twofactor_sms', 'challenge');
+		$tmpl = new Template('twofactor_gateway', 'challenge');
 		$tmpl->assign('phone', PhoneNumberMask::maskNumber($phoneNumber));
 		if ($this->config->getSystemValue('debug', false)) {
 			$tmpl->assign('secret', $secret);
@@ -143,7 +143,7 @@ class SmsProvider implements IProvider {
 	 * Decides whether 2FA is enabled for the given user
 	 */
 	public function isTwoFactorAuthEnabledForUser(IUser $user): bool {
-		return $this->config->getUserValue($user->getUID(), 'twofactor_sms', 'verified', 'false') === 'true';
+		return $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'verified', 'false') === 'true';
 	}
 
 }

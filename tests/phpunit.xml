@@ -1,6 +1,6 @@
 <phpunit bootstrap="bootstrap.php" colors="true" verbose="true">
 	<testsuites>
-		<testsuite name="twofactor_sms tests">
+		<testsuite name="twofactor_gateway tests">
 			<directory suffix="Test.php">.</directory>
 			<exclude>./vendor</exclude>
 		</testsuite>

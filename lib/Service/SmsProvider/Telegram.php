@@ -6,7 +6,7 @@ declare(strict_types = 1);
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author André Fondse <andre@hetnetwerk.org>
  *
- * Nextcloud - Two-factor SMS for Telegram
+ * Nextcloud - Two-factor Gateway for Telegram
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -22,11 +22,11 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorSms\Service\SmsProvider;
+namespace OCA\TwoFactorGateawy\Service\SmsProvider;
 
 use Exception;
-use OCA\TwoFactorSms\Exception\SmsTransmissionException;
-use OCA\TwoFactorSms\Service\ISmsService;
+use OCA\TwoFactorGateawy\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateawy\Service\ISmsService;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
@@ -48,9 +48,9 @@ class Telegram implements ISmsService {
 	 * @throws SmsTransmissionException
 	 */
 	public function send(string $recipient, string $message) {
-		$telegramUrl = $this->config->getAppValue('twofactor_sms', 'telegram_url');
-		$telegramBotToken = $this->config->getAppValue('twofactor_sms', 'telegram_bot_token');
-		$telegramUserId = $this->config->getUserValue('nextclouddev', 'twofactor_sms', 'telegram_id');
+		$telegramUrl = $this->config->getAppValue('twofactor_gateway', 'telegram_url');
+		$telegramBotToken = $this->config->getAppValue('twofactor_gateway', 'telegram_bot_token');
+		$telegramUserId = $this->config->getUserValue('nextclouddev', 'twofactor_gateway', 'telegram_id');
 		try {
 			$url = $telegramUrl . $telegramBotToken . "/sendMessage?chat_id=$telegramUserId&disable_web_page_preview=1&text=" . urlencode($message);
 			$this->client->get($url);

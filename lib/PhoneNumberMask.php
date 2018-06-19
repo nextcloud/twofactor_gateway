@@ -22,7 +22,7 @@
  *
  */
 
-namespace OCA\TwoFactorSms;
+namespace OCA\TwoFactorGateawy;
 
 class PhoneNumberMask {
 

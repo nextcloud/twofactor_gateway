@@ -3,7 +3,7 @@
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
- * Nextcloud - Two-factor SMS
+ * Nextcloud - Two-factor Gateway
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -20,4 +20,4 @@
  */
 include_once __DIR__ . '/../vendor/autoload.php';
 
-$app = new OCA\TwoFactorSms\AppInfo\Application();
+$app = new OCA\TwoFactorGateawy\AppInfo\Application();

@@ -2,7 +2,7 @@ import $ from 'jquery';
 import { nc_fetch_json } from 'nextcloud_fetch';
 
 export function getState() {
-    let url = OC.generateUrl('/apps/twofactor_sms/settings/verification')
+    let url = OC.generateUrl('/apps/twofactor_gateway/settings/verification')
 
     return nc_fetch_json(url).then(function (resp) {
         if (resp.ok) {
@@ -13,7 +13,7 @@ export function getState() {
 }
 
 export function startVerification() {
-    let url = OC.generateUrl('/apps/twofactor_sms/settings/verification/start')
+    let url = OC.generateUrl('/apps/twofactor_gateway/settings/verification/start')
 
     return nc_fetch_json(url, {
         method: 'POST'
@@ -26,7 +26,7 @@ export function startVerification() {
 }
 
 export function tryVerification(code) {
-    let url = OC.generateUrl('/apps/twofactor_sms/settings/verification/finish')
+    let url = OC.generateUrl('/apps/twofactor_gateway/settings/verification/finish')
 
     return nc_fetch_json(url, {
         method: 'POST',
@@ -42,7 +42,7 @@ export function tryVerification(code) {
 }
 
 export function disable() {
-    let url = OC.generateUrl('/apps/twofactor_sms/settings/verification')
+    let url = OC.generateUrl('/apps/twofactor_gateway/settings/verification')
 
     return nc_fetch_json(url, {
         method: 'DELETE'

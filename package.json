@@ -1,5 +1,5 @@
 {
-  "name": "twofactor_sms",
+  "name": "twofactor_gateway",
   "version": "0.1.0",
   "description": "A two-factor auth provider for Nextcloud",
   "main": "index.js",
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ChristophWurst/twofactor_sms.git"
+    "url": "https://github.com/ChristophWurst/twofactor_gateway.git"
   },
   "author": "",
   "license": "AGPL-3.0",

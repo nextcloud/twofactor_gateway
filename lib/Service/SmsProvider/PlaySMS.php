@@ -5,7 +5,7 @@ declare(strict_types = 1);
 /**
  * @author Pascal Clémot <pascal.clemot@free.fr>
  *
- * Nextcloud - Two-factor SMS
+ * Nextcloud - Two-factor Gateway
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -21,11 +21,11 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorSms\Service\SmsProvider;
+namespace OCA\TwoFactorGateawy\Service\SmsProvider;
 
 use Exception;
-use OCA\TwoFactorSms\Exception\SmsTransmissionException;
-use OCA\TwoFactorSms\Service\ISmsService;
+use OCA\TwoFactorGateawy\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateawy\Service\ISmsService;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
@@ -47,9 +47,9 @@ class PlaySMS implements ISmsService {
 	 * @throws SmsTransmissionException
 	 */
 	public function send(string $recipient, string $message) {
-		$url = $this->config->getAppValue('twofactor_sms', 'playsms_url');
-		$user = $this->config->getAppValue('twofactor_sms', 'playsms_user');
-		$password = $this->config->getAppValue('twofactor_sms', 'playsms_password');
+		$url = $this->config->getAppValue('twofactor_gateway', 'playsms_url');
+		$user = $this->config->getAppValue('twofactor_gateway', 'playsms_user');
+		$password = $this->config->getAppValue('twofactor_gateway', 'playsms_password');
 		try {
 			$this->client->get($url, [
 				'query' => [

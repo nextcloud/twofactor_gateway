@@ -22,11 +22,11 @@
  *
  */
 
-namespace OCA\TwoFactorSms\Controller;
+namespace OCA\TwoFactorGateawy\Controller;
 
-use OCA\TwoFactorSms\Exception\VerificationException;
-use OCA\TwoFactorSms\PhoneNumberMask;
-use OCA\TwoFactorSms\Service\SetupService;
+use OCA\TwoFactorGateawy\Exception\VerificationException;
+use OCA\TwoFactorGateawy\PhoneNumberMask;
+use OCA\TwoFactorGateawy\Service\SetupService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
@@ -43,7 +43,7 @@ class SettingsController extends Controller {
 
 	public function __construct(IRequest $request, IUserSession $userSession,
 		SetupService $setup) {
-		parent::__construct('twofactor_sms', $request);
+		parent::__construct('twofactor_gateway', $request);
 
 		$this->userSession = $userSession;
 		$this->setup = $setup;
