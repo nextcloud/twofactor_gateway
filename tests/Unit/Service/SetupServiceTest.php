@@ -20,15 +20,15 @@
  *
  */
 
-namespace OCA\TwoFactorGateawy\Tests\Unit\Service;
+namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
 use ChristophWurst\Nextcloud\Testing\TestCase;
 use OC\Accounts\AccountManager;
-use OCA\TwoFactorGateawy\Exception\PhoneNumberMissingException;
-use OCA\TwoFactorGateawy\Exception\VerificationException;
-use OCA\TwoFactorGateawy\Exception\VerificationTransmissionException;
-use OCA\TwoFactorGateawy\Service\ISmsService;
-use OCA\TwoFactorGateawy\Service\SetupService;
+use OCA\TwoFactorGateway\Exception\PhoneNumberMissingException;
+use OCA\TwoFactorGateway\Exception\VerificationException;
+use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
+use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\SetupService;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;

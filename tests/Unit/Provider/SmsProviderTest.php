@@ -20,12 +20,12 @@
  *
  */
 
-namespace OCA\TwoFactorGateawy\Tests\Unit\Provider;
+namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
 
 use ChristophWurst\Nextcloud\Testing\TestCase;
-use OCA\TwoFactorGateawy\Provider\SmsProvider;
-use OCA\TwoFactorGateawy\Service\ISmsService;
-use OCA\TwoFactorGateawy\Service\SetupService;
+use OCA\TwoFactorGateway\Provider\SmsProvider;
+use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\SetupService;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ISession;
