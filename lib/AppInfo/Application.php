@@ -5,7 +5,7 @@ declare(strict_types = 1);
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
- * Nextcloud - Two-factor SMS
+ * Nextcloud - Two-factor Gateway
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -21,21 +21,21 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorSms\AppInfo;
+namespace OCA\TwoFactorGateawy\AppInfo;
 
 use Exception;
-use OCA\TwoFactorSms\Service\ISmsService;
-use OCA\TwoFactorSms\Service\SmsProvider\PlaySMS;
-use OCA\TwoFactorSms\Service\SmsProvider\SignalGateway;
-use OCA\TwoFactorSms\Service\SmsProvider\Telegram;
-use OCA\TwoFactorSms\Service\SmsProvider\TestGateway;
-use OCA\TwoFactorSms\Service\SmsProvider\WebSmsDe;
+use OCA\TwoFactorGateawy\Service\ISmsService;
+use OCA\TwoFactorGateawy\Service\SmsProvider\PlaySMS;
+use OCA\TwoFactorGateawy\Service\SmsProvider\SignalGateway;
+use OCA\TwoFactorGateawy\Service\SmsProvider\Telegram;
+use OCA\TwoFactorGateawy\Service\SmsProvider\TestGateway;
+use OCA\TwoFactorGateawy\Service\SmsProvider\WebSmsDe;
 use OCP\AppFramework\App;
 use OCP\IConfig;
 
 class Application extends App {
 
-	const APP_NAME = 'twofactor_sms';
+	const APP_NAME = 'twofactor_gateway';
 
 	public function __construct(array $urlParams = []) {
 		parent::__construct(self::APP_NAME, $urlParams);
@@ -44,7 +44,7 @@ class Application extends App {
 
 		/* @var $config IConfig */
 		$config = $container->query(IConfig::class);
-		$provider = $config->getAppValue('twofactor_sms', 'sms_provider', 'websms.de');
+		$provider = $config->getAppValue('twofactor_gateway', 'sms_provider', 'websms.de');
 
 		$container->registerAlias(ISmsService::class, $this->getSmsProviderClass($provider));
 	}
@@ -62,7 +62,7 @@ class Application extends App {
 			case 'websms.de':
 				return WebSmsDe::class;
 		}
-		throw new Exception('invalid configuration for twofactor_sms app');
+		throw new Exception('invalid configuration for twofactor_gateway app');
 	}
 
 }

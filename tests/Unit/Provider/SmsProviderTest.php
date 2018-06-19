@@ -20,12 +20,12 @@
  *
  */
 
-namespace OCA\TwoFactorSms\Tests\Unit\Provider;
+namespace OCA\TwoFactorGateawy\Tests\Unit\Provider;
 
 use ChristophWurst\Nextcloud\Testing\TestCase;
-use OCA\TwoFactorSms\Provider\SmsProvider;
-use OCA\TwoFactorSms\Service\ISmsService;
-use OCA\TwoFactorSms\Service\SetupService;
+use OCA\TwoFactorGateawy\Provider\SmsProvider;
+use OCA\TwoFactorGateawy\Service\ISmsService;
+use OCA\TwoFactorGateawy\Service\SetupService;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ISession;
@@ -74,7 +74,7 @@ class SmsProviderTest extends TestCase {
 		$user->method('getUID')->willReturn('user123');
 		$this->config->expects($this->once())
 			->method('getUserValue')
-			->with('user123', 'twofactor_sms', 'verified', 'false')
+			->with('user123', 'twofactor_gateway', 'verified', 'false')
 			->willReturn('true');
 
 		$enabled = $this->provider->isTwoFactorAuthEnabledForUser($user);

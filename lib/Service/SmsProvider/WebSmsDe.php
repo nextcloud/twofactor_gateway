@@ -5,7 +5,7 @@ declare(strict_types = 1);
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
- * Nextcloud - Two-factor SMS
+ * Nextcloud - Two-factor Gateway
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -21,11 +21,11 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorSms\Service\SmsProvider;
+namespace OCA\TwoFactorGateawy\Service\SmsProvider;
 
 use Exception;
-use OCA\TwoFactorSms\Exception\SmsTransmissionException;
-use OCA\TwoFactorSms\Service\ISmsService;
+use OCA\TwoFactorGateawy\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateawy\Service\ISmsService;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
@@ -47,8 +47,8 @@ class WebSmsDe implements ISmsService {
 	 * @throws SmsTransmissionException
 	 */
 	public function send(string $recipient, string $message) {
-		$user = $this->config->getAppValue('twofactor_sms', 'websms_de_user');
-		$password = $this->config->getAppValue('twofactor_sms', 'websms_de_password');
+		$user = $this->config->getAppValue('twofactor_gateway', 'websms_de_user');
+		$password = $this->config->getAppValue('twofactor_gateway', 'websms_de_password');
 		try {
 			$this->client->post('https://api.websms.com/rest/smsmessaging/text', [
 				'headers' => [

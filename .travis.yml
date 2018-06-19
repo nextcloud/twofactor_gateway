@@ -32,23 +32,23 @@ before_install:
   - composer install
   - cd ..
   - git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b $CORE_BRANCH core
-  - mv twofactor_sms core/apps/
+  - mv twofactor_gateway core/apps/
 
 before_script:
   # Set up core
   - php -f core/occ maintenance:install --database-name oc_autotest --database-user oc_autotest --admin-user admin --admin-pass admin --database $DB --database-pass=''
 
   # Set up app
-  - php -f core/occ app:enable twofactor_sms
+  - php -f core/occ app:enable twofactor_gateway
 
-  - cd core/apps/twofactor_sms
+  - cd core/apps/twofactor_gateway
 
 script:
   # Check PHP syntax errors
   - find . -name \*.php -not -path './vendor/*' -exec php -l "{}" \;
 
   # Run server's app code checker
-  - php ../../occ app:check-code twofactor_sms
+  - php ../../occ app:check-code twofactor_gateway
 
   # Run PHP tests
   - ./vendor/phpunit/phpunit/phpunit --fail-on-warning -c tests/phpunit.xml

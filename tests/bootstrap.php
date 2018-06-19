@@ -3,7 +3,7 @@
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
- * Nextcloud - Two-factor SMS
+ * Nextcloud - Two-factor Gateway
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -24,4 +24,4 @@ define('PHPUNIT_RUN', 1);
 require_once __DIR__.'/../../../lib/base.php';
 require_once __DIR__.'/../vendor/autoload.php';
 
-\OC_App::loadApp('twofactor_sms');
+\OC_App::loadApp('twofactor_gateway');

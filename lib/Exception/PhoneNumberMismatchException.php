@@ -22,7 +22,7 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorSms\Exception;
+namespace OCA\TwoFactorGateawy\Exception;
 
 use Exception;
 

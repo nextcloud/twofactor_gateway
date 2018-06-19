@@ -22,9 +22,9 @@
  *
  */
 
-namespace OCA\TwoFactorSms\Service\SmsProvider;
+namespace OCA\TwoFactorGateawy\Service\SmsProvider;
 
-use OCA\TwoFactorSms\Service\ISmsService;
+use OCA\TwoFactorGateawy\Service\ISmsService;
 use OCP\ILogger;
 
 class TestGateway implements ISmsService {

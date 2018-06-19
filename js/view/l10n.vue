@@ -6,7 +6,7 @@
 export default {
   computed: {
     translated: function() {
-      return t("twofactor_sms", this.text, this.options || {});
+      return t("twofactor_gateway", this.text, this.options || {});
     }
   },
   props: ["text", "options"]

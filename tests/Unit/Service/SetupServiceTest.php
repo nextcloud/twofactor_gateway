@@ -20,15 +20,15 @@
  *
  */
 
-namespace OCA\TwoFactorSms\Tests\Unit\Service;
+namespace OCA\TwoFactorGateawy\Tests\Unit\Service;
 
 use ChristophWurst\Nextcloud\Testing\TestCase;
 use OC\Accounts\AccountManager;
-use OCA\TwoFactorSms\Exception\PhoneNumberMissingException;
-use OCA\TwoFactorSms\Exception\VerificationException;
-use OCA\TwoFactorSms\Exception\VerificationTransmissionException;
-use OCA\TwoFactorSms\Service\ISmsService;
-use OCA\TwoFactorSms\Service\SetupService;
+use OCA\TwoFactorGateawy\Exception\PhoneNumberMissingException;
+use OCA\TwoFactorGateawy\Exception\VerificationException;
+use OCA\TwoFactorGateawy\Exception\VerificationTransmissionException;
+use OCA\TwoFactorGateawy\Service\ISmsService;
+use OCA\TwoFactorGateawy\Service\SetupService;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
@@ -122,13 +122,13 @@ class SetupServiceTest extends TestCase {
 		$user->method('getUID')->willReturn('user123');
 		$this->config->expects($this->at(0))
 			->method('setUserValue')
-			->with('user123', 'twofactor_sms', 'phone', '0123456789');
+			->with('user123', 'twofactor_gateway', 'phone', '0123456789');
 		$this->config->expects($this->at(1))
 			->method('setUserValue')
-			->with('user123', 'twofactor_sms', 'verification_code', '963852');
+			->with('user123', 'twofactor_gateway', 'verification_code', '963852');
 		$this->config->expects($this->at(2))
 			->method('setUserValue')
-			->with('user123', 'twofactor_sms', 'verified', 'false');
+			->with('user123', 'twofactor_gateway', 'verified', 'false');
 
 		$this->setupService->startSetup($user);
 	}
@@ -138,7 +138,7 @@ class SetupServiceTest extends TestCase {
 		$user->method('getUID')->willReturn('user123');
 		$this->config->expects($this->once())
 			->method('getUserValue')
-			->with('user123', 'twofactor_sms', 'verification_code', null)
+			->with('user123', 'twofactor_gateway', 'verification_code', null)
 			->willReturn(null);
 		$this->expectException(\Exception::class);
 
@@ -150,7 +150,7 @@ class SetupServiceTest extends TestCase {
 		$user->method('getUID')->willReturn('user123');
 		$this->config->expects($this->once())
 			->method('getUserValue')
-			->with('user123', 'twofactor_sms', 'verification_code', null)
+			->with('user123', 'twofactor_gateway', 'verification_code', null)
 			->willReturn('111111');
 		$this->expectException(VerificationException::class);
 
@@ -162,11 +162,11 @@ class SetupServiceTest extends TestCase {
 		$user->method('getUID')->willReturn('user123');
 		$this->config->expects($this->once())
 			->method('getUserValue')
-			->with('user123', 'twofactor_sms', 'verification_code', null)
+			->with('user123', 'twofactor_gateway', 'verification_code', null)
 			->willReturn('123456');
 		$this->config->expects($this->once())
 			->method('setUserValue')
-			->with('user123', 'twofactor_sms', 'verified', 'true');
+			->with('user123', 'twofactor_gateway', 'verified', 'true');
 
 		$this->setupService->finishSetup($user, '123456');
 	}
