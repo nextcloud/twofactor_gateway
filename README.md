@@ -5,8 +5,7 @@ A two-factor auth provider for Nextcloud 14 and up. See [my blog post](http://bl
 [![Code Coverage](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/?branch=master)
 
-![](https://raw.githubusercontent.com/ChristophWurst/twofactor_gateway/24a9ef4ec5acf6fa00958008118479c759147384/screenshots/challenge1.png)
-![](https://raw.githubusercontent.com/ChristophWurst/twofactor_gateway/24a9ef4ec5acf6fa00958008118479c759147384/screenshots/challenge2.png)
+![](https://raw.githubusercontent.com/ChristophWurst/twofactor_gateway/ae08ce30abfa866c7c7a486d850d4be07b83d82d/screenshots/challenge.png)
 
 ## Supported SMS services
 This app uses external SMS services for sending the code. Currently there are only two providers, but the idea is to support multiple as different countries have their specific providers.
