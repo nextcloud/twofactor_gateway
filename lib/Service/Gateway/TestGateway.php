@@ -22,7 +22,7 @@
  *
  */
 
-namespace OCA\TwoFactorGateway\Service\SmsProvider;
+namespace OCA\TwoFactorGateway\Service\Gateway;
 
 use OCA\TwoFactorGateway\Service\ISmsService;
 use OCP\ILogger;

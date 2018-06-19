@@ -22,7 +22,7 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorGateway\Service\SmsProvider;
+namespace OCA\TwoFactorGateway\Service\Gateway;
 
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\ISmsService;

@@ -3,10 +3,9 @@
 declare(strict_types = 1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author André Fondse <andre@hetnetwerk.org>
+ * @author Pascal Clémot <pascal.clemot@free.fr>
  *
- * Nextcloud - Two-factor Gateway for Telegram
+ * Nextcloud - Two-factor Gateway
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -22,7 +21,7 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorGateway\Service\SmsProvider;
+namespace OCA\TwoFactorGateway\Service\Gateway;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
@@ -31,7 +30,7 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 
-class Telegram implements ISmsService {
+class PlaySMSGateway implements ISmsService {
 
 	/** @var IClient */
 	private $client;
@@ -48,12 +47,20 @@ class Telegram implements ISmsService {
 	 * @throws SmsTransmissionException
 	 */
 	public function send(string $recipient, string $message) {
-		$telegramUrl = $this->config->getAppValue('twofactor_gateway', 'telegram_url');
-		$telegramBotToken = $this->config->getAppValue('twofactor_gateway', 'telegram_bot_token');
-		$telegramUserId = $this->config->getUserValue('nextclouddev', 'twofactor_gateway', 'telegram_id');
+		$url = $this->config->getAppValue('twofactor_gateway', 'playsms_url');
+		$user = $this->config->getAppValue('twofactor_gateway', 'playsms_user');
+		$password = $this->config->getAppValue('twofactor_gateway', 'playsms_password');
 		try {
-			$url = $telegramUrl . $telegramBotToken . "/sendMessage?chat_id=$telegramUserId&disable_web_page_preview=1&text=" . urlencode($message);
-			$this->client->get($url);
+			$this->client->get($url, [
+				'query' => [
+					'app' => 'ws',
+					'u' => $user,
+					'h' => $password,
+					'op' => 'pv',
+					'to' => $recipient,
+					'msg' => $message,
+				],
+			]);
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}

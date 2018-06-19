@@ -25,11 +25,11 @@ namespace OCA\TwoFactorGateway\AppInfo;
 
 use Exception;
 use OCA\TwoFactorGateway\Service\ISmsService;
-use OCA\TwoFactorGateway\Service\SmsProvider\PlaySMS;
-use OCA\TwoFactorGateway\Service\SmsProvider\SignalGateway;
-use OCA\TwoFactorGateway\Service\SmsProvider\Telegram;
-use OCA\TwoFactorGateway\Service\SmsProvider\TestGateway;
-use OCA\TwoFactorGateway\Service\SmsProvider\WebSmsDe;
+use OCA\TwoFactorGateway\Service\Gateway\PlaySMSGateway;
+use OCA\TwoFactorGateway\Service\Gateway\SignalGateway;
+use OCA\TwoFactorGateway\Service\Gateway\TelegramGateway;
+use OCA\TwoFactorGateway\Service\Gateway\TestGateway;
+use OCA\TwoFactorGateway\Service\Gateway\WebSmsGateway;
 use OCP\AppFramework\App;
 use OCP\IConfig;
 
@@ -52,15 +52,15 @@ class Application extends App {
 	private function getSmsProviderClass(string $name): string {
 		switch ($name) {
 			case 'playsms':
-				return PlaySMS::class;
+				return PlaySMSGateway::class;
 			case 'signal':
 				return SignalGateway::class;
 			case 'telegram':
-				return Telegram::class;
+				return TelegramGateway::class;
 			case 'test':
 				return TestGateway::class;
 			case 'websms.de':
-				return WebSmsDe::class;
+				return WebSmsGateway::class;
 		}
 		throw new Exception('invalid configuration for twofactor_gateway app');
 	}
