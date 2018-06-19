@@ -2,7 +2,7 @@
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>twofactor_gateway</id>
-	<name>Two Factor SMS Provider</name>
+	<name>Two Factor Gateway Provider</name>
 	<summary>sms two-factor provider</summary>
 	<description>A message-based two-factor-auth provider</description>
 	<version>0.5.0</version>
