@@ -20,7 +20,7 @@
  *
  */
 
-namespace OCA\TwoFactorGateawy\Exception;
+namespace OCA\TwoFactorGateway\Exception;
 
 use Exception;
 

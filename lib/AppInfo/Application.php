@@ -21,15 +21,15 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorGateawy\AppInfo;
+namespace OCA\TwoFactorGateway\AppInfo;
 
 use Exception;
-use OCA\TwoFactorGateawy\Service\ISmsService;
-use OCA\TwoFactorGateawy\Service\SmsProvider\PlaySMS;
-use OCA\TwoFactorGateawy\Service\SmsProvider\SignalGateway;
-use OCA\TwoFactorGateawy\Service\SmsProvider\Telegram;
-use OCA\TwoFactorGateawy\Service\SmsProvider\TestGateway;
-use OCA\TwoFactorGateawy\Service\SmsProvider\WebSmsDe;
+use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\SmsProvider\PlaySMS;
+use OCA\TwoFactorGateway\Service\SmsProvider\SignalGateway;
+use OCA\TwoFactorGateway\Service\SmsProvider\Telegram;
+use OCA\TwoFactorGateway\Service\SmsProvider\TestGateway;
+use OCA\TwoFactorGateway\Service\SmsProvider\WebSmsDe;
 use OCP\AppFramework\App;
 use OCP\IConfig;
 

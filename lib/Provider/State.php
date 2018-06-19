@@ -22,7 +22,7 @@
  *
  */
 
-namespace OCA\TwoFactorGateawy\Provider;
+namespace OCA\TwoFactorGateway\Provider;
 
 use JsonSerializable;
 

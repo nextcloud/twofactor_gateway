@@ -22,7 +22,7 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorGateawy\Exception;
+namespace OCA\TwoFactorGateway\Exception;
 
 class VerificationTransmissionException extends SmsTransmissionException {
 

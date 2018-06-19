@@ -22,18 +22,18 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorGateawy\Service;
+namespace OCA\TwoFactorGateway\Service;
 
 use Exception;
 use OC\Accounts\AccountManager;
-use OCA\TwoFactorGateawy\AppInfo\Application;
-use OCA\TwoFactorGateawy\Exception\PhoneNumberMismatchException;
-use OCA\TwoFactorGateawy\Exception\PhoneNumberMissingException;
-use OCA\TwoFactorGateawy\Exception\SmsTransmissionException;
-use OCA\TwoFactorGateawy\Exception\VerificationException;
-use OCA\TwoFactorGateawy\Exception\VerificationTransmissionException;
-use OCA\TwoFactorGateawy\Provider\SmsProvider;
-use OCA\TwoFactorGateawy\Provider\State;
+use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Exception\PhoneNumberMismatchException;
+use OCA\TwoFactorGateway\Exception\PhoneNumberMissingException;
+use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\VerificationException;
+use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
+use OCA\TwoFactorGateway\Provider\SmsProvider;
+use OCA\TwoFactorGateway\Provider\State;
 use OCP\IConfig;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;

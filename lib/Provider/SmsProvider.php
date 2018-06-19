@@ -21,13 +21,13 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorGateawy\Provider;
+namespace OCA\TwoFactorGateway\Provider;
 
-use OCA\TwoFactorGateawy\Exception\PhoneNumberMismatchException;
-use OCA\TwoFactorGateawy\Exception\SmsTransmissionException;
-use OCA\TwoFactorGateawy\PhoneNumberMask;
-use OCA\TwoFactorGateawy\Service\ISmsService;
-use OCA\TwoFactorGateawy\Service\SetupService;
+use OCA\TwoFactorGateway\Exception\PhoneNumberMismatchException;
+use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\PhoneNumberMask;
+use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\SetupService;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\IConfig;
 use OCP\IL10N;

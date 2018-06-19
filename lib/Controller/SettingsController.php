@@ -22,11 +22,11 @@
  *
  */
 
-namespace OCA\TwoFactorGateawy\Controller;
+namespace OCA\TwoFactorGateway\Controller;
 
-use OCA\TwoFactorGateawy\Exception\VerificationException;
-use OCA\TwoFactorGateawy\PhoneNumberMask;
-use OCA\TwoFactorGateawy\Service\SetupService;
+use OCA\TwoFactorGateway\Exception\VerificationException;
+use OCA\TwoFactorGateway\PhoneNumberMask;
+use OCA\TwoFactorGateway\Service\SetupService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;

@@ -20,4 +20,4 @@
  */
 include_once __DIR__ . '/../vendor/autoload.php';
 
-$app = new OCA\TwoFactorGateawy\AppInfo\Application();
+$app = new OCA\TwoFactorGateway\AppInfo\Application();

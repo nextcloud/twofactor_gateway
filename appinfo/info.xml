@@ -8,19 +8,21 @@
 	<version>0.5.0</version>
 	<licence>agpl</licence>
 	<author>Christoph Wurst</author>
-	<namespace>TwoFactorGateawy</namespace>
+	<namespace>TwoFactorGateway</namespace>
 	<category>security</category>
 	<website>https://github.com/nextcloud/twofactor_gateway</website>
 	<bugs>https://github.com/nextcloud/twofactor_gateway/issues</bugs>
+	<screenshot>https://raw.githubusercontent.com/ChristophWurst/twofactor_gateway/3f895bc997c1a3a38c9bae16ccae8bd499af864e/screenshots/settings.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/ChristophWurst/twofactor_gateway/3f895bc997c1a3a38c9bae16ccae8bd499af864e/screenshots/challenge.png</screenshot>
 	<dependencies>
 		<php min-version="7.0" max-version="7.2"/>
 		<nextcloud min-version="14" max-version="14"/>
 	</dependencies>
 
 	<two-factor-providers>
-		<provider>OCA\TwoFactorGateawy\Provider\SmsProvider</provider>
+		<provider>OCA\TwoFactorGateway\Provider\SmsProvider</provider>
 	</two-factor-providers>
 	<settings>
-		<personal>OCA\TwoFactorGateawy\Settings\PersonalSettings</personal>
+		<personal>OCA\TwoFactorGateway\Settings\PersonalSettings</personal>
 	</settings>
 </info>

@@ -21,11 +21,11 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorGateawy\Service\SmsProvider;
+namespace OCA\TwoFactorGateway\Service\SmsProvider;
 
 use Exception;
-use OCA\TwoFactorGateawy\Exception\SmsTransmissionException;
-use OCA\TwoFactorGateawy\Service\ISmsService;
+use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Service\ISmsService;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;

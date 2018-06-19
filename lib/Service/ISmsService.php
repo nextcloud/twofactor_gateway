@@ -21,7 +21,7 @@ declare(strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorGateawy\Service;
+namespace OCA\TwoFactorGateway\Service;
 
 interface ISmsService {
 

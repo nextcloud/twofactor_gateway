@@ -21,7 +21,7 @@ declare (strict_types = 1);
  *
  */
 
-namespace OCA\TwoFactorGateawy\Settings;
+namespace OCA\TwoFactorGateway\Settings;
 
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\Settings\ISettings;
