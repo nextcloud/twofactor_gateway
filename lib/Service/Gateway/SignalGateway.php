@@ -55,14 +55,14 @@ class SignalGateway implements ISmsService {
 		$client = $this->clientService->newClient();
 		$response = $client->post($endpoint, [
 			'body' => [
-				'to' => '+' . $recipient,
+				'to' => $recipient,
 				'message' => $message,
 			],
 		]);
 		$body = $response->getBody();
 		$json = json_decode($body, true);
 
-		if ($response->getStatusCode() !== 200 || is_null($json) || !is_array($json) || !isset($json['success']) || json['success'] !== true) {
+		if ($response->getStatusCode() !== 200 || is_null($json) || !is_array($json) || !isset($json['success']) || $json['success'] !== true) {
 			$status = $response->getStatusCode();
 			throw new SmsTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
 		}
