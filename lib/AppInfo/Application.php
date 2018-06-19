@@ -37,9 +37,6 @@ class Application extends App {
 
 	const APP_NAME = 'twofactor_sms';
 
-	/**
-	 * @param array $urlParams
-	 */
 	public function __construct(array $urlParams = []) {
 		parent::__construct(self::APP_NAME, $urlParams);
 
@@ -52,10 +49,6 @@ class Application extends App {
 		$container->registerAlias(ISmsService::class, $this->getSmsProviderClass($provider));
 	}
 
-	/**
-	 * @param string $name
-	 * @return string fully qualified class name
-	 */
 	private function getSmsProviderClass(string $name): string {
 		switch ($name) {
 			case 'playsms':
