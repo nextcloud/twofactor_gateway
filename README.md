@@ -7,8 +7,8 @@ A two-factor auth provider for Nextcloud 14 and up. See [my blog post](http://bl
 
 ![](https://raw.githubusercontent.com/ChristophWurst/twofactor_gateway/ae08ce30abfa866c7c7a486d850d4be07b83d82d/screenshots/challenge.png)
 
-## Supported SMS services
-This app uses external SMS services for sending the code. Currently there are only two providers, but the idea is to support multiple as different countries have their specific providers.
+## Supported Messaging Gateways
+This app uses external messaging gateways services for sending the code. The idea is to support multiple providers as different countries have their specific providers.
 
 See the [admin documentation](/doc/admin#providers) on how to configure the specific providers.
 
