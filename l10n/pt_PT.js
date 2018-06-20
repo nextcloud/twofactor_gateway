@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "twofactor_sms",
+    "twofactor_gateway",
     {
     "SMS verification" : "Verificação por SMS",
     "Send an authentication code via SMS" : "Enviar código de autorização por SMS",

@@ -1,7 +1,6 @@
 { "translations": {
     "SMS verification" : "Verificación SMS",
     "%s is your Nextcloud authentication code" : "%s ye'l to códigu d'autenticación de Nextcloud",
-    "Two Factor SMS Provider" : "Fornidor de SMS d'autenticación en dos pasos",
     "Authentication code" : "Códigu d'autenticación",
     "An access code has been sent to %s" : "Unvióse un códigu d'accesu a %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Fallu entrín s'unviaba'l mensaxe. Volvi tentalo más sero o contauta col alministrador, por favor."

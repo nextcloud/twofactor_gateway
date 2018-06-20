@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "twofactor_sms",
+    "twofactor_gateway",
     {
     "SMS verification" : "SMS потвърждение",
     "%s is your Nextcloud authentication code" : "%s е вашия Nextcloud идентификационен код",

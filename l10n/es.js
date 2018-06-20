@@ -1,11 +1,11 @@
 OC.L10N.register(
-    "twofactor_sms",
+    "twofactor_gateway",
     {
     "SMS verification" : "Verificación con SMS",
     "Send an authentication code via SMS" : "Enviar un código de autenticación vía SMS",
     "%s is your Nextcloud authentication code" : "%s es tu código de atenficación para Nextcloud",
-    "Two Factor SMS Provider" : "Proveedor en dos pasos SMS",
-    "sms two-factor provider" : "Proveedor de dos factores mediante SMS",
+    "Two-Factor Gateway" : "Gateway de dos factores",
+    "Two-factor gateway provider (SMS, Telegram, Signal)" : "Gateway proveedor de dos factores (SMS, Telegram, Signal)",
     "A message-based two-factor-auth provider" : "Un proveedor de autenticación de dos factores basado en mensajes de texto",
     "Authentication code" : "Código de autentificación",
     "An access code has been sent to %s" : "Un código acceso ha sido enviado a %s",

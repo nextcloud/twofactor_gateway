@@ -1,10 +1,9 @@
 OC.L10N.register(
-    "twofactor_sms",
+    "twofactor_gateway",
     {
     "SMS verification" : "SMS-sannvottun",
     "Send an authentication code via SMS" : "Senda auðkenningarkóða með SMS",
     "%s is your Nextcloud authentication code" : "%s er auðkenningarkóðinn þinn á Nextcloud",
-    "Two Factor SMS Provider" : "Veituaðili tveggja-þrepa SMS-vottunar",
     "Authentication code" : "Auðkenningarkóði",
     "An access code has been sent to %s" : "Búið er að senda aðgangskóða á %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Villa við að senda skilaboðin. Reyndu aftur seinna eða hafðu samband við kerfisstjóra.",
