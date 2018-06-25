@@ -24,7 +24,7 @@ declare(strict_types = 1);
 namespace OCA\TwoFactorGateway\AppInfo;
 
 use Exception;
-use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\PlaySMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\TelegramGateway;
@@ -46,7 +46,7 @@ class Application extends App {
 		$config = $container->query(IConfig::class);
 		$provider = $config->getAppValue('twofactor_gateway', 'sms_provider', 'websms.de');
 
-		$container->registerAlias(ISmsService::class, $this->getSmsProviderClass($provider));
+		$container->registerAlias(IGateway::class, $this->getSmsProviderClass($provider));
 	}
 
 	private function getSmsProviderClass(string $name): string {

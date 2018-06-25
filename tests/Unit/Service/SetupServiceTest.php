@@ -27,7 +27,7 @@ use OC\Accounts\AccountManager;
 use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
-use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\IGateway;
 use OCA\TwoFactorGateway\Service\SetupService;
 use OCP\IConfig;
 use OCP\IUser;
@@ -39,7 +39,7 @@ class SetupServiceTest extends TestCase {
 	/** @var IConfig|PHPUnit_Framework_MockObject_MockObject */
 	private $config;
 
-	/** @var ISmsService|PHPUnit_Framework_MockObject_MockObject */
+	/** @var IGateway|PHPUnit_Framework_MockObject_MockObject */
 	private $smsService;
 
 	/** @var ISecureRandom|PHPUnit_Framework_MockObject_MockObject */
@@ -52,7 +52,7 @@ class SetupServiceTest extends TestCase {
 		parent::setUp();
 
 		$this->config = $this->createMock(IConfig::class);
-		$this->smsService = $this->createMock(ISmsService::class);
+		$this->smsService = $this->createMock(IGateway::class);
 		$this->random = $this->createMock(ISecureRandom::class);
 
 		$this->setupService = new SetupService($this->config, $this->smsService, $this->random);

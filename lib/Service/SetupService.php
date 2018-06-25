@@ -42,14 +42,14 @@ class SetupService {
 	private $config;
 
 
-	/** @var ISmsService */
+	/** @var IGateway */
 	private $smsService;
 
 	/** @var ISecureRandom */
 	private $random;
 
 	public function __construct(IConfig $config,
-								ISmsService $smsService, ISecureRandom $random) {
+								IGateway $smsService, ISecureRandom $random) {
 		$this->config = $config;
 
 		$this->smsService = $smsService;

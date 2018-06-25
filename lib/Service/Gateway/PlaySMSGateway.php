@@ -25,13 +25,13 @@ namespace OCA\TwoFactorGateway\Service\Gateway;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
-use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\IGateway;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IUser;
 
-class PlaySMSGateway implements ISmsService {
+class PlaySMSGateway implements IGateway {
 
 	/** @var IClient */
 	private $client;

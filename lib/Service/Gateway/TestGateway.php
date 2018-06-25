@@ -24,11 +24,11 @@
 
 namespace OCA\TwoFactorGateway\Service\Gateway;
 
-use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\IGateway;
 use OCP\ILogger;
 use OCP\IUser;
 
-class TestGateway implements ISmsService {
+class TestGateway implements IGateway {
 
 	/** @var ILogger */
 	private $logger;

@@ -26,7 +26,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
-use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\IGateway;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
@@ -34,7 +34,7 @@ use OCP\IUser;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
 
-class TelegramGateway implements ISmsService {
+class TelegramGateway implements IGateway {
 
 	/** @var IClient */
 	private $client;

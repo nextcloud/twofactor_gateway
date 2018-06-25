@@ -25,7 +25,7 @@ namespace OCA\TwoFactorGateway\Provider;
 
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
-use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\IGateway;
 use OCA\TwoFactorGateway\Service\SetupService;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\IConfig;
@@ -43,7 +43,7 @@ class SmsProvider implements IProvider {
 	const STATE_ENABLED = 3;
 	const SESSION_KEY = 'twofactor_gateway_secret';
 
-	/** @var ISmsService */
+	/** @var IGateway */
 	private $smsService;
 
 	/** @var SetupService */
@@ -61,7 +61,7 @@ class SmsProvider implements IProvider {
 	/** @var IL10N */
 	private $l10n;
 
-	public function __construct(ISmsService $smsService, SetupService $setupService, ISession $session,
+	public function __construct(IGateway $smsService, SetupService $setupService, ISession $session,
 								ISecureRandom $secureRandom, IConfig $config, IL10N $l10n) {
 		$this->smsService = $smsService;
 		$this->setupService = $setupService;
