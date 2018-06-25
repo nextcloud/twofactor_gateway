@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -25,10 +25,8 @@ declare(strict_types = 1);
 namespace OCA\TwoFactorGateway\Service;
 
 use Exception;
-use OC\Accounts\AccountManager;
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Exception\PhoneNumberMismatchException;
-use OCA\TwoFactorGateway\Exception\PhoneNumberMissingException;
+use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
@@ -43,8 +41,6 @@ class SetupService {
 	/** @var IConfig */
 	private $config;
 
-	/** @var AccountManager */
-	private $accountManager;
 
 	/** @var ISmsService */
 	private $smsService;
@@ -52,82 +48,49 @@ class SetupService {
 	/** @var ISecureRandom */
 	private $random;
 
-	public function __construct(IConfig $config, AccountManager $accountManager,
-		ISmsService $smsService, ISecureRandom $random) {
+	public function __construct(IConfig $config,
+								ISmsService $smsService, ISecureRandom $random) {
 		$this->config = $config;
-		$this->accountManager = $accountManager;
+
 		$this->smsService = $smsService;
 		$this->random = $random;
 	}
 
 	public function getState(IUser $user): State {
-		$state = $this->config->getUserValue($user->getUID(), Application::APP_NAME,
-				'verified', 'false') === 'true' ? SmsProvider::STATE_ENABLED : SmsProvider::STATE_DISABLED;
-		$verifiedNumber = $this->config->getUserValue($user->getUID(),
-			'twofactor_gateway', 'phone', null);
+		$isVerified = $this->config->getUserValue($user->getUID(), Application::APP_NAME, 'verified', 'false') === 'true';
+		$state = $isVerified ? SmsProvider::STATE_ENABLED : SmsProvider::STATE_DISABLED;
+		$verifiedNumber = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'phone', null);
 
 		return new State($state, $verifiedNumber);
 	}
 
 	/**
-	 * @throws PhoneNumberMissingException
+	 * @throws IdentifierMissingException
 	 */
 	public function getChallengePhoneNumber(IUser $user): string {
-		$numerFromUserData = $this->getVerificationPhoneNumber($user);
-		$verifiedNumber = $this->config->getUserValue($user->getUID(),
-			'twofactor_gateway', 'phone', null);
+		$verifiedNumber = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'identifier', null);
 		if (is_null($verifiedNumber)) {
-			throw new PhoneNumberMissingException('verified phone number is missing');
-		}
-
-		if ($numerFromUserData !== $verifiedNumber) {
-			throw new PhoneNumberMismatchException('user\'s phone number has change');
+			throw new IdentifierMissingException('verified identifier is missing');
 		}
 
 		return $verifiedNumber;
 	}
 
 	/**
-	 * @throws PhoneNumberMissingException
+	 * Send out confirmation message and save current identifier in user settings
 	 */
-	private function getVerificationPhoneNumber(IUser $user): string {
-		$userData = $this->accountManager->getUser($user);
-
-		if (!isset($userData[AccountManager::PROPERTY_PHONE]) || empty($userData[AccountManager::PROPERTY_PHONE])) {
-			throw new PhoneNumberMissingException('user did not set a phone number');
-		}
-
-		$num = $userData[AccountManager::PROPERTY_PHONE]['value'];
-
-		if (is_null($num) || empty($num)) {
-			throw new PhoneNumberMissingException('phone number is empty');
-		}
-
-		return $num;
-	}
-
-	/**
-	 * Send out confirmation message and save current phone number in user settings
-	 *
-	 * @throws PhoneNumberMissingException
-	 */
-	public function startSetup(IUser $user): string {
-		$phoneNumber = $this->getVerificationPhoneNumber($user);
-
+	public function startSetup(IUser $user, string $identifier): string {
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
 		try {
-			$this->smsService->send(, $phoneNumber, "$verificationNumber is your Nextcloud verification code.");
+			$this->smsService->send($user, $identifier, "$verificationNumber is your Nextcloud verification code.");
 		} catch (SmsTransmissionException $ex) {
 			throw new VerificationTransmissionException('could not send verification code');
 		}
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'phone',
-			$phoneNumber);
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME,
-			'verification_code', $verificationNumber);
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME,
-			'verified', 'false');
+		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'identifier', $identifier);
+		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'verification_code', $verificationNumber);
+		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'verified', 'false');
 
-		return $phoneNumber;
+		return $identifier;
 	}
 
 	public function finishSetup(IUser $user, string $token) {
@@ -146,10 +109,8 @@ class SetupService {
 	}
 
 	public function disable(IUser $user) {
-		$this->config->deleteUserValue($user->getUID(), Application::APP_NAME,
-			'verified');
-		$this->config->deleteUserValue($user->getUID(), Application::APP_NAME,
-			'verification_code');
+		$this->config->deleteUserValue($user->getUID(), Application::APP_NAME, 'verified');
+		$this->config->deleteUserValue($user->getUID(), Application::APP_NAME, 'verification_code');
 
 		return $this->getState($user);
 	}

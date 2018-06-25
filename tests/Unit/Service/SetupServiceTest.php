@@ -24,7 +24,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
 use ChristophWurst\Nextcloud\Testing\TestCase;
 use OC\Accounts\AccountManager;
-use OCA\TwoFactorGateway\Exception\PhoneNumberMissingException;
+use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
 use OCA\TwoFactorGateway\Service\ISmsService;
@@ -68,7 +68,7 @@ class SetupServiceTest extends TestCase {
 			->method('getUser')
 			->with($user)
 			->willReturn([]);
-		$this->expectException(PhoneNumberMissingException::class);
+		$this->expectException(IdentifierMissingException::class);
 
 		$this->setupService->startSetup($user);
 	}
@@ -81,7 +81,7 @@ class SetupServiceTest extends TestCase {
 			->willReturn([
 				AccountManager::PROPERTY_PHONE => '',
 		]);
-		$this->expectException(PhoneNumberMissingException::class);
+		$this->expectException(IdentifierMissingException::class);
 
 		$this->setupService->startSetup($user);
 	}

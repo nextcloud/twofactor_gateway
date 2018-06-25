@@ -46,11 +46,11 @@ class WebSmsGateway implements ISmsService {
 
 	/**
 	 * @param IUser $user
-	 * @param string $recipient
+	 * @param string $idenfier
 	 * @param string $message
 	 * @throws SmsTransmissionException
 	 */
-	public function send(IUser $user, string $recipient, string $message) {
+	public function send(IUser $user, string $idenfier, string $message) {
 		$user = $this->config->getAppValue('twofactor_gateway', 'websms_de_user');
 		$password = $this->config->getAppValue('twofactor_gateway', 'websms_de_password');
 		try {
@@ -62,7 +62,7 @@ class WebSmsGateway implements ISmsService {
 				'json' => [
 					'messageContent' => $message,
 					'test' => false,
-					'recipientAddressList' => [$recipient],
+					'recipientAddressList' => [$idenfier],
 				],
 			]);
 		} catch (Exception $ex) {

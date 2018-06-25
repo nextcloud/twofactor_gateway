@@ -46,11 +46,11 @@ class PlaySMSGateway implements ISmsService {
 
 	/**
 	 * @param IUser $user
-	 * @param string $recipient
+	 * @param string $idenfier
 	 * @param string $message
 	 * @throws SmsTransmissionException
 	 */
-	public function send(IUser $user, string $recipient, string $message) {
+	public function send(IUser $user, string $idenfier, string $message) {
 		$url = $this->config->getAppValue('twofactor_gateway', 'playsms_url');
 		$user = $this->config->getAppValue('twofactor_gateway', 'playsms_user');
 		$password = $this->config->getAppValue('twofactor_gateway', 'playsms_password');
@@ -61,7 +61,7 @@ class PlaySMSGateway implements ISmsService {
 					'u' => $user,
 					'h' => $password,
 					'op' => 'pv',
-					'to' => $recipient,
+					'to' => $idenfier,
 					'msg' => $message,
 				],
 			]);

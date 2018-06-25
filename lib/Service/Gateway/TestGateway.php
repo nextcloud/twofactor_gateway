@@ -37,8 +37,8 @@ class TestGateway implements ISmsService {
 		$this->logger = $logger;
 	}
 
-	public function send(IUser $user, string $recipient, string $message) {
-		$this->logger->info("message to <$recipient>: $message");
+	public function send(IUser $user, string $idenfier, string $message) {
+		$this->logger->info("message to <$idenfier>: $message");
 	}
 
 }

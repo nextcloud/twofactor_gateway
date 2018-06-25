@@ -48,18 +48,18 @@ class SignalGateway implements ISmsService {
 
 	/**
 	 * @param IUser $user
-	 * @param string $recipient
+	 * @param string $idenfier
 	 * @param string $message
 	 * @throws SmsTransmissionException
 	 */
-	public function send(IUser $user, string $recipient, string $message) {
+	public function send(IUser $user, string $idenfier, string $message) {
 		// TODO: make configurable
 		$endpoint = 'http://localhost:5000';
 
 		$client = $this->clientService->newClient();
 		$response = $client->post($endpoint, [
 			'body' => [
-				'to' => $recipient,
+				'to' => $idenfier,
 				'message' => $message,
 			],
 		]);

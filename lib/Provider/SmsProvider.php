@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -23,7 +23,6 @@ declare(strict_types = 1);
 
 namespace OCA\TwoFactorGateway\Provider;
 
-use OCA\TwoFactorGateway\Exception\PhoneNumberMismatchException;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Service\ISmsService;
@@ -39,8 +38,9 @@ use OCP\Template;
 class SmsProvider implements IProvider {
 
 	const STATE_DISABLED = 0;
-	const STATE_VERIFYING = 1;
-	const STATE_ENABLED = 2;
+	const STATE_START_VERIFICATION = 1;
+	const STATE_VERIFYING = 2;
+	const STATE_ENABLED = 3;
 	const SESSION_KEY = 'twofactor_gateway_secret';
 
 	/** @var ISmsService */
@@ -62,7 +62,7 @@ class SmsProvider implements IProvider {
 	private $l10n;
 
 	public function __construct(ISmsService $smsService, SetupService $setupService, ISession $session,
-		ISecureRandom $secureRandom, IConfig $config, IL10N $l10n) {
+								ISecureRandom $secureRandom, IConfig $config, IL10N $l10n) {
 		$this->smsService = $smsService;
 		$this->setupService = $setupService;
 		$this->session = $session;
@@ -114,8 +114,6 @@ class SmsProvider implements IProvider {
 			$this->smsService->send($user, $phoneNumber, $this->l10n->t('%s is your Nextcloud authentication code', [$secret]));
 		} catch (SmsTransmissionException $ex) {
 			return new Template('twofactor_gateway', 'error');
-		} catch (PhoneNumberMismatchException $ex) {
-			return new Template('twofactor_gateway', 'error_mismatch');
 		}
 
 		$tmpl = new Template('twofactor_gateway', 'challenge');

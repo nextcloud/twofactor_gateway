@@ -49,16 +49,16 @@ class TelegramGateway implements ISmsService {
 
 	/**
 	 * @param IUser $user
-	 * @param string $recipient
+	 * @param string $idenfier
 	 * @param string $message
 	 * @throws \Telegram\Bot\Exceptions\TelegramSDKException
 	 */
-	public function send(IUser $user, string $recipient, string $message) {
+	public function send(IUser $user, string $idenfier, string $message) {
 		$token = $this->config->getAppValue('twofactor_gateway', 'telegram_bot_token', null);
 		// TODO: token missing handling
 
 		$api = new Api($token);
-		$chatId = $this->getChatId($user, $api);
+		$chatId = $this->getChatId($user, $api, (int) $idenfier);
 
 		$api->sendMessage([
 			'chat_id' => $chatId,
@@ -66,14 +66,13 @@ class TelegramGateway implements ISmsService {
 		]);
 	}
 
-	private function getChatId(IUser $user, Api $api): int {
+	private function getChatId(IUser $user, Api $api, int $userId): int {
 		$chatId = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'telegram_chat_id', null);
 
-		if (is_null($chatId)) {
+		if (!is_null($chatId)) {
 			return (int)$chatId;
 		}
 
-		$userId = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'telegram_user_id', null);
 		$updates = $api->getUpdates();
 		/** @var Update $update */
 		$update = current(array_filter($updates, function (Update $data) use ($userId) {

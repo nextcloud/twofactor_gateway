@@ -29,9 +29,9 @@ interface ISmsService {
 
 	/**
 	 * @param IUser $user
-	 * @param string $recipient
+	 * @param string $idenfier
 	 * @param string $message
 	 * @return
 	 */
-	public function send(IUser $user, string $recipient, string $message);
+	public function send(IUser $user, string $idenfier, string $message);
 }
