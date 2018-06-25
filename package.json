@@ -21,7 +21,7 @@
   "dependencies": {
     "css-loader": "^0.28.11",
     "jquery": "^3.3.1",
-    "nextcloud_fetch": "^2.0.0",
+    "nextcloud_fetch": "^2.1.0",
     "vue": "^2.5.16",
     "vue-loader": "^14.2.2",
     "vue-template-compiler": "^2.5.16"
