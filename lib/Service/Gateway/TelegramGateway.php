@@ -26,7 +26,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
-use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\IGateway;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
@@ -34,7 +34,7 @@ use OCP\IUser;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
 
-class TelegramGateway implements ISmsService {
+class TelegramGateway implements IGateway {
 
 	/** @var IClient */
 	private $client;
@@ -58,7 +58,7 @@ class TelegramGateway implements ISmsService {
 		// TODO: token missing handling
 
 		$api = new Api($token);
-		$chatId = $this->getChatId($user, $api, (int) $idenfier);
+		$chatId = $this->getChatId($user, $api, (int)$idenfier);
 
 		$api->sendMessage([
 			'chat_id' => $chatId,
@@ -89,4 +89,13 @@ class TelegramGateway implements ISmsService {
 		return (int)$chatId;
 	}
 
+	/**
+	 * Get a short description of this gateway's name so that users know how
+	 * their messages are delivered, e.g. "Telegram"
+	 *
+	 * @return string
+	 */
+	public function getShortName(): string {
+		return "Telegram";
+	}
 }

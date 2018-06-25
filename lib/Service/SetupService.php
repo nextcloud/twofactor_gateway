@@ -42,14 +42,14 @@ class SetupService {
 	private $config;
 
 
-	/** @var ISmsService */
+	/** @var IGateway */
 	private $smsService;
 
 	/** @var ISecureRandom */
 	private $random;
 
 	public function __construct(IConfig $config,
-								ISmsService $smsService, ISecureRandom $random) {
+								IGateway $smsService, ISecureRandom $random) {
 		$this->config = $config;
 
 		$this->smsService = $smsService;
@@ -61,7 +61,7 @@ class SetupService {
 		$state = $isVerified ? SmsProvider::STATE_ENABLED : SmsProvider::STATE_DISABLED;
 		$verifiedNumber = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'phone', null);
 
-		return new State($state, $verifiedNumber);
+		return new State($this->smsService->getShortName(), $state, $verifiedNumber);
 	}
 
 	/**

@@ -24,11 +24,11 @@
 
 namespace OCA\TwoFactorGateway\Service\Gateway;
 
-use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\IGateway;
 use OCP\ILogger;
 use OCP\IUser;
 
-class TestGateway implements ISmsService {
+class TestGateway implements IGateway {
 
 	/** @var ILogger */
 	private $logger;
@@ -41,4 +41,13 @@ class TestGateway implements ISmsService {
 		$this->logger->info("message to <$idenfier>: $message");
 	}
 
+	/**
+	 * Get a short description of this gateway's name so that users know how
+	 * their messages are delivered, e.g. "Telegram"
+	 *
+	 * @return string
+	 */
+	public function getShortName(): string {
+		return "Test";
+	}
 }

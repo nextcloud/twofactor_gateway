@@ -25,7 +25,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway;
 
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
-use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\IGateway;
 use OCP\Http\Client\IClientService;
 use OCP\ILogger;
 use OCP\IUser;
@@ -33,7 +33,7 @@ use OCP\IUser;
 /**
  * An integration of https://gitlab.com/morph027/signal-web-gateway
  */
-class SignalGateway implements ISmsService {
+class SignalGateway implements IGateway {
 
 	/** @var IClientService */
 	private $clientService;
@@ -72,4 +72,13 @@ class SignalGateway implements ISmsService {
 		}
 	}
 
+	/**
+	 * Get a short description of this gateway's name so that users know how
+	 * their messages are delivered, e.g. "Telegram"
+	 *
+	 * @return string
+	 */
+	public function getShortName(): string {
+		return "Signal";
+	}
 }

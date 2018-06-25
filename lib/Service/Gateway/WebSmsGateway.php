@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -25,13 +25,13 @@ namespace OCA\TwoFactorGateway\Service\Gateway;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
-use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\IGateway;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IUser;
 
-class WebSmsGateway implements ISmsService {
+class WebSmsGateway implements IGateway {
 
 	/** @var IClient */
 	private $client;
@@ -70,4 +70,13 @@ class WebSmsGateway implements ISmsService {
 		}
 	}
 
+	/**
+	 * Get a short description of this gateway's name so that users know how
+	 * their messages are delivered, e.g. "Telegram"
+	 *
+	 * @return string
+	 */
+	public function getShortName(): string {
+		return "SMS";
+	}
 }

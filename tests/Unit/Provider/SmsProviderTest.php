@@ -24,7 +24,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
 
 use ChristophWurst\Nextcloud\Testing\TestCase;
 use OCA\TwoFactorGateway\Provider\SmsProvider;
-use OCA\TwoFactorGateway\Service\ISmsService;
+use OCA\TwoFactorGateway\Service\IGateway;
 use OCA\TwoFactorGateway\Service\SetupService;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -35,7 +35,7 @@ use PHPUnit_Framework_MockObject_MockObject;
 
 class SmsProviderTest extends TestCase {
 
-	/** @var ISmsService|PHPUnit_Framework_MockObject_MockObject */
+	/** @var IGateway|PHPUnit_Framework_MockObject_MockObject */
 	private $smsService;
 
 	/** @var SetupService|PHPUnit_Framework_MockObject_MockObject */
@@ -59,7 +59,7 @@ class SmsProviderTest extends TestCase {
 	protected function setUp() {
 		parent::setUp();
 
-		$this->smsService = $this->createMock(ISmsService::class);
+		$this->smsService = $this->createMock(IGateway::class);
 		$this->setupService = $this->createMock(SetupService::class);
 		$this->session = $this->createMock(ISession::class);
 		$this->random = $this->createMock(ISecureRandom::class);
