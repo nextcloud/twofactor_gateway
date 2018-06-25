@@ -111,7 +111,7 @@ class SmsProvider implements IProvider {
 
 		try {
 			$phoneNumber = $this->setupService->getChallengePhoneNumber($user);
-			$this->smsService->send($phoneNumber, $this->l10n->t('%s is your Nextcloud authentication code', [$secret]));
+			$this->smsService->send($user, $phoneNumber, $this->l10n->t('%s is your Nextcloud authentication code', [$secret]));
 		} catch (SmsTransmissionException $ex) {
 			return new Template('twofactor_gateway', 'error');
 		} catch (PhoneNumberMismatchException $ex) {

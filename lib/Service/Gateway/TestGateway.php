@@ -26,6 +26,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway;
 
 use OCA\TwoFactorGateway\Service\ISmsService;
 use OCP\ILogger;
+use OCP\IUser;
 
 class TestGateway implements ISmsService {
 
@@ -36,7 +37,7 @@ class TestGateway implements ISmsService {
 		$this->logger = $logger;
 	}
 
-	public function send(string $recipient, string $message) {
+	public function send(IUser $user, string $recipient, string $message) {
 		$this->logger->info("message to <$recipient>: $message");
 	}
 

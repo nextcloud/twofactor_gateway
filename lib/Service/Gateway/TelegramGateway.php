@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -30,6 +30,9 @@ use OCA\TwoFactorGateway\Service\ISmsService;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
+use OCP\IUser;
+use Telegram\Bot\Api;
+use Telegram\Bot\Objects\Update;
 
 class TelegramGateway implements ISmsService {
 
@@ -45,18 +48,46 @@ class TelegramGateway implements ISmsService {
 	}
 
 	/**
-	 * @throws SmsTransmissionException
+	 * @param IUser $user
+	 * @param string $recipient
+	 * @param string $message
+	 * @throws \Telegram\Bot\Exceptions\TelegramSDKException
 	 */
-	public function send(string $recipient, string $message) {
-		$telegramUrl = $this->config->getAppValue('twofactor_gateway', 'telegram_url');
-		$telegramBotToken = $this->config->getAppValue('twofactor_gateway', 'telegram_bot_token');
-		$telegramUserId = $this->config->getUserValue('nextclouddev', 'twofactor_gateway', 'telegram_id');
-		try {
-			$url = $telegramUrl . $telegramBotToken . "/sendMessage?chat_id=$telegramUserId&disable_web_page_preview=1&text=" . urlencode($message);
-			$this->client->get($url);
-		} catch (Exception $ex) {
-			throw new SmsTransmissionException();
+	public function send(IUser $user, string $recipient, string $message) {
+		$token = $this->config->getAppValue('twofactor_gateway', 'telegram_bot_token', null);
+		// TODO: token missing handling
+
+		$api = new Api($token);
+		$chatId = $this->getChatId($user, $api);
+
+		$api->sendMessage([
+			'chat_id' => $chatId,
+			'text' => $message,
+		]);
+	}
+
+	private function getChatId(IUser $user, Api $api): int {
+		$chatId = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'telegram_chat_id', null);
+
+		if (is_null($chatId)) {
+			return (int)$chatId;
 		}
+
+		$userId = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'telegram_user_id', null);
+		$updates = $api->getUpdates();
+		/** @var Update $update */
+		$update = current(array_filter($updates, function (Update $data) use ($userId) {
+			if ($data->message->text === "/start" && $data->message->from->id === $userId) {
+				return true;
+			}
+			return false;
+		}));
+		// TODO: handle missing `/start` message and `$update` null values
+
+		$chatId = $update->message->chat->id;
+		$this->config->setUserValue($user->getUID(), 'twofactor_gateway', 'chat_id', $chatId);
+
+		return (int)$chatId;
 	}
 
 }

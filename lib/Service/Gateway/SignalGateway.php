@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -28,6 +28,7 @@ use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\ISmsService;
 use OCP\Http\Client\IClientService;
 use OCP\ILogger;
+use OCP\IUser;
 
 /**
  * An integration of https://gitlab.com/morph027/signal-web-gateway
@@ -46,9 +47,12 @@ class SignalGateway implements ISmsService {
 	}
 
 	/**
+	 * @param IUser $user
+	 * @param string $recipient
+	 * @param string $message
 	 * @throws SmsTransmissionException
 	 */
-	public function send(string $recipient, string $message) {
+	public function send(IUser $user, string $recipient, string $message) {
 		// TODO: make configurable
 		$endpoint = 'http://localhost:5000';
 

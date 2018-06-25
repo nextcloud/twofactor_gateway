@@ -116,8 +116,7 @@ class SetupService {
 
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
 		try {
-			$this->smsService->send($phoneNumber,
-				"$verificationNumber is your Nextcloud verification code.");
+			$this->smsService->send(, $phoneNumber, "$verificationNumber is your Nextcloud verification code.");
 		} catch (SmsTransmissionException $ex) {
 			throw new VerificationTransmissionException('could not send verification code');
 		}

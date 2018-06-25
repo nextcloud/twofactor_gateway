@@ -29,6 +29,7 @@ use OCA\TwoFactorGateway\Service\ISmsService;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
+use OCP\IUser;
 
 class PlaySMSGateway implements ISmsService {
 
@@ -44,9 +45,12 @@ class PlaySMSGateway implements ISmsService {
 	}
 
 	/**
+	 * @param IUser $user
+	 * @param string $recipient
+	 * @param string $message
 	 * @throws SmsTransmissionException
 	 */
-	public function send(string $recipient, string $message) {
+	public function send(IUser $user, string $recipient, string $message) {
 		$url = $this->config->getAppValue('twofactor_gateway', 'playsms_url');
 		$user = $this->config->getAppValue('twofactor_gateway', 'playsms_user');
 		$password = $this->config->getAppValue('twofactor_gateway', 'playsms_password');
