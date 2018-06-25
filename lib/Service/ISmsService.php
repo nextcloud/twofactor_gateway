@@ -23,10 +23,15 @@ declare(strict_types = 1);
 
 namespace OCA\TwoFactorGateway\Service;
 
+use OCP\IUser;
+
 interface ISmsService {
 
 	/**
-	 * @throws SmsTransmissionException
+	 * @param IUser $user
+	 * @param string $idenfier
+	 * @param string $message
+	 * @return
 	 */
-	public function send(string $recipient, string $message);
+	public function send(IUser $user, string $idenfier, string $message);
 }

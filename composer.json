@@ -1,6 +1,7 @@
 {
 	"require": {
-		"christophwurst/nextcloud": "dev-master"
+		"christophwurst/nextcloud": "dev-master",
+		"irazasyed/telegram-bot-sdk": "^3.0"
 	},
 	"require-dev": {
 		"christophwurst/nextcloud_testing": "^0.3.1"

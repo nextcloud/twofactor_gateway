@@ -24,7 +24,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
 use ChristophWurst\Nextcloud\Testing\TestCase;
 use OC\Accounts\AccountManager;
-use OCA\TwoFactorGateway\Exception\PhoneNumberMissingException;
+use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
 use OCA\TwoFactorGateway\Service\ISmsService;
@@ -39,9 +39,6 @@ class SetupServiceTest extends TestCase {
 	/** @var IConfig|PHPUnit_Framework_MockObject_MockObject */
 	private $config;
 
-	/** @var AccountManager|PHPUnit_Framework_MockObject_MockObject */
-	private $accountManager;
-
 	/** @var ISmsService|PHPUnit_Framework_MockObject_MockObject */
 	private $smsService;
 
@@ -55,65 +52,26 @@ class SetupServiceTest extends TestCase {
 		parent::setUp();
 
 		$this->config = $this->createMock(IConfig::class);
-		$this->accountManager = $this->createMock(AccountManager::class);
 		$this->smsService = $this->createMock(ISmsService::class);
 		$this->random = $this->createMock(ISecureRandom::class);
 
-		$this->setupService = new SetupService($this->config, $this->accountManager, $this->smsService, $this->random);
-	}
-
-	public function testStartSetupNoPhoneNumberSet() {
-		$user = $this->createMock(IUser::class);
-		$this->accountManager->expects($this->once())
-			->method('getUser')
-			->with($user)
-			->willReturn([]);
-		$this->expectException(PhoneNumberMissingException::class);
-
-		$this->setupService->startSetup($user);
-	}
-
-	public function testStartSetupEmptyPhoneNumberSet() {
-		$user = $this->createMock(IUser::class);
-		$this->accountManager->expects($this->once())
-			->method('getUser')
-			->with($user)
-			->willReturn([
-				AccountManager::PROPERTY_PHONE => '',
-		]);
-		$this->expectException(PhoneNumberMissingException::class);
-
-		$this->setupService->startSetup($user);
+		$this->setupService = new SetupService($this->config, $this->smsService, $this->random);
 	}
 
 	public function testStartSetupTransmissionError() {
+		$identifier = "1234";
 		$user = $this->createMock(IUser::class);
-		$this->accountManager->expects($this->once())
-			->method('getUser')
-			->with($user)
-			->willReturn([
-				AccountManager::PROPERTY_PHONE => [
-					'value' => '0123456789',
-				],
-		]);
 		$this->smsService->expects($this->once())
 			->method('send')
 			->willThrowException(new VerificationTransmissionException());
 		$this->expectException(VerificationTransmissionException::class);
 
-		$this->setupService->startSetup($user);
+		$this->setupService->startSetup($user, $identifier);
 	}
 
 	public function testStartSetup() {
+		$identifier = "0123456789";
 		$user = $this->createMock(IUser::class);
-		$this->accountManager->expects($this->once())
-			->method('getUser')
-			->with($user)
-			->willReturn([
-				AccountManager::PROPERTY_PHONE => [
-					'value' => '0123456789',
-				],
-		]);
 		$this->smsService->expects($this->once())
 			->method('send');
 		$this->random->expects($this->once())
@@ -122,7 +80,7 @@ class SetupServiceTest extends TestCase {
 		$user->method('getUID')->willReturn('user123');
 		$this->config->expects($this->at(0))
 			->method('setUserValue')
-			->with('user123', 'twofactor_gateway', 'phone', '0123456789');
+			->with('user123', 'twofactor_gateway', 'identifier', '0123456789');
 		$this->config->expects($this->at(1))
 			->method('setUserValue')
 			->with('user123', 'twofactor_gateway', 'verification_code', '963852');
@@ -130,7 +88,7 @@ class SetupServiceTest extends TestCase {
 			->method('setUserValue')
 			->with('user123', 'twofactor_gateway', 'verified', 'false');
 
-		$this->setupService->startSetup($user);
+		$this->setupService->startSetup($user, $identifier);
 	}
 
 	public function testFinishSetupNoVerificationNumberSet() {

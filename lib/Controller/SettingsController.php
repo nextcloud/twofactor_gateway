@@ -25,7 +25,6 @@
 namespace OCA\TwoFactorGateway\Controller;
 
 use OCA\TwoFactorGateway\Exception\VerificationException;
-use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Service\SetupService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -42,7 +41,7 @@ class SettingsController extends Controller {
 	private $setup;
 
 	public function __construct(IRequest $request, IUserSession $userSession,
-		SetupService $setup) {
+								SetupService $setup) {
 		parent::__construct('twofactor_gateway', $request);
 
 		$this->userSession = $userSession;
@@ -64,15 +63,17 @@ class SettingsController extends Controller {
 
 	/**
 	 * @NoAdminRequired
+	 * @param string $identification
+	 * @return JSONResponse
 	 */
-	public function startVerification(): JSONResponse {
+	public function startVerification(string $identifier): JSONResponse {
 		$user = $this->userSession->getUser();
 
 		if (is_null($user)) {
 			return new JSONResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		$num = $this->setup->startSetup($user);
+		$num = $this->setup->startSetup($user, $identifier);
 
 		return new JSONResponse([
 			'phoneNumber' => $num,
