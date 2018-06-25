@@ -28,19 +28,24 @@ use JsonSerializable;
 
 class State implements JsonSerializable {
 
+	/** @var string */
+	private $gatewayName;
+
 	/** @var int */
 	private $state;
 
 	/** @var string */
 	private $phoneNumber;
 
-	public function __construct(int $state, string $phoneNumber = null) {
+	public function __construct(string $gatewayName, int $state, string $phoneNumber = null) {
+		$this->gatewayName = $gatewayName;
 		$this->state = $state;
 		$this->phoneNumber = $phoneNumber;
 	}
 
 	public function jsonSerialize() {
 		return [
+			'gatewayName' => $this->gatewayName,
 			'state' => $this->state,
 			'phoneNumber' => $this->phoneNumber,
 		];

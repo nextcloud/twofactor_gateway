@@ -28,6 +28,14 @@ use OCP\IUser;
 interface IGateway {
 
 	/**
+	 * Get a short description of this gateway's name so that users know how
+	 * their messages are delivered, e.g. "Telegram"
+	 *
+	 * @return string
+	 */
+	public function getShortName(): string;
+
+	/**
 	 * @param IUser $user
 	 * @param string $idenfier
 	 * @param string $message

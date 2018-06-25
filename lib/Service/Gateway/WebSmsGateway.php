@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -70,4 +70,13 @@ class WebSmsGateway implements IGateway {
 		}
 	}
 
+	/**
+	 * Get a short description of this gateway's name so that users know how
+	 * their messages are delivered, e.g. "Telegram"
+	 *
+	 * @return string
+	 */
+	public function getShortName(): string {
+		return "SMS";
+	}
 }

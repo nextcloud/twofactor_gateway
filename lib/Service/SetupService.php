@@ -61,7 +61,7 @@ class SetupService {
 		$state = $isVerified ? SmsProvider::STATE_ENABLED : SmsProvider::STATE_DISABLED;
 		$verifiedNumber = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'phone', null);
 
-		return new State($state, $verifiedNumber);
+		return new State($this->smsService->getShortName(), $state, $verifiedNumber);
 	}
 
 	/**
