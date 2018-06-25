@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "webpack": "^4.12.1",
-    "webpack-cli": "^2.0.14",
+    "webpack-cli": "^3.0.8",
     "webpack-merge": "^4.1.3"
   }
 }
