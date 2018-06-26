@@ -1,18 +1,8 @@
 # Admin Documentation
 
-## Providers
+## Gateways
 
 Here you can find the configuration instructors for the currently supported gateways.
-
-### websms.de
-URL: https://websms.de/
-
-Admin configuration:
-```bash
-./occ config:app:set twofactor_gateway sms_provider --value "websms.de"
-./occ config:app:set twofactor_gateway websms_de_user --value "yourusername"
-./occ config:app:set twofactor_gateway websms_de_password --value "yourpassword"
-```
 
 ### playSMS
 URL: https://playsms.org/
@@ -25,6 +15,14 @@ Admin configuration:
 ./occ config:app:set twofactor_gateway playsms_url --value "playsmswebservicesurl"
 ./occ config:app:set twofactor_gateway playsms_user --value "yourusername"
 ./occ config:app:set twofactor_gateway playsms_password --value "yourpassword"
+```
+
+### Signal
+URL: https://www.signal.org/
+
+Admin configuration:
+```bash
+./occ config:app:set twofactor_gateway sms_provider --value "signal"
 ```
 
 ### Telegram
@@ -44,3 +42,13 @@ Specific entries in `oc_preferences`:
 - appid: ``twofactor_gateway``
 - configkey: ``telegram_id``
 - configvalue: your telegram id. You can get your telegram id by searching the user <b>What's my Telegram ID?</b> in Telegram and start the conversation.
+
+### websms.de
+URL: https://websms.de/
+
+Admin configuration:
+```bash
+./occ config:app:set twofactor_gateway sms_provider --value "websms.de"
+./occ config:app:set twofactor_gateway websms_de_user --value "yourusername"
+./occ config:app:set twofactor_gateway websms_de_password --value "yourpassword"
+```
