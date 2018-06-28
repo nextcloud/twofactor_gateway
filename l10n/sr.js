@@ -4,6 +4,8 @@ OC.L10N.register(
     "SMS verification" : "SMS провера",
     "Send an authentication code via SMS" : "Пошаљи код за проверу идентитета SMS-ом",
     "%s is your Nextcloud authentication code" : "%s je kod za proveru identiteta",
+    "Two-Factor Gateway" : "Мрежни пролаз за двофакторску проверу идентитета",
+    "Two-factor gateway provider (SMS, Telegram, Signal)" : "Мрежни пролаз за провајдера двофакторске провере идентитета (SMS, Телеграм, Сигнал)",
     "A message-based two-factor-auth provider" : "Провајдер двофакторске ауторизације преко порука",
     "Authentication code" : "Код за проверу идентитета",
     "An access code has been sent to %s" : "Приступни код је послат на %s",
