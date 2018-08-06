@@ -26,9 +26,8 @@ namespace OCA\TwoFactorGateway\Provider;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Service\IGateway;
-use OCA\TwoFactorGateway\Service\SetupService;
+use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\Authentication\TwoFactorAuth\IProvider;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\IUser;
@@ -46,8 +45,8 @@ class SmsProvider implements IProvider {
 	/** @var IGateway */
 	private $gateway;
 
-	/** @var SetupService */
-	private $setupService;
+	/** @var StateStorage */
+	private $stateStorage;
 
 	/** @var ISession */
 	private $session;
@@ -59,12 +58,12 @@ class SmsProvider implements IProvider {
 	private $l10n;
 
 	public function __construct(IGateway $gateway,
-								SetupService $setupService,
+								StateStorage $stateStorage,
 								ISession $session,
 								ISecureRandom $secureRandom,
 								IL10N $l10n) {
 		$this->gateway = $gateway;
-		$this->setupService = $setupService;
+		$this->stateStorage = $stateStorage;
 		$this->session = $session;
 		$this->secureRandom = $secureRandom;
 		$this->l10n = $l10n;
@@ -113,7 +112,7 @@ class SmsProvider implements IProvider {
 		$secret = $this->getSecret();
 
 		try {
-			$identifier = $this->setupService->getState($user)->getIdentifier();
+			$identifier = $this->stateStorage->get($user)->getIdentifier();
 			$this->gateway->send(
 				$user,
 				$identifier,
@@ -148,7 +147,7 @@ class SmsProvider implements IProvider {
 	 * Decides whether 2FA is enabled for the given user
 	 */
 	public function isTwoFactorAuthEnabledForUser(IUser $user): bool {
-		return $this->setupService->getState($user)->getState() === self::STATE_ENABLED;
+		return $this->stateStorage->get($user)->getState() === self::STATE_ENABLED;
 	}
 
 }
