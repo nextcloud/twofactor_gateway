@@ -58,31 +58,6 @@ class SetupServiceTest extends TestCase {
 		$this->setupService = new SetupService($this->stateStorage, $this->gateway, $this->random);
 	}
 
-	public function testGetIdentifierNoneFound() {
-		/** @var IUser $user */
-		$user = $this->createMock(IUser::class);
-		$state = State::disabled($user);
-		$this->stateStorage->expects($this->once())
-			->method('get')
-			->willReturn($state);
-		$this->setExpectedException(IdentifierMissingException::class);
-
-		$this->setupService->getChallengePhoneNumber($user);
-	}
-
-	public function testGetIdentifier() {
-		/** @var IUser $user */
-		$user = $this->createMock(IUser::class);
-		$state = State::verifying($user, 'websms', '01234', '1234');
-		$this->stateStorage->expects($this->once())
-			->method('get')
-			->willReturn($state);
-
-		$identifier = $this->setupService->getChallengePhoneNumber($user);
-
-		$this->assertSame('01234', $identifier);
-	}
-
 	public function testStartSetupTransmissionError() {
 		$identifier = '1234';
 		$user = $this->createMock(IUser::class);
