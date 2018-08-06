@@ -25,11 +25,11 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service;
 
 use Exception;
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
+use OCA\TwoFactorGateway\Provider\SmsProvider;
 use OCA\TwoFactorGateway\Provider\State;
 use OCP\Authentication\TwoFactorAuth\IRegistry;
 use OCP\IUser;
@@ -46,12 +46,22 @@ class SetupService {
 	/** @var ISecureRandom */
 	private $random;
 
+	/** @var SmsProvider */
+	private $provider;
+
+	/** @var IRegistry */
+	private $providerRegistry;
+
 	public function __construct(StateStorage $stateStorage,
 								IGateway $smsService,
-								ISecureRandom $random) {
+								ISecureRandom $random,
+								SmsProvider $provider,
+								IRegistry $providerRegistry) {
 		$this->stateStorage = $stateStorage;
 		$this->smsService = $smsService;
 		$this->random = $random;
+		$this->provider = $provider;
+		$this->providerRegistry = $providerRegistry;
 	}
 
 	public function getState(IUser $user): State {
@@ -97,12 +107,16 @@ class SetupService {
 			throw new VerificationException('verification token mismatch');
 		}
 
+		$this->providerRegistry->enableProviderFor($this->provider, $user);
+
 		return $this->stateStorage->persist(
 			$state->verify()
 		);
 	}
 
 	public function disable(IUser $user): State {
+		$this->providerRegistry->disableProviderFor($this->provider, $user);
+
 		return $this->stateStorage->persist(
 			State::disabled($user)
 		);

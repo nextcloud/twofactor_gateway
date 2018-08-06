@@ -26,10 +26,12 @@ use ChristophWurst\Nextcloud\Testing\TestCase;
 use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
+use OCA\TwoFactorGateway\Provider\SmsProvider;
 use OCA\TwoFactorGateway\Provider\State;
 use OCA\TwoFactorGateway\Service\IGateway;
 use OCA\TwoFactorGateway\Service\SetupService;
 use OCA\TwoFactorGateway\Service\StateStorage;
+use OCP\Authentication\TwoFactorAuth\IRegistry;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
 use PHPUnit_Framework_MockObject_MockObject;
@@ -45,6 +47,12 @@ class SetupServiceTest extends TestCase {
 	/** @var ISecureRandom|PHPUnit_Framework_MockObject_MockObject */
 	private $random;
 
+	/** @var SmsProvider|PHPUnit_Framework_MockObject_MockObject */
+	private $provider;
+
+	/** @var IRegistry|PHPUnit_Framework_MockObject_MockObject */
+	private $registry;
+
 	/** @var SetupService */
 	private $setupService;
 
@@ -54,8 +62,16 @@ class SetupServiceTest extends TestCase {
 		$this->stateStorage = $this->createMock(StateStorage::class);
 		$this->gateway = $this->createMock(IGateway::class);
 		$this->random = $this->createMock(ISecureRandom::class);
+		$this->provider = $this->createMock(SmsProvider::class);
+		$this->registry = $this->createMock(IRegistry::class);
 
-		$this->setupService = new SetupService($this->stateStorage, $this->gateway, $this->random);
+		$this->setupService = new SetupService(
+			$this->stateStorage,
+			$this->gateway,
+			$this->random,
+			$this->provider,
+			$this->registry
+		);
 	}
 
 	public function testStartSetupTransmissionError() {
@@ -98,6 +114,8 @@ class SetupServiceTest extends TestCase {
 			->willReturn($state);
 		$this->stateStorage->expects($this->never())
 			->method('persist');
+		$this->registry->expects($this->never())
+			->method('enableProviderFor');
 		$this->expectException(\Exception::class);
 
 		$this->setupService->finishSetup($user, '123456');
@@ -112,6 +130,8 @@ class SetupServiceTest extends TestCase {
 			->willReturn($state);
 		$this->stateStorage->expects($this->never())
 			->method('persist');
+		$this->registry->expects($this->never())
+			->method('enableProviderFor');
 		$this->expectException(VerificationException::class);
 
 		$this->setupService->finishSetup($user, '123456');
@@ -124,6 +144,12 @@ class SetupServiceTest extends TestCase {
 		$this->stateStorage->expects($this->once())
 			->method('get')
 			->willReturn($state);
+		$this->registry->expects($this->once())
+			->method('enableProviderFor')
+			->with(
+				$this->provider,
+				$user
+			);
 		$verfied = $state->verify();
 		$this->stateStorage->expects($this->once())
 			->method('persist')
