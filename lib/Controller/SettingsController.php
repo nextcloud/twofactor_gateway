@@ -73,10 +73,10 @@ class SettingsController extends Controller {
 			return new JSONResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		$num = $this->setup->startSetup($user, $identifier);
+		$state = $this->setup->startSetup($user, $identifier);
 
 		return new JSONResponse([
-			'phoneNumber' => $num,
+			'phoneNumber' => $state->getIdentifier(),
 		]);
 	}
 

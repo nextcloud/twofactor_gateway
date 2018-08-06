@@ -25,29 +25,108 @@
 namespace OCA\TwoFactorGateway\Provider;
 
 use JsonSerializable;
+use OCA\TwoFactorGateway\Service\IGateway;
+use OCP\IUser;
 
 class State implements JsonSerializable {
 
-	/** @var string */
-	private $gatewayName;
+	/** @var IUser */
+	private $user;
 
 	/** @var int */
 	private $state;
 
-	/** @var string */
-	private $phoneNumber;
+	/** @var string|null */
+	private $gatewayName;
 
-	public function __construct(string $gatewayName, int $state, string $phoneNumber = null) {
+	/** @var string|null */
+	private $identifier;
+
+	/** @var string|null */
+	private $verificationCode;
+
+	public function __construct(IUser $user,
+								int $state,
+								string $gatewayName = null,
+								string $identifier = null,
+								string $verificationCode = null) {
+		$this->user = $user;
 		$this->gatewayName = $gatewayName;
 		$this->state = $state;
-		$this->phoneNumber = $phoneNumber;
+		$this->identifier = $identifier;
+		$this->verificationCode = $verificationCode;
+	}
+
+	public static function verifying(IUser $user,
+									 string $gatewayName,
+									 string $identifier,
+									 string $verificationCode): State {
+		return new State(
+			$user,
+			SmsProvider::STATE_VERIFYING,
+			$gatewayName,
+			$identifier,
+			$verificationCode
+		);
+	}
+
+	public static function disabled(IUser $user): State {
+		return new State(
+			$user,
+			SmsProvider::STATE_DISABLED
+		);
+	}
+
+	public function verify(): State {
+		return new State(
+			$this->user,
+			SmsProvider::STATE_ENABLED,
+			$this->gatewayName,
+			$this->identifier,
+			$this->verificationCode
+		);
+	}
+
+	/**
+	 * @return IUser
+	 */
+	public function getUser(): IUser {
+		return $this->user;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getState(): int {
+		return $this->state;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getGatewayName() {
+		return $this->gatewayName;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getIdentifier() {
+		return $this->identifier;
+	}
+
+	/**
+	 * @return null|string
+	 */
+	public function getVerificationCode() {
+		return $this->verificationCode;
 	}
 
 	public function jsonSerialize() {
 		return [
 			'gatewayName' => $this->gatewayName,
 			'state' => $this->state,
-			'phoneNumber' => $this->phoneNumber,
+			'phoneNumber' => $this->identifier,
 		];
 	}
 
