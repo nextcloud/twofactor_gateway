@@ -87,11 +87,9 @@ class SmsProvider implements IProvider {
 
 	/**
 	 * Get the description for selecting the 2FA provider
-	 *
-	 * @todo use gateway-specific description
 	 */
 	public function getDescription(): string {
-		return $this->l10n->t('Send an authentication code via a messaging Gateway');
+		return $this->gateway->getProviderDescription();
 	}
 
 	private function getSecret(): string {

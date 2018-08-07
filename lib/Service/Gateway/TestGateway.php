@@ -48,6 +48,13 @@ class TestGateway implements IGateway {
 	 * @return string
 	 */
 	public function getShortName(): string {
-		return "Test";
+		return 'Test';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getProviderDescription(): string {
+		return 'Authenticate via SMS (test)';
 	}
 }

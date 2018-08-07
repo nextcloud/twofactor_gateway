@@ -27,6 +27,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\IGateway;
 use OCP\Http\Client\IClientService;
+use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IUser;
 
@@ -41,15 +42,22 @@ class SignalGateway implements IGateway {
 	/** @var ILogger */
 	private $logger;
 
-	public function __construct(IClientService $clientService, ILogger $logger) {
+	/** @var IL10N */
+	private $l10n;
+
+	public function __construct(IClientService $clientService,
+								ILogger $logger,
+								IL10N $l10n) {
 		$this->clientService = $clientService;
 		$this->logger = $logger;
+		$this->l10n = $l10n;
 	}
 
 	/**
 	 * @param IUser $user
 	 * @param string $idenfier
 	 * @param string $message
+	 *
 	 * @throws SmsTransmissionException
 	 */
 	public function send(IUser $user, string $idenfier, string $message) {
@@ -79,6 +87,13 @@ class SignalGateway implements IGateway {
 	 * @return string
 	 */
 	public function getShortName(): string {
-		return "Signal";
+		return 'Signal';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getProviderDescription(): string {
+		return $this->l10n->t('Authenticate via Signal');
 	}
 }

@@ -30,6 +30,7 @@ use OCA\TwoFactorGateway\Service\IGateway;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
+use OCP\IL10N;
 use OCP\IUser;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
@@ -42,15 +43,22 @@ class TelegramGateway implements IGateway {
 	/** @var IConfig */
 	private $config;
 
-	public function __construct(IClientService $clientService, IConfig $config) {
+	/** @var IL10N */
+	private $l10n;
+
+	public function __construct(IClientService $clientService,
+								IConfig $config,
+								IL10N $l10n) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
+		$this->l10n = $l10n;
 	}
 
 	/**
 	 * @param IUser $user
 	 * @param string $idenfier
 	 * @param string $message
+	 *
 	 * @throws \Telegram\Bot\Exceptions\TelegramSDKException
 	 */
 	public function send(IUser $user, string $idenfier, string $message) {
@@ -96,6 +104,13 @@ class TelegramGateway implements IGateway {
 	 * @return string
 	 */
 	public function getShortName(): string {
-		return "Telegram";
+		return 'Telegram';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getProviderDescription(): string {
+		return $this->l10n->t('Authenticate via Telegram');
 	}
 }

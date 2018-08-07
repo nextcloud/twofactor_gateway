@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * @author Pascal Clémot <pascal.clemot@free.fr>
@@ -29,6 +29,7 @@ use OCA\TwoFactorGateway\Service\IGateway;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
+use OCP\IL10N;
 use OCP\IUser;
 
 class PlaySMSGateway implements IGateway {
@@ -39,15 +40,22 @@ class PlaySMSGateway implements IGateway {
 	/** @var IConfig */
 	private $config;
 
-	public function __construct(IClientService $clientService, IConfig $config) {
+	/** @var IL10N */
+	private $l10n;
+
+	public function __construct(IClientService $clientService,
+								IConfig $config,
+								IL10N $l10n) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
+		$this->l10n = $l10n;
 	}
 
 	/**
 	 * @param IUser $user
 	 * @param string $idenfier
 	 * @param string $message
+	 *
 	 * @throws SmsTransmissionException
 	 */
 	public function send(IUser $user, string $idenfier, string $message) {
@@ -77,6 +85,13 @@ class PlaySMSGateway implements IGateway {
 	 * @return string
 	 */
 	public function getShortName(): string {
-		return "SMS";
+		return 'SMS';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getProviderDescription(): string {
+		return $this->l10n->t('Authenticate via SMS');
 	}
 }
