@@ -5,7 +5,8 @@
 Here you can find the configuration instructors for the currently supported gateways.
 
 ### playSMS
-URL: https://playsms.org/
+Url: https://playsms.org/
+Stability: Experimental
 
 Use the Webservices provided by playSMS for sending SMS.
 
@@ -18,7 +19,8 @@ Admin configuration:
 ```
 
 ### Signal
-URL: https://www.signal.org/
+Url: https://www.signal.org/
+Stability: Experimental
 
 Admin configuration:
 ```bash
@@ -26,7 +28,8 @@ Admin configuration:
 ```
 
 ### Telegram
-URL: https://www.telegram.org/
+Url: https://www.telegram.org/
+Stability: Unstable
 
 Uses Telegram messages for sending a 2FA code
 
@@ -44,7 +47,8 @@ Specific entries in `oc_preferences`:
 - configvalue: your telegram id. You can get your telegram id by searching the user <b>What's my Telegram ID?</b> in Telegram and start the conversation.
 
 ### websms.de
-URL: https://websms.de/
+Url: https://websms.de/
+Stability: Stable
 
 Admin configuration:
 ```bash
