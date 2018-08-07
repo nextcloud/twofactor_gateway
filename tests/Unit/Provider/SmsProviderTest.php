@@ -24,9 +24,9 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
 
 use ChristophWurst\Nextcloud\Testing\TestCase;
 use OCA\TwoFactorGateway\Provider\SmsProvider;
+use OCA\TwoFactorGateway\Provider\State;
 use OCA\TwoFactorGateway\Service\IGateway;
-use OCA\TwoFactorGateway\Service\SetupService;
-use OCP\IConfig;
+use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\IUser;
@@ -38,17 +38,14 @@ class SmsProviderTest extends TestCase {
 	/** @var IGateway|PHPUnit_Framework_MockObject_MockObject */
 	private $smsService;
 
-	/** @var SetupService|PHPUnit_Framework_MockObject_MockObject */
-	private $setupService;
+	/** @var StateStorage|PHPUnit_Framework_MockObject_MockObject */
+	private $stateStorage;
 
 	/** @var ISession|PHPUnit_Framework_MockObject_MockObject */
 	private $session;
 
 	/** @var ISecureRandom|PHPUnit_Framework_MockObject_MockObject */
 	private $random;
-
-	/** @var IConfig|PHPUnit_Framework_MockObject_MockObject */
-	private $config;
 
 	/** @var IL10n|PHPUnit_Framework_MockObject_MockObject */
 	private $l10n;
@@ -60,22 +57,42 @@ class SmsProviderTest extends TestCase {
 		parent::setUp();
 
 		$this->smsService = $this->createMock(IGateway::class);
-		$this->setupService = $this->createMock(SetupService::class);
+		$this->stateStorage = $this->createMock(StateStorage::class);
 		$this->session = $this->createMock(ISession::class);
 		$this->random = $this->createMock(ISecureRandom::class);
-		$this->config = $this->createMock(IConfig::class);
 		$this->l10n = $this->createMock(IL10N::class);
 
-		$this->provider = new SmsProvider($this->smsService, $this->setupService, $this->session, $this->random, $this->config, $this->l10n);
+		$this->provider = new SmsProvider(
+			$this->smsService,
+			$this->stateStorage,
+			$this->session,
+			$this->random,
+			$this->l10n
+		);
+	}
+
+	public function testIsTwoFactorAuthDisabledForUser() {
+		$user = $this->createMock(IUser::class);
+		$user->method('getUID')->willReturn('user123');
+		$state = new State($user, SmsProvider::STATE_DISABLED, 'signal');
+		$this->stateStorage->expects($this->once())
+			->method('get')
+			->with($user)
+			->willReturn($state);
+
+		$enabled = $this->provider->isTwoFactorAuthEnabledForUser($user);
+
+		$this->assertFalse($enabled);
 	}
 
 	public function testIsTwoFactorAuthEnabledForUser() {
 		$user = $this->createMock(IUser::class);
 		$user->method('getUID')->willReturn('user123');
-		$this->config->expects($this->once())
-			->method('getUserValue')
-			->with('user123', 'twofactor_gateway', 'verified', 'false')
-			->willReturn('true');
+		$state = new State($user, SmsProvider::STATE_ENABLED, 'signal');
+		$this->stateStorage->expects($this->once())
+			->method('get')
+			->with($user)
+			->willReturn($state);
 
 		$enabled = $this->provider->isTwoFactorAuthEnabledForUser($user);
 

@@ -26,9 +26,8 @@ namespace OCA\TwoFactorGateway\Provider;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Service\IGateway;
-use OCA\TwoFactorGateway\Service\SetupService;
+use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\Authentication\TwoFactorAuth\IProvider;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\IUser;
@@ -44,10 +43,10 @@ class SmsProvider implements IProvider {
 	const SESSION_KEY = 'twofactor_gateway_secret';
 
 	/** @var IGateway */
-	private $smsService;
+	private $gateway;
 
-	/** @var SetupService */
-	private $setupService;
+	/** @var StateStorage */
+	private $stateStorage;
 
 	/** @var ISession */
 	private $session;
@@ -55,19 +54,18 @@ class SmsProvider implements IProvider {
 	/** @var ISecureRandom */
 	private $secureRandom;
 
-	/** @var IConfig */
-	private $config;
-
 	/** @var IL10N */
 	private $l10n;
 
-	public function __construct(IGateway $smsService, SetupService $setupService, ISession $session,
-								ISecureRandom $secureRandom, IConfig $config, IL10N $l10n) {
-		$this->smsService = $smsService;
-		$this->setupService = $setupService;
+	public function __construct(IGateway $gateway,
+								StateStorage $stateStorage,
+								ISession $session,
+								ISecureRandom $secureRandom,
+								IL10N $l10n) {
+		$this->gateway = $gateway;
+		$this->stateStorage = $stateStorage;
 		$this->session = $session;
 		$this->secureRandom = $secureRandom;
-		$this->config = $config;
 		$this->l10n = $l10n;
 	}
 
@@ -75,21 +73,25 @@ class SmsProvider implements IProvider {
 	 * Get unique identifier of this 2FA provider
 	 */
 	public function getId(): string {
-		return 'sms';
+		return 'gateway';
 	}
 
 	/**
 	 * Get the display name for selecting the 2FA provider
+	 *
+	 * @todo use gateway-specific display name
 	 */
 	public function getDisplayName(): string {
-		return $this->l10n->t('SMS verification');
+		return $this->l10n->t('Message gateway verification');
 	}
 
 	/**
 	 * Get the description for selecting the 2FA provider
+	 *
+	 * @todo use gateway-specific description
 	 */
 	public function getDescription(): string {
-		return $this->l10n->t('Send an authentication code via SMS');
+		return $this->l10n->t('Send an authentication code via a messaging Gateway');
 	}
 
 	private function getSecret(): string {
@@ -110,17 +112,20 @@ class SmsProvider implements IProvider {
 		$secret = $this->getSecret();
 
 		try {
-			$phoneNumber = $this->setupService->getChallengePhoneNumber($user);
-			$this->smsService->send($user, $phoneNumber, $this->l10n->t('%s is your Nextcloud authentication code', [$secret]));
+			$identifier = $this->stateStorage->get($user)->getIdentifier();
+			$this->gateway->send(
+				$user,
+				$identifier,
+				$this->l10n->t('%s is your Nextcloud authentication code', [
+					$secret
+				])
+			);
 		} catch (SmsTransmissionException $ex) {
 			return new Template('twofactor_gateway', 'error');
 		}
 
 		$tmpl = new Template('twofactor_gateway', 'challenge');
-		$tmpl->assign('phone', PhoneNumberMask::maskNumber($phoneNumber));
-		if ($this->config->getSystemValue('debug', false)) {
-			$tmpl->assign('secret', $secret);
-		}
+		$tmpl->assign('phone', PhoneNumberMask::maskNumber($identifier));
 		return $tmpl;
 	}
 
@@ -128,7 +133,8 @@ class SmsProvider implements IProvider {
 	 * Verify the given challenge
 	 */
 	public function verifyChallenge(IUser $user, string $challenge): bool {
-		$valid = $this->session->exists(self::SESSION_KEY) && $this->session->get(self::SESSION_KEY) === $challenge;
+		$valid = $this->session->exists(self::SESSION_KEY)
+			&& $this->session->get(self::SESSION_KEY) === $challenge;
 
 		if ($valid) {
 			$this->session->remove(self::SESSION_KEY);
@@ -141,7 +147,7 @@ class SmsProvider implements IProvider {
 	 * Decides whether 2FA is enabled for the given user
 	 */
 	public function isTwoFactorAuthEnabledForUser(IUser $user): bool {
-		return $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'verified', 'false') === 'true';
+		return $this->stateStorage->get($user)->getState() === self::STATE_ENABLED;
 	}
 
 }

@@ -25,22 +25,20 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service;
 
 use Exception;
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
 use OCA\TwoFactorGateway\Provider\SmsProvider;
 use OCA\TwoFactorGateway\Provider\State;
-use OCP\IConfig;
+use OCP\Authentication\TwoFactorAuth\IRegistry;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
 
 class SetupService {
 
-	/** @var IConfig */
-	private $config;
-
+	/** @var StateStorage */
+	private $stateStorage;
 
 	/** @var IGateway */
 	private $smsService;
@@ -48,71 +46,80 @@ class SetupService {
 	/** @var ISecureRandom */
 	private $random;
 
-	public function __construct(IConfig $config,
-								IGateway $smsService, ISecureRandom $random) {
-		$this->config = $config;
+	/** @var SmsProvider */
+	private $provider;
 
+	/** @var IRegistry */
+	private $providerRegistry;
+
+	public function __construct(StateStorage $stateStorage,
+								IGateway $smsService,
+								ISecureRandom $random,
+								SmsProvider $provider,
+								IRegistry $providerRegistry) {
+		$this->stateStorage = $stateStorage;
 		$this->smsService = $smsService;
 		$this->random = $random;
+		$this->provider = $provider;
+		$this->providerRegistry = $providerRegistry;
 	}
 
 	public function getState(IUser $user): State {
-		$isVerified = $this->config->getUserValue($user->getUID(), Application::APP_NAME, 'verified', 'false') === 'true';
-		$state = $isVerified ? SmsProvider::STATE_ENABLED : SmsProvider::STATE_DISABLED;
-		$verifiedNumber = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'phone', null);
-
-		return new State($this->smsService->getShortName(), $state, $verifiedNumber);
+		return $this->stateStorage->get($user);
 	}
 
 	/**
 	 * @throws IdentifierMissingException
 	 */
 	public function getChallengePhoneNumber(IUser $user): string {
-		$verifiedNumber = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'identifier', null);
-		if (is_null($verifiedNumber)) {
+		$state = $this->stateStorage->get($user);
+		$identifier = $state->getIdentifier();
+		if (is_null($identifier)) {
 			throw new IdentifierMissingException('verified identifier is missing');
 		}
 
-		return $verifiedNumber;
+		return $identifier;
 	}
 
 	/**
 	 * Send out confirmation message and save current identifier in user settings
 	 */
-	public function startSetup(IUser $user, string $identifier): string {
+	public function startSetup(IUser $user, string $identifier): State {
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
 		try {
 			$this->smsService->send($user, $identifier, "$verificationNumber is your Nextcloud verification code.");
 		} catch (SmsTransmissionException $ex) {
 			throw new VerificationTransmissionException('could not send verification code');
 		}
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'identifier', $identifier);
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'verification_code', $verificationNumber);
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME, 'verified', 'false');
 
-		return $identifier;
+		return $this->stateStorage->persist(
+			State::verifying($user, $this->smsService->getShortName(), $identifier, $verificationNumber)
+		);
 	}
 
-	public function finishSetup(IUser $user, string $token) {
-		$verificationNumber = $this->config->getUserValue($user->getUID(),
-			Application::APP_NAME, 'verification_code', null);
-		if (is_null($verificationNumber)) {
+	public function finishSetup(IUser $user, string $token): State {
+		$state = $this->stateStorage->get($user);
+		if (is_null($state->getVerificationCode())) {
 			throw new Exception('no verification code set');
 		}
 
-		if ($verificationNumber !== $token) {
+		if ($state->getVerificationCode() !== $token) {
 			throw new VerificationException('verification token mismatch');
 		}
 
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME,
-			'verified', 'true');
+		$this->providerRegistry->enableProviderFor($this->provider, $user);
+
+		return $this->stateStorage->persist(
+			$state->verify()
+		);
 	}
 
-	public function disable(IUser $user) {
-		$this->config->deleteUserValue($user->getUID(), Application::APP_NAME, 'verified');
-		$this->config->deleteUserValue($user->getUID(), Application::APP_NAME, 'verification_code');
+	public function disable(IUser $user): State {
+		$this->providerRegistry->disableProviderFor($this->provider, $user);
 
-		return $this->getState($user);
+		return $this->stateStorage->persist(
+			State::disabled($user)
+		);
 	}
 
 }
