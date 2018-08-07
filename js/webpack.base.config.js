@@ -1,4 +1,5 @@
 const path = require('path');
+const {VueLoaderPlugin} = require('vue-loader')
 
 module.exports = {
 	entry: './js/init.js',
@@ -20,7 +21,25 @@ module.exports = {
 				options: {
 					loaders: {}
 				}
+			},
+			{
+				test: /\.css$/,
+				use: [
+					{
+						loader: 'vue-style-loader'
+					},
+					{
+						loader: 'css-loader',
+						options: {
+							modules: true,
+							localIdentName: '[local]_[hash:base64:8]'
+						}
+					}
+				]
 			}
 		]
-	}
+	},
+	plugins: [
+		new VueLoaderPlugin()
+	]
 };
