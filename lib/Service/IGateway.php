@@ -37,6 +37,14 @@ interface IGateway {
 	public function getShortName(): string;
 
 	/**
+	 * Get a gateway-specific description for the gateway 2FA provider,
+	 * e.g. `Authenticate via SMS`.
+	 *
+	 * @return string
+	 */
+	public function getProviderDescription(): string;
+
+	/**
 	 * @param IUser $user
 	 * @param string $idenfier
 	 * @param string $message
