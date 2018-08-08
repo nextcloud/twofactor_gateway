@@ -1,8 +1,6 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "SMS verification" : "التحقق عبر نظام الرسائل القصيرة",
-    "Send an authentication code via SMS" : "أرسل رمز مصادقة عبر رسالة SMS قصيرة",
     "%s is your Nextcloud authentication code" : "%s هو رمز المصادقة الخاص بناكست كلاود",
     "Authentication code" : "رمز المصادقة",
     "An access code has been sent to %s" : "تم إرسال رمزٍ للنفاذ إلى %s",

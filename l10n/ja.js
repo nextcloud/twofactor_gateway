@@ -1,8 +1,6 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "SMS verification" : "SMS認証",
-    "Send an authentication code via SMS" : "SMS経由で認証コードを送信する",
     "%s is your Nextcloud authentication code" : "%sはあなたのNextcloud認証コードです",
     "Two-Factor Gateway" : "二要素ゲートウェイ",
     "Two-factor gateway provider (SMS, Telegram, Signal)" : "二要素ゲートウェイプロバイダ（SMS, テレグラム, シグナル）",

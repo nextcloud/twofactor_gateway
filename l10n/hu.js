@@ -1,8 +1,6 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "SMS verification" : "SMS ellenőrzés",
-    "Send an authentication code via SMS" : "Hitelesítő kód küldése SMS-ben",
     "%s is your Nextcloud authentication code" : "%s a Nextcloud hitelesítő kódod",
     "Two-Factor Gateway" : "Kétlépcsős azonosítás",
     "Two-factor gateway provider (SMS, Telegram, Signal)" : "Kétlépcsős azonosítási szolgáltató (SMS, Telegram,Signal)",

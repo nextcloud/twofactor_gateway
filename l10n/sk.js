@@ -1,8 +1,6 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "SMS verification" : "Overenie cez SMS",
-    "Send an authentication code via SMS" : "Odoslať autentifikačný kód cez SMS",
     "%s is your Nextcloud authentication code" : "%s je váš Nextcloud autentizačný kód",
     "Two-Factor Gateway" : "Dvojfaktorová brána",
     "Two-factor gateway provider (SMS, Telegram, Signal)" : "Poskytovateľ dvojfaktorovej brány (SMS, Telegram apka, Signal apka)",

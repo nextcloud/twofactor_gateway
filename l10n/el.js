@@ -1,8 +1,6 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "SMS verification" : "Επιβεβαίωση με SMS",
-    "Send an authentication code via SMS" : "Στείλτε έναν κωδικό επαλήθευσης μέσω SMS",
     "%s is your Nextcloud authentication code" : "%s είναι ο κωδικός πιστοποίησης του Nextcloud",
     "Authentication code" : "Κωδικός πιστοποίησης",
     "An access code has been sent to %s" : "Ο κωδικός πρόσβασης έχει αποσταλεί  %s",

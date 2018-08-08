@@ -1,8 +1,6 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "SMS verification" : "SMS verificatie",
-    "Send an authentication code via SMS" : "Verstuur een authenticatiecode via SMS",
     "%s is your Nextcloud authentication code" : "%s is je Nextcloud authenticatiecode",
     "Authentication code" : "Authenticatie code",
     "An access code has been sent to %s" : "Er is een toegangscode verzonden aan %s",

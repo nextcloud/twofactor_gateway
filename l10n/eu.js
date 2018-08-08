@@ -1,8 +1,6 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "SMS verification" : "SMS egiaztapena",
-    "Send an authentication code via SMS" : "SMS bidez autentikazio kodea bidali",
     "%s is your Nextcloud authentication code" : "Zure Nextcloud autentikazio kodea %s da.",
     "Authentication code" : "Autentikazio kodea",
     "An access code has been sent to %s" : "Sarbide kodea %s-ra bidali da.",

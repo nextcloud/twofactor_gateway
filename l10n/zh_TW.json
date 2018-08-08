@@ -1,6 +1,4 @@
 { "translations": {
-    "SMS verification" : "簡訊驗證",
-    "Send an authentication code via SMS" : "通過簡訊發送驗證碼",
     "%s is your Nextcloud authentication code" : "%s 是你的 Nextcloud 驗證碼",
     "Two-Factor Gateway" : "兩階段驗證中心",
     "Two-factor gateway provider (SMS, Telegram, Signal)" : "兩階段驗證中心提供(SMS簡訊，電報，訊號)",

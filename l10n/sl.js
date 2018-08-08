@@ -1,7 +1,6 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "SMS verification" : "SMS preverjanje",
     "%s is your Nextcloud authentication code" : "%s je tvoja Nextcloud prijavna šifra",
     "Authentication code" : "Prijavna šifra",
     "An access code has been sent to %s" : "Prijavna šifra je bila poslana %s"

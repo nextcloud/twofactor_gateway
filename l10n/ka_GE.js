@@ -1,8 +1,6 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "SMS verification" : "სმს ვერიფიკაცია",
-    "Send an authentication code via SMS" : "აუტენტიფიკაციის კოდის გაგზავნა სმსით",
     "%s is your Nextcloud authentication code" : "%s თქვენი Nextcloud-ის აუტენტიფიკაციის კოდია",
     "Authentication code" : "აუტენტიფიკაციის კოდი",
     "An access code has been sent to %s" : "წვდომის კოდი გაეგზავნა მომხმარებელს %s",
