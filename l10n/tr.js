@@ -1,7 +1,11 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Message gateway verification" : "İleti aracısı doğrulaması",
     "%s is your Nextcloud authentication code" : "Nextcloud doğrulama kodunuz: %s",
+    "Authenticate via SMS" : "SMS ile Kimlik Doğrulama",
+    "Authenticate via Signal" : "Signal ile Kimlik Doğrulama",
+    "Authenticate via Telegram" : "Telegram ile Kimlik Doğrulama",
     "Two-Factor Gateway" : "İki Aşamalı Kimlik Doğrulama Sağlayıcısı",
     "Two-factor gateway provider (SMS, Telegram, Signal)" : "İki aşamalı kimlik doğrulama sağlayıcısı (SMS, Telegram, Signal)",
     "A message-based two-factor-auth provider" : "SMS temelli iki aşamalı kimlik doğrulama hizmeti sağlayıcısı",
