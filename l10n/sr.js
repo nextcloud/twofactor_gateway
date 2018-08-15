@@ -1,7 +1,11 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Message gateway verification" : "Мрежни пролаз порука за верификацију",
     "%s is your Nextcloud authentication code" : "%s je kod za proveru identiteta",
+    "Authenticate via SMS" : "Провери идентитет преко SMS-а",
+    "Authenticate via Signal" : "Провери идентитет преко Сигнала",
+    "Authenticate via Telegram" : "Провери идентитет преко Телеграма",
     "Two-Factor Gateway" : "Мрежни пролаз за двофакторску проверу идентитета",
     "Two-factor gateway provider (SMS, Telegram, Signal)" : "Мрежни пролаз за провајдера двофакторске провере идентитета (SMS, Телеграм, Сигнал)",
     "A message-based two-factor-auth provider" : "Провајдер двофакторске ауторизације преко порука",
