@@ -26,6 +26,7 @@ namespace OCA\TwoFactorGateway\Provider;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\SMS;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\IL10N;
@@ -57,12 +58,12 @@ class SmsProvider implements IProvider {
 	/** @var IL10N */
 	private $l10n;
 
-	public function __construct(IGateway $gateway,
+	public function __construct(SMS $smsGateway,
 								StateStorage $stateStorage,
 								ISession $session,
 								ISecureRandom $secureRandom,
 								IL10N $l10n) {
-		$this->gateway = $gateway;
+		$this->gateway = $smsGateway;
 		$this->stateStorage = $stateStorage;
 		$this->session = $session;
 		$this->secureRandom = $secureRandom;
@@ -89,7 +90,7 @@ class SmsProvider implements IProvider {
 	 * Get the description for selecting the 2FA provider
 	 */
 	public function getDescription(): string {
-		return $this->gateway->getProviderDescription();
+		return $this->l10n->t('Authenticate via SMS');
 	}
 
 	private function getSecret(): string {

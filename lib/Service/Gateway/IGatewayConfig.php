@@ -1,7 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Pascal Clémot <pascal.clemot@free.fr>
  *
  * Nextcloud - Two-factor Gateway
  *
@@ -18,6 +20,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
  */
-include_once __DIR__ . '/../vendor/autoload.php';
 
-$app = new OCA\TwoFactorGateway\AppInfo\Application();
+namespace OCA\TwoFactorGateway\Service\Gateway;
+
+interface IGatewayConfig {
+
+	public function isComplete(): bool;
+
+}

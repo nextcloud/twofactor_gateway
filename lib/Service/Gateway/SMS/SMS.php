@@ -23,59 +23,29 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS;
 
-use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCP\Http\Client\IClient;
-use OCP\Http\Client\IClientService;
-use OCP\IConfig;
-use OCP\IL10N;
+use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\IUser;
 
-class PlaySMSGateway implements IGateway {
+class SMS implements IGateway {
 
-	/** @var IClient */
-	private $client;
-
-	/** @var IConfig */
+	/** @var SMSConfig */
 	private $config;
 
-	/** @var IL10N */
-	private $l10n;
-
-	public function __construct(IClientService $clientService,
-								IConfig $config,
-								IL10N $l10n) {
-		$this->client = $clientService->newClient();
+	public function __construct(SMSConfig $config) {
 		$this->config = $config;
-		$this->l10n = $l10n;
 	}
 
 	/**
 	 * @param IUser $user
-	 * @param string $idenfier
+	 * @param string $identifier
 	 * @param string $message
 	 *
 	 * @throws SmsTransmissionException
 	 */
-	public function send(IUser $user, string $idenfier, string $message) {
-		$url = $this->config->getAppValue('twofactor_gateway', 'playsms_url');
-		$user = $this->config->getAppValue('twofactor_gateway', 'playsms_user');
-		$password = $this->config->getAppValue('twofactor_gateway', 'playsms_password');
-		try {
-			$this->client->get($url, [
-				'query' => [
-					'app' => 'ws',
-					'u' => $user,
-					'h' => $password,
-					'op' => 'pv',
-					'to' => $idenfier,
-					'msg' => $message,
-				],
-			]);
-		} catch (Exception $ex) {
-			throw new SmsTransmissionException();
-		}
+	public function send(IUser $user, string $identifier, string $message) {
+		$this->config->getProvider()->send($identifier, $message);
 	}
 
 	/**
@@ -89,9 +59,12 @@ class PlaySMSGateway implements IGateway {
 	}
 
 	/**
-	 * @return string
+	 * Get the gateway-specific configuration
+	 *
+	 * @return SMSConfig
 	 */
-	public function getProviderDescription(): string {
-		return $this->l10n->t('Authenticate via SMS');
+	public function getConfig(): IGatewayConfig {
+		return $this->config;
 	}
+
 }

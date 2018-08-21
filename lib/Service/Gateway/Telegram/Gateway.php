@@ -27,6 +27,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\Telegram;
 use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
@@ -43,25 +44,20 @@ class Gateway implements IGateway {
 	/** @var IConfig */
 	private $config;
 
-	/** @var IL10N */
-	private $l10n;
-
 	public function __construct(IClientService $clientService,
-								IConfig $config,
-								IL10N $l10n) {
+								IConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
-		$this->l10n = $l10n;
 	}
 
 	/**
 	 * @param IUser $user
-	 * @param string $idenfier
+	 * @param string $identifier
 	 * @param string $message
 	 *
-	 * @throws \Telegram\Bot\Exceptions\TelegramSDKException
+	 * @throws SmsTransmissionException
 	 */
-	public function send(IUser $user, string $idenfier, string $message) {
+	public function send(IUser $user, string $identifier, string $message) {
 		$token = $this->config->getAppValue('twofactor_gateway', 'telegram_bot_token', null);
 		// TODO: token missing handling
 
@@ -108,9 +104,11 @@ class Gateway implements IGateway {
 	}
 
 	/**
-	 * @return string
+	 * Get the gateway-specific configuration
+	 *
+	 * @return IGatewayConfig
 	 */
-	public function getProviderDescription(): string {
-		return $this->l10n->t('Authenticate via Telegram');
+	public function getConfig(): IGatewayConfig {
+		// TODO: Implement getConfig() method.
 	}
 }

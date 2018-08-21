@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Pascal Clémot <pascal.clemot@free.fr>
  *
  * Nextcloud - Two-factor Gateway
  *
@@ -21,16 +21,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\AppInfo;
+namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCP\AppFramework\App;
+interface IProviderConfig {
 
-class Application extends App {
-
-	const APP_NAME = 'twofactor_gateway';
-
-	public function __construct(array $urlParams = []) {
-		parent::__construct(self::APP_NAME, $urlParams);
-	}
+	public function isComplete(): bool;
 
 }

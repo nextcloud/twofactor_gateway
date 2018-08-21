@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Pascal Clémot <pascal.clemot@free.fr>
  *
  * Nextcloud - Two-factor Gateway
  *
@@ -21,16 +21,15 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\AppInfo;
+namespace OCA\TwoFactorGateway\Exception;
 
-use OCP\AppFramework\App;
+use Exception;
+use Throwable;
 
-class Application extends App {
+class ConfigurationException extends Exception {
 
-	const APP_NAME = 'twofactor_gateway';
-
-	public function __construct(array $urlParams = []) {
-		parent::__construct(self::APP_NAME, $urlParams);
+	public function __construct(int $code = 0, Throwable $previous = null) {
+		parent::__construct('Invalid gateway/provider configuration set', $code, $previous);
 	}
 
 }

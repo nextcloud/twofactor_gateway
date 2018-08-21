@@ -37,13 +37,8 @@ class StateStorage {
 	/** @var IConfig */
 	private $config;
 
-	/** @var IGateway */
-	private $gateway;
-
-	public function __construct(IConfig $config,
-								IGateway $gateway) {
+	public function __construct(IConfig $config) {
 		$this->config = $config;
-		$this->gateway = $gateway;
 	}
 
 	public function get(IUser $user): State {
@@ -62,7 +57,7 @@ class StateStorage {
 		return new State(
 			$user,
 			$state,
-			$this->gateway->getShortName(),
+			'', // TODO: fix
 			$identifier,
 			$verificationCode
 		);

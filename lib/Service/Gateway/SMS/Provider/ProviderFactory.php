@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Pascal Clémot <pascal.clemot@free.fr>
  *
  * Nextcloud - Two-factor Gateway
  *
@@ -21,16 +21,29 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\AppInfo;
+namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCP\AppFramework\App;
+use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
+use OCP\AppFramework\IAppContainer;
 
-class Application extends App {
+class ProviderFactory {
 
-	const APP_NAME = 'twofactor_gateway';
+	/** @var IAppContainer */
+	private $container;
 
-	public function __construct(array $urlParams = []) {
-		parent::__construct(self::APP_NAME, $urlParams);
+	public function __construct(IAppContainer $container) {
+		$this->container = $container;
+	}
+
+	public function getProvider(string $id): IProvider {
+		switch ($id) {
+			case PlaySMS::PROVIDER_ID:
+				return $this->container->query(PlaySMS::class);
+			case WebSms::PROVIDER_ID:
+				return $this->container->query(WebSms::class);
+			default:
+				throw new InvalidSmsProviderException("Provider <$id> does not exist");
+		}
 	}
 
 }
