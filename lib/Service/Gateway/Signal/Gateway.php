@@ -68,7 +68,7 @@ class Gateway implements IGateway {
 		$client = $this->clientService->newClient();
 		$response = $client->post($endpoint, [
 			'body' => [
-				'to' => $idenfier,
+				'to' => $identifier,
 				'message' => $message,
 			],
 		]);

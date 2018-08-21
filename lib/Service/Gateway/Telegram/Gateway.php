@@ -24,14 +24,12 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\Telegram;
 
-use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
-use OCP\IL10N;
 use OCP\IUser;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
@@ -115,4 +113,5 @@ class Gateway implements IGateway {
 	public function getConfig(): IGatewayConfig {
 		return $this->gatewayConfig;
 	}
+
 }
