@@ -1,7 +1,11 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Message gateway verification" : "Ověřování brány zpráv",
     "%s is your Nextcloud authentication code" : "%s je váš ověřovací kód pro Nextcloud",
+    "Authenticate via SMS" : "Ověřit prostřednictvím SMS",
+    "Authenticate via Signal" : "Ověřit prostřednictvím Signal",
+    "Authenticate via Telegram" : "Ověřit přes Telegram",
     "A message-based two-factor-auth provider" : "Poskytovatel dvoufázového ověření založeného na zprávách",
     "Authentication code" : "Ověřovací kód",
     "An access code has been sent to %s" : "Přístupový kód byl zaslán na %s",
