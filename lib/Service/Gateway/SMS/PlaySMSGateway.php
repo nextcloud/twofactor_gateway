@@ -3,10 +3,9 @@
 declare(strict_types=1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author André Fondse <andre@hetnetwerk.org>
+ * @author Pascal Clémot <pascal.clemot@free.fr>
  *
- * Nextcloud - Two-factor Gateway for Telegram
+ * Nextcloud - Two-factor Gateway
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -22,20 +21,18 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\Service\Gateway;
+namespace OCA\TwoFactorGateway\Service\Gateway\SMS;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
-use OCA\TwoFactorGateway\Service\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IUser;
-use Telegram\Bot\Api;
-use Telegram\Bot\Objects\Update;
 
-class TelegramGateway implements IGateway {
+class PlaySMSGateway implements IGateway {
 
 	/** @var IClient */
 	private $client;
@@ -59,42 +56,26 @@ class TelegramGateway implements IGateway {
 	 * @param string $idenfier
 	 * @param string $message
 	 *
-	 * @throws \Telegram\Bot\Exceptions\TelegramSDKException
+	 * @throws SmsTransmissionException
 	 */
 	public function send(IUser $user, string $idenfier, string $message) {
-		$token = $this->config->getAppValue('twofactor_gateway', 'telegram_bot_token', null);
-		// TODO: token missing handling
-
-		$api = new Api($token);
-		$chatId = $this->getChatId($user, $api, (int)$idenfier);
-
-		$api->sendMessage([
-			'chat_id' => $chatId,
-			'text' => $message,
-		]);
-	}
-
-	private function getChatId(IUser $user, Api $api, int $userId): int {
-		$chatId = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'telegram_chat_id', null);
-
-		if (!is_null($chatId)) {
-			return (int)$chatId;
+		$url = $this->config->getAppValue('twofactor_gateway', 'playsms_url');
+		$user = $this->config->getAppValue('twofactor_gateway', 'playsms_user');
+		$password = $this->config->getAppValue('twofactor_gateway', 'playsms_password');
+		try {
+			$this->client->get($url, [
+				'query' => [
+					'app' => 'ws',
+					'u' => $user,
+					'h' => $password,
+					'op' => 'pv',
+					'to' => $idenfier,
+					'msg' => $message,
+				],
+			]);
+		} catch (Exception $ex) {
+			throw new SmsTransmissionException();
 		}
-
-		$updates = $api->getUpdates();
-		/** @var Update $update */
-		$update = current(array_filter($updates, function (Update $data) use ($userId) {
-			if ($data->message->text === "/start" && $data->message->from->id === $userId) {
-				return true;
-			}
-			return false;
-		}));
-		// TODO: handle missing `/start` message and `$update` null values
-
-		$chatId = $update->message->chat->id;
-		$this->config->setUserValue($user->getUID(), 'twofactor_gateway', 'chat_id', $chatId);
-
-		return (int)$chatId;
 	}
 
 	/**
@@ -104,13 +85,13 @@ class TelegramGateway implements IGateway {
 	 * @return string
 	 */
 	public function getShortName(): string {
-		return 'Telegram';
+		return 'SMS';
 	}
 
 	/**
 	 * @return string
 	 */
 	public function getProviderDescription(): string {
-		return $this->l10n->t('Authenticate via Telegram');
+		return $this->l10n->t('Authenticate via SMS');
 	}
 }

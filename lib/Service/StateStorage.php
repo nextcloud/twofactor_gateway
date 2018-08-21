@@ -28,6 +28,7 @@ use Exception;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Provider\SmsProvider;
 use OCA\TwoFactorGateway\Provider\State;
+use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCP\IConfig;
 use OCP\IUser;
 

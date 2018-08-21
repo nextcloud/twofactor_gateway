@@ -25,7 +25,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
 use ChristophWurst\Nextcloud\Testing\TestCase;
 use OCA\TwoFactorGateway\Provider\SmsProvider;
 use OCA\TwoFactorGateway\Provider\State;
-use OCA\TwoFactorGateway\Service\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IConfig;
 use OCP\IUser;

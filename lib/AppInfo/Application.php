@@ -24,12 +24,12 @@ declare(strict_types = 1);
 namespace OCA\TwoFactorGateway\AppInfo;
 
 use Exception;
-use OCA\TwoFactorGateway\Service\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\PlaySMSGateway;
-use OCA\TwoFactorGateway\Service\Gateway\SignalGateway;
-use OCA\TwoFactorGateway\Service\Gateway\TelegramGateway;
+use OCA\TwoFactorGateway\Service\Gateway\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\PlaySMSGateway;
+use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
+use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\TestGateway;
-use OCA\TwoFactorGateway\Service\Gateway\WebSmsGateway;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\WebSmsGateway;
 use OCP\AppFramework\App;
 use OCP\IConfig;
 

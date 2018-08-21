@@ -25,7 +25,7 @@ namespace OCA\TwoFactorGateway\Provider;
 
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
-use OCA\TwoFactorGateway\Service\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\IL10N;

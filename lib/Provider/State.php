@@ -25,7 +25,7 @@
 namespace OCA\TwoFactorGateway\Provider;
 
 use JsonSerializable;
-use OCA\TwoFactorGateway\Service\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCP\IUser;
 
 class State implements JsonSerializable {
