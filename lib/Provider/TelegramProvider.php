@@ -24,13 +24,13 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider;
 
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway;
+use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\Security\ISecureRandom;
 
-class SmsProvider extends AProvider {
+class TelegramProvider extends AProvider {
 
 	public function __construct(Gateway $smsGateway,
 								StateStorage $stateStorage,
@@ -38,7 +38,7 @@ class SmsProvider extends AProvider {
 								ISecureRandom $secureRandom,
 								IL10N $l10n) {
 		parent::__construct(
-			'sms',
+			'telegram',
 			$smsGateway,
 			$stateStorage,
 			$session,
@@ -48,17 +48,24 @@ class SmsProvider extends AProvider {
 	}
 
 	/**
+	 * Get unique identifier of this 2FA provider
+	 */
+	public function getId(): string {
+		return 'gateway_telegram';
+	}
+
+	/**
 	 * Get the display name for selecting the 2FA provider
 	 */
 	public function getDisplayName(): string {
-		return $this->l10n->t('Message gateway verification');
+		return $this->l10n->t('Telegram verification');
 	}
 
 	/**
 	 * Get the description for selecting the 2FA provider
 	 */
 	public function getDescription(): string {
-		return $this->l10n->t('Authenticate via SMS');
+		return $this->l10n->t('Authenticate via Telegram');
 	}
 
 }
