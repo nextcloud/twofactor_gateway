@@ -49,8 +49,16 @@ class WebSmsConfig implements IProviderConfig {
 		return $this->getOrFail('websms_de_user');
 	}
 
+	public function setUser(string $user) {
+		$this->config->setAppValue(Application::APP_NAME, 'websms_de_user', $user);
+	}
+
 	public function getPassword(): string {
 		return $this->getOrFail('websms_de_password');
+	}
+
+	public function setPassword(string $password) {
+		$this->config->setAppValue(Application::APP_NAME, 'websms_de_password', $password);
 	}
 
 	public function isComplete(): bool {

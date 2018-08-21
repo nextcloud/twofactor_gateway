@@ -49,12 +49,24 @@ class PlaySMSConfig implements IProviderConfig {
 		return $this->getOrFail('playsms_url');
 	}
 
+	public function setUrl(string $url) {
+		$this->config->setAppValue(Application::APP_NAME, 'playsms_url', $url);
+	}
+
 	public function getUser(): string {
 		return $this->getOrFail('playsms_user');
 	}
 
+	public function setUser(string $user) {
+		$this->config->setAppValue(Application::APP_NAME, 'playsms_user', $user);
+	}
+
 	public function getPassword(): string {
 		return $this->getOrFail('playsms_password');
+	}
+
+	public function setPassword(string $password) {
+		$this->config->setAppValue(Application::APP_NAME, 'playsms_password', $password);
 	}
 
 	public function isComplete(): bool {

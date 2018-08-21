@@ -23,6 +23,7 @@
 		<provider>OCA\TwoFactorGateway\Provider\SmsProvider</provider>
 	</two-factor-providers>
 	<commands>
+		<command>OCA\TwoFactorGateway\Command\Configure</command>
 		<command>OCA\TwoFactorGateway\Command\Status</command>
 		<command>OCA\TwoFactorGateway\Command\Test</command>
 	</commands>

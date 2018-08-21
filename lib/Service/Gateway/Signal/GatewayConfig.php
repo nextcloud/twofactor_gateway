@@ -23,13 +23,43 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\Signal;
 
+use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
+use OCP\IConfig;
 
 class GatewayConfig implements IGatewayConfig {
 
-	public function isComplete(): bool {
-		// TODO: https://github.com/nextcloud/twofactor_gateway/issues/84
-		return true;
+	/** @var IConfig */
+	private $config;
+
+	public function __construct(IConfig $config) {
+		$this->config = $config;
 	}
+
+	private function getOrFail(string $key): string {
+		$val = $this->config->getAppValue(Application::APP_NAME, $key, null);
+		if (is_null($val)) {
+			throw new ConfigurationException();
+		}
+		return $val;
+	}
+
+	public function getUrl(): string {
+		return $this->getOrFail('signal_url');
+	}
+
+	public function setUrl(string $url) {
+		$this->config->setAppValue(Application::APP_NAME, 'signal_url', $url);
+	}
+
+	public function isComplete(): bool {
+		$set = $this->config->getAppKeys(Application::APP_NAME);
+		$expected = [
+			'signal_url',
+		];
+		return count(array_intersect($set, $expected)) === count($expected);
+	}
+
 
 }

@@ -53,6 +53,10 @@ class GatewayConfig implements IGatewayConfig {
 		return $this->providerFactory->getProvider($providerName);
 	}
 
+	public function setProvider(string $provider) {
+		$this->config->setAppValue(Application::APP_NAME, 'sms_provider_name', $provider);
+	}
+
 	public function isComplete(): bool {
 		try {
 			$provider = $this->getProvider();
@@ -61,5 +65,6 @@ class GatewayConfig implements IGatewayConfig {
 			return false;
 		}
 	}
+
 
 }
