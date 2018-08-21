@@ -22,6 +22,9 @@
 	<two-factor-providers>
 		<provider>OCA\TwoFactorGateway\Provider\SmsProvider</provider>
 	</two-factor-providers>
+	<commands>
+		<command>OCA\TwoFactorGateway\Command\Status</command>
+	</commands>
 	<settings>
 		<personal>OCA\TwoFactorGateway\Settings\PersonalSettings</personal>
 	</settings>

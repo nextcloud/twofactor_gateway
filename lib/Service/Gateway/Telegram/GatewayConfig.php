@@ -3,9 +3,10 @@
 declare(strict_types=1);
 
 /**
- * @author Pascal Clémot <pascal.clemot@free.fr>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author André Fondse <andre@hetnetwerk.org>
  *
- * Nextcloud - Two-factor Gateway
+ * Nextcloud - Two-factor Gateway for Telegram
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -21,45 +22,41 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\Service\Gateway\SMS;
+
+namespace OCA\TwoFactorGateway\Service\Gateway\Telegram;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\IProvider;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ProviderFactory;
 use OCP\IConfig;
 
-class SMSConfig implements IGatewayConfig {
+class GatewayConfig implements IGatewayConfig {
 
 	/** @var IConfig */
 	private $config;
 
-	/** @var ProviderFactory */
-	private $providerFactory;
-
-	public function __construct(IConfig $config,
-								ProviderFactory $providerFactory) {
+	public function __construct(IConfig $config) {
 		$this->config = $config;
-		$this->providerFactory = $providerFactory;
 	}
 
-	public function getProvider(): IProvider {
-		$providerName = $this->config->getAppValue(Application::APP_NAME, 'sms_provider_name', null);
-		if (is_null($providerName)) {
+	private function getOrFail(string $key): string {
+		$val = $this->config->getAppValue(Application::APP_NAME, $key, null);
+		if (is_null($val)) {
 			throw new ConfigurationException();
 		}
+		return $val;
+	}
 
-		return $this->providerFactory->getProvider($providerName);
+	public function getBotToken(): string {
+		return $this->getOrFail('telegram_bot_token');
 	}
 
 	public function isComplete(): bool {
-		try {
-			$provider = $this->getProvider();
-			return $provider->getConfig($this->config)->isComplete();
-		} catch (ConfigurationException $ex) {
-			return false;
-		}
+		$set = $this->config->getAppKeys(Application::APP_NAME);
+		$expected = [
+			'telegram_bot_token',
+		];
+		return count(array_intersect($set, $expected)) === count($expected);
 	}
 
 }

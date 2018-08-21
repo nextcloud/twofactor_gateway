@@ -40,12 +40,17 @@ class Gateway implements IGateway {
 	/** @var IClientService */
 	private $clientService;
 
+	/** @var GatewayConfig */
+	private $config;
+
 	/** @var ILogger */
 	private $logger;
 
 	public function __construct(IClientService $clientService,
+								GatewayConfig $config,
 								ILogger $logger) {
 		$this->clientService = $clientService;
+		$this->config = $config;
 		$this->logger = $logger;
 	}
 
@@ -92,7 +97,7 @@ class Gateway implements IGateway {
 	 * @return IGatewayConfig
 	 */
 	public function getConfig(): IGatewayConfig {
-		// TODO: Implement getConfig() method.
+		return $this->config;
 	}
 
 }

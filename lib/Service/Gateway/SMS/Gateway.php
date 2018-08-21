@@ -28,12 +28,12 @@ use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\IUser;
 
-class SMS implements IGateway {
+class Gateway implements IGateway {
 
-	/** @var SMSConfig */
+	/** @var GatewayConfig */
 	private $config;
 
-	public function __construct(SMSConfig $config) {
+	public function __construct(GatewayConfig $config) {
 		$this->config = $config;
 	}
 
@@ -61,7 +61,7 @@ class SMS implements IGateway {
 	/**
 	 * Get the gateway-specific configuration
 	 *
-	 * @return SMSConfig
+	 * @return GatewayConfig
 	 */
 	public function getConfig(): IGatewayConfig {
 		return $this->config;

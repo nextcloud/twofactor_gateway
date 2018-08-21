@@ -41,12 +41,17 @@ class Gateway implements IGateway {
 	/** @var IClient */
 	private $client;
 
+	/** @var GatewayConfig */
+	private $gatewayConfig;
+
 	/** @var IConfig */
 	private $config;
 
 	public function __construct(IClientService $clientService,
+								GatewayConfig $gatewayConfig,
 								IConfig $config) {
 		$this->client = $clientService->newClient();
+		$this->gatewayConfig = $gatewayConfig;
 		$this->config = $config;
 	}
 
@@ -58,11 +63,10 @@ class Gateway implements IGateway {
 	 * @throws SmsTransmissionException
 	 */
 	public function send(IUser $user, string $identifier, string $message) {
-		$token = $this->config->getAppValue('twofactor_gateway', 'telegram_bot_token', null);
-		// TODO: token missing handling
+		$botToken = $this->gatewayConfig->getBotToken();
 
-		$api = new Api($token);
-		$chatId = $this->getChatId($user, $api, (int)$idenfier);
+		$api = new Api($botToken);
+		$chatId = $this->getChatId($user, $api, (int)$identifier);
 
 		$api->sendMessage([
 			'chat_id' => $chatId,
@@ -109,6 +113,6 @@ class Gateway implements IGateway {
 	 * @return IGatewayConfig
 	 */
 	public function getConfig(): IGatewayConfig {
-		// TODO: Implement getConfig() method.
+		return $this->gatewayConfig;
 	}
 }

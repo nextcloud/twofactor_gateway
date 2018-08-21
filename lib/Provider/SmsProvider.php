@@ -26,7 +26,7 @@ namespace OCA\TwoFactorGateway\Provider;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\SMS;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\IL10N;
@@ -58,7 +58,7 @@ class SmsProvider implements IProvider {
 	/** @var IL10N */
 	private $l10n;
 
-	public function __construct(SMS $smsGateway,
+	public function __construct(Gateway $smsGateway,
 								StateStorage $stateStorage,
 								ISession $session,
 								ISecureRandom $secureRandom,
