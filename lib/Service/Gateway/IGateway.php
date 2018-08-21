@@ -21,7 +21,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\Service;
+namespace OCA\TwoFactorGateway\Service\Gateway;
 
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCP\IUser;

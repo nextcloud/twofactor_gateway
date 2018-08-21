@@ -22,10 +22,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\Service\Gateway;
+namespace OCA\TwoFactorGateway\Service\Gateway\Signal;
 
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
-use OCA\TwoFactorGateway\Service\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCP\Http\Client\IClientService;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -34,7 +34,7 @@ use OCP\IUser;
 /**
  * An integration of https://gitlab.com/morph027/signal-web-gateway
  */
-class SignalGateway implements IGateway {
+class Gateway implements IGateway {
 
 	/** @var IClientService */
 	private $clientService;

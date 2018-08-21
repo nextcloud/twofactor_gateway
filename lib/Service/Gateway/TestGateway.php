@@ -24,7 +24,7 @@
 
 namespace OCA\TwoFactorGateway\Service\Gateway;
 
-use OCA\TwoFactorGateway\Service\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCP\ILogger;
 use OCP\IUser;
 

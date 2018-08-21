@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @author Pascal Clémot <pascal.clemot@free.fr>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * Nextcloud - Two-factor Gateway
  *
@@ -21,18 +21,18 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\Service\Gateway;
+namespace OCA\TwoFactorGateway\Service\Gateway\SMS;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
-use OCA\TwoFactorGateway\Service\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IUser;
 
-class PlaySMSGateway implements IGateway {
+class WebSmsGateway implements IGateway {
 
 	/** @var IClient */
 	private $client;
@@ -59,18 +59,18 @@ class PlaySMSGateway implements IGateway {
 	 * @throws SmsTransmissionException
 	 */
 	public function send(IUser $user, string $idenfier, string $message) {
-		$url = $this->config->getAppValue('twofactor_gateway', 'playsms_url');
-		$user = $this->config->getAppValue('twofactor_gateway', 'playsms_user');
-		$password = $this->config->getAppValue('twofactor_gateway', 'playsms_password');
+		$user = $this->config->getAppValue('twofactor_gateway', 'websms_de_user');
+		$password = $this->config->getAppValue('twofactor_gateway', 'websms_de_password');
 		try {
-			$this->client->get($url, [
-				'query' => [
-					'app' => 'ws',
-					'u' => $user,
-					'h' => $password,
-					'op' => 'pv',
-					'to' => $idenfier,
-					'msg' => $message,
+			$this->client->post('https://api.websms.com/rest/smsmessaging/text', [
+				'headers' => [
+					'Authorization' => 'Basic ' . base64_encode("$user:$password"),
+					'Content-Type' => 'application/json',
+				],
+				'json' => [
+					'messageContent' => $message,
+					'test' => false,
+					'recipientAddressList' => [$idenfier],
 				],
 			]);
 		} catch (Exception $ex) {
