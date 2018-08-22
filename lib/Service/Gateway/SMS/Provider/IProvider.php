@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @author Pascal Clémot <pascal.clemot@free.fr>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * Nextcloud - Two-factor Gateway
  *
