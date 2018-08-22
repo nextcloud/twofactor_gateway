@@ -62,16 +62,16 @@ class Gateway implements IGateway {
 	 * @throws SmsTransmissionException
 	 */
 	public function send(IUser $user, string $identifier, string $message) {
-		// TODO: make configurable
-		$endpoint = 'http://localhost:5000';
-
 		$client = $this->clientService->newClient();
-		$response = $client->post($endpoint, [
-			'body' => [
-				'to' => $identifier,
-				'message' => $message,
-			],
-		]);
+		$response = $client->post(
+			$this->config->getUrl(),
+			[
+				'body' => [
+					'to' => $identifier,
+					'message' => $message,
+				],
+			]
+		);
 		$body = $response->getBody();
 		$json = json_decode($body, true);
 
