@@ -31,6 +31,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\GatewayConfig as SMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
+use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfig;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -143,6 +144,15 @@ class Configure extends Command {
 	}
 
 	private function configureTelegram(InputInterface $input, OutputInterface $output) {
+		$helper = $this->getHelper('question');
+		$tokenQuestion = new Question('Please enter your Telegram bot token: ');
+		$token = $helper->ask($input, $output, $tokenQuestion);
+		$output->writeln("Using $token.");
+
+		/** @var TelegramConfig $config */
+		$config = $this->telegramGateway->getConfig();
+
+		$config->setBotToken($token);
 	}
 
 }

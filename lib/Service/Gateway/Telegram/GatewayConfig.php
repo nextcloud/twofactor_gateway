@@ -51,6 +51,10 @@ class GatewayConfig implements IGatewayConfig {
 		return $this->getOrFail('telegram_bot_token');
 	}
 
+	public function setBotToken(string $token) {
+		$this->config->setAppValue(Application::APP_NAME, 'telegram_bot_token', $token);
+	}
+
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
 		$expected = [
@@ -58,5 +62,6 @@ class GatewayConfig implements IGatewayConfig {
 		];
 		return count(array_intersect($set, $expected)) === count($expected);
 	}
+
 
 }
