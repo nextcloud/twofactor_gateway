@@ -51,29 +51,31 @@ class SettingsController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 */
-	public function getVerificationState(): JSONResponse {
+	public function getVerificationState(string $gateway): JSONResponse {
 		$user = $this->userSession->getUser();
 
 		if (is_null($user)) {
 			return new JSONResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		return new JSONResponse($this->setup->getState($user));
+		return new JSONResponse($this->setup->getState($user, $gateway));
 	}
 
 	/**
 	 * @NoAdminRequired
+	 *
 	 * @param string $identification
+	 *
 	 * @return JSONResponse
 	 */
-	public function startVerification(string $identifier): JSONResponse {
+	public function startVerification(string $gateway, string $identifier): JSONResponse {
 		$user = $this->userSession->getUser();
 
 		if (is_null($user)) {
 			return new JSONResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		$state = $this->setup->startSetup($user, $identifier);
+		$state = $this->setup->startSetup($user, $gateway, $identifier);
 
 		return new JSONResponse([
 			'phoneNumber' => $state->getIdentifier(),
@@ -83,7 +85,7 @@ class SettingsController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 */
-	public function finishVerification(string $verificationCode): JSONResponse {
+	public function finishVerification(string $gateway, string $verificationCode): JSONResponse {
 		$user = $this->userSession->getUser();
 
 		if (is_null($user)) {
@@ -91,7 +93,7 @@ class SettingsController extends Controller {
 		}
 
 		try {
-			$this->setup->finishSetup($user, $verificationCode);
+			$this->setup->finishSetup($user, $gateway, $verificationCode);
 		} catch (VerificationException $ex) {
 			return new JSONResponse(null, Http::STATUS_BAD_REQUEST);
 		}
@@ -102,14 +104,14 @@ class SettingsController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 */
-	public function revokeVerification(): JSONResponse {
+	public function revokeVerification(string $gateway): JSONResponse {
 		$user = $this->userSession->getUser();
 
 		if (is_null($user)) {
 			return new JSONResponse(null, Http::STATUS_BAD_REQUEST);
 		}
 
-		return new JSONResponse($this->setup->disable($user));
+		return new JSONResponse($this->setup->disable($user, $gateway));
 	}
 
 }

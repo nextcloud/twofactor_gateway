@@ -36,7 +36,7 @@ class State implements JsonSerializable {
 	/** @var int */
 	private $state;
 
-	/** @var string|null */
+	/** @var string */
 	private $gatewayName;
 
 	/** @var string|null */
@@ -47,7 +47,7 @@ class State implements JsonSerializable {
 
 	public function __construct(IUser $user,
 								int $state,
-								string $gatewayName = null,
+								string $gatewayName,
 								string $identifier = null,
 								string $verificationCode = null) {
 		$this->user = $user;
@@ -70,10 +70,11 @@ class State implements JsonSerializable {
 		);
 	}
 
-	public static function disabled(IUser $user): State {
+	public static function disabled(IUser $user, string $gatewayName): State {
 		return new State(
 			$user,
-			SmsProvider::STATE_DISABLED
+			SmsProvider::STATE_DISABLED,
+			$gatewayName
 		);
 	}
 
@@ -102,9 +103,9 @@ class State implements JsonSerializable {
 	}
 
 	/**
-	 * @return string|null
+	 * @return string
 	 */
-	public function getGatewayName() {
+	public function getGatewayName(): string {
 		return $this->gatewayName;
 	}
 

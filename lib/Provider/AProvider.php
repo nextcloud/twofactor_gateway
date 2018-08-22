@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider;
 
+use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\Authentication\TwoFactorAuth\IProvider;
@@ -40,7 +41,7 @@ abstract class AProvider implements IProvider {
 	const STATE_ENABLED = 3;
 
 	/** @var string */
-	protected $gatewayId;
+	protected $gatewayName;
 
 	/** @var IGateway */
 	protected $gateway;
@@ -68,7 +69,7 @@ abstract class AProvider implements IProvider {
 								ISecureRandom $secureRandom,
 								IL10N $l10n) {
 		$this->gateway = $gateway;
-		$this->gatewayId = $gatewayId;
+		$this->gatewayName = $gatewayId;
 		$this->stateStorage = $stateStorage;
 		$this->session = $session;
 		$this->secureRandom = $secureRandom;
@@ -79,7 +80,7 @@ abstract class AProvider implements IProvider {
 	 * Get unique identifier of this 2FA provider
 	 */
 	public function getId(): string {
-		return "gateway_$this->gatewayId";
+		return "gateway_$this->gatewayName";
 	}
 
 	private function getSecret(): string {
@@ -100,7 +101,7 @@ abstract class AProvider implements IProvider {
 		$secret = $this->getSecret();
 
 		try {
-			$identifier = $this->stateStorage->get($user)->getIdentifier();
+			$identifier = $this->stateStorage->get($user, $this->gatewayName)->getIdentifier();
 			$this->gateway->send(
 				$user,
 				$identifier,
@@ -135,7 +136,7 @@ abstract class AProvider implements IProvider {
 	 * Decides whether 2FA is enabled for the given user
 	 */
 	public function isTwoFactorAuthEnabledForUser(IUser $user): bool {
-		return $this->stateStorage->get($user)->getState() === self::STATE_ENABLED;
+		return $this->stateStorage->get($user, $this->gatewayName)->getState() === self::STATE_ENABLED;
 	}
 
 }

@@ -26,22 +26,22 @@ return [
 	'routes' => [
 		[
 			'name' => 'settings#getVerificationState',
-			'url' => '/settings/verification',
+			'url' => '/settings/{gateway}/verification',
 			'verb' => 'GET'
 		],
 		[
 			'name' => 'settings#startVerification',
-			'url' => '/settings/verification/start',
+			'url' => '/settings/{gateway}/verification/start',
 			'verb' => 'POST'
 		],
 		[
 			'name' => 'settings#finishVerification',
-			'url' => '/settings/verification/finish',
+			'url' => '/settings/{gateway}/verification/finish',
 			'verb' => 'POST'
 		],
 		[
 			'name' => 'settings#revokeVerification',
-			'url' => '/settings/verification',
+			'url' => '/settings/{gateway}/verification',
 			'verb' => 'DELETE'
 		],
 	]

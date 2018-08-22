@@ -29,9 +29,9 @@ use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
+use OCA\TwoFactorGateway\Service\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\SmsProvider;
 use OCA\TwoFactorGateway\Provider\State;
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCP\Authentication\TwoFactorAuth\IRegistry;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
@@ -41,8 +41,8 @@ class SetupService {
 	/** @var StateStorage */
 	private $stateStorage;
 
-	/** @var IGateway */
-	private $smsService;
+	/** @var GatewayFactory */
+	private $gatewayFactory;
 
 	/** @var ISecureRandom */
 	private $random;
@@ -54,29 +54,29 @@ class SetupService {
 	private $providerRegistry;
 
 	public function __construct(StateStorage $stateStorage,
-								IGateway $smsService,
+								GatewayFactory $gatewayFactory,
 								ISecureRandom $random,
 								SmsProvider $provider,
 								IRegistry $providerRegistry) {
 		$this->stateStorage = $stateStorage;
-		$this->smsService = $smsService;
+		$this->gatewayFactory = $gatewayFactory;
 		$this->random = $random;
 		$this->provider = $provider;
 		$this->providerRegistry = $providerRegistry;
 	}
 
-	public function getState(IUser $user): State {
-		return $this->stateStorage->get($user);
+	public function getState(IUser $user, string $gatewayName): State {
+		return $this->stateStorage->get($user, $gatewayName);
 	}
 
 	/**
 	 * @throws IdentifierMissingException
 	 */
-	public function getChallengePhoneNumber(IUser $user): string {
-		$state = $this->stateStorage->get($user);
+	public function getChallengePhoneNumber(IUser $user, string $gatewayName): string {
+		$state = $this->stateStorage->get($user, $gatewayName);
 		$identifier = $state->getIdentifier();
 		if (is_null($identifier)) {
-			throw new IdentifierMissingException('verified identifier is missing');
+			throw new IdentifierMissingException("verified identifier for $gatewayName is missing");
 		}
 
 		return $identifier;
@@ -85,21 +85,22 @@ class SetupService {
 	/**
 	 * Send out confirmation message and save current identifier in user settings
 	 */
-	public function startSetup(IUser $user, string $identifier): State {
+	public function startSetup(IUser $user, string $gatewayName, string $identifier): State {
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
+		$gateway = $this->gatewayFactory->getGateway($gatewayName);
 		try {
-			$this->smsService->send($user, $identifier, "$verificationNumber is your Nextcloud verification code.");
+			$gateway->send($user, $identifier, "$verificationNumber is your Nextcloud verification code.");
 		} catch (SmsTransmissionException $ex) {
 			throw new VerificationTransmissionException('could not send verification code');
 		}
 
 		return $this->stateStorage->persist(
-			State::verifying($user, $this->smsService->getShortName(), $identifier, $verificationNumber)
+			State::verifying($user, $gatewayName, $identifier, $verificationNumber)
 		);
 	}
 
-	public function finishSetup(IUser $user, string $token): State {
-		$state = $this->stateStorage->get($user);
+	public function finishSetup(IUser $user, string $gatewayName, string $token): State {
+		$state = $this->stateStorage->get($user, $gatewayName);
 		if (is_null($state->getVerificationCode())) {
 			throw new Exception('no verification code set');
 		}
@@ -115,11 +116,11 @@ class SetupService {
 		);
 	}
 
-	public function disable(IUser $user): State {
+	public function disable(IUser $user, string $gatewayName): State {
 		$this->providerRegistry->disableProviderFor($this->provider, $user);
 
 		return $this->stateStorage->persist(
-			State::disabled($user)
+			State::disabled($user, $gatewayName)
 		);
 	}
 

@@ -28,7 +28,6 @@ use Exception;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Provider\SmsProvider;
 use OCA\TwoFactorGateway\Provider\State;
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCP\IConfig;
 use OCP\IUser;
 
@@ -41,10 +40,29 @@ class StateStorage {
 		$this->config = $config;
 	}
 
-	public function get(IUser $user): State {
-		$isVerified = $this->config->getUserValue($user->getUID(), Application::APP_NAME, 'verified', 'false') === 'true';
-		$identifier = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'identifier', null);
-		$verificationCode = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'verification_code', null);
+	private function buildConfigKey(string $gatewayName, string $key) {
+		return "twofactor_gateway_$gatewayName" . "_$key";
+	}
+
+	private function getUserValue(IUser $user, string $gatewayName, string $key, $default = '') {
+		$gatewayKey = $this->buildConfigKey($gatewayName, $key);
+		return $this->config->getUserValue($user->getUID(), Application::APP_NAME, $gatewayKey, $default);
+	}
+
+	private function setUserValue(IUser $user, string $gatewayName, string $key, $value) {
+		$gatewayKey = $this->buildConfigKey($gatewayName, $key);
+		$this->config->setUserValue($user->getUID(), Application::APP_NAME, $gatewayKey, $value);
+	}
+
+	private function deleteUserValue(IUser $user, string $gatewayName, string $key) {
+		$gatewayKey = $this->buildConfigKey($gatewayName, $key);
+		$this->config->deleteUserValue($user->getUID(), Application::APP_NAME, $gatewayKey);
+	}
+
+	public function get(IUser $user, string $gatewayName): State {
+		$isVerified = $this->getUserValue($user, $gatewayName, 'verified', 'false') === 'true';
+		$identifier = $this->getUserValue($user, $gatewayName, 'identifier', null);
+		$verificationCode = $this->getUserValue($user, $gatewayName, 'verification_code', null);
 
 		if ($isVerified) {
 			$state = SmsProvider::STATE_ENABLED;
@@ -57,7 +75,7 @@ class StateStorage {
 		return new State(
 			$user,
 			$state,
-			'', // TODO: fix
+			$gatewayName,
 			$identifier,
 			$verificationCode
 		);
@@ -66,55 +84,55 @@ class StateStorage {
 	public function persist(State $state): State {
 		switch ($state->getState()) {
 			case SmsProvider::STATE_DISABLED:
-				$this->config->deleteUserValue(
-					$state->getUser()->getUID(),
-					Application::APP_NAME,
+				$this->deleteUserValue(
+					$state->getUser(),
+					$state->getGatewayName(),
 					'verified'
 				);
-				$this->config->deleteUserValue(
-					$state->getUser()->getUID(),
-					Application::APP_NAME,
+				$this->deleteUserValue(
+					$state->getUser(),
+					$state->getGatewayName(),
 					'verification_code'
 				);
 
 				break;
 			case SmsProvider::STATE_VERIFYING:
-				$this->config->setUserValue(
-					$state->getUser()->getUID(),
-					Application::APP_NAME,
+				$this->setUserValue(
+					$state->getUser(),
+					$state->getGatewayName(),
 					'identifier',
 					$state->getIdentifier()
 				);
-				$this->config->setUserValue(
-					$state->getUser()->getUID(),
-					Application::APP_NAME,
+				$this->setUserValue(
+					$state->getUser(),
+					$state->getGatewayName(),
 					'verification_code',
 					$state->getVerificationCode()
 				);
-				$this->config->setUserValue(
-					$state->getUser()->getUID(),
-					Application::APP_NAME,
+				$this->setUserValue(
+					$state->getUser(),
+					$state->getGatewayName(),
 					'verified',
 					'false'
 				);
 
 				break;
 			case SmsProvider::STATE_ENABLED:
-				$this->config->setUserValue(
-					$state->getUser()->getUID(),
-					Application::APP_NAME,
+				$this->setUserValue(
+					$state->getUser(),
+					$state->getGatewayName(),
 					'identifier',
 					$state->getIdentifier()
 				);
-				$this->config->setUserValue(
-					$state->getUser()->getUID(),
-					Application::APP_NAME,
+				$this->setUserValue(
+					$state->getUser(),
+					$state->getGatewayName(),
 					'verification_code',
 					$state->getVerificationCode()
 				);
-				$this->config->setUserValue(
-					$state->getUser()->getUID(),
-					Application::APP_NAME,
+				$this->setUserValue(
+					$state->getUser(),
+					$state->getGatewayName(),
 					'verified',
 					'true'
 				);

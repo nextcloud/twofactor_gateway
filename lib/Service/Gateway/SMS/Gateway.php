@@ -49,16 +49,6 @@ class Gateway implements IGateway {
 	}
 
 	/**
-	 * Get a short description of this gateway's name so that users know how
-	 * their messages are delivered, e.g. "Telegram"
-	 *
-	 * @return string
-	 */
-	public function getShortName(): string {
-		return 'SMS';
-	}
-
-	/**
 	 * Get the gateway-specific configuration
 	 *
 	 * @return GatewayConfig
