@@ -57,7 +57,9 @@ class StateStorageTest extends TestCase {
 		$user->method('getUID')->willReturn($uid);
 		$this->config->method('getUserValue')
 			->willReturnMap([
-				[$uid, 'twofactor_gateway', 'verified', 'false', 'false'],
+				[$uid, 'twofactor_gateway', 'sms_verified', 'false', 'false'],
+				[$uid, 'twofactor_gateway', 'sms_identifier', '', ''],
+				[$uid, 'twofactor_gateway', 'sms_verification_code', '', ''],
 			]);
 
 		$state = $this->storage->get($user, 'sms');
@@ -72,8 +74,8 @@ class StateStorageTest extends TestCase {
 		$this->config->method('getUserValue')
 			->willReturnMap([
 				[$uid, 'twofactor_gateway', 'signal_verified', 'false', 'false'],
-				[$uid, 'twofactor_gateway', 'signal_identifier', null, '0123456789'],
-				[$uid, 'twofactor_gateway', 'signal_verification_code', null, '123456'],
+				[$uid, 'twofactor_gateway', 'signal_identifier', '', '0123456789'],
+				[$uid, 'twofactor_gateway', 'signal_verification_code', '', '123456'],
 			]);
 
 		$state = $this->storage->get($user, 'signal');
@@ -91,7 +93,7 @@ class StateStorageTest extends TestCase {
 		$this->config->method('getUserValue')
 			->willReturnMap([
 				[$uid, 'twofactor_gateway', 'telegram_verified', 'false', 'true'],
-				[$uid, 'twofactor_gateway', 'telegram_identifier', null, '0123456789'],
+				[$uid, 'twofactor_gateway', 'telegram_identifier', '', '0123456789'],
 			]);
 
 		$state = $this->storage->get($user, 'telegram');
@@ -108,7 +110,8 @@ class StateStorageTest extends TestCase {
 		$this->config->method('getUserValue')
 			->willReturnMap([
 				[$uid, 'twofactor_gateway', 'sms_verified', 'false', 'false'],
-				[$uid, 'twofactor_gateway', 'sms_identifier', null, '0123456789'],
+				[$uid, 'twofactor_gateway', 'sms_identifier', '', '0123456789'],
+				[$uid, 'twofactor_gateway', 'sms_verification_code', '', ''],
 			]);
 
 		$state = $this->storage->get($user, 'sms');

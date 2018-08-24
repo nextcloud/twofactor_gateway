@@ -64,7 +64,7 @@ class StateStorage {
 		$identifier = $this->getUserValue($user, $gatewayName, 'identifier');
 		$verificationCode = $this->getUserValue($user, $gatewayName, 'verification_code');
 
-		if ($isVerified === 'true') {
+		if ($isVerified) {
 			$state = SmsProvider::STATE_ENABLED;
 		} else if ($identifier !== '' && $verificationCode !== '') {
 			$state = SmsProvider::STATE_VERIFYING;
