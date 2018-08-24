@@ -1,6 +1,6 @@
 {
   "name": "twofactor_gateway",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "A two-factor auth provider for Nextcloud",
   "main": "index.js",
   "directories": {
