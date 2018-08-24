@@ -1,5 +1,9 @@
 <template>
-	<div v-if="loading">
+	<div v-if="!isAvailable">
+		<L10n text="The {displayName} gateway is not configured."
+			  :options="{displayName: displayName}" />
+	</div>
+	<div v-else-if="loading">
 		<span class="icon-loading-small"></span>
 	</div>
 	<div v-else>
@@ -57,6 +61,7 @@
 			return {
 				loading: true,
 				state: 0,
+				isAvailable: true,
 				phoneNumber: '',
 				confirmationCode: '',
 				identifier: '',
@@ -66,6 +71,8 @@
 		mounted: function () {
 			getState(this.gatewayName)
 				.then(res => {
+					console.debug('loaded state for gateway ' + this.gatewayName, res);
+					this.isAvailable = res.isAvailable;
 					this.state = res.state;
 					this.phoneNumber = res.phoneNumber;
 					this.loading = false;

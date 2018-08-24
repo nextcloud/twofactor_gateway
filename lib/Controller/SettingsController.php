@@ -25,6 +25,7 @@
 namespace OCA\TwoFactorGateway\Controller;
 
 use OCA\TwoFactorGateway\Exception\VerificationException;
+use OCA\TwoFactorGateway\Service\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Service\SetupService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -40,12 +41,18 @@ class SettingsController extends Controller {
 	/** @var SetupService */
 	private $setup;
 
-	public function __construct(IRequest $request, IUserSession $userSession,
-								SetupService $setup) {
+	/** @var GatewayFactory */
+	private $gatewayFactory;
+
+	public function __construct(IRequest $request,
+								IUserSession $userSession,
+								SetupService $setup,
+								GatewayFactory $gatewayFactory) {
 		parent::__construct('twofactor_gateway', $request);
 
 		$this->userSession = $userSession;
 		$this->setup = $setup;
+		$this->gatewayFactory = $gatewayFactory;
 	}
 
 	/**
@@ -56,6 +63,11 @@ class SettingsController extends Controller {
 
 		if (is_null($user)) {
 			return new JSONResponse(null, Http::STATUS_BAD_REQUEST);
+		}
+
+		$gatewayConfig = $this->gatewayFactory->getGateway($gateway)->getConfig();
+		if (!$gatewayConfig->isComplete()) {
+			return new JSONResponse(null, Http::STATUS_SERVICE_UNAVAILABLE);
 		}
 
 		return new JSONResponse($this->setup->getState($user, $gateway));
