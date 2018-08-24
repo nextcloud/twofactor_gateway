@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
@@ -21,16 +19,44 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\AppInfo;
+namespace OCA\TwoFactorGateway\Service\Gateway;
 
-use OCP\AppFramework\App;
 
-class Application extends App {
+class State {
 
-	const APP_NAME = 'twofactor_gateway';
+	const DISABLED = 0;
+	const VERIFYING = 1;
+	const ENABLED = 2;
 
-	public function __construct(array $urlParams = []) {
-		parent::__construct(self::APP_NAME, $urlParams);
+	/** @var int */
+	private $state;
+
+	private function __construct(int $state) {
+		$this->state = $state;
+	}
+
+	public static function disabled(): State {
+		return new self(self::DISABLED);
+	}
+
+	public static function verifying(): State {
+		return new self(self::VERIFYING);
+	}
+
+	public static function enabled(): State {
+		return new self(self::ENABLED);
+	}
+
+	public function isDisabled(): bool {
+		return $this->state === self::DISABLED;
+	}
+
+	public function isVerifying(): bool {
+		return $this->state === self::DISABLED;
+	}
+
+	public function isEnabled(): bool {
+		return $this->state === self::DISABLED;
 	}
 
 }

@@ -24,13 +24,13 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider;
 
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway;
+use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\Security\ISecureRandom;
 
-class SmsProvider extends AProvider {
+class SignalProvider extends AProvider {
 
 	public function __construct(Gateway $smsGateway,
 								StateStorage $stateStorage,
@@ -38,7 +38,7 @@ class SmsProvider extends AProvider {
 								ISecureRandom $secureRandom,
 								IL10N $l10n) {
 		parent::__construct(
-			'sms',
+			'signal',
 			$smsGateway,
 			$stateStorage,
 			$session,
@@ -51,14 +51,14 @@ class SmsProvider extends AProvider {
 	 * Get the display name for selecting the 2FA provider
 	 */
 	public function getDisplayName(): string {
-		return $this->l10n->t('Message gateway verification');
+		return $this->l10n->t('Signal verification');
 	}
 
 	/**
 	 * Get the description for selecting the 2FA provider
 	 */
 	public function getDescription(): string {
-		return $this->l10n->t('Authenticate via SMS');
+		return $this->l10n->t('Authenticate via Signal');
 	}
 
 }

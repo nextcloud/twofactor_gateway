@@ -1,9 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * @copyright 2018 Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @author 201 Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -22,27 +22,14 @@
  *
  */
 
-return [
-	'routes' => [
-		[
-			'name' => 'settings#getVerificationState',
-			'url' => '/settings/{gateway}/verification',
-			'verb' => 'GET'
-		],
-		[
-			'name' => 'settings#startVerification',
-			'url' => '/settings/{gateway}/verification/start',
-			'verb' => 'POST'
-		],
-		[
-			'name' => 'settings#finishVerification',
-			'url' => '/settings/{gateway}/verification/finish',
-			'verb' => 'POST'
-		],
-		[
-			'name' => 'settings#revokeVerification',
-			'url' => '/settings/{gateway}/verification',
-			'verb' => 'DELETE'
-		],
-	]
-];
+namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
+
+use ChristophWurst\Nextcloud\Testing\TestCase;
+use OCA\TwoFactorGateway\Provider\SignalProvider;
+
+class SignalProviderTest extends TestCase {
+
+	public function test__construct() {
+
+	}
+}

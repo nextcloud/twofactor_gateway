@@ -21,16 +21,20 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\AppInfo;
+namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCP\AppFramework\App;
+use OCP\IConfig;
 
-class Application extends App {
+interface IProvider {
 
-	const APP_NAME = 'twofactor_gateway';
+	/**
+	 * @param string $identifier
+	 * @param string $message
+	 *
+	 * @throws SmsTransmissionException
+	 */
+	public function send(string $identifier, string $message);
 
-	public function __construct(array $urlParams = []) {
-		parent::__construct(self::APP_NAME, $urlParams);
-	}
+	public function getConfig(): IProviderConfig;
 
 }

@@ -26,6 +26,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\Signal;
 
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClientService;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -39,38 +40,38 @@ class Gateway implements IGateway {
 	/** @var IClientService */
 	private $clientService;
 
+	/** @var GatewayConfig */
+	private $config;
+
 	/** @var ILogger */
 	private $logger;
 
-	/** @var IL10N */
-	private $l10n;
-
 	public function __construct(IClientService $clientService,
-								ILogger $logger,
-								IL10N $l10n) {
+								GatewayConfig $config,
+								ILogger $logger) {
 		$this->clientService = $clientService;
+		$this->config = $config;
 		$this->logger = $logger;
-		$this->l10n = $l10n;
 	}
 
 	/**
 	 * @param IUser $user
-	 * @param string $idenfier
+	 * @param string $identifier
 	 * @param string $message
 	 *
 	 * @throws SmsTransmissionException
 	 */
-	public function send(IUser $user, string $idenfier, string $message) {
-		// TODO: make configurable
-		$endpoint = 'http://localhost:5000';
-
+	public function send(IUser $user, string $identifier, string $message) {
 		$client = $this->clientService->newClient();
-		$response = $client->post($endpoint, [
-			'body' => [
-				'to' => $idenfier,
-				'message' => $message,
-			],
-		]);
+		$response = $client->post(
+			$this->config->getUrl(),
+			[
+				'body' => [
+					'to' => $identifier,
+					'message' => $message,
+				],
+			]
+		);
 		$body = $response->getBody();
 		$json = json_decode($body, true);
 
@@ -81,19 +82,12 @@ class Gateway implements IGateway {
 	}
 
 	/**
-	 * Get a short description of this gateway's name so that users know how
-	 * their messages are delivered, e.g. "Telegram"
+	 * Get the gateway-specific configuration
 	 *
-	 * @return string
+	 * @return IGatewayConfig
 	 */
-	public function getShortName(): string {
-		return 'Signal';
+	public function getConfig(): IGatewayConfig {
+		return $this->config;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getProviderDescription(): string {
-		return $this->l10n->t('Authenticate via Signal');
-	}
 }

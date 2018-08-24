@@ -1,6 +1,6 @@
 import Vue from "vue"
 
-import SettingsView from "view/settings.vue"
+import SettingsView from "views/Settings.vue"
 
 Vue.config.productionTip = false
 

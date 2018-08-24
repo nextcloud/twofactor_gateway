@@ -24,13 +24,12 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\Telegram;
 
-use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
-use OCP\IL10N;
 use OCP\IUser;
 use Telegram\Bot\Api;
 use Telegram\Bot\Objects\Update;
@@ -40,33 +39,32 @@ class Gateway implements IGateway {
 	/** @var IClient */
 	private $client;
 
+	/** @var GatewayConfig */
+	private $gatewayConfig;
+
 	/** @var IConfig */
 	private $config;
 
-	/** @var IL10N */
-	private $l10n;
-
 	public function __construct(IClientService $clientService,
-								IConfig $config,
-								IL10N $l10n) {
+								GatewayConfig $gatewayConfig,
+								IConfig $config) {
 		$this->client = $clientService->newClient();
+		$this->gatewayConfig = $gatewayConfig;
 		$this->config = $config;
-		$this->l10n = $l10n;
 	}
 
 	/**
 	 * @param IUser $user
-	 * @param string $idenfier
+	 * @param string $identifier
 	 * @param string $message
 	 *
-	 * @throws \Telegram\Bot\Exceptions\TelegramSDKException
+	 * @throws SmsTransmissionException
 	 */
-	public function send(IUser $user, string $idenfier, string $message) {
-		$token = $this->config->getAppValue('twofactor_gateway', 'telegram_bot_token', null);
-		// TODO: token missing handling
+	public function send(IUser $user, string $identifier, string $message) {
+		$botToken = $this->gatewayConfig->getBotToken();
 
-		$api = new Api($token);
-		$chatId = $this->getChatId($user, $api, (int)$idenfier);
+		$api = new Api($botToken);
+		$chatId = $this->getChatId($user, $api, (int)$identifier);
 
 		$api->sendMessage([
 			'chat_id' => $chatId,
@@ -98,19 +96,12 @@ class Gateway implements IGateway {
 	}
 
 	/**
-	 * Get a short description of this gateway's name so that users know how
-	 * their messages are delivered, e.g. "Telegram"
+	 * Get the gateway-specific configuration
 	 *
-	 * @return string
+	 * @return IGatewayConfig
 	 */
-	public function getShortName(): string {
-		return 'Telegram';
+	public function getConfig(): IGatewayConfig {
+		return $this->gatewayConfig;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getProviderDescription(): string {
-		return $this->l10n->t('Authenticate via Telegram');
-	}
 }

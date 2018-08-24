@@ -57,10 +57,12 @@ class StateStorageTest extends TestCase {
 		$user->method('getUID')->willReturn($uid);
 		$this->config->method('getUserValue')
 			->willReturnMap([
-				[$uid, 'twofactor_gateway', 'verified', 'false', 'false'],
+				[$uid, 'twofactor_gateway', 'sms_verified', 'false', 'false'],
+				[$uid, 'twofactor_gateway', 'sms_identifier', '', ''],
+				[$uid, 'twofactor_gateway', 'sms_verification_code', '', ''],
 			]);
 
-		$state = $this->storage->get($user);
+		$state = $this->storage->get($user, 'sms');
 
 		$this->assertSame(SmsProvider::STATE_DISABLED, $state->getState());
 	}
@@ -71,16 +73,17 @@ class StateStorageTest extends TestCase {
 		$user->method('getUID')->willReturn($uid);
 		$this->config->method('getUserValue')
 			->willReturnMap([
-				[$uid, 'twofactor_gateway', 'verified', 'false', 'false'],
-				[$uid, 'twofactor_gateway', 'identifier', null, '0123456789'],
-				[$uid, 'twofactor_gateway', 'verification_code', null, '123456'],
+				[$uid, 'twofactor_gateway', 'signal_verified', 'false', 'false'],
+				[$uid, 'twofactor_gateway', 'signal_identifier', '', '0123456789'],
+				[$uid, 'twofactor_gateway', 'signal_verification_code', '', '123456'],
 			]);
 
-		$state = $this->storage->get($user);
+		$state = $this->storage->get($user, 'signal');
 
 		$this->assertSame(SmsProvider::STATE_VERIFYING, $state->getState());
 		$this->assertSame('0123456789', $state->getIdentifier());
 		$this->assertSame('123456', $state->getVerificationCode());
+		$this->assertSame('signal', $state->getGatewayName());
 	}
 
 	public function testGetEnabledState() {
@@ -89,14 +92,15 @@ class StateStorageTest extends TestCase {
 		$user->method('getUID')->willReturn($uid);
 		$this->config->method('getUserValue')
 			->willReturnMap([
-				[$uid, 'twofactor_gateway', 'verified', 'false', 'true'],
-				[$uid, 'twofactor_gateway', 'identifier', null, '0123456789'],
+				[$uid, 'twofactor_gateway', 'telegram_verified', 'false', 'true'],
+				[$uid, 'twofactor_gateway', 'telegram_identifier', '', '0123456789'],
 			]);
 
-		$state = $this->storage->get($user);
+		$state = $this->storage->get($user, 'telegram');
 
 		$this->assertSame(SmsProvider::STATE_ENABLED, $state->getState());
 		$this->assertSame('0123456789', $state->getIdentifier());
+		$this->assertSame('telegram', $state->getGatewayName());
 	}
 
 	public function testDisabledState() {
@@ -105,14 +109,16 @@ class StateStorageTest extends TestCase {
 		$user->method('getUID')->willReturn($uid);
 		$this->config->method('getUserValue')
 			->willReturnMap([
-				[$uid, 'twofactor_gateway', 'verified', 'false', 'false'],
-				[$uid, 'twofactor_gateway', 'identifier', null, '0123456789'],
+				[$uid, 'twofactor_gateway', 'sms_verified', 'false', 'false'],
+				[$uid, 'twofactor_gateway', 'sms_identifier', '', '0123456789'],
+				[$uid, 'twofactor_gateway', 'sms_verification_code', '', ''],
 			]);
 
-		$state = $this->storage->get($user);
+		$state = $this->storage->get($user, 'sms');
 
 		$this->assertSame(SmsProvider::STATE_DISABLED, $state->getState());
 		$this->assertSame('0123456789', $state->getIdentifier());
+		$this->assertSame('sms', $state->getGatewayName());
 	}
 
 	public function testPersistVerifyingState() {
@@ -129,9 +135,9 @@ class StateStorageTest extends TestCase {
 			->expects($this->exactly(3))
 			->method('setUserValue')
 			->withConsecutive(
-				[$uid, 'twofactor_gateway', 'identifier', '0123456789'],
-				[$uid, 'twofactor_gateway', 'verification_code', '1234'],
-				[$uid, 'twofactor_gateway', 'verified', 'false']
+				[$uid, 'twofactor_gateway', 'telegram_identifier', '0123456789'],
+				[$uid, 'twofactor_gateway', 'telegram_verification_code', '1234'],
+				[$uid, 'twofactor_gateway', 'telegram_verified', 'false']
 			);
 
 		$persisted = $this->storage->persist($state);
@@ -154,9 +160,9 @@ class StateStorageTest extends TestCase {
 			->expects($this->exactly(3))
 			->method('setUserValue')
 			->withConsecutive(
-				[$uid, 'twofactor_gateway', 'identifier', '0123456789'],
-				[$uid, 'twofactor_gateway', 'verification_code', '1234'],
-				[$uid, 'twofactor_gateway', 'verified', 'true']
+				[$uid, 'twofactor_gateway', 'telegram_identifier', '0123456789'],
+				[$uid, 'twofactor_gateway', 'telegram_verification_code', '1234'],
+				[$uid, 'twofactor_gateway', 'telegram_verified', 'true']
 			);
 
 		$persisted = $this->storage->persist($state);

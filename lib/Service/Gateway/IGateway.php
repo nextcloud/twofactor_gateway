@@ -29,27 +29,18 @@ use OCP\IUser;
 interface IGateway {
 
 	/**
-	 * Get a short description of this gateway's name so that users know how
-	 * their messages are delivered, e.g. "Telegram"
+	 * Get the gateway-specific configuration
 	 *
-	 * @return string
+	 * @return IGatewayConfig
 	 */
-	public function getShortName(): string;
-
-	/**
-	 * Get a gateway-specific description for the gateway 2FA provider,
-	 * e.g. `Authenticate via SMS`.
-	 *
-	 * @return string
-	 */
-	public function getProviderDescription(): string;
+	public function getConfig(): IGatewayConfig;
 
 	/**
 	 * @param IUser $user
-	 * @param string $idenfier
+	 * @param string $identifier
 	 * @param string $message
 	 *
 	 * @throws SmsTransmissionException
 	 */
-	public function send(IUser $user, string $idenfier, string $message);
+	public function send(IUser $user, string $identifier, string $message);
 }

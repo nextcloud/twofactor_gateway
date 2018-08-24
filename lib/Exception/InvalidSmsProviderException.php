@@ -21,16 +21,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\AppInfo;
+namespace OCA\TwoFactorGateway\Exception;
 
-use OCP\AppFramework\App;
+use Exception;
 
-class Application extends App {
-
-	const APP_NAME = 'twofactor_gateway';
-
-	public function __construct(array $urlParams = []) {
-		parent::__construct(self::APP_NAME, $urlParams);
-	}
+class InvalidSmsProviderException extends Exception {
 
 }

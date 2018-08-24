@@ -21,16 +21,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\AppInfo;
+namespace OCA\TwoFactorGateway\Service\Gateway;
 
-use OCP\AppFramework\App;
+interface IGatewayConfig {
 
-class Application extends App {
-
-	const APP_NAME = 'twofactor_gateway';
-
-	public function __construct(array $urlParams = []) {
-		parent::__construct(self::APP_NAME, $urlParams);
-	}
+	public function isComplete(): bool;
 
 }

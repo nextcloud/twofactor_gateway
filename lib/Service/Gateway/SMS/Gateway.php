@@ -21,44 +21,40 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\Provider;
+namespace OCA\TwoFactorGateway\Service\Gateway\SMS;
 
+use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway;
-use OCA\TwoFactorGateway\Service\StateStorage;
-use OCP\IL10N;
-use OCP\ISession;
-use OCP\Security\ISecureRandom;
+use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
+use OCP\IUser;
 
-class SmsProvider extends AProvider {
+class Gateway implements IGateway {
 
-	public function __construct(Gateway $smsGateway,
-								StateStorage $stateStorage,
-								ISession $session,
-								ISecureRandom $secureRandom,
-								IL10N $l10n) {
-		parent::__construct(
-			'sms',
-			$smsGateway,
-			$stateStorage,
-			$session,
-			$secureRandom,
-			$l10n
-		);
+	/** @var GatewayConfig */
+	private $config;
+
+	public function __construct(GatewayConfig $config) {
+		$this->config = $config;
 	}
 
 	/**
-	 * Get the display name for selecting the 2FA provider
+	 * @param IUser $user
+	 * @param string $identifier
+	 * @param string $message
+	 *
+	 * @throws SmsTransmissionException
 	 */
-	public function getDisplayName(): string {
-		return $this->l10n->t('Message gateway verification');
+	public function send(IUser $user, string $identifier, string $message) {
+		$this->config->getProvider()->send($identifier, $message);
 	}
 
 	/**
-	 * Get the description for selecting the 2FA provider
+	 * Get the gateway-specific configuration
+	 *
+	 * @return GatewayConfig
 	 */
-	public function getDescription(): string {
-		return $this->l10n->t('Authenticate via SMS');
+	public function getConfig(): IGatewayConfig {
+		return $this->config;
 	}
 
 }

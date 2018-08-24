@@ -21,77 +21,63 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\TwoFactorGateway\Service\Gateway\SMS;
+namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
-use OCP\IL10N;
-use OCP\IUser;
 
-class PlaySMSGateway implements IGateway {
+class PlaySMS implements IProvider {
+
+	const PROVIDER_ID = 'playsms';
 
 	/** @var IClient */
 	private $client;
 
-	/** @var IConfig */
+	/** @var PlaySMSConfig */
 	private $config;
 
-	/** @var IL10N */
-	private $l10n;
-
 	public function __construct(IClientService $clientService,
-								IConfig $config,
-								IL10N $l10n) {
+								PlaySMSConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
-		$this->l10n = $l10n;
 	}
 
 	/**
-	 * @param IUser $user
-	 * @param string $idenfier
+	 * @param string $identifier
 	 * @param string $message
 	 *
 	 * @throws SmsTransmissionException
 	 */
-	public function send(IUser $user, string $idenfier, string $message) {
-		$url = $this->config->getAppValue('twofactor_gateway', 'playsms_url');
-		$user = $this->config->getAppValue('twofactor_gateway', 'playsms_user');
-		$password = $this->config->getAppValue('twofactor_gateway', 'playsms_password');
+	public function send(string $identifier, string $message) {
+		$config = $this->getConfig();
+
 		try {
-			$this->client->get($url, [
-				'query' => [
-					'app' => 'ws',
-					'u' => $user,
-					'h' => $password,
-					'op' => 'pv',
-					'to' => $idenfier,
-					'msg' => $message,
-				],
-			]);
+			$this->client->get(
+				$config->getUrl(),
+				[
+					'query' => [
+						'app' => 'ws',
+						'u' => $config->getUser(),
+						'h' => $config->getPassword(),
+						'op' => 'pv',
+						'to' => $identifier,
+						'msg' => $message,
+					],
+				]
+			);
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
 	}
 
 	/**
-	 * Get a short description of this gateway's name so that users know how
-	 * their messages are delivered, e.g. "Telegram"
-	 *
-	 * @return string
+	 * @return PlaySMSConfig
 	 */
-	public function getShortName(): string {
-		return 'SMS';
+	public function getConfig(): IProviderConfig {
+		return $this->config;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getProviderDescription(): string {
-		return $this->l10n->t('Authenticate via SMS');
-	}
 }
