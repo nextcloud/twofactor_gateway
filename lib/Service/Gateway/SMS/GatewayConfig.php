@@ -60,7 +60,7 @@ class GatewayConfig implements IGatewayConfig {
 	public function isComplete(): bool {
 		try {
 			$provider = $this->getProvider();
-			return $provider->getConfig($this->config)->isComplete();
+			return $provider->getConfig()->isComplete();
 		} catch (ConfigurationException $ex) {
 			return false;
 		}
