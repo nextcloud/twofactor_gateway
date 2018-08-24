@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
@@ -23,21 +25,18 @@
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
 
 use ChristophWurst\Nextcloud\Testing\TestCase;
-use OCA\TwoFactorGateway\Provider\SmsProvider;
-use OCA\TwoFactorGateway\Provider\State;
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway;
+use OCA\TwoFactorGateway\Provider\TelegramProvider;
+use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IL10N;
 use OCP\ISession;
-use OCP\IUser;
 use OCP\Security\ISecureRandom;
 use PHPUnit_Framework_MockObject_MockObject;
 
-class SmsProviderTest extends TestCase {
+class TelegramProviderTest extends TestCase {
 
-	/** @var IGateway|PHPUnit_Framework_MockObject_MockObject */
-	private $smsGateway;
+	/** @var Gateway|PHPUnit_Framework_MockObject_MockObject */
+	private $gateway;
 
 	/** @var StateStorage|PHPUnit_Framework_MockObject_MockObject */
 	private $stateStorage;
@@ -48,23 +47,23 @@ class SmsProviderTest extends TestCase {
 	/** @var ISecureRandom|PHPUnit_Framework_MockObject_MockObject */
 	private $random;
 
-	/** @var IL10n|PHPUnit_Framework_MockObject_MockObject */
+	/** @var IL10N|PHPUnit_Framework_MockObject_MockObject */
 	private $l10n;
 
-	/** @var SmsProvider */
+	/** @var TelegramProvider */
 	private $provider;
 
 	protected function setUp() {
 		parent::setUp();
 
-		$this->smsGateway = $this->createMock(Gateway::class);
+		$this->gateway = $this->createMock(Gateway::class);
 		$this->stateStorage = $this->createMock(StateStorage::class);
 		$this->session = $this->createMock(ISession::class);
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->l10n = $this->createMock(IL10N::class);
 
-		$this->provider = new SmsProvider(
-			$this->smsGateway,
+		$this->provider = new TelegramProvider(
+			$this->gateway,
 			$this->stateStorage,
 			$this->session,
 			$this->random,
@@ -72,32 +71,36 @@ class SmsProviderTest extends TestCase {
 		);
 	}
 
-	public function testIsTwoFactorAuthDisabledForUser() {
-		$user = $this->createMock(IUser::class);
-		$user->method('getUID')->willReturn('user123');
-		$state = new State($user, SmsProvider::STATE_DISABLED, 'signal');
-		$this->stateStorage->expects($this->once())
-			->method('get')
-			->with($user)
-			->willReturn($state);
 
-		$enabled = $this->provider->isTwoFactorAuthEnabledForUser($user);
+	public function testGetDescription() {
+		$translated = 'trans';
+		$this->l10n->expects($this->once())
+			->method('t')
+			->with('Authenticate via Telegram')
+			->willReturn($translated);
 
-		$this->assertFalse($enabled);
+		$actual = $this->provider->getDescription();
+
+		$this->assertSame($translated, $actual);
 	}
 
-	public function testIsTwoFactorAuthEnabledForUser() {
-		$user = $this->createMock(IUser::class);
-		$user->method('getUID')->willReturn('user123');
-		$state = new State($user, SmsProvider::STATE_ENABLED, 'signal');
-		$this->stateStorage->expects($this->once())
-			->method('get')
-			->with($user)
-			->willReturn($state);
+	public function testGetId() {
+		$expected = 'gateway_telegram';
 
-		$enabled = $this->provider->isTwoFactorAuthEnabledForUser($user);
+		$actual = $this->provider->getId();
 
-		$this->assertTrue($enabled);
+		$this->assertSame($expected, $actual);
 	}
 
+	public function testGetDisplayName() {
+		$translated = 'trans';
+		$this->l10n->expects($this->once())
+			->method('t')
+			->with('Telegram verification')
+			->willReturn($translated);
+
+		$actual = $this->provider->getDisplayName();
+
+		$this->assertSame($translated, $actual);
+	}
 }

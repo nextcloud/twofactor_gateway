@@ -23,11 +23,13 @@
 namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
 use ChristophWurst\Nextcloud\Testing\TestCase;
-use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
+use Exception;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
-use OCA\TwoFactorGateway\Provider\SmsProvider;
+use OCA\TwoFactorGateway\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\Factory as ProviderFactory;
 use OCA\TwoFactorGateway\Provider\State;
+use OCA\TwoFactorGateway\Service\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\SetupService;
 use OCA\TwoFactorGateway\Service\StateStorage;
@@ -41,14 +43,14 @@ class SetupServiceTest extends TestCase {
 	/** @var StateStorage|PHPUnit_Framework_MockObject_MockObject */
 	private $stateStorage;
 
-	/** @var IGateway|PHPUnit_Framework_MockObject_MockObject */
-	private $gateway;
+	/** @var GatewayFactory|PHPUnit_Framework_MockObject_MockObject */
+	private $gatewayFactory;
 
 	/** @var ISecureRandom|PHPUnit_Framework_MockObject_MockObject */
 	private $random;
 
-	/** @var SmsProvider|PHPUnit_Framework_MockObject_MockObject */
-	private $provider;
+	/** @var ProviderFactory|PHPUnit_Framework_MockObject_MockObject */
+	private $providerFactory;
 
 	/** @var IRegistry|PHPUnit_Framework_MockObject_MockObject */
 	private $registry;
@@ -60,16 +62,16 @@ class SetupServiceTest extends TestCase {
 		parent::setUp();
 
 		$this->stateStorage = $this->createMock(StateStorage::class);
-		$this->gateway = $this->createMock(IGateway::class);
+		$this->gatewayFactory = $this->createMock(GatewayFactory::class);
+		$this->providerFactory = $this->createMock(ProviderFactory::class);
 		$this->random = $this->createMock(ISecureRandom::class);
-		$this->provider = $this->createMock(SmsProvider::class);
 		$this->registry = $this->createMock(IRegistry::class);
 
 		$this->setupService = new SetupService(
 			$this->stateStorage,
-			$this->gateway,
+			$this->gatewayFactory,
+			$this->providerFactory,
 			$this->random,
-			$this->provider,
 			$this->registry
 		);
 	}
@@ -77,20 +79,29 @@ class SetupServiceTest extends TestCase {
 	public function testStartSetupTransmissionError() {
 		$identifier = '1234';
 		$user = $this->createMock(IUser::class);
-		$this->gateway->expects($this->once())
+		$gateway = $this->createMock(IGateway::class);
+		$this->gatewayFactory->expects($this->once())
+			->method('getGateway')
+			->with('sms')
+			->willReturn($gateway);
+		$gateway->expects($this->once())
 			->method('send')
 			->willThrowException(new VerificationTransmissionException());
 		$this->expectException(VerificationTransmissionException::class);
 
-		$this->setupService->startSetup($user, $identifier);
+		$this->setupService->startSetup($user, 'sms', $identifier);
 	}
 
 	public function testStartSetup() {
 		$identifier = '0123456789';
-		$gatewayName = 'websms';
-		$this->gateway->method('getShortName')->willReturn($gatewayName);
+		$gatewayName = 'signal';
+		$gateway = $this->createMock(IGateway::class);
+		$this->gatewayFactory->expects($this->once())
+			->method('getGateway')
+			->with($gatewayName)
+			->willReturn($gateway);
 		$user = $this->createMock(IUser::class);
-		$this->gateway->expects($this->once())
+		$gateway->expects($this->once())
 			->method('send');
 		$this->random->expects($this->once())
 			->method('generate')
@@ -101,14 +112,14 @@ class SetupServiceTest extends TestCase {
 			->with($this->equalTo($state))
 			->willReturnArgument(0);
 
-		$actualState = $this->setupService->startSetup($user, $identifier);
+		$actualState = $this->setupService->startSetup($user, $gatewayName, $identifier);
 
 		$this->assertEquals($state, $actualState);
 	}
 
 	public function testFinishSetupNoVerificationNumberSet() {
 		$user = $this->createMock(IUser::class);
-		$state = State::disabled($user);
+		$state = State::disabled($user, 'sms');
 		$this->stateStorage->expects($this->once())
 			->method('get')
 			->willReturn($state);
@@ -116,15 +127,15 @@ class SetupServiceTest extends TestCase {
 			->method('persist');
 		$this->registry->expects($this->never())
 			->method('enableProviderFor');
-		$this->expectException(\Exception::class);
+		$this->expectException(Exception::class);
 
-		$this->setupService->finishSetup($user, '123456');
+		$this->setupService->finishSetup($user, 'telegram','123456');
 	}
 
 	public function testFinishSetupWithWrongVerificationNumber() {
 		$user = $this->createMock(IUser::class);
 		$user->method('getUID')->willReturn('user123');
-		$state = State::verifying($user, 'websms', '0123456789', '654321');
+		$state = State::verifying($user, 'telegram', '0123456789', '654321');
 		$this->stateStorage->expects($this->once())
 			->method('get')
 			->willReturn($state);
@@ -134,20 +145,25 @@ class SetupServiceTest extends TestCase {
 			->method('enableProviderFor');
 		$this->expectException(VerificationException::class);
 
-		$this->setupService->finishSetup($user, '123456');
+		$this->setupService->finishSetup($user, 'telegram', '123456');
 	}
 
 	public function testFinishSetup() {
 		$user = $this->createMock(IUser::class);
 		$user->method('getUID')->willReturn('user123');
-		$state = State::verifying($user, 'websms', '0123456789', '123456');
+		$state = State::verifying($user, 'signal', '0123456789', '123456');
 		$this->stateStorage->expects($this->once())
 			->method('get')
 			->willReturn($state);
+		$provider = $this->createMock(AProvider::class);
+		$this->providerFactory->expects($this->once())
+			->method('getProvider')
+			->with('signal')
+			->willReturn($provider);
 		$this->registry->expects($this->once())
 			->method('enableProviderFor')
 			->with(
-				$this->provider,
+				$provider,
 				$user
 			);
 		$verfied = $state->verify();
@@ -156,7 +172,7 @@ class SetupServiceTest extends TestCase {
 			->with($this->equalTo($verfied))
 			->willReturnArgument(0);
 
-		$actualState = $this->setupService->finishSetup($user, '123456');
+		$actualState = $this->setupService->finishSetup($user, 'signal', '123456');
 
 		$this->assertEquals($verfied, $actualState);
 	}

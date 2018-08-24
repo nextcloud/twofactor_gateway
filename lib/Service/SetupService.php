@@ -29,8 +29,8 @@ use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
+use OCA\TwoFactorGateway\Provider\Factory;
 use OCA\TwoFactorGateway\Service\Gateway\Factory as GatewayFactory;
-use OCA\TwoFactorGateway\Provider\SmsProvider;
 use OCA\TwoFactorGateway\Provider\State;
 use OCP\Authentication\TwoFactorAuth\IRegistry;
 use OCP\IUser;
@@ -44,24 +44,24 @@ class SetupService {
 	/** @var GatewayFactory */
 	private $gatewayFactory;
 
+	/** @var Factory */
+	private $providerFactory;
+
 	/** @var ISecureRandom */
 	private $random;
-
-	/** @var SmsProvider */
-	private $provider;
 
 	/** @var IRegistry */
 	private $providerRegistry;
 
 	public function __construct(StateStorage $stateStorage,
 								GatewayFactory $gatewayFactory,
+								Factory $providerFactory,
 								ISecureRandom $random,
-								SmsProvider $provider,
 								IRegistry $providerRegistry) {
 		$this->stateStorage = $stateStorage;
 		$this->gatewayFactory = $gatewayFactory;
+		$this->providerFactory = $providerFactory;
 		$this->random = $random;
-		$this->provider = $provider;
 		$this->providerRegistry = $providerRegistry;
 	}
 
@@ -109,7 +109,8 @@ class SetupService {
 			throw new VerificationException('verification token mismatch');
 		}
 
-		$this->providerRegistry->enableProviderFor($this->provider, $user);
+		$provider = $this->providerFactory->getProvider($gatewayName);
+		$this->providerRegistry->enableProviderFor($provider, $user);
 
 		return $this->stateStorage->persist(
 			$state->verify()
@@ -117,7 +118,10 @@ class SetupService {
 	}
 
 	public function disable(IUser $user, string $gatewayName): State {
-		$this->providerRegistry->disableProviderFor($this->provider, $user);
+		$provider = $this->providerFactory->getProvider($gatewayName);
+		$this->providerRegistry->enableProviderFor($provider, $user);
+		$this->providerRegistry->disableProviderFor($provider, $user);
+
 
 		return $this->stateStorage->persist(
 			State::disabled($user, $gatewayName)

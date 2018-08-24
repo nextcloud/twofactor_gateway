@@ -41,7 +41,7 @@ class StateStorage {
 	}
 
 	private function buildConfigKey(string $gatewayName, string $key) {
-		return "twofactor_gateway_$gatewayName" . "_$key";
+		return "$gatewayName" . "_$key";
 	}
 
 	private function getUserValue(IUser $user, string $gatewayName, string $key, $default = '') {
