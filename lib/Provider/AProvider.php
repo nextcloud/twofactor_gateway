@@ -59,7 +59,7 @@ abstract class AProvider implements IProvider {
 	protected $l10n;
 
 	private function getSessionKey() {
-		return "twofactor_gateway_$this->gatewayId_secret";
+		return "twofactor_gateway_$this->gatewayId" . "_secret";
 	}
 
 	public function __construct(string $gatewayId,
