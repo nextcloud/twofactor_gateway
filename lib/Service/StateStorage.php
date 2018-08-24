@@ -61,12 +61,12 @@ class StateStorage {
 
 	public function get(IUser $user, string $gatewayName): State {
 		$isVerified = $this->getUserValue($user, $gatewayName, 'verified', 'false') === 'true';
-		$identifier = $this->getUserValue($user, $gatewayName, 'identifier', null);
-		$verificationCode = $this->getUserValue($user, $gatewayName, 'verification_code', null);
+		$identifier = $this->getUserValue($user, $gatewayName, 'identifier');
+		$verificationCode = $this->getUserValue($user, $gatewayName, 'verification_code');
 
-		if ($isVerified) {
+		if ($isVerified === 'true') {
 			$state = SmsProvider::STATE_ENABLED;
-		} else if (!is_null($identifier) && !is_null($verificationCode)) {
+		} else if ($identifier !== '' && $verificationCode !== '') {
 			$state = SmsProvider::STATE_VERIFYING;
 		} else {
 			$state = SmsProvider::STATE_DISABLED;

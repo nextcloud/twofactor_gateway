@@ -45,8 +45,8 @@ class GatewayConfig implements IGatewayConfig {
 	}
 
 	public function getProvider(): IProvider {
-		$providerName = $this->config->getAppValue(Application::APP_NAME, 'sms_provider_name', null);
-		if (is_null($providerName)) {
+		$providerName = $this->config->getAppValue(Application::APP_NAME, 'sms_provider_name');
+		if ($providerName === '') {
 			throw new ConfigurationException();
 		}
 

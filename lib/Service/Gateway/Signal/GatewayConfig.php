@@ -38,8 +38,8 @@ class GatewayConfig implements IGatewayConfig {
 	}
 
 	private function getOrFail(string $key): string {
-		$val = $this->config->getAppValue(Application::APP_NAME, $key, null);
-		if (is_null($val)) {
+		$val = $this->config->getAppValue(Application::APP_NAME, $key);
+		if ($val === '') {
 			throw new ConfigurationException();
 		}
 		return $val;
