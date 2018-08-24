@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider;
 
+use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
