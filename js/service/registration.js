@@ -7,7 +7,16 @@ export function getState (gateway) {
 
 	return nc_fetch_json(url).then(function (resp) {
 		if (resp.ok) {
-			return resp.json()
+			return resp.json().then(json => {
+				json.isAvailable = true
+				return json
+			})
+		}
+		if (resp.status === 503) {
+			console.info(gateway + ' gateway is not available')
+			return {
+				isAvailable: false
+			}
 		}
 		throw resp
 	})
