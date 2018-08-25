@@ -1,10 +1,10 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "Message gateway verification" : "אימות דרך שער הודעות",
     "%s is your Nextcloud authentication code" : "%s הוא קוד האימות הבא שלך ב־Nextcloud",
-    "Authenticate via SMS" : "אימות דרך מסרון",
     "Authenticate via Signal" : "אימות דרך Signal",
+    "Message gateway verification" : "אימות דרך שער הודעות",
+    "Authenticate via SMS" : "אימות דרך מסרון",
     "Authenticate via Telegram" : "אימות דרך טלגרם",
     "Two-Factor Gateway" : "שער גישה דו־שלבי",
     "Two-factor gateway provider (SMS, Telegram, Signal)" : "ספק שער גישה דו־שלבי (מסרונים, טלגרם, Signal)",

@@ -1,8 +1,8 @@
 { "translations": {
-    "Message gateway verification" : "Шлюз для отправки сообщений подтверждения",
     "%s is your Nextcloud authentication code" : "Код подтверждения Nextcloud: «%s»",
-    "Authenticate via SMS" : "Аутентифицировать с помощью СМС",
     "Authenticate via Signal" : "Аутентифицировать с помощью Signal",
+    "Message gateway verification" : "Шлюз для отправки сообщений подтверждения",
+    "Authenticate via SMS" : "Аутентифицировать с помощью СМС",
     "Authenticate via Telegram" : "Аутентифицировать с помощью Telegram",
     "Two-Factor Gateway" : "Шлюз для передачи второго фактора",
     "Two-factor gateway provider (SMS, Telegram, Signal)" : "Канал для передачи кода (СМС, Telegram, Signal)",

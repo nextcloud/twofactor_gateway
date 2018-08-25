@@ -1,10 +1,10 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "Message gateway verification" : "Verificação do gateway de mensagens",
     "%s is your Nextcloud authentication code" : "%s é seu código de autenticação do Nextcloud",
-    "Authenticate via SMS" : "Authenticar via SMS",
     "Authenticate via Signal" : "Autenticar via Sinal",
+    "Message gateway verification" : "Verificação do gateway de mensagens",
+    "Authenticate via SMS" : "Authenticar via SMS",
     "Authenticate via Telegram" : "Authenticar via Telegram",
     "Two-Factor Gateway" : "Gateway de dois fatores",
     "Two-factor gateway provider (SMS, Telegram, Signal)" : "Provedor do gateway de dois fatores (SMS, Telegram, Signal)",
