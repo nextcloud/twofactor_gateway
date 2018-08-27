@@ -19,7 +19,14 @@ occ twofactorauth:gateway:configure sms
 Url: https://www.signal.org/
 Stability: Experimental
 
-Interactive admin configuration:
+This gateways allows you to send messages via the Signal protocol. The Signal gateway can be
+run as Docker container. The image for gateway including setup instructions can be found on
+[GitLab](https://gitlab.com/morph027/signal-web-gateway).
+
+*Note: Signal users are bound to phone numbers. If you already use Signal on your phone, you need a separate number for the gateway's registration.*
+
+Once you've set up the gateway, you can configure this app interactively:
+
 ```bash
 occ twofactorauth:gateway:configure signal
 ```
