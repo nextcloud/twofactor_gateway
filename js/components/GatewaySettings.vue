@@ -1,44 +1,50 @@
 <template>
-	<div v-if="!isAvailable">
-		<L10n text="The {displayName} gateway is not configured."
-			  :options="{displayName: displayName}" />
-	</div>
-	<div v-else-if="loading">
-		<span class="icon-loading-small"></span>
-	</div>
-	<div v-else>
-		<p v-if="state === 0">
-			<L10n text="You are not using {displayName} for two-factor authentication at the moment."
+	<div>
+		<h3>{{ displayName }}</h3>
+		<div v-if="!isAvailable">
+			<slot name="instructions" />
+			<L10n text="The {displayName} gateway is not configured."
 				  :options="{displayName: displayName}" />
-			<button @click="enable">
-				<L10n text="Enable"></L10n>
-			</button>
-		</p>
-		<p v-if="state === 1">
-			<strong v-if="verificationError === true">
-				<L10n text="Could not verify your code. Please try again."></L10n>
-			</strong>
-			<L10n text="Enter your identification (e.g. phone number to start the verification):"></L10n>
-			<input v-model="identifier">
-			<button @click="verify">
-				<L10n text="Verify"></L10n>
-			</button>
-		</p>
-		<p v-if="state === 2">
-			<L10n text="A confirmation code has been sent to {phone} via SMS. Please insert the code here:"
-				  :options="{phone: phoneNumber}"></L10n>
-			<input v-model="confirmationCode">
-			<button @click="confirm">
-				<L10n text="Confirm"></L10n>
-			</button>
-		</p>
-		<p v-if="state === 3">
-			<L10n text="Your account was successfully configured to receive messages via {displayName}."
-				  :options="{displayName: displayName}" />
-			<button @click="disable">
-				<l10n text="Disable"></l10n>
-			</button>
-		</p>
+		</div>
+		<div v-else-if="loading">
+			<span class="icon-loading-small"></span>
+		</div>
+		<div v-else>
+			<p v-if="state === 0">
+				<slot name="instructions" />
+				<L10n text="You are not using {displayName} for two-factor authentication at the moment."
+					  :options="{displayName: displayName}" />
+				<button @click="enable">
+					<L10n text="Enable"></L10n>
+				</button>
+			</p>
+			<p v-if="state === 1">
+				<slot name="instructions" />
+				<strong v-if="verificationError === true">
+					<L10n text="Could not verify your code. Please try again."></L10n>
+				</strong>
+				<L10n text="Enter your identification (e.g. phone number to start the verification):"></L10n>
+				<input v-model="identifier">
+				<button @click="verify">
+					<L10n text="Verify"></L10n>
+				</button>
+			</p>
+			<p v-if="state === 2">
+				<L10n text="A confirmation code has been sent to {phone} via SMS. Please insert the code here:"
+					  :options="{phone: phoneNumber}"></L10n>
+				<input v-model="confirmationCode">
+				<button @click="confirm">
+					<L10n text="Confirm"></L10n>
+				</button>
+			</p>
+			<p v-if="state === 3">
+				<L10n text="Your account was successfully configured to receive messages via {displayName}."
+					  :options="{displayName: displayName}" />
+				<button @click="disable">
+					<l10n text="Disable"></l10n>
+				</button>
+			</p>
+		</div>
 	</div>
 </template>
 
@@ -133,3 +139,9 @@
 		}
 	}
 </script>
+
+<style>
+	.icon-loading-small {
+		padding-left: 15px;
+	}
+</style>
