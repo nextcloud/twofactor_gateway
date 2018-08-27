@@ -28,9 +28,9 @@ occ twofactorauth:gateway:configure signal
 Url: https://www.telegram.org/
 Stability: Unstable
 
-Uses Telegram messages for sending a 2FA code
+In order to send messages via the Telegram network, you have to register a [Telegram Bot](https://core.telegram.org/bots). This bot is used to send authentication codes to users after they have initiated a conversation and entered their Telegram ID.
 
-Interactive admin configuration:
+Once you've got your bot's token, follow the interactive configuration command:
 ```bash
 occ twofactorauth:gateway:configure telegram
 ```
