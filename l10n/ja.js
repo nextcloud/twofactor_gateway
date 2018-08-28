@@ -3,8 +3,6 @@ OC.L10N.register(
     {
     "%s is your Nextcloud authentication code" : "%sはあなたのNextcloud認証コードです",
     "Two-Factor Gateway" : "二要素ゲートウェイ",
-    "Two-factor gateway provider (SMS, Telegram, Signal)" : "二要素ゲートウェイプロバイダ（SMS, テレグラム, シグナル）",
-    "A message-based two-factor-auth provider" : "メッセージベースの二要素認証プロバイダ",
     "Authentication code" : "認証コード",
     "An access code has been sent to %s" : "アクセスコードが %s に送信されました",
     "Error while sending the Message. Please try again later or contact the administrator." : "メッセージの送信中にエラーが発生しました。後で再試行するか、管理者に連絡してください。",

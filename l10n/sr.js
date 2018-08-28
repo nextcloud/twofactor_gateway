@@ -7,8 +7,6 @@ OC.L10N.register(
     "Authenticate via SMS" : "Провери идентитет преко SMS-а",
     "Authenticate via Telegram" : "Провери идентитет преко Телеграма",
     "Two-Factor Gateway" : "Мрежни пролаз за двофакторску проверу идентитета",
-    "Two-factor gateway provider (SMS, Telegram, Signal)" : "Мрежни пролаз за провајдера двофакторске провере идентитета (SMS, Телеграм, Сигнал)",
-    "A message-based two-factor-auth provider" : "Провајдер двофакторске ауторизације преко порука",
     "Authentication code" : "Код за проверу идентитета",
     "An access code has been sent to %s" : "Приступни код је послат на %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Грешка приликом слања поруке. Покушајте касније или контактирајте администратора.",

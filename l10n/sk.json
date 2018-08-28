@@ -1,8 +1,6 @@
 { "translations": {
     "%s is your Nextcloud authentication code" : "%s je váš Nextcloud autentizačný kód",
     "Two-Factor Gateway" : "Dvojfaktorová brána",
-    "Two-factor gateway provider (SMS, Telegram, Signal)" : "Poskytovateľ dvojfaktorovej brány (SMS, Telegram apka, Signal apka)",
-    "A message-based two-factor-auth provider" : "Poskytovateľ dvojfaktorového overovania založeného na správach",
     "Authentication code" : "Overovací kód",
     "An access code has been sent to %s" : "Prístupový kód bol odoslaný na %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Chyba počas odosielania správy. Skúste to znovu alebo kontaktujte správcu.",

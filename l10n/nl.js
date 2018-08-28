@@ -7,8 +7,6 @@ OC.L10N.register(
     "Authenticate via SMS" : "Authenticeren via SMS",
     "Authenticate via Telegram" : "Authenticeren via Telegram",
     "Two-Factor Gateway" : "Two-Factor Gateway",
-    "Two-factor gateway provider (SMS, Telegram, Signal)" : "Two-factor gateway provider (SMS, Telegram, Signal)",
-    "A message-based two-factor-auth provider" : "Een berichtgebaseerde two-factor-auth provider",
     "Authentication code" : "Authenticatie code",
     "An access code has been sent to %s" : "Er is een toegangscode verzonden aan %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Fout bij versturen bericht. Probeer het later opnieuw of neem contact op met je beheerder.",

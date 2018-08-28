@@ -6,7 +6,6 @@ OC.L10N.register(
     "Message gateway verification" : "Ověřování brány zpráv",
     "Authenticate via SMS" : "Ověřit prostřednictvím SMS",
     "Authenticate via Telegram" : "Ověřit přes Telegram",
-    "A message-based two-factor-auth provider" : "Poskytovatel dvoufázového ověření založeného na zprávách",
     "Authentication code" : "Ověřovací kód",
     "An access code has been sent to %s" : "Přístupový kód byl zaslán na %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Chyba při odesílání zprávy. Zkuste to později, nebo kontaktujte administrátora.",

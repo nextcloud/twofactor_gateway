@@ -3,8 +3,6 @@ OC.L10N.register(
     {
     "%s is your Nextcloud authentication code" : "%s 是你的 Nextcloud 驗證碼",
     "Two-Factor Gateway" : "兩階段驗證中心",
-    "Two-factor gateway provider (SMS, Telegram, Signal)" : "兩階段驗證中心提供(SMS簡訊，電報，訊號)",
-    "A message-based two-factor-auth provider" : "來自兩階段驗證提供者的訊息",
     "Authentication code" : "驗證碼",
     "An access code has been sent to %s" : "一個驗証碼已經發送到 %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "發送簡訊出錯.請重試或聯絡系統管理員.",

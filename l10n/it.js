@@ -9,8 +9,6 @@ OC.L10N.register(
     "Telegram verification" : "Verifica di Telegram",
     "Authenticate via Telegram" : "Autentica tramite Telegram",
     "Two-Factor Gateway" : "Gateway a due fattori",
-    "Two-factor gateway provider (SMS, Telegram, Signal)" : "Fornitore gateway a due fattori (SMS, Telegram, Signal)",
-    "A message-based two-factor-auth provider" : "Un fornitore di autenticazione a due fattori basato su messaggio",
     "Authentication code" : "Codice di autenticazione",
     "An access code has been sent to %s" : "Un codice di accesso è stato inviato a %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Errore durante l'invio del messaggio. Riprova più tardi o contatta l'amministratore.",

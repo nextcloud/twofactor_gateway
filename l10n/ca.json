@@ -1,8 +1,6 @@
 { "translations": {
     "%s is your Nextcloud authentication code" : "%s es el teu codi d'autenticació de Nextcloud",
     "Two-Factor Gateway" : "Passarel·la de dos factors",
-    "Two-factor gateway provider (SMS, Telegram, Signal)" : "Proveïdor de la passarel·la de dos factors (SMS, Telegram, Signal)",
-    "A message-based two-factor-auth provider" : "Un proveïdor d'autenticació de dos factors basat en missatges",
     "Authentication code" : "Codi d'autenticació",
     "An access code has been sent to %s" : "S'ha enviat un codi d'accés a %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "S'ha produït un error en enviar el missatge. Torneu a provar més tard o poseu-vos en contacte amb l'administrador.",

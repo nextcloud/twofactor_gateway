@@ -5,8 +5,6 @@
     "Authenticate via SMS" : "Аутентифицировать с помощью СМС",
     "Authenticate via Telegram" : "Аутентифицировать с помощью Telegram",
     "Two-Factor Gateway" : "Шлюз для передачи второго фактора",
-    "Two-factor gateway provider (SMS, Telegram, Signal)" : "Канал для передачи кода (СМС, Telegram, Signal)",
-    "A message-based two-factor-auth provider" : "Двухфакторная авторизация на основе сообщений",
     "Authentication code" : "Код подтверждения",
     "An access code has been sent to %s" : "Код доступа был отправлен %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Ошибка при отправке сообщения. Пожалуйста попробуйте позже или свяжитесь с администратором.",

@@ -5,8 +5,6 @@
     "Authenticate via SMS" : "Autenticar a través de SMS",
     "Authenticate via Telegram" : "Autenticar a través de Telegram",
     "Two-Factor Gateway" : "Acceso a la verificación en dos pasos",
-    "Two-factor gateway provider (SMS, Telegram, Signal)" : "Gateway del proveedor de verificación en dos pasos (SMS, Telegram, Signal)",
-    "A message-based two-factor-auth provider" : "Un proveedor de verificación en dos pasos basado en mensajes de texto",
     "Authentication code" : "Código de autentificación",
     "An access code has been sent to %s" : "El código acceso ha sido enviado a %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Error al enviar el mensaje. Por favor, inténtelo de nuevo más tarde o póngase en contacto con el administrador.",

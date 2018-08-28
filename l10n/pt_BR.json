@@ -7,8 +7,6 @@
     "Telegram verification" : "Verificação de Telegram",
     "Authenticate via Telegram" : "Authenticar via Telegram",
     "Two-Factor Gateway" : "Gateway de dois fatores",
-    "Two-factor gateway provider (SMS, Telegram, Signal)" : "Provedor do gateway de dois fatores (SMS, Telegram, Signal)",
-    "A message-based two-factor-auth provider" : "Um provedor de autenticação de dois fatores baseado em mensagem",
     "Authentication code" : "Código de autenticação",
     "An access code has been sent to %s" : "Um código de acesso foi enviado para %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Erro ao enviar a mensagem. Tente novamente mais tarde ou entre em contato com o administrador.",

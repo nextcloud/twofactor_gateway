@@ -5,8 +5,6 @@
     "Authenticate via SMS" : "אימות דרך מסרון",
     "Authenticate via Telegram" : "אימות דרך טלגרם",
     "Two-Factor Gateway" : "שער גישה דו־שלבי",
-    "Two-factor gateway provider (SMS, Telegram, Signal)" : "ספק שער גישה דו־שלבי (מסרונים, טלגרם, Signal)",
-    "A message-based two-factor-auth provider" : "ספק אימות דו־שלבי מבוסס הודעות",
     "Authentication code" : "קוד אימות",
     "An access code has been sent to %s" : "קוד גישה נשלח אל %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "אירעה שגיאה בעת שליחת ההודעה. נא לנסות שוב מאוחר יותר או ליצור קשר עם ההנהלה.",

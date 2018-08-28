@@ -7,8 +7,6 @@
     "Telegram verification" : "Telegram doğrulaması",
     "Authenticate via Telegram" : "Telegram ile Kimlik Doğrulama",
     "Two-Factor Gateway" : "İki Aşamalı Kimlik Doğrulama Sağlayıcısı",
-    "Two-factor gateway provider (SMS, Telegram, Signal)" : "İki aşamalı kimlik doğrulama sağlayıcısı (SMS, Telegram, Signal)",
-    "A message-based two-factor-auth provider" : "SMS temelli iki aşamalı kimlik doğrulama hizmeti sağlayıcısı",
     "Authentication code" : "Doğrulama kodu",
     "An access code has been sent to %s" : "%s için erişim kodu gönderildi",
     "Error while sending the Message. Please try again later or contact the administrator." : "İleti gönderilirken bir sorun çıktı. Lütfen daha sonra yeniden deneyin ya da yönetici ile görüşün.",
