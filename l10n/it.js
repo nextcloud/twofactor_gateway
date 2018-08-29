@@ -9,6 +9,8 @@ OC.L10N.register(
     "Telegram verification" : "Verifica di Telegram",
     "Authenticate via Telegram" : "Autentica tramite Telegram",
     "Two-Factor Gateway" : "Gateway a due fattori",
+    "Two-factor gateway providers (SMS, Telegram, Signal)" : "Fornitori gateway a due fattori (SMS, Telegram, Signal)",
+    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Un insieme di fornitori a due fattori di Nextcloud per inviare i codici di autenticazione tramite Signal, SMS e Telegram.",
     "Authentication code" : "Codice di autenticazione",
     "An access code has been sent to %s" : "Un codice di accesso è stato inviato a %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Errore durante l'invio del messaggio. Riprova più tardi o contatta l'amministratore.",
