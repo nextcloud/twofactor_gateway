@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.9.0 – 2018-08-29
+## 0.9.0 – 2018-08-30
 ### Added
 - Setup instructions for users directly in the settings UI
 - Updated admin documentation
