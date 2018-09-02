@@ -3,6 +3,7 @@
     "Authenticate via Signal" : "Ověřit prostřednictvím Signal",
     "Message gateway verification" : "Ověřování brány zpráv",
     "Authenticate via SMS" : "Ověřit prostřednictvím SMS",
+    "Telegram verification" : "Telegram ověřování",
     "Authenticate via Telegram" : "Ověřit přes Telegram",
     "Authentication code" : "Ověřovací kód",
     "An access code has been sent to %s" : "Přístupový kód byl zaslán na %s",
