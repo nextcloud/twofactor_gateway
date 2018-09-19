@@ -55,6 +55,7 @@ script:
   - ./vendor/bin/phpunit --fail-on-warning -c tests/phpunit.xml
   - ./vendor/bin/phpunit --fail-on-warning -c tests/phpunit.integration.xml
 
+after_script:
   # Upload coverage report to Scrutinizer
   - if [[ "$PHP_COVERAGE" = "TRUE" ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
   - if [[ "$PHP_COVERAGE" = "TRUE" ]]; then php ocular.phar code-coverage:upload --format=php-clover tests/clover.xml; fi
