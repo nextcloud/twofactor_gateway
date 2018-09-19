@@ -51,8 +51,8 @@ script:
   - php ../../occ app:check-code twofactor_gateway
 
   # Run PHP tests
-  - ./vendor/phpunit/phpunit/phpunit --fail-on-warning -c tests/phpunit.xml
-  - ./vendor/phpunit/phpunit/phpunit --fail-on-warning -c tests/phpunit.integration.xml
+  - ./vendor/bin/phpunit --fail-on-warning -c tests/phpunit.xml
+  - ./vendor/bin/phpunit --fail-on-warning -c tests/phpunit.integration.xml
 
   # Upload coverage report to Scrutinizer
   - if [[ "$PHP_COVERAGE" = "TRUE" ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
