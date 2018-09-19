@@ -16,4 +16,4 @@ imports:
 
 tools:
     external_code_coverage:
-        timeout: 1800 # Timeout in seconds. 30 minutes
+        timeout: 1200 # Timeout in seconds. 20 minutes
