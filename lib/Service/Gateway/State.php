@@ -52,11 +52,11 @@ class State {
 	}
 
 	public function isVerifying(): bool {
-		return $this->state === self::DISABLED;
+		return $this->state === self::VERIFYING;
 	}
 
 	public function isEnabled(): bool {
-		return $this->state === self::DISABLED;
+		return $this->state === self::ENABLED;
 	}
 
 }
