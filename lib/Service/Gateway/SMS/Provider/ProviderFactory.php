@@ -41,6 +41,8 @@ class ProviderFactory {
 				return $this->container->query(PlaySMS::class);
 			case WebSms::PROVIDER_ID:
 				return $this->container->query(WebSms::class);
+			case ClockworkSMS::PROVIDER_ID:
+				return $this->container->query(ClockworkSMS::class);
 			default:
 				throw new InvalidSmsProviderException("Provider <$id> does not exist");
 		}
