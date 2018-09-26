@@ -138,7 +138,7 @@ class Configure extends Command {
 				break;
 			case 'clockworksms':
 				$config->setProvider($provider);
-				/** @var WebSmsConfig $providerConfig */
+				/** @var ClockworkSmsConfig $providerConfig */
 				$providerConfig = $config->getProvider()->getConfig();
 
 				$apitokenQuestion = new Question('Please enter your clockworksms api token: ');
