@@ -99,7 +99,7 @@ class Configure extends Command {
 
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -134,6 +134,17 @@ class Configure extends Command {
 				$providerConfig->setUrl($url);
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
+
+				break;
+			case 'clockworksms':
+				$config->setProvider($provider);
+				/** @var WebSmsConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$apitokenQuestion = new Question('Please enter your clockworksms api token: ');
+				$apitoken = $helper->ask($input, $output, $apitokenQuestion);
+
+				$providerConfig->setApiToken($apitoken);
 
 				break;
 			default:
