@@ -5,6 +5,7 @@ A set of Nextcloud two-factor providers to send authentication codes via Signal,
 [![Build Status](https://travis-ci.org/nextcloud/twofactor_gateway.svg?branch=master)](https://travis-ci.org/nextcloud/twofactor_gateway)
 [![Code Coverage](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/?branch=master)
+[![Read the Docs](https://img.shields.io/readthedocs/nextcloud-twofactor-gateway.svg)](https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/)
 
 ![](https://raw.githubusercontent.com/ChristophWurst/twofactor_gateway/ae08ce30abfa866c7c7a486d850d4be07b83d82d/screenshots/challenge.png)
 
