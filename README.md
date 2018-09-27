@@ -10,7 +10,7 @@ A set of Nextcloud two-factor providers to send authentication codes via Signal,
 
 ## Supported Messaging Gateways
 This app uses external messaging gateways services for sending the code. See the 
-[admin documentation](/doc/Admin_Documentation) on how to configure the specific providers.
+[admin documentation]  on how to configure the specific providers.
 
 ## Login with external apps
 All modern applications communicating with Nextcloud now use Login flow so you 
@@ -20,3 +20,5 @@ limited to SMS-based authentication.
 Absent support for the Login flow, after enabling Two Factor SMS, your legacy
 applications will accept device passwords. To manage them, 
 [see more here](https://docs.nextcloud.com/server/14/user_manual/session_management.html#managing-devices)
+
+[admin documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/Admin%20Documentation/
