@@ -9,6 +9,9 @@
 	<licence>agpl</licence>
 	<author>Christoph Wurst</author>
 	<namespace>TwoFactorGateway</namespace>
+	<documentation>
+		<admin>https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/Admin%20Documentation/</admin>
+	</documentation>
 	<category>security</category>
 	<website>https://github.com/nextcloud/twofactor_gateway</website>
 	<bugs>https://github.com/nextcloud/twofactor_gateway/issues</bugs>
