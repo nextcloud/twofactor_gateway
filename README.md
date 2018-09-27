@@ -10,7 +10,7 @@ A set of Nextcloud two-factor providers to send authentication codes via Signal,
 
 ## Supported Messaging Gateways
 This app uses external messaging gateways services for sending the code. See the 
-[admin documentation](/doc/admin) on how to configure the specific providers.
+[admin documentation](/doc/Admin%20Documentation) on how to configure the specific providers.
 
 ## Login with external apps
 All modern applications communicating with Nextcloud now use Login flow so you 
