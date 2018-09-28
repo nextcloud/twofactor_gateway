@@ -90,7 +90,7 @@ class Gateway implements IGateway {
 		// TODO: handle missing `/start` message and `$update` null values
 
 		$chatId = $update->message->chat->id;
-		$this->config->setUserValue($user->getUID(), 'twofactor_gateway', 'chat_id', $chatId);
+		$this->config->setUserValue($user->getUID(), 'twofactor_gateway', 'telegram_chat_id', $chatId);
 
 		return (int)$chatId;
 	}
