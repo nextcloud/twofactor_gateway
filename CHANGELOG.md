@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.10.0 – 2018-10-08
+### Added
+- Support for ClockworkSMS
+- Admin documentation reference in info.xml (also rendered on apps.nextcloud.com)
+### Fixed
+- Loading animation after provider state has been loaded
+- Caching of Telegram chat id (provider stopped working after a few days)
+- Removed dead code
+
 ## 0.9.0 – 2018-08-30
 ### Added
 - Setup instructions for users directly in the settings UI
