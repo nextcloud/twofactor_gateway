@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "640364d4675baf8c545e1d0d4df14256",
+    "content-hash": "fcef692d529cda77ccf9595c558a7aa5",
     "packages": [
         {
             "name": "christophwurst/nextcloud",
-            "version": "14.0.0",
+            "version": "v14.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "3adf5ad0ecef6b3fa82636d0e6cf09d456f188cf"
+                "reference": "1cd0a4a69c488d410aef30a56c98d51f0d9aba6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/3adf5ad0ecef6b3fa82636d0e6cf09d456f188cf",
-                "reference": "3adf5ad0ecef6b3fa82636d0e6cf09d456f188cf",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/1cd0a4a69c488d410aef30a56c98d51f0d9aba6e",
+                "reference": "1cd0a4a69c488d410aef30a56c98d51f0d9aba6e",
                 "shasum": ""
             },
             "type": "library",
@@ -37,7 +37,7 @@
                 }
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
-            "time": "2018-09-17T12:48:04+00:00"
+            "time": "2018-10-08T07:23:03+00:00"
         },
         {
             "name": "doctrine/inflector",
