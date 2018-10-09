@@ -3,7 +3,7 @@
 		<h2 data-anchor-name="sms-second-factor-auth">
 			<L10n text="Message gateway second-factor auth"/>
 		</h2>
-		<L10n text="Here you can configure the message gateway to receive two-factor authentication codes via Signal, SMS or Telegram." />
+		<L10n text="In this section you can configure the message gateway to receive two-factor authentication codes via Signal, SMS or Telegram." />
 		<GatewaySettings gateway-name="signal" display-name="Signal">
 			<SignalInstructions slot="instructions" />
 		</GatewaySettings>
