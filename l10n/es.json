@@ -1,5 +1,5 @@
 { "translations": {
-    "%s is your Nextcloud authentication code" : "Tu código de atenficación para Nextcloud es: %s",
+    "%s is your Nextcloud authentication code" : "Tu código de autenticación para NextCloud es: %s",
     "Signal verification" : "Verificación vía Signal",
     "Authenticate via Signal" : "Autenticar a través de Signal",
     "Message gateway verification" : "Puerta de acceso para la verificación por mensaje",
@@ -7,8 +7,8 @@
     "Telegram verification" : "Verificación vía Telegram",
     "Authenticate via Telegram" : "Autenticar a través de Telegram",
     "Two-Factor Gateway" : "Acceso a la verificación en dos pasos",
-    "Two-factor gateway providers (SMS, Telegram, Signal)" : "Proveedores intermedios de dos factores (SMS, Telegram, Signal)",
-    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Un grupo de proveedores de dos factores para Nextcloud para enviar códigos de autenticación vía Signal, SMS o Telegram.",
+    "Two-factor gateway providers (SMS, Telegram, Signal)" : "Proveedores de puertas de acceso para verificacion en dos pasos (SMS, Telegram, Signal)",
+    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Un grupo de proveedores de verificación en dos pasos para Nextcloud para enviar códigos de autenticación vía Signal, SMS o Telegram.",
     "Authentication code" : "Código de autentificación",
     "An access code has been sent to %s" : "El código acceso ha sido enviado a %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Error al enviar el mensaje. Por favor, inténtelo de nuevo más tarde o póngase en contacto con el administrador.",
