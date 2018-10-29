@@ -8,6 +8,7 @@
     "Authenticate via Telegram" : "Auðkenning með Telegram",
     "Two-Factor Gateway" : "Tveggja-þrepa auðkenningargátt",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Útgefandi tveggja-þrepa auðkenningargáttar (SMS, Telegram, Signal)",
+    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Nokkrit útgefendur tveggja-þrepa auðkenningar til að senda auðkenningarkóða með SMS, Telegram og Signal.",
     "Authentication code" : "Auðkenningarkóði",
     "An access code has been sent to %s" : "Búið er að senda aðgangskóða á %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Villa við að senda skilaboðin. Reyndu aftur seinna eða hafðu samband við kerfisstjóra.",
