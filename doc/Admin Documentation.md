@@ -55,7 +55,7 @@ occ twofactorauth:gateway:configure sms
 Url: https://github.com/PuzzelSolutions/sms
 Stability: Stable
 
-Use the SMS gateway provided by playSMS for sending SMS.
+Use the SMS gateway provided by Puzzel for sending SMS.
 
 Interactive admin configuration:
 
