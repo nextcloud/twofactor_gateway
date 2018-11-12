@@ -30,6 +30,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\GatewayConfig as SMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfig;
 use Symfony\Component\Console\Command\Command;
@@ -99,7 +100,7 @@ class Configure extends Command {
 
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -147,6 +148,30 @@ class Configure extends Command {
 				$providerConfig->setApiToken($apitoken);
 
 				break;
+			case 'puzzelsms':
+				$config->setProvider($provider);
+
+				/** @var PuzzelSMSConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$urlQuestion = new Question('Please enter your PuzzelSMS URL: ');
+				$url = $helper->ask($input, $output, $urlQuestion);
+
+				$usernameQuestion = new Question('Please enter your PuzzelSMS username: ');
+				$username = $helper->ask($input, $output, $usernameQuestion);
+
+				$passwordQuestion = new Question('Please enter your PuzzelSMS password: ');
+				$password = $helper->ask($input, $output, $passwordQuestion);
+
+				$serviceQuestion = new Question('Please enter your PuzzelSMS service ID: ');
+				$serviceId = $helper->ask($input, $output, $serviceQuestion);
+
+				$providerConfig->setUrl($url);
+				$providerConfig->setUser($username);
+				$providerConfig->setPassword($password);
+				$providerConfig->setServiceId($serviceId);
+				break;
+
 			default:
 				$output->writeln("Invalid provider $provider");
 				break;
