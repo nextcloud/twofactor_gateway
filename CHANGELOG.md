@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.10.1 – 2018-11-12
+### Fixed
+- Software dependencies updated
+
 ## 0.10.0 – 2018-10-08
 ### Added
 - Support for ClockworkSMS
