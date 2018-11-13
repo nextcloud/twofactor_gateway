@@ -37,6 +37,8 @@ class ProviderFactory {
 
 	public function getProvider(string $id): IProvider {
 		switch ($id) {
+			case PuzzelSMS::PROVIDER_ID:
+				return $this->container->query(PuzzelSMS::class);
 			case PlaySMS::PROVIDER_ID:
 				return $this->container->query(PlaySMS::class);
 			case WebSms::PROVIDER_ID:

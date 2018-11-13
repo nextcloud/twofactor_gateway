@@ -50,3 +50,15 @@ Interactive admin configuration:
 ```bash
 occ twofactorauth:gateway:configure sms
 ```
+
+### PuzzelSMS
+Url: https://github.com/PuzzelSolutions/sms
+Stability: Stable
+
+Use the SMS gateway provided by Puzzel for sending SMS.
+
+Interactive admin configuration:
+
+```bash
+occ twofactorauth:gateway:configure sms
+```
