@@ -1,6 +1,6 @@
 {
 	"require": {
-		"christophwurst/nextcloud": "14.0.3",
+		"christophwurst/nextcloud": "14.0.4",
 		"irazasyed/telegram-bot-sdk": "^3.0"
 	},
 	"require-dev": {
