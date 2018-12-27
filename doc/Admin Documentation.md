@@ -62,3 +62,15 @@ Interactive admin configuration:
 ```bash
 occ twofactorauth:gateway:configure sms
 ```
+
+### VoIP.ms
+Url: https://voip.ms
+Stability: Stable
+
+Use the SMS gateway provided by VoIP.ms for sending SMS.
+
+Interactive admin configuration:
+
+```bash
+occ twofactorauth:gateway:configure sms
+```

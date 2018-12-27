@@ -100,7 +100,7 @@ class Configure extends Command {
 
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, voipms): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -170,6 +170,26 @@ class Configure extends Command {
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
 				$providerConfig->setServiceId($serviceId);
+				break;
+
+			case 'voipms':
+				$config->setProvider($provider);
+
+				/** @var VoipMsConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$usernameQuestion = new Question('Please enter your VoIP.ms API username: ');
+				$username = $helper->ask($input, $output, $usernameQuestion);
+
+				$passwordQuestion = new Question('Please enter your VoIP.ms API password: ');
+				$password = $helper->ask($input, $output, $passwordQuestion);
+
+				$didQuestion = new Question('Please enter your VoIP.ms DID: ');
+				$did = $helper->ask($input, $output, $didQuestion);
+
+				$providerConfig->setUser($username);
+				$providerConfig->setPassword($password);
+				$providerConfig->setDid($did);
 				break;
 
 			default:
