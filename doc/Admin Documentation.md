@@ -35,7 +35,10 @@ occ twofactorauth:gateway:configure signal
 Url: https://www.telegram.org/
 Stability: Unstable
 
-In order to send messages via the Telegram network, you have to register a [Telegram Bot](https://core.telegram.org/bots), which is used to send authentication codes to users after they have initiated a conversation and entered their Telegram ID.
+This gateways allows you to send messages via the Signal protocol. In order to send messages,
+you have to register a [Telegram Bot](https://core.telegram.org/bots), which is used to send
+authentication codes to users after they have initiated a conversation and entered their
+Telegram ID.
 
 Follow these steps to activate the Telegram authentication gateway:
 
@@ -46,17 +49,20 @@ Follow these steps to activate the Telegram authentication gateway:
    * Send the name of the bot, e.g. `'My own NC bot'`.
    * Send the username of the bot, e.g. `'my_nc_bot'`.
 
-   BotFather confirmes that a new bot has successfully been set-up and provides the HTTP API access token to you, e.g. `'123456789:AAbbCCddEEffGGhhIIjjKKllMMnnOOppQQ'`.
+   BotFather confirmes that a new bot has successfully been set-up and provides the HTTP API
+   access token to you, e.g. `'123456789:AAbbCCddEEffGGhhIIjjKKllMMnnOOppQQ'`.
 
 2. Activate the Nextcloud Twofactor Gateway for Telegram
-   Open a command shell on your Nextcloud server, navigate to the Nextcloud directory and run the following command:
+   Open a command shell on your Nextcloud server, navigate to the Nextcloud directory and run
+   the following command:
    ```bash
    occ twofactorauth:gateway:configure telegram
    Please enter your Telegram bot token: 123456789:AAbbCCddEEffGGhhIIjjKKllMMnnOOppQQ
    Using 123456789:AAbbCCddEEffGGhhIIjjKKllMMnnOOppQQ.
    ```
    
-   The Telegram authentication gateway has now successfully been set-up. Follow the instructions in the user documentation to activate the Gateway for a specific user.
+   The Telegram authentication gateway has now successfully been set-up. Follow the instructions
+   in the user documentation to activate the Gateway for a specific user.
 
 ### websms.de
 Url: https://websms.de/
