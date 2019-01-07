@@ -42,17 +42,17 @@ use of the gateway for a user:
 5. Activate the authentication gateway for a user
 
    * Log in to Nextcloud with the user you want to enable the twofactor gateway for.
-   * Open **Settings -> Personal -> Security** and check the `Message gateway second-factor auth`
-      configuration.
+   * Open **Settings -> Personal -> Security** and navigate to the `Message gateway
+     second-factor auth` configuration.
    * Press the `Enable` button under the Telegram label.
-   * Enter the previously evaluated personal user id, e.g. `998877665` and press the `Verify`
-     button.
-   * Now you should receive a Telegram message with your Nextcloud authentication code, e.g.
-     `123456`.
+   * Enter the previously evaluated personal user id, e.g. `998877665` and press the
+     `Verify` button.
+   * Now you should receive a Telegram message with your Nextcloud authentication code,
+     e.g. `123456`.
    * Enter the received Nextcloud authentication code and press the `Confirm` button.
    
-   Finally the system should state `Your account was successfully configured to receive messages
-   via Telegram.`
+   Finally the system should state `Your account was successfully configured to receive
+   messages via Telegram.`
 
-   **Remember:** As next step you should immediately generate Two-Factor Authentication backup codes
-   to be able to login, in the vase that the Telegram service fails.
+   **Remember:** As next step you should immediately generate Two-Factor Authentication
+   backup codes    to be able to login, in the vase that the Telegram service fails.
