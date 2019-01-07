@@ -66,12 +66,12 @@ class Test extends Command {
 		$this->addArgument(
 			'gateway',
 			InputArgument::REQUIRED,
-			'The identifier (e.g. phone number) of the recipient'
+			'The name of the gateway, e.g. sms, signal, telegram, etc.'
 		);
 		$this->addArgument(
 			'identifier',
 			InputArgument::REQUIRED,
-			'The identifier (e.g. phone number) of the recipient'
+			'The identifier (e.g. phone number, user id, etc.) of the recipient'
 		);
 	}
 
