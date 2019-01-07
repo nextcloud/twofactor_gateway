@@ -35,12 +35,28 @@ occ twofactorauth:gateway:configure signal
 Url: https://www.telegram.org/
 Stability: Unstable
 
-In order to send messages via the Telegram network, you have to register a [Telegram Bot](https://core.telegram.org/bots). This bot is used to send authentication codes to users after they have initiated a conversation and entered their Telegram ID.
+In order to send messages via the Telegram network, you have to register a [Telegram Bot](https://core.telegram.org/bots), which is used to send authentication codes to users after they have initiated a conversation and entered their Telegram ID.
 
-Once you've got your bot's token, follow the interactive configuration command:
-```bash
-occ twofactorauth:gateway:configure telegram
-```
+Follow these steps to activate the Telegram authentication gateway:
+
+1. Register a Telegram Bot.
+
+   * Open your Telegram client, search for `@BotFather` and start a conversation.
+   * Send `/newbot` to start the bot setup process.
+   * Send the name of the bot, e.g. `'My own NC bot'`.
+   * Send the username of the bot, e.g. `'my_nc_bot'`.
+
+   BotFather confirmes that a new bot has successfully been set-up and provides the HTTP API access token to you, e.g. `'123456789:AAbbCCddEEffGGhhIIjjKKllMMnnOOppQQ'`.
+
+2. Activate the Nextcloud Twofactor Gateway for Telegram
+   Open a command shell on your Nextcloud server, navigate to the Nextcloud directory and run the following command:
+   ```bash
+   occ twofactorauth:gateway:configure telegram
+   Please enter your Telegram bot token: 123456789:AAbbCCddEEffGGhhIIjjKKllMMnnOOppQQ
+   Using 123456789:AAbbCCddEEffGGhhIIjjKKllMMnnOOppQQ.
+   ```
+   
+   The Telegram authentication gateway has now successfully been set-up. Follow the instructions in the user documentation to activate the Gateway for a specific user.
 
 ### websms.de
 Url: https://websms.de/
