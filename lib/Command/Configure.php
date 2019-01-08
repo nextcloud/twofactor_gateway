@@ -61,7 +61,7 @@ class Configure extends Command {
 		$this->addArgument(
 			'gateway',
 			InputArgument::REQUIRED,
-			'The identifier (e.g. phone number) of the recipient'
+			'The name of the gateway, e.g. sms, signal, telegram, etc.'
 		);
 	}
 
