@@ -1,0 +1,269 @@
+diff --git a/.project b/.project
+new file mode 100644
+index 0000000..3fddacd
+--- /dev/null
++++ b/.project
+@@ -0,0 +1,11 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<projectDescription>
++	<name>twofactor_gateway</name>
++	<comment></comment>
++	<projects>
++	</projects>
++	<buildSpec>
++	</buildSpec>
++	<natures>
++	</natures>
++</projectDescription>
+diff --git a/.settings/com.genuitec.eclipse.code.core.prefs b/.settings/com.genuitec.eclipse.code.core.prefs
+new file mode 100644
+index 0000000..d17a6c5
+--- /dev/null
++++ b/.settings/com.genuitec.eclipse.code.core.prefs
+@@ -0,0 +1,2 @@
++codemixBuild=true
++eclipse.preferences.version=1
+diff --git a/doc/Admin Documentation.md b/doc/Admin Documentation.md
+index 58fd735..5009e77 100644
+--- a/doc/Admin Documentation.md
++++ b/doc/Admin Documentation.md
+@@ -85,3 +85,15 @@
+ ```bash
+ occ twofactorauth:gateway:configure sms
+ ```
++
++### EcallSMS
++Url: https://www.ecall.ch/
++Stability: Stable
++
++Use the HTTPS service provided by eCall.ch for sending SMS.
++
++Interactive admin configuration:
++```bash
++occ twofactorauth:gateway:configure sms
++```
++For 'sender ID' you can use 16 numbers or 11 alphanummeric characters.
+diff --git a/lib/Command/Configure.php b/lib/Command/Configure.php
+index 9b430c1..1804a68 100644
+--- a/lib/Command/Configure.php
++++ b/lib/Command/Configure.php
+@@ -100,7 +100,7 @@
+ 
+ 	private function configureSms(InputInterface $input, OutputInterface $output) {
+ 		$helper = $this->getHelper('question');
+-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms): ', 'websms');
++		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, voipsms, ecallsms): ', 'websms');
+ 		$provider = $helper->ask($input, $output, $providerQuestion);
+ 
+ 		/** @var SMSConfig $config */
+@@ -170,6 +170,22 @@
+ 				$providerConfig->setUser($username);
+ 				$providerConfig->setPassword($password);
+ 				$providerConfig->setServiceId($serviceId);
++                break;
++		case 'ecallsms':
++                $config->setProvider($provider);
++                /** @var EcallSMSConfig $providerConfig */
++                $providerConfig = $config->getProvider()->getConfig();
++                
++				$usernameQuestion = new Question('Please enter your eCall.ch username: ');
++                $username = $helper->ask($input, $output, $usernameQuestion);
++				$passwordQuestion = new Question('Please enter your eCall.ch password: ');
++                $password = $helper->ask($input, $output, $passwordQuestion);
++				$senderidQuestion = new Question('Please enter your eCall.ch sender ID: ');
++                $senderid = $helper->ask($input, $output, $senderidQuestion);
++                
++				$providerConfig->setUser($username);
++				$providerConfig->setPassword($password);
++				$providerConfig->setSenderId($senderid);
+ 				break;
+ 
+ 			default:
+diff --git a/lib/Service/Gateway/SMS/Provider/EcallSMS.php b/lib/Service/Gateway/SMS/Provider/EcallSMS.php
+new file mode 100644
+index 0000000..20c81fe
+--- /dev/null
++++ b/lib/Service/Gateway/SMS/Provider/EcallSMS.php
+@@ -0,0 +1,81 @@
++<?php
++
++declare(strict_types=1);
++
++/**
++ * @author Fabian Zihlmann <fabian.zihlmann@mybica.ch>
++ *
++ * Nextcloud - Two-factor Gateway
++ *
++ * This code is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Affero General Public License, version 3,
++ * as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU Affero General Public License for more details.
++ *
++ * You should have received a copy of the GNU Affero General Public License, version 3,
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>
++ *
++ */
++
++namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
++
++use Exception;
++use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
++use OCP\Http\Client\IClient;
++use OCP\Http\Client\IClientService;
++
++class EcallSMS implements IProvider {
++
++	const PROVIDER_ID = 'ecallsms';
++
++	/** @var IClient */
++	private $client;
++
++	/** @var EcallSMSConfig */
++	private $config;
++
++	public function __construct(IClientService $clientService,
++								EcallSMSConfig $config) {
++		$this->client = $clientService->newClient();
++		$this->config = $config;
++	}
++
++	/**
++	 * @param string $identifier
++	 * @param string $message
++	 *
++	 * @throws SmsTransmissionException
++	 */
++	public function send(string $identifier, string $message) {
++		$config = $this->getConfig();
++		$user = $config->getUser();
++		$password = $config->getPassword();
++		$senderid = $config->getSenderId();
++		try {
++			$this->client->get('https://www.ecall.ch/ecallurl/ecallurl.ASP', [
++				'query' => [
++                    'WCI' => 'Interface',
++					'Function' => 'SendPage',
++					'AccountName' => $user,
++					'AccountPassword' => $password,
++					'Callback' => $senderid,
++					'Address' => $identifier,
++					'Message' => $message,
++				],
++			]);
++		} catch (Exception $ex) {
++			throw new SmsTransmissionException();
++		}
++	}
++
++	/**
++	 * @return EcallSMSConfig
++	 */
++	public function getConfig(): IProviderConfig {
++		return $this->config;
++	}
++}
+diff --git a/lib/Service/Gateway/SMS/Provider/EcallSMSConfig.php b/lib/Service/Gateway/SMS/Provider/EcallSMSConfig.php
+new file mode 100644
+index 0000000..990ae07
+--- /dev/null
++++ b/lib/Service/Gateway/SMS/Provider/EcallSMSConfig.php
+@@ -0,0 +1,82 @@
++<?php
++
++declare(strict_types=1);
++
++/**
++ * @author Fabian Zihlmann <fabian.zihlmann@mybica.ch>
++ *
++ * Nextcloud - Two-factor Gateway for Telegram
++ *
++ * This code is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU Affero General Public License, version 3,
++ * as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++ * GNU Affero General Public License for more details.
++ *
++ * You should have received a copy of the GNU Affero General Public License, version 3,
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>
++ *
++ */
++
++namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
++
++use function array_intersect;
++use OCA\TwoFactorGateway\AppInfo\Application;
++use OCA\TwoFactorGateway\Exception\ConfigurationException;
++use OCP\IConfig;
++
++class EcallSMSConfig implements IProviderConfig {
++
++	/** @var IConfig */
++	private $config;
++
++	public function __construct(IConfig $config) {
++		$this->config = $config;
++	}
++
++	private function getOrFail(string $key): string {
++		$val = $this->config->getAppValue(Application::APP_NAME, $key, null);
++		if (is_null($val)) {
++			throw new ConfigurationException();
++		}
++		return $val;
++	}
++
++	public function getUser(): string {
++		return $this->getOrFail('ecallsms_username');
++	}
++
++	public function setUser(string $user) {
++		$this->config->setAppValue(Application::APP_NAME, 'ecallsms_username', $user);
++	}
++
++	public function getPassword(): string {
++		return $this->getOrFail('ecallsms_password');
++	}
++
++	public function setPassword(string $password) {
++		$this->config->setAppValue(Application::APP_NAME, 'ecallsms_password', $password);
++	}
++
++	public function getSenderId(): string {
++		return $this->getOrFail('ecallsms_senderid');
++	}
++
++	public function setSenderId(string $senderid) {
++		$this->config->setAppValue(Application::APP_NAME, 'ecallsms_senderid', $senderid);
++	}
++
++	public function isComplete(): bool {
++		$set = $this->config->getAppKeys(Application::APP_NAME);
++		$expected = [
++			'ecallsms_username',
++			'ecallsms_password',
++			'ecallsms_senderid',
++		];
++		return count(array_intersect($set, $expected)) === count($expected);
++	}
++
++}
+diff --git a/lib/Service/Gateway/SMS/Provider/ProviderFactory.php b/lib/Service/Gateway/SMS/Provider/ProviderFactory.php
+index 06369ce..5bf171e 100644
+--- a/lib/Service/Gateway/SMS/Provider/ProviderFactory.php
++++ b/lib/Service/Gateway/SMS/Provider/ProviderFactory.php
+@@ -45,6 +45,8 @@
+ 				return $this->container->query(WebSms::class);
+ 			case ClockworkSMS::PROVIDER_ID:
+ 				return $this->container->query(ClockworkSMS::class);
++			case EcallSMS::PROVIDER_ID:
++				return $this->container->query(EcallSMS::class);
+ 			default:
+ 				throw new InvalidSmsProviderException("Provider <$id> does not exist");
+ 		}
