@@ -171,17 +171,17 @@ class Configure extends Command {
 				$providerConfig->setPassword($password);
 				$providerConfig->setServiceId($serviceId);
 				break;
-		case 'ecallsms':
-                $config->setProvider($provider);
-                /** @var EcallSMSConfig $providerConfig */
-                $providerConfig = $config->getProvider()->getConfig();
+			case 'ecallsms':
+                		$config->setProvider($provider);
+                		/** @var EcallSMSConfig $providerConfig */
+                		$providerConfig = $config->getProvider()->getConfig();
                 
 				$usernameQuestion = new Question('Please enter your eCall.ch username: ');
-                $username = $helper->ask($input, $output, $usernameQuestion);
+                		$username = $helper->ask($input, $output, $usernameQuestion);
 				$passwordQuestion = new Question('Please enter your eCall.ch password: ');
-                $password = $helper->ask($input, $output, $passwordQuestion);
+                		$password = $helper->ask($input, $output, $passwordQuestion);
 				$senderidQuestion = new Question('Please enter your eCall.ch sender ID: ');
-                $senderid = $helper->ask($input, $output, $senderidQuestion);
+                		$senderid = $helper->ask($input, $output, $senderidQuestion);
                 
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
