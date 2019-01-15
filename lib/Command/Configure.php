@@ -28,6 +28,8 @@ use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\GatewayConfig as SignalConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\GatewayConfig as SMSConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClockworkSMSConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\EcallSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
@@ -61,7 +63,7 @@ class Configure extends Command {
 		$this->addArgument(
 			'gateway',
 			InputArgument::REQUIRED,
-			'The identifier (e.g. phone number) of the recipient'
+			'The name of the gateway, e.g. sms, signal, telegram, etc.'
 		);
 	}
 
@@ -100,7 +102,7 @@ class Configure extends Command {
 
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, voipms): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, voipsms, ecallsms, voipms): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -139,7 +141,7 @@ class Configure extends Command {
 				break;
 			case 'clockworksms':
 				$config->setProvider($provider);
-				/** @var ClockworkSmsConfig $providerConfig */
+				/** @var ClockworkSMSConfig $providerConfig */
 				$providerConfig = $config->getProvider()->getConfig();
 
 				$apitokenQuestion = new Question('Please enter your clockworksms api token: ');
@@ -170,6 +172,22 @@ class Configure extends Command {
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
 				$providerConfig->setServiceId($serviceId);
+				break;
+			case 'ecallsms':
+				$config->setProvider($provider);
+				/** @var EcallSMSConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$usernameQuestion = new Question('Please enter your eCall.ch username: ');
+				$username = $helper->ask($input, $output, $usernameQuestion);
+				$passwordQuestion = new Question('Please enter your eCall.ch password: ');
+				$password = $helper->ask($input, $output, $passwordQuestion);
+				$senderIdQuestion = new Question('Please enter your eCall.ch sender ID: ');
+				$senderId = $helper->ask($input, $output, $senderIdQuestion);
+
+				$providerConfig->setUser($username);
+				$providerConfig->setPassword($password);
+				$providerConfig->setSenderId($senderId);
 				break;
 
 			case 'voipms':
