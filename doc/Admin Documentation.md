@@ -100,7 +100,7 @@ For 'sender ID' you can use 16 numbers or 11 alphanummeric characters.
 
 ### VoIP.ms
 Url: https://voip.ms
-Stability: Stable
+Stability: Experimental
 
 Use the SMS gateway provided by VoIP.ms for sending SMS.
 
