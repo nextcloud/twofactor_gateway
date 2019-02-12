@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 - ph7.3 support
 - Nextcloud 16 support
 - ecall support
-- voip.sms support
+- voip.ms support
 - New and updated translations
 - User documentation
 - CLI setup command parameter description
