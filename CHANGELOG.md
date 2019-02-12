@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.12.0 – 201-02-13
+## 0.12.0 – 2019-02-13
 ### Added
 - ph7.3 support
 - Nextcloud 16 support
