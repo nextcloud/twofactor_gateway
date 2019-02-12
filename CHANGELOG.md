@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.12.0 – 201-02-13
+### Added
+- ph7.3 support
+- Nextcloud 16 support
+- ecall support
+- voip.sms support
+- New and updated translations
+- User documentation
+- CLI setup command parameter description
+### Changed
+- Better Telegram setup description
+### Removed
+- Nextcloud 14 support
+
 ## 0.11.0 – 2018-11-16
 ### Added
 - PuzzelSMS support
