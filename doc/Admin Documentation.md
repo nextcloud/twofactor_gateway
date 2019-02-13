@@ -5,7 +5,7 @@
 Here you can find the configuration instructions for the currently supported gateways.
 
 ### playSMS
-Url: https://playsms.org/
+URL: https://playsms.org/
 Stability: Experimental
 
 Use the Webservices provided by playSMS for sending SMS.
@@ -16,11 +16,11 @@ occ twofactorauth:gateway:configure sms
 ```
 
 ### Signal
-Url: https://www.signal.org/
+URL: https://www.signal.org/
 Stability: Experimental
 
 This gateways allows you to send messages via the Signal protocol. The Signal gateway can be
-run as Docker container. The image for gateway including setup instructions can be found on
+run as a Docker container. The image for the gateway including setup instructions can be found on
 [GitLab](https://gitlab.com/morph027/signal-web-gateway).
 
 *Note: Signal users are bound to phone numbers. If you already use Signal on your phone, you
@@ -33,7 +33,7 @@ occ twofactorauth:gateway:configure signal
 ```
 
 ### Telegram
-Url: https://www.telegram.org/
+URL: https://www.telegram.org/
 Stability: Unstable
 
 This gateways allows you to send messages via the Telegram protocol. In order to send messages,
@@ -50,7 +50,7 @@ Follow these steps to activate the Telegram authentication gateway:
    * Send the name of the bot, e.g. `'My own NC bot'`.
    * Send the username of the bot, e.g. `'my_nc_bot'`.
 
-   BotFather confirmes that a new bot has successfully been set-up and provides the HTTP API
+   BotFather confirms that a new bot has successfully been set-up and provides the HTTP API
    access token to you, e.g. `'123456789:AAbbCCddEEffGGhhIIjjKKllMMnnOOppQQ'`.
 
 2. Activate the Nextcloud Twofactor Gateway for Telegram
@@ -61,12 +61,12 @@ Follow these steps to activate the Telegram authentication gateway:
    Please enter your Telegram bot token: 123456789:AAbbCCddEEffGGhhIIjjKKllMMnnOOppQQ
    Using 123456789:AAbbCCddEEffGGhhIIjjKKllMMnnOOppQQ.
    ```
-   
+
    The Telegram authentication gateway has now successfully been set-up. Follow the instructions
-   in the user documentation to activate the Gateway for a specific user.
+   in the [User Documentation] to activate the Gateway for a specific user.
 
 ### websms.de
-Url: https://websms.de/
+URL: https://websms.de/
 Stability: Stable
 
 Interactive admin configuration:
@@ -75,19 +75,18 @@ occ twofactorauth:gateway:configure sms
 ```
 
 ### PuzzelSMS
-Url: https://github.com/PuzzelSolutions/sms
+URL: https://github.com/PuzzelSolutions/sms
 Stability: Experimental
 
 Use the SMS gateway provided by Puzzel for sending SMS.
 
 Interactive admin configuration:
-
 ```bash
 occ twofactorauth:gateway:configure sms
 ```
 
 ### EcallSMS
-Url: https://www.ecall.ch/
+URL: https://www.ecall.ch/
 Stability: Experimental
 
 Use the HTTPS service provided by eCall.ch for sending SMS.
@@ -96,16 +95,17 @@ Interactive admin configuration:
 ```bash
 occ twofactorauth:gateway:configure sms
 ```
-For 'sender ID' you can use 16 numbers or 11 alphanummeric characters.
+For 'sender ID' you can use 16 numbers or 11 alphanumeric characters.
 
 ### VoIP.ms
-Url: https://voip.ms
+URL: https://voip.ms
 Stability: Experimental
 
 Use the SMS gateway provided by VoIP.ms for sending SMS.
 
 Interactive admin configuration:
-
 ```bash
 occ twofactorauth:gateway:configure sms
 ```
+
+[User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
