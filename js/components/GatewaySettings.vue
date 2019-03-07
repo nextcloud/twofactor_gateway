@@ -1,6 +1,5 @@
 <template>
 	<div>
-		<h3>{{ displayName }}</h3>
 		<div v-if="!isAvailable">
 			<L10n text="The {displayName} gateway is not configured."
 				  :options="{displayName: displayName}"/>

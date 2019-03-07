@@ -2,4 +2,4 @@
 script('twofactor_gateway', 'build/build');
 ?>
 
-<div class="section" id="twofactor-sms-section"></div>
+<div id="twofactor-gateway-<?php print_unescaped($_['gateway']) ?>"></div>

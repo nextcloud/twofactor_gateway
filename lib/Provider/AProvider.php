@@ -27,14 +27,17 @@ use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
+use OCA\TwoFactorGateway\Settings\PersonalSettings;
+use OCP\Authentication\TwoFactorAuth\IPersonalProviderSettings;
 use OCP\Authentication\TwoFactorAuth\IProvider;
+use OCP\Authentication\TwoFactorAuth\IProvidesPersonalSettings;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
 use OCP\Template;
 
-abstract class AProvider implements IProvider {
+abstract class AProvider implements IProvider, IProvidesPersonalSettings {
 
 	const STATE_DISABLED = 0;
 	const STATE_START_VERIFICATION = 1;
@@ -138,6 +141,10 @@ abstract class AProvider implements IProvider {
 	 */
 	public function isTwoFactorAuthEnabledForUser(IUser $user): bool {
 		return $this->stateStorage->get($user, $this->gatewayName)->getState() === self::STATE_ENABLED;
+	}
+
+	public function getPersonalSettings(IUser $user): IPersonalProviderSettings {
+		return new PersonalSettings($this->gatewayName);
 	}
 
 }

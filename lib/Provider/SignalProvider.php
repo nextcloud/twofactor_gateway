@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider;
 
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IL10N;

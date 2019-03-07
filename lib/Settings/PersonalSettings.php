@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare (strict_types=1);
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -23,34 +23,27 @@ declare (strict_types = 1);
 
 namespace OCA\TwoFactorGateway\Settings;
 
-use OCP\AppFramework\Http\TemplateResponse;
-use OCP\Settings\ISettings;
+use OCP\Authentication\TwoFactorAuth\IPersonalProviderSettings;
+use OCP\Template;
 
-class PersonalSettings implements ISettings
-{
+class PersonalSettings implements IPersonalProviderSettings {
 
-    /**
-     * @return TemplateResponse
-     */
-    public function getForm()
-    {
-        return new TemplateResponse('twofactor_gateway', 'personal_settings');
-    }
+	/** @var string */
+	private $gateway;
 
-    /**
-     * @return string
-     */
-    public function getSection()
-    {
-        return 'security';
-    }
+	public function __construct(string $gateway) {
+		$this->gateway = $gateway;
+	}
 
-    /**
-     * @return int
-     */
-    public function getPriority()
-    {
-        return 50;
-    }
+	/**
+	 * @return Template
+	 *
+	 * @since 15.0.0
+	 */
+	public function getBody(): Template {
+		$tmpl = new Template('twofactor_gateway', 'personal_settings');
+		$tmpl->assign('gateway', $this->gateway);
+		return $tmpl;
+	}
 
 }
