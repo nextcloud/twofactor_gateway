@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider;
 
+use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
@@ -30,6 +31,7 @@ use OCA\TwoFactorGateway\Service\StateStorage;
 use OCA\TwoFactorGateway\Settings\PersonalSettings;
 use OCP\Authentication\TwoFactorAuth\IPersonalProviderSettings;
 use OCP\Authentication\TwoFactorAuth\IProvider;
+use OCP\Authentication\TwoFactorAuth\IProvidesIcons;
 use OCP\Authentication\TwoFactorAuth\IProvidesPersonalSettings;
 use OCP\IL10N;
 use OCP\ISession;
@@ -37,7 +39,7 @@ use OCP\IUser;
 use OCP\Security\ISecureRandom;
 use OCP\Template;
 
-abstract class AProvider implements IProvider, IProvidesPersonalSettings {
+abstract class AProvider implements IProvider, IProvidesIcons, IProvidesPersonalSettings {
 
 	const STATE_DISABLED = 0;
 	const STATE_START_VERIFICATION = 1;
@@ -145,6 +147,14 @@ abstract class AProvider implements IProvider, IProvidesPersonalSettings {
 
 	public function getPersonalSettings(IUser $user): IPersonalProviderSettings {
 		return new PersonalSettings($this->gatewayName);
+	}
+
+	public function getLightIcon(): String {
+		return image_path(Application::APP_NAME, 'app.svg');
+	}
+
+	public function getDarkIcon(): String {
+		return image_path(Application::APP_NAME, 'app-dark.svg');
 	}
 
 }
