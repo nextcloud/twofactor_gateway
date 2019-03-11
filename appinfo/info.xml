@@ -32,7 +32,4 @@
 		<command>OCA\TwoFactorGateway\Command\Status</command>
 		<command>OCA\TwoFactorGateway\Command\Test</command>
 	</commands>
-	<settings>
-		<personal>OCA\TwoFactorGateway\Settings\PersonalSettings</personal>
-	</settings>
 </info>
