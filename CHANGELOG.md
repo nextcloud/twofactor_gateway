@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.13.0 – 2019-04-05
+### Added
+- Huawei E3531 3G stick support
+- New and updated translations
+- Move the personal settings to the general 2FA section
+
 ## 0.12.0 – 2019-02-13
 ### Added
 - PHP 7.3 support
