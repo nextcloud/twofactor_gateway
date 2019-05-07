@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "christophwurst/nextcloud",
-            "version": "v15.0.5",
+            "version": "v15.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "6b56dfad6b04a533ff514354e01df0632aefa98b"
+                "reference": "22175a6ec85f8aeb289c47206a8775401ca02979"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/6b56dfad6b04a533ff514354e01df0632aefa98b",
-                "reference": "6b56dfad6b04a533ff514354e01df0632aefa98b",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/22175a6ec85f8aeb289c47206a8775401ca02979",
+                "reference": "22175a6ec85f8aeb289c47206a8775401ca02979",
                 "shasum": ""
             },
             "require": {
@@ -40,7 +40,7 @@
                 }
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
-            "time": "2019-03-05T07:24:26+00:00"
+            "time": "2019-04-25T13:34:40+00:00"
         },
         {
             "name": "doctrine/inflector",
