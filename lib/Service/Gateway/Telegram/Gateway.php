@@ -33,6 +33,7 @@ use OCP\IConfig;
 use OCP\ILogger;
 use OCP\IUser;
 use Telegram\Bot\Api;
+use Telegram\Bot\Exceptions\TelegramSDKException;
 use Telegram\Bot\Objects\Update;
 
 class Gateway implements IGateway {
@@ -72,42 +73,19 @@ class Gateway implements IGateway {
 		$this->logger->debug("telegram bot token: $botToken");
 
 		$api = new Api($botToken);
-		$chatId = $this->getChatId($user, $api, (int)$identifier);
 
-		$this->logger->debug("sending telegram message to chat $chatId");
-		$api->sendMessage([
-			'chat_id' => $chatId,
-			'text' => $message,
-		]);
-		$this->logger->debug("telegram message to chat $chatId sent");
-	}
+		$this->logger->debug("sending telegram message to $identifier");
+		try {
+			$api->sendMessage([
+				'chat_id' => $identifier,
+				'text' => $message,
+			]);
+		} catch (TelegramSDKException $e) {
+			$this->logger->logException($e);
 
-	private function getChatId(IUser $user, Api $api, int $userId): int {
-		$chatId = $this->config->getUserValue($user->getUID(), 'twofactor_gateway', 'telegram_chat_id', null);
-
-		if (!is_null($chatId)) {
-			$this->logger->debug("using cached telegram chat id $chatId for user $userId");
-			return (int)$chatId;
+			throw new SmsTransmissionException($e);
 		}
-
-		$this->logger->debug("trying to get chat id from updates");
-		$updates = $api->getUpdates();
-		$this->logger->debug("got " . count($updates) . " updates");
-		/** @var Update $update */
-		$update = current(array_filter($updates, function (Update $data) use ($userId) {
-			if ($data->message->text === "/start" && $data->message->from->id === $userId) {
-				$this->logger->debug("found `/start` message for user $userId");
-				return true;
-			}
-			return false;
-		}));
-		// TODO: handle missing `/start` message and `$update` null values
-
-		$chatId = $update->message->chat->id;
-		$this->config->setUserValue($user->getUID(), 'twofactor_gateway', 'telegram_chat_id', $chatId);
-		$this->logger->debug("found chat id $chatId for user $userId");
-
-		return (int)$chatId;
+		$this->logger->debug("telegram message to chat $identifier sent");
 	}
 
 	/**
