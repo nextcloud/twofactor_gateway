@@ -5,7 +5,7 @@
 	<name>Two-Factor Gateway</name>
 	<summary>Two-factor gateway providers (SMS, Telegram, Signal)</summary>
 	<description>A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram.</description>
-	<version>0.13.0</version>
+	<version>0.14.0</version>
 	<licence>agpl</licence>
 	<author>Christoph Wurst</author>
 	<namespace>TwoFactorGateway</namespace>
