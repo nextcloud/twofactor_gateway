@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.14.0 – 2019-05-14
+### Added
+- Nextcloud 16 support
+### Fixed
+- Use Telegram user/chat ID as entered by user to fix many edge cases
+### Removed
+- Nextcloud 15 support
+- php7.0 support
+
 ## 0.13.0 – 2019-04-05
 ### Added
 - Huawei E3531 3G stick support
