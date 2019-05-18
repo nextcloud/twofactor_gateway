@@ -109,3 +109,14 @@ occ twofactorauth:gateway:configure sms
 ```
 
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
+
+### Spryng
+URL: https://www.spryng.nl
+Stability: Experimental
+
+Use the HTTPS service provided by Spryng.nl for sending SMS.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
