@@ -225,7 +225,7 @@ class Configure extends Command {
 
 			case 'spryng':
 				$config->setProvider($provider);
-				/** @var ClockworkSMSConfig $providerConfig */
+				/** @var SpryngSMSConfig $providerConfig */
 				$providerConfig = $config->getProvider()->getConfig();
 
 				$apitokenQuestion = new Question('Please enter your Spryng api token: ');

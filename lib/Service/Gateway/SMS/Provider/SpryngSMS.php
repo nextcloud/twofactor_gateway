@@ -66,7 +66,7 @@ class SpryngSMS implements IProvider {
 					'json' => [
 						'body' => $message,
 						'encoding' => 'plain',
-						'originator' => 'NextCloud',
+						'originator' => 'Nextcloud',
 						'recipients' => [$identifier],
 						'route' => '1',
 					],
