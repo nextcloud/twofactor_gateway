@@ -53,7 +53,7 @@ class SpryngSMS implements IProvider {
 	 */
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
-
+		/** @var SpryngSMSConfig $providerConfig */
 		try {
 			$response = $this->client->post(
 				'https://rest.spryngsms.com/v1/messages?with%5B%5D=recipients',
