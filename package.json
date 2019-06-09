@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "webpack": "^4.32.2",
-    "webpack-cli": "^3.3.2",
+    "webpack-cli": "^3.3.3",
     "webpack-merge": "^4.2.1"
   }
 }
