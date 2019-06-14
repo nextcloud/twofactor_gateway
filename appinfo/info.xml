@@ -26,6 +26,7 @@
 		<provider>OCA\TwoFactorGateway\Provider\SignalProvider</provider>
 		<provider>OCA\TwoFactorGateway\Provider\SmsProvider</provider>
 		<provider>OCA\TwoFactorGateway\Provider\TelegramProvider</provider>
+		<provider>OCA\TwoFactorGateway\Provider\EmailProvider</provider>
 	</two-factor-providers>
 	<commands>
 		<command>OCA\TwoFactorGateway\Command\Configure</command>

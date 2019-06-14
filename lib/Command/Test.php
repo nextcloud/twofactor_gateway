@@ -28,6 +28,7 @@ use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
+use OCA\TwoFactorGateway\Service\Gateway\Email\Gateway as EmailGateway;
 use OCP\IUserManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -45,17 +46,22 @@ class Test extends Command {
 	/** @var TelegramGateway */
 	private $telegramGateway;
 
+	/** @var EmailGateway */
+	private $emailGateway;
+
 	/** @var IUserManager */
 	private $userManager;
 
 	public function __construct(SignalGateway $signalGateway,
 								SMSGateway $smsGateway,
 								TelegramGateway $telegramGateway,
+                                EmailGateway $emailGateway,
 								IUserManager $userManager) {
 		parent::__construct('twofactorauth:gateway:test');
 		$this->signalGateway = $signalGateway;
 		$this->smsGateway = $smsGateway;
 		$this->telegramGateway = $telegramGateway;
+        $this->emailGateway = $emailGateway;
 		$this->userManager = $userManager;
 
 		$this->addArgument(
@@ -71,7 +77,7 @@ class Test extends Command {
 		$this->addArgument(
 			'identifier',
 			InputArgument::REQUIRED,
-			'The identifier of the recipient , e.g. phone number, user id, etc.'
+			'The identifier of the recipient , e.g. phone number, user id, email, etc.'
 		);
 	}
 
@@ -96,6 +102,9 @@ class Test extends Command {
 				break;
 			case 'telegram':
 				$gateway = $this->telegramGateway;
+				break;
+			case 'email':
+				$gateway = $this->emailGateway;
 				break;
 			default:
 				$output->writeln("<error>Invalid gateway $gatewayName</error>");

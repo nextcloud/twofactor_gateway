@@ -27,6 +27,7 @@ use Exception;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
+use OCA\TwoFactorGateway\Service\Gateway\Email\Gateway as EmailGateway;
 
 class Factory {
 
@@ -39,13 +40,18 @@ class Factory {
 	/** @var TelegramGateway */
 	private $telegramGateway;
 
+	/** @var EmailGateway */
+	private $emailGateway;
+
 	public function __construct(SignalGateway $signalGateway,
 								SMSGateway $smsGateway,
-								TelegramGateway $telegramGateway) {
+								TelegramGateway $telegramGateway,
+                                EmailGateway $emailGateway) {
 
 		$this->signalGateway = $signalGateway;
 		$this->smsGateway = $smsGateway;
 		$this->telegramGateway = $telegramGateway;
+        $this->emailGateway = $emailGateway;
 	}
 
 	public function getGateway(string $name): IGateway {
@@ -56,6 +62,8 @@ class Factory {
 				return $this->smsGateway;
 			case 'telegram':
 				return $this->telegramGateway;
+			case 'email':
+				return $this->emailGateway;
 			default:
 				throw new Exception("Invalid gateway <$name>");
 		}

@@ -36,6 +36,8 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfig;
+use OCA\TwoFactorGateway\Service\Gateway\Email\Gateway as EmailGateway;
+use OCA\TwoFactorGateway\Service\Gateway\Email\GatewayConfig as EmailConfig;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -53,18 +55,23 @@ class Configure extends Command {
 	/** @var TelegramGateway */
 	private $telegramGateway;
 
+	/** @var EmailGateway */
+	private $emailGateway;
+
 	public function __construct(SignalGateway $signalGateway,
 								SMSGateway $smsGateway,
-								TelegramGateway $telegramGateway) {
+								TelegramGateway $telegramGateway,
+                                EmailGateway $emailGateway) {
 		parent::__construct('twofactorauth:gateway:configure');
 		$this->signalGateway = $signalGateway;
 		$this->smsGateway = $smsGateway;
 		$this->telegramGateway = $telegramGateway;
+        $this->emailGateway = $emailGateway;
 
 		$this->addArgument(
 			'gateway',
 			InputArgument::REQUIRED,
-			'The name of the gateway, e.g. sms, signal, telegram, etc.'
+			'The name of the gateway, e.g. sms, signal, telegram, email, etc.'
 		);
 	}
 
@@ -82,6 +89,9 @@ class Configure extends Command {
 				break;
 			case 'telegram':
 				$this->configureTelegram($input, $output);
+				break;
+			case 'email':
+				$this->configureEmail($input, $output);
 				break;
 			default:
 				$output->writeln("<error>Invalid gateway $gatewayName</error>");
@@ -241,4 +251,6 @@ class Configure extends Command {
 		$config->setBotToken($token);
 	}
 
+	private function configureEmail(InputInterface $input, OutputInterface $output) {
+	}
 }

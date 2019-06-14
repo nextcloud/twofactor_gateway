@@ -121,6 +121,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IProvidesPersonal
 
 		$tmpl = new Template('twofactor_gateway', 'challenge');
 		$tmpl->assign('phone', PhoneNumberMask::maskNumber($identifier));
+        $tmpl->assign('email', $identifier);
 		return $tmpl;
 	}
 
