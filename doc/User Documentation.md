@@ -57,4 +57,12 @@ use of the gateway for a user:
    **Remember:** As a next step you should immediately generate Two-Factor Authentication
    backup codes to be able to login, in case the Telegram service fails.
 
+
+    .. note::
+
+    After setting up your Two-Factor gateway, some clients that do not support Two-Factor
+    Authentication might not work. See Nexctloud's documentation on [Using Two-Factor 
+    Authentication] for more information on how to get these clients to work.
+
 [Administrator Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/Admin%20Documentation/
+[Using Two-Factor Authentication]: https://docs.nextcloud.com/server/stable/user_manual/user_2fa.html#using-client-applications-with-two-factor-authentication
