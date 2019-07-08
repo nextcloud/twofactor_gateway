@@ -51,6 +51,8 @@ class ProviderFactory {
 				return $this->container->query(VoipMs::class);
 			case HuaweiE3531::PROVIDER_ID:
 				return $this->container->query(HuaweiE3531::class);
+			case MesstoSms::PROVIDER_ID:
+				return $this->container->query(MesstoSms::class);
 			default:
 				throw new InvalidSmsProviderException("Provider <$id> does not exist");
 		}
