@@ -111,7 +111,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IProvidesPersonal
 			$this->gateway->send(
 				$user,
 				$identifier,
-				$this->l10n->t('%s is your Nextcloud authentication code', [
+				$this->l10n->t('%s is your authentication code', [
 					$secret
 				])
 			);

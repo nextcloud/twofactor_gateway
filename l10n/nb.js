@@ -1,7 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "%s is your Nextcloud authentication code" : "%s er din Nextcloud-autentiseringskode",
+    "%s is your authentication code" : "%s er din Nextcloud-autentiseringskode",
     "Authenticate via Signal" : "Autentiser med Signal",
     "Authenticate via Telegram" : "Autentiser med Telegram",
     "Authentication code" : "Autentiseringskode",

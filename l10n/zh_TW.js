@@ -1,7 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "%s is your Nextcloud authentication code" : "%s 是你的 Nextcloud 驗證碼",
+    "%s is your authentication code" : "%s 是你的 Nextcloud 驗證碼",
     "Two-Factor Gateway" : "兩階段驗證中心",
     "Authentication code" : "驗證碼",
     "An access code has been sent to %s" : "一個驗証碼已經發送到 %s",

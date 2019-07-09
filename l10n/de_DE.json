@@ -1,5 +1,5 @@
 { "translations": {
-    "%s is your Nextcloud authentication code" : "%s ist Ihr Nextcloud-Authentifizierungscode",
+    "%s is your authentication code" : "%s ist Ihr Nextcloud-Authentifizierungscode",
     "Signal verification" : "Signal-Bestätigung",
     "Authenticate via Signal" : "Authentifizierung über Signal",
     "Message gateway verification" : "Nachrichten-Gateway-Überprüfung",

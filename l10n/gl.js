@@ -1,7 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "%s is your Nextcloud authentication code" : "O seu código de autenticación Nextcloud é:%s",
+    "%s is your authentication code" : "O seu código de autenticación Nextcloud é:%s",
     "Signal verification" : "Verificación a través do Signal",
     "Authenticate via Signal" : "Autenticar a través do Signal",
     "Message gateway verification" : "Pasarela para a verificación por mensaxe ",

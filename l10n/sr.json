@@ -1,5 +1,5 @@
 { "translations": {
-    "%s is your Nextcloud authentication code" : "%s je kod za proveru identiteta",
+    "%s is your authentication code" : "%s je kod za proveru identiteta",
     "Signal verification" : "Сигнал верификација",
     "Authenticate via Signal" : "Провери идентитет преко Сигнала",
     "Message gateway verification" : "Мрежни пролаз порука за верификацију",

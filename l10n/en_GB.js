@@ -1,7 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "%s is your Nextcloud authentication code" : "%s is your Nextcloud authentication code",
+    "%s is your authentication code" : "%s is your authentication code",
     "Authentication code" : "Authentication code",
     "An access code has been sent to %s" : "An access code has been sent to %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Error while sending the Message. Please try again later or contact the administrator.",

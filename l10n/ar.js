@@ -1,7 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "%s is your Nextcloud authentication code" : "%s هو رمز المصادقة الخاص بناكست كلاود",
+    "%s is your authentication code" : "%s هو رمز المصادقة الخاص بناكست كلاود",
     "Authentication code" : "رمز المصادقة",
     "An access code has been sent to %s" : "تم إرسال رمزٍ للنفاذ إلى %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "حدث خطأ أثناء إرسال الرسالة. الرجاء إعادة المحاولة لاحقا أو الاتصال بالمشرف."

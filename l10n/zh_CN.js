@@ -1,7 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "%s is your Nextcloud authentication code" : "%s 是您在 Nextcloud 的授权认证代码",
+    "%s is your authentication code" : "%s 是您在 Nextcloud 的授权认证代码",
     "Signal verification" : "信号验证",
     "Authenticate via Signal" : "通过信号认证",
     "Message gateway verification" : "消息网关验证",

@@ -1,7 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "%s is your Nextcloud authentication code" : "%s е вашия Nextcloud удостоверителен код",
+    "%s is your authentication code" : "%s е вашия Nextcloud удостоверителен код",
     "Signal verification" : "Signal удостоверяване",
     "Authenticate via Signal" : "Удостоверяване с Signal",
     "Authenticate via SMS" : "Удостоверяване с SMS",
