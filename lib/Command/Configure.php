@@ -35,6 +35,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\MesstoSmsConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\GatewayApiSmsConfig;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfig;
 use Symfony\Component\Console\Command\Command;
@@ -104,7 +105,7 @@ class Configure extends Command {
 
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, huawei_e3531, messtosms): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, huawei_e3531, messtosms, gatewayapisms): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -235,6 +236,21 @@ class Configure extends Command {
 
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
+
+				break;
+
+			case 'gatewayapisms':
+				$config->setProvider($provider);
+				/** @var GatewayApiSmsConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$authtokenQuestion = new Question('Please enter your GatewayAPI authentication token: ');
+				$authtoken = $helper->ask($input, $output, $authtokenQuestion);
+				$senderidQuestion = new Question('Please enter your GatewayAPI sender id (11 alphanumeric characters, or 15 digits): ');
+				$senderid = $helper->ask($input, $output, $senderidQuestion);
+
+				$providerConfig->setAuthToken($authtoken);
+				$providerConfig->setSenderId($senderid);
 
 				break;
 

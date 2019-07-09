@@ -53,6 +53,8 @@ class ProviderFactory {
 				return $this->container->query(HuaweiE3531::class);
 			case MesstoSms::PROVIDER_ID:
 				return $this->container->query(MesstoSms::class);
+			case GatewayApiSms::PROVIDER_ID:
+				return $this->container->query(GatewayApiSms::class);
 			default:
 				throw new InvalidSmsProviderException("Provider <$id> does not exist");
 		}

@@ -117,4 +117,13 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure sms
 ```
 
+### GatewayAPI SMS
+URL: https://gatewayapi.com/
+Stability: Experimental
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
