@@ -19,6 +19,7 @@ will be able to log in just like you would on the web, including, but not
 limited to SMS-based authentication.
 
 Absent support for the Login flow, after enabling Two Factor SMS, your legacy
-applications will accept device passwords. To manage them,
-[see more here](https://docs.nextcloud.com/server/14/user_manual/session_management.html#managing-devices)
+applications will accept device passwords. Read more on [managing devices].
+
 [admin documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/Admin%20Documentation/
+[managing devices]: https://docs.nextcloud.com/server/14/user_manual/session_management.html#managing-devices
