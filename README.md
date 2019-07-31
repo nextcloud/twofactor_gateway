@@ -22,4 +22,4 @@ Absent support for the Login flow, after enabling Two Factor SMS, your legacy
 applications will accept device passwords. Read more on [managing devices].
 
 [admin documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/Admin%20Documentation/
-[managing devices]: https://docs.nextcloud.com/server/14/user_manual/session_management.html#managing-devices
+[managing devices]: https://docs.nextcloud.com/server/stable/user_manual/session_management.html#managing-devices
