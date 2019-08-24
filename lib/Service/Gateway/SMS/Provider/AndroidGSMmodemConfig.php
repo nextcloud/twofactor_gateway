@@ -62,10 +62,10 @@ class AndroidGSMmodemConfig implements IProviderConfig {
 	}
 
 	public function getHost(): string {
-			return $this->getOrFail('android_gsm_modem_host')
+			return $this->getOrFail('android_gsm_modem_host');
 	}
 	
-	public func_get_arg setHost(string $host) {
+	public function setHost(string $host) {
 		$this->config->setAppValue(Application::APP_NAME, 'android_gsm_modem_host', $host);
 	}
 	
