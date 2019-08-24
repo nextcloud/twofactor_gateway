@@ -37,7 +37,7 @@ class AndroidGSMmodem implements IProvider {
 		$password = $config->getPassword();
 		$host = $config->getHost();
 		try {
-			$this->client->get('http://'.$host.'/SendSMS/username='.$user.'&password='.$password.'&phone='.$identifier.'&message='.$message);
+			$this->client->get('http://'.$host.'/SendSMS?username='.$user.'&password='.$password.'&phone='.$identifier.'&message='.$message);
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
