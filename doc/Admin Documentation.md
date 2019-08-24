@@ -4,6 +4,17 @@
 
 Here you can find the configuration instructions for the currently supported gateways.
 
+### GMS Modem Android App
+URL: https://sindhitutorials.com/blog/gsm-modem-free-sms-android-app/
+Stability: Experimental
+
+Use an old Android phone with a cheap pay as you go plan to easily send SMS messages for Nextcloud 2fa.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
 ### playSMS
 URL: https://playsms.org/
 Stability: Experimental
