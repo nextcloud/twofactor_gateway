@@ -4,7 +4,7 @@
 
 Here you can find the configuration instructions for the currently supported gateways.
 
-### GMS Modem Android App
+### GSM Modem Android App
 URL: https://sindhitutorials.com/blog/gsm-modem-free-sms-android-app/
 Stability: Experimental
 
