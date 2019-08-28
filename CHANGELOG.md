@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.14.1 – 2019-08-28
+### Changed
+- New and updated translations
+### Fixed
+- Vulnerabilities in npm dependencies
+
 ## 0.14.0 – 2019-05-14
 ### Added
 - Nextcloud 16 support
