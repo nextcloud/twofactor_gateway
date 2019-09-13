@@ -67,6 +67,8 @@ matrix:
     - php: 7.3
       env: "DB=sqlite SERVER_BRANCH=stable16"
     - php: 7.3
+      env: "DB=sqlite SERVER_BRANCH=stable17"
+    - php: 7.3
       env: "DB=sqlite"
     - php: 7.2
       env: "DB=sqlite PHP_COVERAGE=TRUE"
