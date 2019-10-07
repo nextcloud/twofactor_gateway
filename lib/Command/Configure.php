@@ -34,7 +34,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\AndroidGSMmodemConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\AndroidGsmModemConfig;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfig;
 use Symfony\Component\Console\Command\Command;
@@ -226,7 +226,7 @@ class Configure extends Command {
 			case 'android_gsm_modem':
 				$config->setProvider($provider);
 				
-				/** @var AndroidGSMmodemConfig $providerConfig */
+				/** @var AndroidGsmModemConfig $providerConfig */
 				$providerConfig = $config->getProvider()->getConfig();
 				
 				$hostQuestion = new Question('Please enter your GSM Modem IP address (e.g: x.x.x.x:8090)');
@@ -238,9 +238,13 @@ class Configure extends Command {
 				$passwordQuestion = new Question('Please enter your GSM Modem API password: ');
 				$password = $helper->ask($input, $output, $passwordQuestion);
 
+				$protocolQuestion = new Question('Please enter your GSM Modem API protocol (http/https): ');
+				$protocol = $helper->ask($input, $output, $protocolQuestion);
+
 				$providerConfig->setHost($host);
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
+				$providerConfig->setProtocol($protocol);
 				break;
 				
 			default:

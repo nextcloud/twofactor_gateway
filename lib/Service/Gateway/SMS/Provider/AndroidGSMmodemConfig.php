@@ -28,7 +28,7 @@ use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 
-class AndroidGSMmodemConfig implements IProviderConfig {
+class AndroidGsmModemConfig implements IProviderConfig {
 
 	/** @var IConfig */
 	private $config;
@@ -67,6 +67,14 @@ class AndroidGSMmodemConfig implements IProviderConfig {
 	
 	public function setHost(string $host) {
 		$this->config->setAppValue(Application::APP_NAME, 'android_gsm_modem_host', $host);
+	}
+	
+	public function getProtocol(): string {
+		return $this->getOrFail('android_gsm_modem_protocol');
+	}
+	
+	public function setProtocol(string $protocol): string {
+		$this->config->setAppValue(Application::APP_NAME, 'android_gsm_modem_protocol', $protocol);
 	}
 	
 	public function isComplete(): bool {

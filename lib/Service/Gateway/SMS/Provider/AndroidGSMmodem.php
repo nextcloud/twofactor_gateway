@@ -9,18 +9,18 @@ use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class AndroidGSMmodem implements IProvider {
+class AndroidGsmModem implements IProvider {
 
 	const PROVIDER_ID = 'android_gsm_modem';
 
 	/** @var IClient */
 	private $client;
 
-	/** @var AndroidGSMmodemConfig */
+	/** @var AndroidGsmModemConfig */
 	private $config;
 
 	public function __construct(IClientService $clientService,
-								AndroidGSMmodemConfig $config) {
+								AndroidGsmModemConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}
@@ -36,15 +36,23 @@ class AndroidGSMmodem implements IProvider {
 		$user = $config->getUser();
 		$password = $config->getPassword();
 		$host = $config->getHost();
+		$protocol = $config->getProtocol();
 		try {
-			$this->client->get('http://'.$host.'/SendSMS?username='.$user.'&password='.$password.'&phone='.$identifier.'&message='.$message);
+			$this->client->get("$protocol://$host/SendSMS", [
+				'query' => [
+					'user' => $user,
+					'password' => $password,
+					'phone' => $identifier,
+					'message' => $message,
+				],
+			]);
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
 	}
 
 	/**
-	 * @return AndroidGSMmodemConfig
+	 * @return AndroidGsmModemConfig
 	 */
 	public function getConfig(): IProviderConfig {
 		return $this->config;
