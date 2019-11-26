@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "christophwurst/nextcloud",
-            "version": "v15.0.11",
+            "version": "v15.0.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "ae369819b03f6d91fd2d0a9007c0de413f5b5587"
+                "reference": "a1433b6da661ab33fc9697213df15b69db128f12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/ae369819b03f6d91fd2d0a9007c0de413f5b5587",
-                "reference": "ae369819b03f6d91fd2d0a9007c0de413f5b5587",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/a1433b6da661ab33fc9697213df15b69db128f12",
+                "reference": "a1433b6da661ab33fc9697213df15b69db128f12",
                 "shasum": ""
             },
             "require": {
@@ -40,7 +40,7 @@
                 }
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
-            "time": "2019-09-03T07:45:51+00:00"
+            "time": "2019-11-25T09:02:55+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -1077,18 +1077,18 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "role": "Developer",
-                    "email": "arne@blankerts.de"
+                    "email": "arne@blankerts.de",
+                    "role": "Developer"
                 },
                 {
                     "name": "Sebastian Heuer",
-                    "role": "Developer",
-                    "email": "sebastian@phpeople.de"
+                    "email": "sebastian@phpeople.de",
+                    "role": "Developer"
                 },
                 {
                     "name": "Sebastian Bergmann",
-                    "role": "Developer",
-                    "email": "sebastian@phpunit.de"
+                    "email": "sebastian@phpunit.de",
+                    "role": "Developer"
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
@@ -2390,8 +2390,8 @@
             "authors": [
                 {
                     "name": "Arne Blankerts",
-                    "role": "Developer",
-                    "email": "arne@blankerts.de"
+                    "email": "arne@blankerts.de",
+                    "role": "Developer"
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
