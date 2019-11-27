@@ -56,15 +56,13 @@ class EcallSMS implements IProvider {
 		$password = $config->getPassword();
 		$senderId = $config->getSenderId();
 		try {
-			$this->client->get('https://www.ecall.ch/ecallurl/ecallurl.ASP', [
+			$this->client->get('https://url.ecall.ch/api/sms', [
 				'query' => [
-					'WCI' => 'Interface',
-					'Function' => 'SendPage',
-					'AccountName' => $user,
-					'AccountPassword' => $password,
+					'username' => $user,
+					'password' => $password,
 					'Callback' => $senderId,
-					'Address' => $identifier,
-					'Message' => $message,
+					'address' => $identifier,
+					'message' => $message,
 				],
 			]);
 		} catch (Exception $ex) {
