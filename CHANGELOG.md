@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.15.0 – 2019-12-10
+### Added
+- Spryng gateway support
+- Sms77io gateway support
+- Nextcloud 18 support
+- php7.4 support
+### Changed
+- ecall API updated to new version
+- New and updated translations
+### Removed
+- php7.1 support
+
 ## 0.14.1 – 2019-08-28
 ### Changed
 - New and updated translations
