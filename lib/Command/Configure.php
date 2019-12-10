@@ -34,6 +34,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SpryngSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfig;
 use Symfony\Component\Console\Command\Command;
@@ -103,7 +104,7 @@ class Configure extends Command {
 
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, huawei_e3531): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, huawei_e3531, spryng): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -220,6 +221,18 @@ class Configure extends Command {
 				$url = $helper->ask($input, $output, $urlQuestion);
 
 				$providerConfig->setUrl($url);
+				break;
+
+			case 'spryng':
+				$config->setProvider($provider);
+				/** @var SpryngSMSConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$apitokenQuestion = new Question('Please enter your Spryng api token: ');
+				$apitoken = $helper->ask($input, $output, $apitokenQuestion);
+
+				$providerConfig->setApiToken($apitoken);
+
 				break;
 
 			default:
