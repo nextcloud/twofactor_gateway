@@ -2,14 +2,18 @@ sudo: required
 dist: trusty
 language: php
 php:
-  - 7.1
   - 7.2
   - 7.3
+  - 7.4snapshot
+jobs:
+  allow_failures:
+  - php: nightly
 
 env:
   global:
   - SERVER_BRANCH=master
   - PHP_COVERAGE=FALSE
+  - PATCH_VERSION_CHECK=FALSE
   matrix:
   - DB=sqlite
 
@@ -33,6 +37,8 @@ before_install:
   - composer install
   - cd ..
   - git clone https://github.com/nextcloud/server.git --recursive --depth 1 -b $SERVER_BRANCH core
+  - if [[ "$PATCH_VERSION_CHECK" = "TRUE" ]]; then echo "<?php" > core/lib/versioncheck.php; fi
+  - if [[ "$PATCH_VERSION_CHECK" = "TRUE" ]]; then  sed -ri 's/(<php min\-version="[0-9\.]+") max\-version="[0-9\.]+"/\1/g' twofactor_gateway/appinfo/info.xml; fi
   - mv twofactor_gateway core/apps/
 
 before_script:
@@ -72,4 +78,6 @@ matrix:
       env: "DB=sqlite"
     - php: 7.2
       env: "DB=sqlite PHP_COVERAGE=TRUE"
+    - php: nightly
+      env: "PATCH_VERSION_CHECK=TRUE"
   fast_finish: true
