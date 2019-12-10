@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
@@ -32,29 +34,29 @@ use OCP\IL10N;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
-use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class SmsProviderTest extends TestCase {
 
-	/** @var IGateway|PHPUnit_Framework_MockObject_MockObject */
+	/** @var IGateway|MockObject */
 	private $smsGateway;
 
-	/** @var StateStorage|PHPUnit_Framework_MockObject_MockObject */
+	/** @var StateStorage|MockObject */
 	private $stateStorage;
 
-	/** @var ISession|PHPUnit_Framework_MockObject_MockObject */
+	/** @var ISession|MockObject */
 	private $session;
 
-	/** @var ISecureRandom|PHPUnit_Framework_MockObject_MockObject */
+	/** @var ISecureRandom|MockObject */
 	private $random;
 
-	/** @var IL10n|PHPUnit_Framework_MockObject_MockObject */
+	/** @var IL10n|MockObject */
 	private $l10n;
 
 	/** @var SmsProvider */
 	private $provider;
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->smsGateway = $this->createMock(Gateway::class);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
@@ -36,29 +38,29 @@ use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\Authentication\TwoFactorAuth\IRegistry;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
-use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class SetupServiceTest extends TestCase {
 
-	/** @var StateStorage|PHPUnit_Framework_MockObject_MockObject */
+	/** @var StateStorage|MockObject */
 	private $stateStorage;
 
-	/** @var GatewayFactory|PHPUnit_Framework_MockObject_MockObject */
+	/** @var GatewayFactory|MockObject */
 	private $gatewayFactory;
 
-	/** @var ISecureRandom|PHPUnit_Framework_MockObject_MockObject */
+	/** @var ISecureRandom|MockObject */
 	private $random;
 
-	/** @var ProviderFactory|PHPUnit_Framework_MockObject_MockObject */
+	/** @var ProviderFactory|MockObject */
 	private $providerFactory;
 
-	/** @var IRegistry|PHPUnit_Framework_MockObject_MockObject */
+	/** @var IRegistry|MockObject */
 	private $registry;
 
 	/** @var SetupService */
 	private $setupService;
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->stateStorage = $this->createMock(StateStorage::class);

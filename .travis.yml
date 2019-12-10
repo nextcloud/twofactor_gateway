@@ -58,8 +58,7 @@ script:
   - php ../../occ app:check-code twofactor_gateway
 
   # Run PHP tests
-  - ./vendor/bin/phpunit --fail-on-warning -c tests/phpunit.xml
-  - ./vendor/bin/phpunit --fail-on-warning -c tests/phpunit.integration.xml
+  - composer run test:unit:dev
 
 after_script:
   # Upload coverage report to Scrutinizer

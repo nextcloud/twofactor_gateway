@@ -31,29 +31,29 @@ use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\Security\ISecureRandom;
-use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class TelegramProviderTest extends TestCase {
 
-	/** @var Gateway|PHPUnit_Framework_MockObject_MockObject */
+	/** @var Gateway|MockObject */
 	private $gateway;
 
-	/** @var StateStorage|PHPUnit_Framework_MockObject_MockObject */
+	/** @var StateStorage|MockObject */
 	private $stateStorage;
 
-	/** @var ISession|PHPUnit_Framework_MockObject_MockObject */
+	/** @var ISession|MockObject */
 	private $session;
 
-	/** @var ISecureRandom|PHPUnit_Framework_MockObject_MockObject */
+	/** @var ISecureRandom|MockObject */
 	private $random;
 
-	/** @var IL10N|PHPUnit_Framework_MockObject_MockObject */
+	/** @var IL10N|MockObject */
 	private $l10n;
 
 	/** @var TelegramProvider */
 	private $provider;
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->gateway = $this->createMock(Gateway::class);
@@ -103,4 +103,5 @@ class TelegramProviderTest extends TestCase {
 
 		$this->assertSame($translated, $actual);
 	}
+
 }
