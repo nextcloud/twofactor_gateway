@@ -108,6 +108,17 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure sms
 ```
 
+### sms77.io
+URL: https://sms77.io
+Stability: Experimental
+
+Use the SMS gateway provided by sms77.io for sending SMS.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
 
 ### Spryng

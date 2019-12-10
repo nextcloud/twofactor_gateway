@@ -31,6 +31,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\GatewayConfig as SMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClockworkSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\EcallSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\Sms77IoConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
@@ -233,6 +234,17 @@ class Configure extends Command {
 
 				$providerConfig->setApiToken($apitoken);
 
+				break;
+
+			case 'sms77':
+				$config->setProvider($provider);
+				/** @var Sms77IoConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$apiKeyQuestion = new Question('Please enter your sms77.io API key: ');
+				$apiKey = $helper->ask($input, $output, $apiKeyQuestion);
+
+				$providerConfig->setApiKey($apiKey);
 				break;
 
 			default:
