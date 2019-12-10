@@ -1,6 +1,6 @@
 {
 	"require": {
-		"christophwurst/nextcloud": "^15.0",
+		"christophwurst/nextcloud": "^16.0",
 		"irazasyed/telegram-bot-sdk": "^3.0"
 	},
 	"require-dev": {
@@ -10,7 +10,7 @@
 		"optimize-autoloader": true,
 		"classmap-authoritative": true,
 		"platform": {
-			"php": "7.0"
+			"php": "7.2"
 		}
 	}
 }
