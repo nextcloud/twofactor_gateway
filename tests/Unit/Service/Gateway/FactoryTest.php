@@ -44,7 +44,7 @@ class FactoryTest extends TestCase {
 	/** @var Factory */
 	private $factory;
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 
 		$this->signalGateway = $this->createMock(SignalGateway::class);
@@ -76,10 +76,8 @@ class FactoryTest extends TestCase {
 		$this->assertSame($this->telegramGateway, $gateway);
 	}
 
-	/**
-	 * @expectedException \Exception
-	 */
 	public function testGetInvalidGateway() {
+		$this->expectException(\Exception::class);
 		$this->factory->getGateway("wrong");
 	}
 
