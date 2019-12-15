@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "51652fc5f17e4f7473cef1026be0a310",
+    "content-hash": "adc01c1e2148a98b63857e76d6d448d2",
     "packages": [
         {
             "name": "christophwurst/nextcloud",
-            "version": "v16.0.6",
+            "version": "v17.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ChristophWurst/nextcloud_composer.git",
-                "reference": "472bafce9f6ccbde26b02254f1c395978974dd2d"
+                "reference": "717da841af036eecefbb934ac09ea6e5666522ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/472bafce9f6ccbde26b02254f1c395978974dd2d",
-                "reference": "472bafce9f6ccbde26b02254f1c395978974dd2d",
+                "url": "https://api.github.com/repos/ChristophWurst/nextcloud_composer/zipball/717da841af036eecefbb934ac09ea6e5666522ec",
+                "reference": "717da841af036eecefbb934ac09ea6e5666522ec",
                 "shasum": ""
             },
             "require": {
@@ -26,7 +26,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "16.0.0-dev"
+                    "dev-master": "17.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -40,7 +40,7 @@
                 }
             ],
             "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
-            "time": "2019-11-25T09:01:37+00:00"
+            "time": "2019-11-25T09:00:02+00:00"
         },
         {
             "name": "doctrine/inflector",
