@@ -23,7 +23,7 @@
     "jquery": "^3.4.1",
     "nextcloud_fetch": "^2.1.0",
     "vue": "^2.6.11",
-    "vue-loader": "^15.7.2",
+    "vue-loader": "^15.8.3",
     "vue-style-loader": "^4.1.2",
     "vue-template-compiler": "^2.6.11"
   },
