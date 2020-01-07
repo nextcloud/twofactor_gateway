@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.15.1 – 2020-01-07
+### Changed
+- New and updated translations
+- Updated dependencies
+
 ## 0.15.0 – 2019-12-10
 ### Added
 - Spryng gateway support
