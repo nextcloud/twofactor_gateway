@@ -105,7 +105,7 @@ class Configure extends Command {
 
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, huawei_e3531, spryng): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, huawei_e3531, spryng, sms77io): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -236,7 +236,7 @@ class Configure extends Command {
 
 				break;
 
-			case 'sms77':
+			case 'sms77io':
 				$config->setProvider($provider);
 				/** @var Sms77IoConfig $providerConfig */
 				$providerConfig = $config->getProvider()->getConfig();
