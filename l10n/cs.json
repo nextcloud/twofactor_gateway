@@ -4,7 +4,7 @@
     "Authenticate via Signal" : "Ověřit prostřednictvím služby Signal",
     "Message gateway verification" : "Ověřování brány zpráv",
     "Authenticate via SMS" : "Ověřit prostřednictvím SMS",
-    "Telegram verification" : "Telegram ověřování",
+    "Telegram verification" : "Ověřování prostřednictvím služby Telegram",
     "Authenticate via Telegram" : "Ověřit přes Telegram",
     "Two-Factor Gateway" : "Brána pro dvouúrovňové ověřování",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Poskytovatelé bran pro dvouúrovňové ověřování (SMS, Telegram, Signal)",
