@@ -4,7 +4,7 @@
 		"irazasyed/telegram-bot-sdk": "^3.0"
 	},
 	"require-dev": {
-		"christophwurst/nextcloud_testing": "^0.9"
+		"christophwurst/nextcloud_testing": "^0.10"
 	},
 	"config": {
 		"optimize-autoloader": true,
