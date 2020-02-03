@@ -32,6 +32,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClockworkSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\EcallSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\Sms77IoConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\OvhConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
@@ -105,7 +106,8 @@ class Configure extends Command {
 
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, huawei_e3531, spryng, sms77io): ', 'websms');
+
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, huawei_e3531, spryng, sms77io, ovh', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -246,6 +248,39 @@ class Configure extends Command {
 
 				$providerConfig->setApiKey($apiKey);
 				break;
+
+			case 'ovh':
+				$config->setProvider($provider);
+
+				/** @var OvhConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$endpointQ = new Question('Please enter the endpoint to use (ovh-eu, ovh-us, ovh-ca, soyoustart-eu, soyoustart-ca, kimsufi-eu, kimsufi-ca, runabove-ca): ');
+				$endpoint = $helper->ask($input, $output, $endpointQ);
+
+				$appKeyQ = new Question('Please enter your application key: ');
+				$appKey = $helper->ask($input, $output, $appKeyQ);
+
+				$appSecretQ = new Question('Please enter your application secret: ');
+				$appSecret = $helper->ask($input, $output, $appSecretQ);
+
+				$consumerKeyQ = new Question('Please enter your consumer key: ');
+				$consumerKey = $helper->ask($input, $output, $consumerKeyQ);
+
+				$accountQ = new Question('Please enter your account (sms-*****): ');
+				$account = $helper->ask($input, $output, $accountQ);
+
+				$senderQ = new Question('Please enter your sender: ');
+				$sender = $helper->ask($input, $output, $senderQ);
+
+				$providerConfig->setApplicationKey($appKey);
+				$providerConfig->setApplicationSecret($appSecret);
+				$providerConfig->setConsumerKey($consumerKey);
+				$providerConfig->setEndpoint($endpoint);
+				$providerConfig->setAccount($account);
+				$providerConfig->setSender($sender);
+				break;
+
 
 			default:
 				$output->writeln("Invalid provider $provider");

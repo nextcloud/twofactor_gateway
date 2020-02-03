@@ -119,6 +119,32 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure sms
 ```
 
+### OVH
+URL: https://www.ovhtelecom.fr/sms/
+Stability: Experimental
+
+Use the SMS gateway provided by OVH for sending SMS.
+
+1. First create an application key, an application secret and a consumer key with the [createToken](https://eu.api.ovh.com/createToken/index.cgi?GET=/sms&GET=/sms/*/jobs&POST=/sms/*/jobs) page.
+
+2. Go to you OVH account manager and get an SMS plan. You should see on the sidebar menu the SMS submenu with the account name: *sms-#######*
+
+3. Create a "sender". On the main page of the SMS account, you should see a *Create a sender* link. 
+
+4. Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
+   * Choose the `ovh` SMS provider.
+   * Choose the endpoint connexion.
+   * Enter successively the application key, the application secret, the consumer key, the account, and the sender.
+    
+5. Try to send a test with
+```bash
+occ twofactorauth:gateway:test <uid> sms <receiver>
+```
+
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
 
 ### Spryng

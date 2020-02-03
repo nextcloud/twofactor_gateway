@@ -53,6 +53,8 @@ class ProviderFactory {
 				return $this->container->query(HuaweiE3531::class);
 			case Sms77Io::PROVIDER_ID:
 				return $this->container->query(Sms77Io::class);
+			case Ovh::PROVIDER_ID:
+				return $this->container->query(Ovh::class);
 			case SpryngSMS::PROVIDER_ID:
 				return $this->container->query(SpryngSMS::class);
 			default:
