@@ -57,6 +57,8 @@ class ProviderFactory {
 				return $this->container->query(Ovh::class);
 			case SpryngSMS::PROVIDER_ID:
 				return $this->container->query(SpryngSMS::class);
+			case ClickatellCentral::PROVIDER_ID:
+				return $this->container->query(ClickatellCentral::class);
 			default:
 				throw new InvalidSmsProviderException("Provider <$id> does not exist");
 		}
