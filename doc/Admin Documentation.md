@@ -129,7 +129,7 @@ Use the SMS gateway provided by OVH for sending SMS.
 
 2. Go to you OVH account manager and get an SMS plan. You should see on the sidebar menu the SMS submenu with the account name: *sms-#######*
 
-3. Create a "sender". On the main page of the SMS account, you should see a *Create a sender* link. 
+3. Create a "sender". On the main page of the SMS account, you should see a *Create a sender* link.
 
 4. Interactive admin configuration:
 ```bash
@@ -139,13 +139,11 @@ occ twofactorauth:gateway:configure sms
    * Choose the `ovh` SMS provider.
    * Choose the endpoint connexion.
    * Enter successively the application key, the application secret, the consumer key, the account, and the sender.
-    
+
 5. Try to send a test with
 ```bash
 occ twofactorauth:gateway:test <uid> sms <receiver>
 ```
-
-[User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
 
 ### Spryng
 URL: https://www.spryng.nl
@@ -157,3 +155,29 @@ Interactive admin configuration:
 ```bash
 occ twofactorauth:gateway:configure sms
 ```
+
+### Clickatell (Developer Central)
+URL: https://central.clickatell.com/
+Stability: Experimental
+
+Use legacy Clickatell.com API for sending SMS.
+
+* Login with your credencials at [archive.clickatell.com](https://archive.clickatell.com/login)
+* Add a new HTTP API at [central.clickatell.com](https://central.clickatell.com/api/http/add)
+* Go to `Edit Settings`:
+  * Rename your new API
+  * Change username to something different
+  * Choose a secure and unique password
+  * (optional): Set maximum message parts to 1
+  * (optional): Enable auto-conversion of mobile numbers
+  * (optional): Restrict access to your webserver IP-address
+* Save changes!
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
+Select `clickatellcentral` and enter your API-ID, API username and API password.
+
+[User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
