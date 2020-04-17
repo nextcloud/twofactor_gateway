@@ -8,3 +8,5 @@ vendor/
 /nbproject/
 
 /tests/clover.*
+
+.php_cs.cache
