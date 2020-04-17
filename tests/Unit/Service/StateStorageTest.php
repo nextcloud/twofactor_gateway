@@ -171,6 +171,4 @@ class StateStorageTest extends TestCase {
 
 		$this->assertSame($persisted, $state);
 	}
-
-
 }

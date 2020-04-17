@@ -26,5 +26,4 @@ namespace OCA\TwoFactorGateway\Exception;
 use Exception;
 
 class InvalidSmsProviderException extends Exception {
-
 }

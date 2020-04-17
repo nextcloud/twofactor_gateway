@@ -30,7 +30,6 @@ use OCP\ISession;
 use OCP\Security\ISecureRandom;
 
 class TelegramProvider extends AProvider {
-
 	public function __construct(Gateway $smsGateway,
 								StateStorage $stateStorage,
 								ISession $session,
@@ -66,5 +65,4 @@ class TelegramProvider extends AProvider {
 	public function getDescription(): string {
 		return $this->l10n->t('Authenticate via Telegram');
 	}
-
 }

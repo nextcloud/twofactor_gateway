@@ -63,5 +63,4 @@ class ProviderFactory {
 				throw new InvalidSmsProviderException("Provider <$id> does not exist");
 		}
 	}
-
 }

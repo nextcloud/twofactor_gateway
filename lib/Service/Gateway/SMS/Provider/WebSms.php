@@ -29,8 +29,7 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class WebSms implements IProvider {
-
-	const PROVIDER_ID = 'websms';
+	public const PROVIDER_ID = 'websms';
 
 	/** @var IClient */
 	private $client;

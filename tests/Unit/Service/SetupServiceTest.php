@@ -178,5 +178,4 @@ class SetupServiceTest extends TestCase {
 
 		$this->assertEquals($verfied, $actualState);
 	}
-
 }

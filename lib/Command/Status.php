@@ -58,5 +58,4 @@ class Status extends Command {
 		$telegramConfigured = $this->telegramGateway->getConfig()->isComplete();
 		$output->writeln('Telegram gateway: ' . ($telegramConfigured ? 'configured' : 'not configured'));
 	}
-
 }

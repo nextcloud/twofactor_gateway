@@ -30,7 +30,6 @@ use OCA\TwoFactorGateway\Provider\State;
 use OCP\IUser;
 
 class StateTest extends TestCase {
-
 	public function testVerify() {
 		$user = $this->createMock(IUser::class);
 		$original = State::verifying(
@@ -51,5 +50,4 @@ class StateTest extends TestCase {
 
 		$this->assertEquals($expected, $actual);
 	}
-
 }

@@ -62,6 +62,4 @@ class GatewayConfig implements IGatewayConfig {
 		];
 		return count(array_intersect($set, $expected)) === count($expected);
 	}
-
-
 }

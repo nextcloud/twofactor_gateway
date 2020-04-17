@@ -4,7 +4,8 @@
 		"irazasyed/telegram-bot-sdk": "^3.0"
 	},
 	"require-dev": {
-		"christophwurst/nextcloud_testing": "^0.10"
+		"christophwurst/nextcloud_testing": "^0.10",
+		"nextcloud/coding-standard": "^0.3.0"
 	},
 	"config": {
 		"optimize-autoloader": true,
@@ -14,6 +15,8 @@
 		}
 	},
 	"scripts": {
+		"cs:check": "php-cs-fixer fix --dry-run --diff",
+		"cs:fix": "php-cs-fixer fix",
 		"lint": "find . -name \\*.php -not -path './vendor/*' -exec php -l \"{}\" \\;",
 		"test": "phpunit -c tests/phpunit.xml",
 		"test:unit": "phpunit -c tests/phpunit.xml tests/Unit",

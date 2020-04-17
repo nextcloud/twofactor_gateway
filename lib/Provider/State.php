@@ -129,5 +129,4 @@ class State implements JsonSerializable {
 			'phoneNumber' => $this->identifier,
 		];
 	}
-
 }

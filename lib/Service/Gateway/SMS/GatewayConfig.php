@@ -65,6 +65,4 @@ class GatewayConfig implements IGatewayConfig {
 			return false;
 		}
 	}
-
-
 }

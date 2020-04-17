@@ -101,5 +101,4 @@ class SmsProviderTest extends TestCase {
 
 		$this->assertTrue($enabled);
 	}
-
 }

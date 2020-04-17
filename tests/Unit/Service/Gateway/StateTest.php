@@ -28,7 +28,6 @@ use ChristophWurst\Nextcloud\Testing\TestCase;
 use OCA\TwoFactorGateway\Service\Gateway\State;
 
 class StateTest extends TestCase {
-
 	public function testDisabled() {
 		$state = State::disabled();
 
@@ -52,5 +51,4 @@ class StateTest extends TestCase {
 		$this->assertFalse($state->isVerifying());
 		$this->assertTrue($state->isEnabled());
 	}
-
 }

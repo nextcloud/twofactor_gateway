@@ -29,8 +29,7 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class VoipMs implements IProvider {
-
-	const PROVIDER_ID = 'voipms';
+	public const PROVIDER_ID = 'voipms';
 
 	/** @var IClient */
 	private $client;

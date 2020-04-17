@@ -127,5 +127,4 @@ class SetupService {
 			State::disabled($user, $gatewayName)
 		);
 	}
-
 }

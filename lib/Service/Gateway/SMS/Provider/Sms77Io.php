@@ -29,8 +29,7 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class Sms77Io implements IProvider {
-
-	const PROVIDER_ID = 'sms77io';
+	public const PROVIDER_ID = 'sms77io';
 
 	/** @var IClient */
 	private $client;

@@ -125,5 +125,4 @@ class SettingsController extends Controller {
 
 		return new JSONResponse($this->setup->disable($user, $gateway));
 	}
-
 }

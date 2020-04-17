@@ -24,7 +24,5 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 interface IProviderConfig {
-
 	public function isComplete(): bool;
-
 }
