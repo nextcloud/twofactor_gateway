@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.16.0 - 2020-04-17
+### Added
+- Nextcloud 19 support
+- Clickatell.com gateway support
+- OVH SMS gateway support
+### Changed
+- New and updated translations
+- Updated dependencies
+### Fixed
+- Problems with sms77
+
 ## 0.15.1 – 2020-01-07
 ### Changed
 - New and updated translations
