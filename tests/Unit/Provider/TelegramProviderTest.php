@@ -103,5 +103,4 @@ class TelegramProviderTest extends TestCase {
 
 		$this->assertSame($translated, $actual);
 	}
-
 }

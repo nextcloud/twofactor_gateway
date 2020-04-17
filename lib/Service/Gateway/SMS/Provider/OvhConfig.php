@@ -69,27 +69,27 @@ class OvhConfig implements IProviderConfig {
 		return $this->getOrFail('ovh_sender');
 	}
 
-	public function setApplicationKey(string $appKey){
+	public function setApplicationKey(string $appKey) {
 		$this->config->setAppValue(Application::APP_NAME, 'ovh_application_key', $appKey);
 	}
 
-	public function setApplicationSecret(string $appSecret){
+	public function setApplicationSecret(string $appSecret) {
 		$this->config->setAppValue(Application::APP_NAME, 'ovh_application_secret', $appSecret);
 	}
 
-	public function setConsumerKey(string $consumerKey){
+	public function setConsumerKey(string $consumerKey) {
 		$this->config->setAppValue(Application::APP_NAME, 'ovh_consumer_key', $consumerKey);
 	}
 
-	public function setEndpoint(string $endpoint){
+	public function setEndpoint(string $endpoint) {
 		$this->config->setAppValue(Application::APP_NAME, 'ovh_endpoint', $endpoint);
 	}
 
-	public function setAccount($account){
+	public function setAccount($account) {
 		$this->config->setAppValue(Application::APP_NAME, 'ovh_account', $account);
 	}
 
-	public function setSender($sender){
+	public function setSender($sender) {
 		$this->config->setAppValue(Application::APP_NAME, 'ovh_sender', $sender);
 	}
 
@@ -105,5 +105,4 @@ class OvhConfig implements IProviderConfig {
 		];
 		return count(array_intersect($set, $expected)) === count($expected);
 	}
-
 }

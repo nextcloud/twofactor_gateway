@@ -79,5 +79,4 @@ class ClickatellCentralConfig implements IProviderConfig {
 		];
 		return count(array_intersect($set, $expected)) === count($expected);
 	}
-
 }

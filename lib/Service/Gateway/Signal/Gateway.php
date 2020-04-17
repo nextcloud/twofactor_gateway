@@ -28,7 +28,6 @@ use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClientService;
-use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IUser;
 
@@ -89,5 +88,4 @@ class Gateway implements IGateway {
 	public function getConfig(): IGatewayConfig {
 		return $this->config;
 	}
-
 }

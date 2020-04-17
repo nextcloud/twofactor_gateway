@@ -23,8 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCP\IConfig;
-
 interface IProvider {
 
 	/**
@@ -36,5 +34,4 @@ interface IProvider {
 	public function send(string $identifier, string $message);
 
 	public function getConfig(): IProviderConfig;
-
 }

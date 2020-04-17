@@ -58,5 +58,4 @@ class Factory {
 				throw new InvalidSmsProviderException();
 		}
 	}
-
 }

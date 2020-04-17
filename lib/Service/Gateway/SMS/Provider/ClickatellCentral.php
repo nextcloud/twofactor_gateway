@@ -30,8 +30,7 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class ClickatellCentral implements IProvider {
-
-	const PROVIDER_ID = 'clickatellcentral';
+	public const PROVIDER_ID = 'clickatellcentral';
 
 	/** @var IClient */
 	private $client;

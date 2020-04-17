@@ -29,8 +29,7 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class EcallSMS implements IProvider {
-
-	const PROVIDER_ID = 'ecallsms';
+	public const PROVIDER_ID = 'ecallsms';
 
 	/** @var IClient */
 	private $client;

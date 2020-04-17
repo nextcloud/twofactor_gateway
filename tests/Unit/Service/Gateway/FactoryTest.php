@@ -80,5 +80,4 @@ class FactoryTest extends TestCase {
 		$this->expectException(\Exception::class);
 		$this->factory->getGateway("wrong");
 	}
-
 }

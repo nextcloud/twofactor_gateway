@@ -26,11 +26,9 @@ namespace OCA\TwoFactorGateway\AppInfo;
 use OCP\AppFramework\App;
 
 class Application extends App {
-
-	const APP_NAME = 'twofactor_gateway';
+	public const APP_NAME = 'twofactor_gateway';
 
 	public function __construct(array $urlParams = []) {
 		parent::__construct(self::APP_NAME, $urlParams);
 	}
-
 }

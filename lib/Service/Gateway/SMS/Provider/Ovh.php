@@ -30,8 +30,7 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class Ovh implements IProvider {
-
-	const PROVIDER_ID = 'ovh';
+	public const PROVIDER_ID = 'ovh';
 
 	/** @var IClient */
 	private $client;
@@ -59,8 +58,8 @@ class Ovh implements IProvider {
 	 * Array of the 4 needed parameters to connect to the API
 	 * @var array
 	 */
-	private $attrs = [ 
-		'AK' => null, 
+	private $attrs = [
+		'AK' => null,
 		'AS' => null,
 		'CK' => null,
 		'endpoint' => null,
@@ -69,7 +68,7 @@ class Ovh implements IProvider {
 
 
 	public function __construct(IClientService $clientService,
-                                OvhConfig $config) {
+								OvhConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}
@@ -89,8 +88,9 @@ class Ovh implements IProvider {
 		$this->attrs['AK'] = $config->getApplicationKey();
 		$this->attrs['AS'] = $config->getApplicationSecret();
 		$this->attrs['CK'] = $config->getConsumerKey();
-		if (!isset($this->endpoints[$endpoint]))
+		if (!isset($this->endpoints[$endpoint])) {
 			throw new InvalidSmsProviderException("Endpoint $endpoint not found");
+		}
 		$this->attrs['endpoint'] = $this->endpoints[$endpoint];
 
 		$this->getTimeDelta();
@@ -148,14 +148,14 @@ class Ovh implements IProvider {
 	 */
 	private function getTimeDelta() {
 		if (!isset($this->attrs['timedelta'])) {
-			if (!isset($this->attrs['endpoint']))
+			if (!isset($this->attrs['endpoint'])) {
 				throw new InvalidSmsProviderException('Need to set the endpoint');
+			}
 			try {
 				$response         = $this->client->get($this->attrs['endpoint'].'/auth/time');
 				$serverTimestamp  = (int)$response->getBody();
 				$this->attrs['timedelta'] = $serverTimestamp - time();
-			}
-			catch (Exception $ex) {
+			} catch (Exception $ex) {
 				throw new InvalidSmsProviderException('Unable to calculate time delta:'.$ex->getMessage());
 			}
 		}
@@ -180,6 +180,4 @@ class Ovh implements IProvider {
 		];
 		return $header;
 	}
-
-
 }

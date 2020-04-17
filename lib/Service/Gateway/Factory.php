@@ -42,7 +42,6 @@ class Factory {
 	public function __construct(SignalGateway $signalGateway,
 								SMSGateway $smsGateway,
 								TelegramGateway $telegramGateway) {
-
 		$this->signalGateway = $signalGateway;
 		$this->smsGateway = $smsGateway;
 		$this->telegramGateway = $telegramGateway;
@@ -60,5 +59,4 @@ class Factory {
 				throw new Exception("Invalid gateway <$name>");
 		}
 	}
-
 }

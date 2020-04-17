@@ -40,11 +40,10 @@ use OCP\Security\ISecureRandom;
 use OCP\Template;
 
 abstract class AProvider implements IProvider, IProvidesIcons, IProvidesPersonalSettings {
-
-	const STATE_DISABLED = 0;
-	const STATE_START_VERIFICATION = 1;
-	const STATE_VERIFYING = 2;
-	const STATE_ENABLED = 3;
+	public const STATE_DISABLED = 0;
+	public const STATE_START_VERIFICATION = 1;
+	public const STATE_VERIFYING = 2;
+	public const STATE_ENABLED = 3;
 
 	/** @var string */
 	protected $gatewayName;
@@ -156,5 +155,4 @@ abstract class AProvider implements IProvider, IProvidesIcons, IProvidesPersonal
 	public function getDarkIcon(): String {
 		return image_path(Application::APP_NAME, 'app-dark.svg');
 	}
-
 }

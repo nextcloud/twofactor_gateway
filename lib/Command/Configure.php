@@ -303,7 +303,6 @@ class Configure extends Command {
 				$output->writeln("Invalid provider $provider");
 				break;
 		}
-
 	}
 
 	private function configureTelegram(InputInterface $input, OutputInterface $output) {
@@ -317,5 +316,4 @@ class Configure extends Command {
 
 		$config->setBotToken($token);
 	}
-
 }

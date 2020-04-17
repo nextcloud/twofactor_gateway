@@ -66,7 +66,7 @@ class StateStorage {
 
 		if ($isVerified) {
 			$state = SmsProvider::STATE_ENABLED;
-		} else if ($identifier !== '' && $verificationCode !== '') {
+		} elseif ($identifier !== '' && $verificationCode !== '') {
 			$state = SmsProvider::STATE_VERIFYING;
 		} else {
 			$state = SmsProvider::STATE_DISABLED;
@@ -144,5 +144,4 @@ class StateStorage {
 
 		return $state;
 	}
-
 }

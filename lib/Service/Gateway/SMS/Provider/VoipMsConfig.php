@@ -78,5 +78,4 @@ class VoipMsConfig implements IProviderConfig {
 		];
 		return count(array_intersect($set, $expected)) === count($expected);
 	}
-
 }

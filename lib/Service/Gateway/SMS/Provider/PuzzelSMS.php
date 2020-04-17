@@ -27,11 +27,9 @@ use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
-use OCP\IConfig;
 
 class PuzzelSMS implements IProvider {
-
-	const PROVIDER_ID = 'puzzelsms';
+	public const PROVIDER_ID = 'puzzelsms';
 
 	/** @var IClient */
 	private $client;
@@ -78,5 +76,4 @@ class PuzzelSMS implements IProvider {
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}
-
 }

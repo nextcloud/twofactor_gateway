@@ -27,11 +27,9 @@ use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
-use OCP\IConfig;
 
 class PlaySMS implements IProvider {
-
-	const PROVIDER_ID = 'playsms';
+	public const PROVIDER_ID = 'playsms';
 
 	/** @var IClient */
 	private $client;
@@ -79,5 +77,4 @@ class PlaySMS implements IProvider {
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}
-
 }

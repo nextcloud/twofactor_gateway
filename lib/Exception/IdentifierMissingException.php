@@ -25,5 +25,4 @@ namespace OCA\TwoFactorGateway\Exception;
 use Exception;
 
 class IdentifierMissingException extends Exception {
-
 }

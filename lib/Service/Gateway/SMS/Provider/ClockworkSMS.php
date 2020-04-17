@@ -27,11 +27,9 @@ use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
-use OCP\IConfig;
 
 class ClockworkSMS implements IProvider {
-
-	const PROVIDER_ID = 'clockworksms';
+	public const PROVIDER_ID = 'clockworksms';
 
 	/** @var IClient */
 	private $client;
@@ -76,5 +74,4 @@ class ClockworkSMS implements IProvider {
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}
-
 }

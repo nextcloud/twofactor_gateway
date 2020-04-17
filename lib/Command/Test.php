@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Command;
 
-use InvalidArgumentException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
@@ -104,5 +103,4 @@ class Test extends Command {
 
 		$gateway->send($user, $identifier, 'Test');
 	}
-
 }

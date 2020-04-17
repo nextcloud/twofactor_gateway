@@ -35,5 +35,4 @@ class PhoneNumberMask {
 
 		return str_repeat('*', $start) . substr($number, $start);
 	}
-
 }

@@ -56,5 +56,4 @@ class Gateway implements IGateway {
 	public function getConfig(): IGatewayConfig {
 		return $this->config;
 	}
-
 }

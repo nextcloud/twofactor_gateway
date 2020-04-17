@@ -21,12 +21,10 @@
 
 namespace OCA\TwoFactorGateway\Service\Gateway;
 
-
 class State {
-
-	const DISABLED = 0;
-	const VERIFYING = 1;
-	const ENABLED = 2;
+	public const DISABLED = 0;
+	public const VERIFYING = 1;
+	public const ENABLED = 2;
 
 	/** @var int */
 	private $state;
@@ -58,5 +56,4 @@ class State {
 	public function isEnabled(): bool {
 		return $this->state === self::ENABLED;
 	}
-
 }

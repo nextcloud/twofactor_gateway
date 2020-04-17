@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types=1);
+declare(strict_types=1);
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -45,5 +45,4 @@ class PersonalSettings implements IPersonalProviderSettings {
 		$tmpl->assign('gateway', $this->gateway);
 		return $tmpl;
 	}
-
 }
