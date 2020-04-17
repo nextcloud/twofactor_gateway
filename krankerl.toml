@@ -1,27 +1,4 @@
 [package]
-exclude = [
-	".git",
-	"build",
-	".gitignore",
-	".travis.yml",
-	".tx",
-	".scrutinizer.yml",
-	"CONTRIBUTING.md",
-	"composer.json",
-	"composer.lock",
-	"composer.phar",
-	"krankerl.toml",
-	"l10n/no-php",
-	"Makefile",
-	"nbproject",
-	"node_modules",
-	"package.json",
-	"package-lock.json",
-	"screenshots",
-	"tests",
-	"vendor/bin",
-]
-
 before_cmds = [
 	"composer install --no-dev -o",
 	"npm install",
