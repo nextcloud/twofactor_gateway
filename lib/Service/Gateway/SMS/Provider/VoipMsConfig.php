@@ -30,6 +30,12 @@ use OCP\IConfig;
 
 class VoipMsConfig implements IProviderConfig {
 
+	const expected = [
+		'voipms_api_username',
+		'voipms_api_password',
+		'voipms_did',
+	];
+
 	/** @var IConfig */
 	private $config;
 
@@ -71,11 +77,12 @@ class VoipMsConfig implements IProviderConfig {
 
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
-		$expected = [
-			'voipms_api_username',
-			'voipms_api_password',
-			'voipms_did',
-		];
-		return count(array_intersect($set, $expected)) === count($expected);
+		return count(array_intersect($set, self::expected)) === count(self::expected);
+	}
+	
+	public function remove() {
+		foreach(self::expected as $key) {
+			$this->config->deleteAppValue(Application::APP_NAME, $key);
+		}
 	}
 }

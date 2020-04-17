@@ -31,5 +31,6 @@
 		<command>OCA\TwoFactorGateway\Command\Configure</command>
 		<command>OCA\TwoFactorGateway\Command\Status</command>
 		<command>OCA\TwoFactorGateway\Command\Test</command>
+		<command>OCA\TwoFactorGateway\Command\Remove</command>
 	</commands>
 </info>

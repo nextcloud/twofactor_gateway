@@ -30,6 +30,13 @@ use OCP\IConfig;
 
 class PuzzelSMSConfig implements IProviderConfig {
 
+	const expected = [
+		'puzzel_url',
+		'puzzel_user',
+		'puzzel_password',
+		'puzzel_serviceid',
+	];
+
 	/** @var IConfig */
 	private $config;
 
@@ -79,12 +86,12 @@ class PuzzelSMSConfig implements IProviderConfig {
 
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
-		$expected = [
-			'puzzel_url',
-			'puzzel_user',
-			'puzzel_password',
-			'puzzel_serviceid',
-		];
-		return count(array_intersect($set, $expected)) === count($expected);
+		return count(array_intersect($set, self::expected)) === count(self::expected);
+	}
+	
+	public function remove() {
+		foreach(self::expected as $key) {
+			$this->config->deleteAppValue(Application::APP_NAME, $key);
+		}
 	}
 }
