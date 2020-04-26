@@ -20,7 +20,7 @@
   "license": "AGPL-3.0",
   "dependencies": {
     "css-loader": "^3.5.3",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "nextcloud_fetch": "^2.1.0",
     "vue": "^2.6.11",
     "vue-loader": "^15.9.1",
