@@ -45,21 +45,21 @@ class ClickSendConfig implements IProviderConfig {
 		return $val;
 	}
 
-    public function getUser(): string {
-        return $this->getOrFail('clicksend_user');
-    }
+	public function getUser(): string {
+		return $this->getOrFail('clicksend_user');
+	}
 
-    public function setUser(string $user) {
-        $this->config->setAppValue(Application::APP_NAME, 'clicksend_user', $user);
-    }
+	public function setUser(string $user) {
+		$this->config->setAppValue(Application::APP_NAME, 'clicksend_user', $user);
+	}
 
-    public function getApiKey(): string {
-        return $this->getOrFail('clicksend_apikey');
-    }
+	public function getApiKey(): string {
+		return $this->getOrFail('clicksend_apikey');
+	}
 
-    public function setApiKey(string $password) {
-        $this->config->setAppValue(Application::APP_NAME, 'clicksend_apikey', $password);
-    }
+	public function setApiKey(string $password) {
+		$this->config->setAppValue(Application::APP_NAME, 'clicksend_apikey', $password);
+	}
 
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);

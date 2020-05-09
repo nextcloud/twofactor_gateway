@@ -56,9 +56,9 @@ class ClickSend implements IProvider {
 		try {
 			$this->client->get('https://api-mapper.clicksend.com/http/v2/send.php', [
 				'query' => [
-				    'method' => 'http',
-                    'username' => $username,
-                    'key' => $apiKey,
+					'method' => 'http',
+					'username' => $username,
+					'key' => $apiKey,
 					'to' => $identifier,
 					'message' => $message,
 					'senderid' => 'nextcloud'
