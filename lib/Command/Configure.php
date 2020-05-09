@@ -28,6 +28,7 @@ use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\GatewayConfig as SignalConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\GatewayConfig as SMSConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickSendConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClockworkSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\EcallSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
@@ -108,7 +109,7 @@ class Configure extends Command {
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
 
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, huawei_e3531, spryng, sms77io, ovh, clickatellcentral', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -297,6 +298,21 @@ class Configure extends Command {
 				$providerConfig->setApi($api);
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
+				break;
+
+			case 'clicksend':
+				$config->setProvider($provider);
+				/** @var ClickSendConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$usernameQuestion = new Question('Please enter your clicksend.com username: ');
+				$username = $helper->ask($input, $output, $usernameQuestion);
+				$apiKeyQuestion = new Question('Please enter your clicksend.com API Key (or, if subuser, the password): ');
+				$apiKey = $helper->ask($input, $output, $apiKeyQuestion);
+
+				$providerConfig->setUser($username);
+				$providerConfig->setApiKey($apiKey);
+
 				break;
 
 			default:

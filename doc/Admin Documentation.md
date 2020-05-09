@@ -180,4 +180,15 @@ occ twofactorauth:gateway:configure sms
 
 Select `clickatellcentral` and enter your API-ID, API username and API password.
 
+### ClickSend
+URL: https://www.clicksend.com
+Stability: Experimental
+
+Use the HTTPS service provided by clicksend.com for sending SMS.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
