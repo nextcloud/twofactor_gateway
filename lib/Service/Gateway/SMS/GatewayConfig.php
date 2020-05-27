@@ -65,4 +65,8 @@ class GatewayConfig implements IGatewayConfig {
 			return false;
 		}
 	}
+
+	public function remove() {
+		$this->getProvider()->getConfig()->remove();
+	}
 }

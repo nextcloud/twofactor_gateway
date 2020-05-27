@@ -31,6 +31,12 @@ use OCP\IConfig;
 
 class ClickatellCentralConfig implements IProviderConfig {
 
+	const expected = [
+		'clickatell_central_api',
+		'clickatell_central_user',
+		'clickatell_central_password',
+	];
+
 	/** @var IConfig */
 	private $config;
 
@@ -72,11 +78,12 @@ class ClickatellCentralConfig implements IProviderConfig {
 
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
-		$expected = [
-			'clickatell_central_api',
-			'clickatell_central_user',
-			'clickatell_central_password',
-		];
-		return count(array_intersect($set, $expected)) === count($expected);
+		return count(array_intersect($set, self::expected)) === count(self::expected);
+	}
+
+	public function remove() {
+		foreach(self::expected as $key) {
+			$this->config->deleteAppValue(Application::APP_NAME, $key);
+		}
 	}
 }

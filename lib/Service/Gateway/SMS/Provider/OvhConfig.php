@@ -30,6 +30,15 @@ use OCP\IConfig;
 
 class OvhConfig implements IProviderConfig {
 
+	const expected = [
+		'ovh_application_key',
+		'ovh_application_secret',
+		'ovh_consumer_key',
+		'ovh_endpoint',
+		'ovh_account',
+		'ovh_sender'
+	];
+
 	/** @var IConfig */
 	private $config;
 
@@ -95,14 +104,12 @@ class OvhConfig implements IProviderConfig {
 
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
-		$expected = [
-			'ovh_application_key',
-			'ovh_application_secret',
-			'ovh_consumer_key',
-			'ovh_endpoint',
-			'ovh_account',
-			'ovh_sender'
-		];
-		return count(array_intersect($set, $expected)) === count($expected);
+		return count(array_intersect($set, self::expected)) === count(self::expected);
+	}
+
+	public function remove() {
+		foreach(self::expected as $key) {
+			$this->config->deleteAppValue(Application::APP_NAME, $key);
+		}
 	}
 }

@@ -30,6 +30,12 @@ use OCP\IConfig;
 
 class PlaySMSConfig implements IProviderConfig {
 
+	const expected = [
+		'playsms_url',
+		'playsms_user',
+		'playsms_password',
+	];
+
 	/** @var IConfig */
 	private $config;
 
@@ -71,11 +77,12 @@ class PlaySMSConfig implements IProviderConfig {
 
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
-		$expected = [
-			'playsms_url',
-			'playsms_user',
-			'playsms_password',
-		];
-		return count(array_intersect($set, $expected)) === count($expected);
+		return count(array_intersect($set, self::expected)) === count(self::expected);
+	}
+
+	public function remove() {
+		foreach(self::expected as $key) {
+			$this->config->deleteAppValue(Application::APP_NAME, $key);
+		}
 	}
 }

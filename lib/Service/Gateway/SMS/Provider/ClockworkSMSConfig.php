@@ -30,6 +30,10 @@ use OCP\IConfig;
 
 class ClockworkSMSConfig implements IProviderConfig {
 
+	const expected = [
+		'clockworksms_apitoken'
+	];
+
 	/** @var IConfig */
 	private $config;
 
@@ -55,9 +59,12 @@ class ClockworkSMSConfig implements IProviderConfig {
 
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
-		$expected = [
-			'clockworksms_apitoken'
-		];
-		return count(array_intersect($set, $expected)) === count($expected);
+		return count(array_intersect($set, self::expected)) === count(self::expected);
+	}
+
+	public function remove() {
+		foreach(self::expected as $key) {
+			$this->config->deleteAppValue(Application::APP_NAME, $key);
+		}
 	}
 }
