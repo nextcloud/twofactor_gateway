@@ -321,16 +321,16 @@ class Configure extends Command {
 				$providerConfig = $config->getProvider()->getConfig();
 				
 				$authIdQuestion = new Question('Please enter your plivo authentication id (Auth ID): ');
-				$authId = $helper->ask($input, $output, $usernameQuestion);
+				$authId = $helper->ask($input, $output, $authIdQuestion);
 				
 				$authTokenQuestion = new Question('Please enter your plivo authentication token (Auth Token): ');
-				$authToken = $helper->ask($input, $output, $apiKeyQuestion);
+				$authToken = $helper->ask($input, $output, $authTokenQuestion);
 				
 				$srcNumberQuestion = new Question('Please enter your plivo phone number (in E.164 format): ');
-				$srcNumber = $helper->ask($input, $output, $usernameQuestion);
+				$srcNumber = $helper->ask($input, $output, $srcNumberQuestion);
 				
 				$callbackUrlQuestion = new Question('Please enter your plivo callback url: ');
-				$callbackUrl = $helper->ask($input, $output, $apiKeyQuestion);
+				$callbackUrl = $helper->ask($input, $output, $callbackUrlQuestion);
 				
 				$providerConfig->setValue($providerConfig::AUTH_ID_KEY,$authId);
 				$providerConfig->setValue($providerConfig::AUTH_TOKEN_KEY, $authToken);

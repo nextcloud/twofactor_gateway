@@ -29,7 +29,7 @@ use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 
-class ClickSendConfig implements IProviderConfig {
+class PlivoConfig implements IProviderConfig {
 
 	/** @var IConfig */
 	private $config;

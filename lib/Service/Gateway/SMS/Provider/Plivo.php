@@ -43,7 +43,7 @@ class Plivo implements IProvider {
 		$this->config = $config;
 	}
 	
-	**
+	/**
 	 * @param string $identifier
 	 * @param string $message
 	 *
@@ -60,13 +60,13 @@ class Plivo implements IProvider {
 			$this->client->get("https://api.plivo.com/v1/Account/$authID/Message/", [
 				'body' => json_encode([
 							'to' => $identifier,
-							'src' = $srcNumber,
-							'txt' = $message,
-							'url' = $callbackUrl
+							'src' => $srcNumber,
+							'txt' => $message,
+							'url' => $callbackUrl
 						],JSON_FORCE_OBJECT),
 				'headers' => [
 					'Content-Type' => "application/json",
-					'Authorization' => "Basic " . base64_encode($authID:$authToken);
+					'Authorization' => "Basic " . base64_encode($authID.':'.$authToken)
 				]
 			]);
 		} catch (Exception $ex) {
