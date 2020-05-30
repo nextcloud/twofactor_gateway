@@ -35,6 +35,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\Sms77IoConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\OvhConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlivoConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SpryngSMSConfig;
@@ -109,7 +110,7 @@ class Configure extends Command {
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
 
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, plivo, puzzelsms, ecallsms, voipms, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -313,6 +314,29 @@ class Configure extends Command {
 				$providerConfig->setUser($username);
 				$providerConfig->setApiKey($apiKey);
 
+				break;
+			case 'plivo':
+				$config->setProvider($provider);
+				/** @var PlivoConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+				
+				$authIdQuestion = new Question('Please enter your plivo authentication id (Auth ID): ');
+				$authId = $helper->ask($input, $output, $usernameQuestion);
+				
+				$authTokenQuestion = new Question('Please enter your plivo authentication token (Auth Token): ');
+				$authToken = $helper->ask($input, $output, $apiKeyQuestion);
+				
+				$srcNumberQuestion = new Question('Please enter your plivo phone number (in E.164 format): ');
+				$srcNumber = $helper->ask($input, $output, $usernameQuestion);
+				
+				$callbackUrlQuestion = new Question('Please enter your plivo callback url: ');
+				$callbackUrl = $helper->ask($input, $output, $apiKeyQuestion);
+				
+				$providerConfig->setValue($providerConfig::AUTH_ID_KEY,$authId);
+				$providerConfig->setValue($providerConfig::AUTH_TOKEN_KEY, $authToken);
+				$providerConfig->setValue($providerConfig::CALLBACK_URL, $srcNumber);
+				$providerConfig->setValue($providerConfig::SRC_NUMBER_KEY, $callbackUrl);
+				
 				break;
 
 			default:

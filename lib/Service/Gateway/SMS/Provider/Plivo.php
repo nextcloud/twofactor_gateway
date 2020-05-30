@@ -34,11 +34,11 @@ class Plivo implements IProvider {
 	/** @var IClient */
 	private $client;
 
-	/** @var ClickSendConfig */
+	/** @var PlivoConfig */
 	private $config;
 
 	public function __construct(IClientService $clientService,
-							ClickSendConfig $config) {
+							PlivoConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}
@@ -51,14 +51,22 @@ class Plivo implements IProvider {
 	 */
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
-		$apiKey = $config->getApiKey();
-		$apiId = $config->getApiId();
+		$authToken = $config->getAuthToken();
+		$authID = $config->getAuthID();
+		$srcNumber = $config->getSrcNumber();
+		$callbackUrl = $config->getCallbackUrl();
+		
 		try {
-			$this->client->get("https://api.plivo.com/v1/Account/$apiId/Message/", [
-				'body' => [
-					'to' => 'get from phone number of user',
-					'src' = 'tbd',
-					'txt' = '2fa code',
+			$this->client->get("https://api.plivo.com/v1/Account/$authID/Message/", [
+				'body' => json_encode([
+							'to' => $identifier,
+							'src' = $srcNumber,
+							'txt' = $message,
+							'url' = $callbackUrl
+						],JSON_FORCE_OBJECT),
+				'headers' => [
+					'Content-Type' => "application/json",
+					'Authorization' => "Basic " . base64_encode($authID:$authToken);
 				]
 			]);
 		} catch (Exception $ex) {
@@ -67,7 +75,7 @@ class Plivo implements IProvider {
 	}
 	
 	/**
-	 * @return ClickSendConfig
+	 * @return PlivoConfig
 	 */
 	public function getConfig(): IProviderConfig {
 		return $this->config;
