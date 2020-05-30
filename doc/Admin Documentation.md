@@ -191,4 +191,15 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure sms
 ```
 
+### Plivo
+URL: https://www.plivo.com
+Stability: Experimental
+
+Use the HTTPS service provided by clicksend.com for sending SMS.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
