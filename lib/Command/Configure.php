@@ -109,8 +109,10 @@ class Configure extends Command {
 
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
-
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, plivo, puzzelsms, ecallsms, voipms, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend): ', 'websms');
+		$providerArray = ['websms', 'playsms', 'clockworksms', 'puzzelsms', 'ecallsms', 'voipms', 'huawei_e3531', 'spryng', 'sms77io', 'ovh', 'clickatellcentral', 'clicksend', 'plivo'];
+		sort($providerArray);
+		$strOfProviders = implode(',',$providerArray);
+		$providerQuestion = new Question('Please choose a SMS provider ('.$strOfProviders.'): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -326,7 +328,7 @@ class Configure extends Command {
 				$authTokenQuestion = new Question('Please enter your plivo authentication token (Auth Token): ');
 				$authToken = $helper->ask($input, $output, $authTokenQuestion);
 				
-				$srcNumberQuestion = new Question('Please enter your plivo phone number (in E.164 format): ');
+				$srcNumberQuestion = new Question("Please enter your plivo phone number (in E.164 format '+12345678901'): ");
 				$srcNumber = $helper->ask($input, $output, $srcNumberQuestion);
 				
 				$callbackUrlQuestion = new Question('Please enter your plivo callback url: ');
@@ -334,8 +336,8 @@ class Configure extends Command {
 				
 				$providerConfig->setValue($providerConfig::AUTH_ID_KEY,$authId);
 				$providerConfig->setValue($providerConfig::AUTH_TOKEN_KEY, $authToken);
-				$providerConfig->setValue($providerConfig::CALLBACK_URL, $srcNumber);
-				$providerConfig->setValue($providerConfig::SRC_NUMBER_KEY, $callbackUrl);
+				$providerConfig->setValue($providerConfig::CALLBACK_URL, $callbackUrl);
+				$providerConfig->setValue($providerConfig::SRC_NUMBER_KEY, $srcNumber);
 				
 				break;
 

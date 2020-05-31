@@ -59,11 +59,11 @@ class Plivo implements IProvider {
 		try {
 			$this->client->get("https://api.plivo.com/v1/Account/$authID/Message/", [
 				'body' => json_encode([
-							'to' => $identifier,
-							'src' => $srcNumber,
-							'txt' => $message,
-							'url' => $callbackUrl
-						],JSON_FORCE_OBJECT),
+					'to' => $identifier,
+					'src' => $srcNumber,
+					'txt' => $message,
+					'url' => $callbackUrl
+				],JSON_FORCE_OBJECT),
 				'headers' => [
 					'Content-Type' => "application/json",
 					'Authorization' => "Basic " . base64_encode($authID.':'.$authToken)

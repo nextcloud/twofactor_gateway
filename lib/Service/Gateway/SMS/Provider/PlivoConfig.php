@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-
 use function array_intersect;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
@@ -40,11 +39,11 @@ class PlivoConfig implements IProviderConfig {
 	public const SRC_NUMBER_KEY = 'plivo_src_number';
 	
 	private const EXPECTED_KEYS = [
-			self::AUTH_ID_KEY,
-			self::AUTH_TOKEN_KEY,
-			self::CALLBACK_URL,
-			self::SRC_NUMBER_KEY
-		];
+		self::AUTH_ID_KEY,
+		self::AUTH_TOKEN_KEY,
+		self::CALLBACK_URL,
+		self::SRC_NUMBER_KEY
+	];
 
 	public function __construct(IConfig $config) {
 		$this->config = $config;
@@ -59,20 +58,20 @@ class PlivoConfig implements IProviderConfig {
 	}
 	
 	public function getValue(string $key): string {
-        return $this->getInternalValue($key);
-    	}
+		return $this->getInternalValue($key);
+	}
 
-    	public function setValue(string $key, string $value) {
-        $this->config->setAppValue(Application::APP_NAME, $key, $value);
-    	}
-    
-    public function isComplete(): bool {
+	public function setValue(string $key, string $value) {
+		$this->config->setAppValue(Application::APP_NAME, $key, $value);
+	}
+	
+	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
 		return count(array_intersect($set,self::EXPECTED_KEYS)) === count($expected);
 	}
 	
 	public function remove() {
-		foreach(self::EXPECTED_KEYS as $key) {
+		foreach (self::EXPECTED_KEYS as $key) {
 			$this->config->deleteAppValue(Application::APP_NAME, $key);
 		}
 	}

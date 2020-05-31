@@ -195,7 +195,7 @@ occ twofactorauth:gateway:configure sms
 URL: https://www.plivo.com
 Stability: Experimental
 
-Use the HTTPS service provided by clicksend.com for sending SMS.
+Use the HTTPS service provided by plivo.com for sending SMS.
 
 Interactive admin configuration:
 ```bash
