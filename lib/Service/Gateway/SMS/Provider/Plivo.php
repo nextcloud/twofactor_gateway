@@ -61,22 +61,21 @@ class Plivo implements IProvider {
 		$callbackUrl = $config->getValue($config::CALLBACK_URL);
 		
 		$apiParams = [
-					'body' => json_encode([
-						'dst' => $identifier,
-						'src' => $srcNumber,
-						'text' => $message
-					],JSON_FORCE_OBJECT),
-					'headers' => [
-						'Content-Type' => "application/json",
-						'Authorization' => "Basic " . base64_encode($authID.':'.$authToken)
-					],
-					'debug' => true
-				];
+			'body' => json_encode([
+				'dst' => $identifier,
+				'src' => $srcNumber,
+				'text' => $message
+			],JSON_FORCE_OBJECT),
+			'headers' => [
+				'Content-Type' => "application/json",
+				'Authorization' => "Basic " . base64_encode($authID.':'.$authToken)
+			]
+		];
 		
 		try {
+			$this->logger->debug("api call: https://api.plivo.com/v1/Account/$authID/Message/" .print_r($apiParams,true));
 			$this->client->post("https://api.plivo.com/v1/Account/$authID/Message/", $apiParams);
 		} catch (Exception $ex) {
-			$this->logger->error("api call: https://api.plivo.com/v1/Account/$authID/Message/" .print_r($apiParams,true));
 			$this->logger->error($ex->getMessage());
 			throw new SmsTransmissionException();
 		}
