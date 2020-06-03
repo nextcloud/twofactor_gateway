@@ -27,6 +27,7 @@ use Exception;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
+use \OCP\ILogger;
 
 class Plivo implements IProvider {
 	public const PROVIDER_ID = 'plivo';
@@ -36,11 +37,14 @@ class Plivo implements IProvider {
 
 	/** @var PlivoConfig */
 	private $config;
+	
+	private $logger;
 
 	public function __construct(IClientService $clientService,
-							PlivoConfig $config) {
+							PlivoConfig $config, ILogger $logger) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
+		$this->logger = $logger;
 	}
 	
 	/**
@@ -56,19 +60,23 @@ class Plivo implements IProvider {
 		$srcNumber = $config->getValue($config::SRC_NUMBER_KEY);
 		$callbackUrl = $config->getValue($config::CALLBACK_URL);
 		
+		$apiParams = [
+					'body' => json_encode([
+						'dst' => $identifier,
+						'src' => $srcNumber,
+						'text' => $message,
+						'url' => $callbackUrl
+					],JSON_FORCE_OBJECT),
+					'headers' => [
+						'Content-Type' => "application/json",
+						'Authorization' => "Basic " . base64_encode($authID.':'.$authToken)
+					],
+					'debug' => true
+				];
+		
 		try {
-			$this->client->get("https://api.plivo.com/v1/Account/$authID/Message/", [
-				'body' => json_encode([
-					'to' => $identifier,
-					'src' => $srcNumber,
-					'txt' => $message,
-					'url' => $callbackUrl
-				],JSON_FORCE_OBJECT),
-				'headers' => [
-					'Content-Type' => "application/json",
-					'Authorization' => "Basic " . base64_encode($authID.':'.$authToken)
-				]
-			]);
+			$this->logger->error("api call: https://api.plivo.com/v1/Account/$authID/Message/" .print_r($apiParams,true));
+			$this->client->post("https://api.plivo.com/v1/Account/$authID/Message/", $apiParams);
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
