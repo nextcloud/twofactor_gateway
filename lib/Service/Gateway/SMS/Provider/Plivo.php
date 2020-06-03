@@ -51,10 +51,10 @@ class Plivo implements IProvider {
 	 */
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
-		$authToken = $config->getAuthToken();
-		$authID = $config->getAuthID();
-		$srcNumber = $config->getSrcNumber();
-		$callbackUrl = $config->getCallbackUrl();
+		$authToken = $config->getValue($config::AUTH_TOKEN_KEY);
+		$authID = $config->getValue($config::AUTH_ID_KEY);
+		$srcNumber = $config->getValue($config::SRC_NUMBER_KEY);
+		$callbackUrl = $config->getValue($config::CALLBACK_URL);
 		
 		try {
 			$this->client->get("https://api.plivo.com/v1/Account/$authID/Message/", [
