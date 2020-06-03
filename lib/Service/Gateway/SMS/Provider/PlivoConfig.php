@@ -67,7 +67,7 @@ class PlivoConfig implements IProviderConfig {
 	
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
-		return count(array_intersect($set,self::EXPECTED_KEYS)) === count($expected);
+		return count(array_intersect($set,self::EXPECTED_KEYS)) === count(self::EXPECTED_KEYS);
 	}
 	
 	public function remove() {
