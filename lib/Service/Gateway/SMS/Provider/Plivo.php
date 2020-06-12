@@ -58,7 +58,6 @@ class Plivo implements IProvider {
 		$authToken = $config->getValue($config::AUTH_TOKEN_KEY);
 		$authID = $config->getValue($config::AUTH_ID_KEY);
 		$srcNumber = $config->getValue($config::SRC_NUMBER_KEY);
-		$callbackUrl = $config->getValue($config::CALLBACK_URL);
 		
 		$apiParams = [
 			'body' => json_encode([

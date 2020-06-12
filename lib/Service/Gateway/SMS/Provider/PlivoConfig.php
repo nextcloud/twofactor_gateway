@@ -35,13 +35,11 @@ class PlivoConfig implements IProviderConfig {
 	
 	public const AUTH_ID_KEY = 'plivo_auth_id';
 	public const AUTH_TOKEN_KEY = 'plivo_auth_token';
-	public const CALLBACK_URL = 'plivo_callback_url';
 	public const SRC_NUMBER_KEY = 'plivo_src_number';
 	
 	private const EXPECTED_KEYS = [
 		self::AUTH_ID_KEY,
 		self::AUTH_TOKEN_KEY,
-		self::CALLBACK_URL,
 		self::SRC_NUMBER_KEY
 	];
 
