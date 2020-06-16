@@ -109,20 +109,20 @@ class Configure extends Command {
 
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
-		$providerArray = ['websms', 
-					'playsms', 
-					'clockworksms', 
-					'puzzelsms', 
-					'ecallsms', 
-					'voipms', 
-					'huawei_e3531', 
-					'spryng', 
-					'sms77io', 
-					'ovh', 
-					'clickatellcentral', 
-					'clicksend', 
-					'plivo'
-					];
+		$providerArray = ['websms',
+			'playsms',
+			'clockworksms',
+			'puzzelsms',
+			'ecallsms',
+			'voipms',
+			'huawei_e3531',
+			'spryng',
+			'sms77io',
+			'ovh',
+			'clickatellcentral',
+			'clicksend',
+			'plivo'
+		];
 		sort($providerArray,SORT_STRING);
 		$strOfProviders = implode(',', $providerArray);
 		$providerQuestion = new Question("Please choose a SMS provider ($strOfProviders): ", 'websms');

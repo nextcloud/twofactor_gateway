@@ -76,7 +76,7 @@ class Plivo implements IProvider {
 			$this->client->post("https://api.plivo.com/v1/Account/$authID/Message/", $apiParams);
 		} catch (Exception $ex) {
 			$this->logger->logException($ex, [
-			  'message' => 'Could not send Plivo message: ' . $ex->getMessage(),
+				'message' => 'Could not send Plivo message: ' . $ex->getMessage(),
 			]);
 			throw new SmsTransmissionException();
 		}
