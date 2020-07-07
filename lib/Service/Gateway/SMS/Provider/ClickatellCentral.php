@@ -53,7 +53,7 @@ class ClickatellCentral implements IProvider {
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 		try {
-			$this->client->get(vsprintf('https://api.clickatell.com/http/sendmsg?user=%s&password=%s&api_id=%u&to=%s&text=%s', [
+			$response = $this->client->get(vsprintf('https://api.clickatell.com/http/sendmsg?user=%s&password=%s&api_id=%u&to=%s&text=%s', [
 				urlencode($config->getUser()),
 				urlencode($config->getPassword()),
 				$config->getApi(),
@@ -62,6 +62,10 @@ class ClickatellCentral implements IProvider {
 			]));
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
+		}
+
+		if ($response->getStatusCode() !== 200 || substr($response->getBody(), 0, 4) !== 'ID: ') {
+			throw new SmsTransmissionException($response->getBody());
 		}
 	}
 
