@@ -10,6 +10,7 @@ OC.L10N.register(
     "Authenticate via Telegram" : "Hitelesítés Telegrammal",
     "Two-Factor Gateway" : "Kétlépcsős azonosítás",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Kétlépcsős azonosítási szolgáltatók (SMS, Telegram,Signal)",
+    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Kétlépcsős azonosítási szolgáltatók, amelyek Signalon, SMS-en és Telegramon keresztül küldenek hitelesítő kódokat.",
     "Authentication code" : "Hitelesítő kód",
     "An access code has been sent to %s" : "Egy hozzáférési kód el lett küldve ide: %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Hiba az üzenet küldése közben. Kérlek próbáld újra később vagy lépj kapcsolatba a rendszergazdával.",
