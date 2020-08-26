@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.17.0 - 2020-08-26
+### Added
+- Nextcloud 20 support
+- Ability to remove gateways via the CLI
+- ClickSend.com SMS gateway
+### Removed
+- Nextcloud 16 support
+- Nextcloud 17 support
+
 ## 0.16.0 - 2020-04-17
 ### Added
 - Nextcloud 19 support
