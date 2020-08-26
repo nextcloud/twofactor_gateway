@@ -65,13 +65,11 @@ after_script:
 matrix:
   include:
     - php: 7.2
-      env: "DB=sqlite SERVER_BRANCH=v16.0.0"
-    - php: 7.3
-      env: "DB=sqlite SERVER_BRANCH=stable16"
-    - php: 7.3
-      env: "DB=sqlite SERVER_BRANCH=stable17"
+      env: "DB=sqlite SERVER_BRANCH=v18.0.0"
     - php: 7.3
       env: "DB=sqlite SERVER_BRANCH=stable18"
+    - php: 7.3
+      env: "DB=sqlite SERVER_BRANCH=stable19"
     - php: 7.3
       env: "DB=sqlite"
     - php: 7.2
