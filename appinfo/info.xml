@@ -19,7 +19,7 @@
 	<screenshot>https://raw.githubusercontent.com/ChristophWurst/twofactor_gateway/3f895bc997c1a3a38c9bae16ccae8bd499af864e/screenshots/challenge.png</screenshot>
 	<dependencies>
 		<php min-version="7.2" max-version="7.4"/>
-		<nextcloud min-version="16" max-version="19"/>
+		<nextcloud min-version="18" max-version="20"/>
 	</dependencies>
 
 	<two-factor-providers>
