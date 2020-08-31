@@ -22,10 +22,10 @@
     "css-loader": "^3.6.0",
     "jquery": "^3.5.1",
     "nextcloud_fetch": "^2.1.0",
-    "vue": "^2.6.11",
+    "vue": "^2.6.12",
     "vue-loader": "^15.9.2",
     "vue-style-loader": "^4.1.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.12"
   },
   "devDependencies": {
     "webpack": "^4.43.0",
