@@ -61,6 +61,8 @@ class ProviderFactory {
 				return $this->container->query(ClickatellCentral::class);
 			case ClickSend::PROVIDER_ID:
 				return $this->container->query(ClickSend::class);
+			case Plivo::PROVIDER_ID:
+				return $this->container->query(Plivo::class);
 			default:
 				throw new InvalidSmsProviderException("Provider <$id> does not exist");
 		}
