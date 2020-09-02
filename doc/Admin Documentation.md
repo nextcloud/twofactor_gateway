@@ -108,6 +108,17 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure sms
 ```
 
+## Voipbuster
+URL: https://voipbuster.com
+Stability: Experimental
+
+Use the HTTPS service provided by Voipbuster.com for sending SMS.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
 ### sms77.io
 URL: https://sms77.io
 Stability: Experimental
