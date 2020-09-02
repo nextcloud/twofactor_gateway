@@ -39,6 +39,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SpryngSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellCentralConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\VoipbusterConfig;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfig;
 use Symfony\Component\Console\Command\Command;
@@ -109,7 +110,7 @@ class Configure extends Command {
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
 
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -212,6 +213,26 @@ class Configure extends Command {
 				$didQuestion = new Question('Please enter your VoIP.ms DID: ');
 				$did = $helper->ask($input, $output, $didQuestion);
 
+				$providerConfig->setUser($username);
+				$providerConfig->setPassword($password);
+				$providerConfig->setDid($did);
+				break;
+
+			case 'voipbuster':
+				$config->setProvider($provider);
+		
+				/** @var VoipbusterConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+		
+				$usernameQuestion = new Question('Please enter your Voipbuster API username: ');
+				$username = $helper->ask($input, $output, $usernameQuestion);
+		
+				$passwordQuestion = new Question('Please enter your Voipbuster API password: ');
+				$password = $helper->ask($input, $output, $passwordQuestion);
+		
+				$didQuestion = new Question('Please enter your Voipbuster DID: ');
+				$did = $helper->ask($input, $output, $didQuestion);
+		
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
 				$providerConfig->setDid($did);
