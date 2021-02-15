@@ -10,6 +10,7 @@ OC.L10N.register(
     "Authenticate via Telegram" : "由 Telegram 驗證",
     "Two-Factor Gateway" : "兩階段驗證中心",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "雙因素驗證閘道提供者(SMS, Telegram, Signal)",
+    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "一個 Nextcloud 兩步驗證提供者的集合，通過 Signal、短訊和 Telegram 發送校驗碼。",
     "Authentication code" : "驗證碼",
     "An access code has been sent to %s" : "一個驗証碼已經發送到 %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "發送簡訊出錯.請重試或聯絡系統管理員.",
