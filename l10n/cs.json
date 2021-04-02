@@ -8,7 +8,7 @@
     "Authenticate via Telegram" : "Ověřit přes Telegram",
     "Two-Factor Gateway" : "Brána pro dvouúrovňové ověřování",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Poskytovatelé bran pro dvouúrovňové ověřování (SMS, Telegram, Signal)",
-    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Sada poskytovatelů dvouúrovňového ověřování pro Nextcloud  pro posílání ověřovacích kódů prostřednictvím služeb Signal, SMS a Telegram.",
+    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Sada poskytovatelů dvouúrovňového ověřování pro Nextcloud pro posílání ověřovacích kódů prostřednictvím služeb Signal, SMS a Telegram.",
     "Authentication code" : "Ověřovací kód",
     "An access code has been sent to %s" : "Přístupový kód byl zaslán na %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Chyba při odesílání zprávy. Zkuste to později, nebo se obraťte na správce.",
