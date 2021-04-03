@@ -32,8 +32,8 @@ use OCP\Http\Client\IClientService;
 use OCP\IConfig;
 use OCP\ILogger;
 use OCP\IUser;
-use Telegram\Bot\Api;
-use Telegram\Bot\Exceptions\TelegramSDKException;
+use TelegramBot\Api\BotApi;
+use TelegramBot\Api\Exception as TelegramSDKException;
 
 class Gateway implements IGateway {
 
@@ -71,14 +71,11 @@ class Gateway implements IGateway {
 		$botToken = $this->gatewayConfig->getBotToken();
 		$this->logger->debug("telegram bot token: $botToken");
 
-		$api = new Api($botToken);
+		$api = new BotApi($botToken);
 
 		$this->logger->debug("sending telegram message to $identifier");
 		try {
-			$api->sendMessage([
-				'chat_id' => $identifier,
-				'text' => $message,
-			]);
+			$api->sendMessage($identifier, $message);
 		} catch (TelegramSDKException $e) {
 			$this->logger->logException($e);
 
