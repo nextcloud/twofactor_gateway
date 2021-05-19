@@ -1,10 +1,10 @@
 sudo: required
-dist: trusty
 language: php
 php:
   - 7.2
   - 7.3
   - 7.4snapshot
+  - 8.0
 
 env:
   global:
@@ -64,17 +64,37 @@ after_script:
 
 matrix:
   include:
+    # NC20 w/ PHP 7.2
     - php: 7.2
-      env: "DB=sqlite SERVER_BRANCH=v18.0.0"
+      dist: trusty
+      env: "DB=sqlite SERVER_BRANCH=stable20"
+    # NC21 w/ PHP 7.3
     - php: 7.3
-      env: "DB=sqlite SERVER_BRANCH=stable18"
+      dist: trusty
+      env: "DB=sqlite SERVER_BRANCH=stable21"
+    # NC21 w/ PHP 7.4
+    - php: 7.4
+      dist: trusty
+      env: "DB=sqlite SERVER_BRANCH=stable21"
+    # NC21 w/ PHP 8.0
+    - php: 8.0
+      dist: xenial
+      env: "DB=sqlite SERVER_BRANCH=stable21"
+    # NC22 w/ PHP 7.3
     - php: 7.3
-      env: "DB=sqlite SERVER_BRANCH=stable19"
-    - php: 7.3
-      env: "DB=sqlite"
-    - php: 7.2
+      dist: trusty
       env: "DB=sqlite PHP_COVERAGE=TRUE"
+    # NC22 w/ PHP 7.4
+    - php: 7.4
+      dist: trusty
+      env: "DB=sqlite PHP_COVERAGE=TRUE"
+    # NC22 w/ PHP 8.0
+    - php: 8.0
+      dist: xenial
+      env: "DB=sqlite PHP_COVERAGE=TRUE"
+    # NC22 w/ PHP nightly
     - php: nightly
+      dist: xenial
       env: "PATCH_VERSION_CHECK=TRUE"
   fast_finish: true
   allow_failures:
