@@ -9,7 +9,7 @@ OC.L10N.register(
     "Telegram verification" : "Telegram 認証",
     "Authenticate via Telegram" : "Telegram経由で認証",
     "Two-Factor Gateway" : "二要素ゲートウェイ",
-    "Two-factor gateway providers (SMS, Telegram, Signal)" : "二要素ゲートウェイプロバイダ （SMS、Telegram、Signal）",
+    "Two-factor gateway providers (SMS, Telegram, Signal)" : "二要素ゲートウェイプロバイダー （SMS、Telegram、Signal）",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Signal、SMS、Telegramによって認証コードを送信するNextcloud 二要素プロバイダーのセット。",
     "Authentication code" : "認証コード",
     "An access code has been sent to %s" : "アクセスコードが %s に送信されました",
