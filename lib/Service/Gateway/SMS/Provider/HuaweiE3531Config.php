@@ -29,8 +29,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 
 class HuaweiE3531Config implements IProviderConfig {
-
-	const expected = [
+	private const expected = [
 		'huawei_e3531_api',
 	];
 
@@ -63,7 +62,7 @@ class HuaweiE3531Config implements IProviderConfig {
 	}
 
 	public function remove() {
-		foreach(self::expected as $key) {
+		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_NAME, $key);
 		}
 	}

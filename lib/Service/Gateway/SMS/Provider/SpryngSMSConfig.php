@@ -29,8 +29,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 
 class SpryngSMSConfig implements IProviderConfig {
-
-	const expected = [
+	private const expected = [
 		'spryng_apitoken'
 	];
 
@@ -63,7 +62,7 @@ class SpryngSMSConfig implements IProviderConfig {
 	}
 	
 	public function remove() {
-		foreach(self::expected as $key) {
+		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_NAME, $key);
 		}
 	}

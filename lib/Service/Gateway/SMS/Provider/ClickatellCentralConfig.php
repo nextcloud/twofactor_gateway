@@ -30,8 +30,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 
 class ClickatellCentralConfig implements IProviderConfig {
-
-	const expected = [
+	private const expected = [
 		'clickatell_central_api',
 		'clickatell_central_user',
 		'clickatell_central_password',
@@ -82,7 +81,7 @@ class ClickatellCentralConfig implements IProviderConfig {
 	}
 
 	public function remove() {
-		foreach(self::expected as $key) {
+		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_NAME, $key);
 		}
 	}

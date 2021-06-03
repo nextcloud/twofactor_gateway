@@ -65,7 +65,7 @@ class Remove extends Command {
 		$gateway = null;
 		switch ($gatewayName) {
 			case 'signal':
-			    $gateway = $this->signalGateway;
+				$gateway = $this->signalGateway;
 				break;
 			case 'sms':
 				$gateway = $this->smsGateway;

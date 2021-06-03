@@ -29,8 +29,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 
 class OvhConfig implements IProviderConfig {
-
-	const expected = [
+	private const expected = [
 		'ovh_application_key',
 		'ovh_application_secret',
 		'ovh_consumer_key',
@@ -108,7 +107,7 @@ class OvhConfig implements IProviderConfig {
 	}
 
 	public function remove() {
-		foreach(self::expected as $key) {
+		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_NAME, $key);
 		}
 	}

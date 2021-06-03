@@ -29,6 +29,10 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 
 class ClickSendConfig implements IProviderConfig {
+	private const expected = [
+		'clicksend_user',
+		'clicksend_apikey',
+	];
 
 	/** @var IConfig */
 	private $config;
@@ -63,10 +67,12 @@ class ClickSendConfig implements IProviderConfig {
 
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
-		$expected = [
-			'clicksend_user',
-			'clicksend_apikey',
-		];
-		return count(array_intersect($set, $expected)) === count($expected);
+		return count(array_intersect($set, self::expected)) === count(self::expected);
+	}
+
+	public function remove() {
+		foreach (self::expected as $key) {
+			$this->config->deleteAppValue(Application::APP_NAME, $key);
+		}
 	}
 }

@@ -29,8 +29,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 
 class PlaySMSConfig implements IProviderConfig {
-
-	const expected = [
+	private const expected = [
 		'playsms_url',
 		'playsms_user',
 		'playsms_password',
@@ -81,7 +80,7 @@ class PlaySMSConfig implements IProviderConfig {
 	}
 
 	public function remove() {
-		foreach(self::expected as $key) {
+		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_NAME, $key);
 		}
 	}
