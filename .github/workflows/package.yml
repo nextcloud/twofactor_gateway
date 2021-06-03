@@ -1,0 +1,67 @@
+name: Package the app with krankerl
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  release:
+    types: [published]
+
+env:
+  KRANKERL_VERSION: 0.13.1
+  APP_NAME: twofactor_gateway
+
+jobs:
+  package:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout App
+        uses: actions/checkout@v2
+
+      - name: Setup PHP 7.2
+        uses: shivammathur/setup-php@2.11.0
+        with:
+          php-version: '7.2'
+          tools: composer
+      - name: Setup Node.js
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: '12' # dependency chokidar@2.1.8 will break with v14+
+
+      - name: Get cache directories
+        id: cache-dir
+        run: |
+          echo "::set-output name=composer::$(composer config cache-files-dir)"
+          echo "::set-output name=npm::$(npm config get cache)"
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.cache-dir.outputs.composer }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Cache npm dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.cache-dir.outputs.npm }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: Install krankerl
+        run: |
+          wget https://github.com/ChristophWurst/krankerl/releases/download/v${KRANKERL_VERSION}/krankerl
+          sudo mv krankerl /usr/bin/krankerl
+          sudo chown root:root /usr/bin/krankerl
+          sudo chmod 755 /usr/bin/krankerl
+
+      - name: Package app
+        run: krankerl package
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.APP_NAME }}.tar.gz
+          path: build/artifacts/${{ env.APP_NAME }}.tar.gz
+      - name: Attach artifact to release
+        uses: fnkr/github-action-ghr@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GHR_PATH: build/artifacts/${{ env.APP_NAME }}.tar.gz
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
