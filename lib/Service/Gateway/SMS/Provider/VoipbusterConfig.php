@@ -29,6 +29,11 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 
 class VoipbusterConfig implements IProviderConfig {
+	private const expected = [
+		'voipbuster_api_username',
+		'voipbuster_api_password',
+		'voipbuster_did',
+	];
 
 	/** @var IConfig */
 	private $config;
@@ -71,11 +76,12 @@ class VoipbusterConfig implements IProviderConfig {
 
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
-		$expected = [
-			'voipbuster_api_username',
-			'voipbuster_api_password',
-			'voipbuster_did',
-		];
-		return count(array_intersect($set, $expected)) === count($expected);
+		return count(array_intersect($set, self::expected)) === count(self::expected);
+	}
+
+	public function remove() {
+		foreach (self::expected as $key) {
+			$this->config->deleteAppValue(Application::APP_NAME, $key);
+		}
 	}
 }

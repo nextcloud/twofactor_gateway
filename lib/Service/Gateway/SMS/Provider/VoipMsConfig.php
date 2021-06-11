@@ -29,8 +29,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 
 class VoipMsConfig implements IProviderConfig {
-
-	const expected = [
+	private const expected = [
 		'voipms_api_username',
 		'voipms_api_password',
 		'voipms_did',
@@ -81,7 +80,7 @@ class VoipMsConfig implements IProviderConfig {
 	}
 	
 	public function remove() {
-		foreach(self::expected as $key) {
+		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_NAME, $key);
 		}
 	}

@@ -61,7 +61,7 @@ class PuzzelSMS implements IProvider {
 						'password' => $config->getPassword(),
 						"message[0].recipient" => "+".$identifier,
 						"message[0].content" => $message,
-						'serviceId'=> $config->getServiceId(),
+						'serviceId' => $config->getServiceId(),
 					],
 				]
 			);

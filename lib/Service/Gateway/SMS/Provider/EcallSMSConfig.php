@@ -29,8 +29,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 
 class EcallSMSConfig implements IProviderConfig {
-
-	const expected = [
+	private const expected = [
 		'ecallsms_username',
 		'ecallsms_password',
 		'ecallsms_senderid',
@@ -81,7 +80,7 @@ class EcallSMSConfig implements IProviderConfig {
 	}
 
 	public function remove() {
-		foreach(self::expected as $key) {
+		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_NAME, $key);
 		}
 	}

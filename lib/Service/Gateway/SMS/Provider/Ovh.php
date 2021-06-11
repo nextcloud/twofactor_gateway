@@ -44,14 +44,14 @@ class Ovh implements IProvider {
 	 * @var array
 	 */
 	private $endpoints = [
-		'ovh-eu'        => 'https://api.ovh.com/1.0',
-		'ovh-us'        => 'https://api.us.ovhcloud.com/1.0',
-		'ovh-ca'        => 'https://ca.api.ovh.com/1.0',
-		'kimsufi-eu'    => 'https://eu.api.kimsufi.com/1.0',
-		'kimsufi-ca'    => 'https://ca.api.kimsufi.com/1.0',
+		'ovh-eu' => 'https://api.ovh.com/1.0',
+		'ovh-us' => 'https://api.us.ovhcloud.com/1.0',
+		'ovh-ca' => 'https://ca.api.ovh.com/1.0',
+		'kimsufi-eu' => 'https://eu.api.kimsufi.com/1.0',
+		'kimsufi-ca' => 'https://ca.api.kimsufi.com/1.0',
 		'soyoustart-eu' => 'https://eu.api.soyoustart.com/1.0',
 		'soyoustart-ca' => 'https://ca.api.soyoustart.com/1.0',
-		'runabove-ca'   => 'https://api.runabove.com/1.0',
+		'runabove-ca' => 'https://api.runabove.com/1.0',
 	];
 
 	/**
@@ -112,14 +112,14 @@ class Ovh implements IProvider {
 			throw new InvalidSmsProviderException("SMS account $smsAccount not found");
 		}
 		$content = [
-			"charset"=> "UTF-8",
-			"message"=> $message,
-			"noStopClause"=> true,
-			"priority"=> "high",
-			"receivers"=> [ $identifier ],
-			"senderForResponse"=> false,
-			"sender"=> $sender,
-			"validityPeriod"=> 3600
+			"charset" => "UTF-8",
+			"message" => $message,
+			"noStopClause" => true,
+			"priority" => "high",
+			"receivers" => [ $identifier ],
+			"senderForResponse" => false,
+			"sender" => $sender,
+			"validityPeriod" => 3600
 		];
 		$body = json_encode($content);
 
@@ -152,8 +152,8 @@ class Ovh implements IProvider {
 				throw new InvalidSmsProviderException('Need to set the endpoint');
 			}
 			try {
-				$response         = $this->client->get($this->attrs['endpoint'].'/auth/time');
-				$serverTimestamp  = (int)$response->getBody();
+				$response = $this->client->get($this->attrs['endpoint'].'/auth/time');
+				$serverTimestamp = (int)$response->getBody();
 				$this->attrs['timedelta'] = $serverTimestamp - time();
 			} catch (Exception $ex) {
 				throw new InvalidSmsProviderException('Unable to calculate time delta:'.$ex->getMessage());
@@ -168,15 +168,15 @@ class Ovh implements IProvider {
 	 * @param string $body JSON encoded body content for the POST request
 	 * @return array $header Contains the data for the request need by OVH
 	 */
-	private function getHeader($method,$query,$body='') {
+	private function getHeader($method,$query,$body = '') {
 		$timestamp = time() + $this->attrs['timedelta'];
 		$prehash = $this->attrs['AS'].'+'.$this->attrs['CK'].'+'.$method.'+'.$query.'+'.$body.'+'.$timestamp;
 		$header = [
-			'Content-Type'      => 'application/json; charset=utf-8',
+			'Content-Type' => 'application/json; charset=utf-8',
 			'X-Ovh-Application' => $this->attrs['AK'],
-			'X-Ovh-Timestamp'   => $timestamp,
-			'X-Ovh-Signature'   => '$1$'.sha1($prehash),
-			'X-Ovh-Consumer'    => $this->attrs['CK'],
+			'X-Ovh-Timestamp' => $timestamp,
+			'X-Ovh-Signature' => '$1$'.sha1($prehash),
+			'X-Ovh-Consumer' => $this->attrs['CK'],
 		];
 		return $header;
 	}

@@ -5,7 +5,9 @@ composer.phar
 
 /node_modules
 vendor/
+
 /nbproject/
+/.idea/
 
 /tests/clover.*
 

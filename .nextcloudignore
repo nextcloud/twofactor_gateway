@@ -3,7 +3,9 @@
 /.git
 /.github
 /.gitignore
+/.idea
 /.nextcloudignore
+/.php-cs-fixer.dist.php
 /.travis.yml
 /.tx
 /.scrutinizer.yml

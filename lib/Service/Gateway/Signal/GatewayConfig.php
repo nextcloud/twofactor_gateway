@@ -29,8 +29,7 @@ use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\IConfig;
 
 class GatewayConfig implements IGatewayConfig {
-
-	const expected = [
+	private const expected = [
 		'signal_url',
 	];
 
@@ -63,7 +62,7 @@ class GatewayConfig implements IGatewayConfig {
 	}
 
 	public function remove() {
-		foreach(self::expected as $key) {
+		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_NAME, $key);
 		}
 	}
