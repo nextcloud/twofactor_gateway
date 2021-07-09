@@ -15,6 +15,17 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure sms
 ```
 
+### SMSGlobal 
+URL: https://www.smsglobal.com/
+Stability: Experimental
+
+Use the Webservices provided by playSMS for sending SMS.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
 ### Signal
 URL: https://www.signal.org/
 Stability: Experimental

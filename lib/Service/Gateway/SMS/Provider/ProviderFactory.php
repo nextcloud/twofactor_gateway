@@ -41,6 +41,8 @@ class ProviderFactory {
 				return $this->container->query(PuzzelSMS::class);
 			case PlaySMS::PROVIDER_ID:
 				return $this->container->query(PlaySMS::class);
+			case SMSGlobal::PROVIDER_ID:
+				return $this->container->query(SMSGlobal::class);
 			case WebSms::PROVIDER_ID:
 				return $this->container->query(WebSms::class);
 			case ClockworkSMS::PROVIDER_ID:

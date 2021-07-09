@@ -32,6 +32,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickSendConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClockworkSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\EcallSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SMSGlobalConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\Sms77IoConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\OvhConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
@@ -110,7 +111,7 @@ class Configure extends Command {
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
 
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend, smsglobal): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -333,6 +334,22 @@ class Configure extends Command {
 
 				$providerConfig->setUser($username);
 				$providerConfig->setApiKey($apiKey);
+
+				break;
+			case 'smsglobal':
+				$config->setProvider($provider);
+				/** @var SMSGlobalConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$url='https://api.smsglobal.com/http-api.php';
+				$usernameQuestion = new Question('Please enter your SMSGlobal username: ');
+				$username = $helper->ask($input, $output, $usernameQuestion);
+				$passwordQuestion = new Question('Please enter your SMSGlobal password: ');
+				$password = $helper->ask($input, $output, $passwordQuestion);
+
+				$providerConfig->setUrl($url);
+				$providerConfig->setUser($username);
+				$providerConfig->setPassword($password);
 
 				break;
 
