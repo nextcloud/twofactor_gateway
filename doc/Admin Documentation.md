@@ -19,7 +19,7 @@ occ twofactorauth:gateway:configure sms
 URL: https://www.smsglobal.com/
 Stability: Experimental
 
-Use the Webservices provided by playSMS for sending SMS.
+Use the Webservices provided by SMSGlobal for sending SMS.
 
 Interactive admin configuration:
 ```bash

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @author Pascal Clémot <pascal.clemot@free.fr>
+ * @author Bosdla
  *
  * Nextcloud - Two-factor Gateway
  *
@@ -51,7 +51,7 @@ class SMSGlobal implements IProvider {
 	 */
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
-                $to=str_replace("+", "", $identifier); 
+        $to=str_replace("+", "", $identifier);
 
 		try {
 			$this->client->get(

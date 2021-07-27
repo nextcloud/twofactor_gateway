@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ * @author Bosdla
  *
  * Nextcloud - Two-factor Gateway
  *
