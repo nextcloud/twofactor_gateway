@@ -341,7 +341,9 @@ class Configure extends Command {
 				/** @var SMSGlobalConfig $providerConfig */
 				$providerConfig = $config->getProvider()->getConfig();
 
-				$url='https://api.smsglobal.com/http-api.php';
+				$urlproposal='https://api.smsglobal.com/http-api.php';
+				$urlQuestion = new Question('Please enter your SMSGlobal http-api:',$urlproposal);
+				$url = $helper->ask($input, $output, $urlQuestion);
 				$usernameQuestion = new Question('Please enter your SMSGlobal username (for http-api):');
 				$username = $helper->ask($input, $output, $usernameQuestion);
 				$passwordQuestion = new Question('Please enter your SMSGlobal password: (for http-api):');
