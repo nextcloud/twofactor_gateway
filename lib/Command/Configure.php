@@ -40,6 +40,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SpryngSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellCentralConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\VoipbusterConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SerwerSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfig;
 use Symfony\Component\Console\Command\Command;
@@ -110,7 +111,7 @@ class Configure extends Command {
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
 
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend, serwersms): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -333,6 +334,24 @@ class Configure extends Command {
 
 				$providerConfig->setUser($username);
 				$providerConfig->setApiKey($apiKey);
+
+				break;
+
+			case 'serwersms':
+				$config->setProvider($provider);
+				/** @var SerwerSMSConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$loginQuestion = new Question('Please enter your SerwerSMS.pl API login: ');
+				$login = $helper->ask($input, $output, $loginQuestion);
+				$passwordQuestion = new Question('Please enter your SerwerSMS.pl API password: ');
+				$password = $helper->ask($input, $output, $passwordQuestion);
+				$senderQuestion = new Question('Please enter your SerwerSMS.pl sender name: ');
+				$sender = $helper->ask($input, $output, $senderQuestion);
+
+				$providerConfig->setLogin($login);
+				$providerConfig->setPassword($password);
+				$providerConfig->setSender($sender);
 
 				break;
 
