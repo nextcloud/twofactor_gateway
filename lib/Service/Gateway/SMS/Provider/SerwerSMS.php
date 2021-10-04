@@ -55,7 +55,7 @@ class SerwerSMS implements IProvider {
 		$password = $config->getPassword();
 		$sender = $config->getSender();
 		try {
-			$this->client->post('https://api2.serwersms.pl/messages/send_sms', [
+			$response = $this->client->post('https://api2.serwersms.pl/messages/send_sms', [
 				'headers' => [
 					'Content-Type' => 'application/json',
 				],
@@ -67,6 +67,12 @@ class SerwerSMS implements IProvider {
 					'sender' => $sender,
 				],
 			]);
+
+			$responseData = json_decode($response->getBody(), true);
+
+			if ($responseData['success'] !== true) {
+				throw new SmsTransmissionException();
+			}
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
