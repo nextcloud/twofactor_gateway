@@ -340,6 +340,7 @@ class Configure extends Command {
 				$output->writeln("Invalid provider $provider");
 				break;
 		}
+		return self::SUCCESS;
 	}
 
 	private function configureTelegram(InputInterface $input, OutputInterface $output) {
