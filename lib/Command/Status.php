@@ -57,6 +57,6 @@ class Status extends Command {
 		$output->writeln('SMS gateway: ' . ($smsConfigured ? 'configured' : 'not configured'));
 		$telegramConfigured = $this->telegramGateway->getConfig()->isComplete();
 		$output->writeln('Telegram gateway: ' . ($telegramConfigured ? 'configured' : 'not configured'));
-		return self::SUCCESS;
+		return 0;
 	}
 }
