@@ -82,13 +82,13 @@ class Configure extends Command {
 		switch ($gatewayName) {
 			case 'signal':
 				$this->configureSignal($input, $output);
-				break;
+				return 0;
 			case 'sms':
 				$this->configureSms($input, $output);
-				break;
+				return 0;
 			case 'telegram':
 				$this->configureTelegram($input, $output);
-				break;
+				return 0;
 			default:
 				$output->writeln("<error>Invalid gateway $gatewayName</error>");
 				return;
@@ -340,6 +340,7 @@ class Configure extends Command {
 				$output->writeln("Invalid provider $provider");
 				break;
 		}
+		return 0;
 	}
 
 	private function configureTelegram(InputInterface $input, OutputInterface $output) {
