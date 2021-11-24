@@ -1,8 +1,8 @@
 {
 	"name": "twofactor_gateway/0.18.0",
-	"description": "TwoFactor Gateway for Nextcloud 18-21 with PHP 7.2-8.0",
+	"description": "TwoFactor Gateway for Nextcloud 21-24 with PHP 7.3-8.0",
 	"require": {
-		"php": "^7.2|^8",
+		"php": "^7.3|^8",
 		"christophwurst/nextcloud": "^20.0|^21.0",
 		"telegram-bot/api": "^2.3"
 	},
@@ -15,7 +15,7 @@
 		"optimize-autoloader": true,
 		"classmap-authoritative": true,
 		"platform": {
-			"php": "7.2"
+			"php": "7.3"
 		}
 	},
 	"scripts": {
