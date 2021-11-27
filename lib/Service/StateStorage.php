@@ -46,17 +46,17 @@ class StateStorage {
 
 	private function getUserValue(IUser $user, string $gatewayName, string $key, $default = '') {
 		$gatewayKey = $this->buildConfigKey($gatewayName, $key);
-		return $this->config->getUserValue($user->getUID(), Application::APP_NAME, $gatewayKey, $default);
+		return $this->config->getUserValue($user->getUID(), Application::APP_ID, $gatewayKey, $default);
 	}
 
 	private function setUserValue(IUser $user, string $gatewayName, string $key, $value) {
 		$gatewayKey = $this->buildConfigKey($gatewayName, $key);
-		$this->config->setUserValue($user->getUID(), Application::APP_NAME, $gatewayKey, $value);
+		$this->config->setUserValue($user->getUID(), Application::APP_ID, $gatewayKey, $value);
 	}
 
 	private function deleteUserValue(IUser $user, string $gatewayName, string $key) {
 		$gatewayKey = $this->buildConfigKey($gatewayName, $key);
-		$this->config->deleteUserValue($user->getUID(), Application::APP_NAME, $gatewayKey);
+		$this->config->deleteUserValue($user->getUID(), Application::APP_ID, $gatewayKey);
 	}
 
 	public function get(IUser $user, string $gatewayName): State {

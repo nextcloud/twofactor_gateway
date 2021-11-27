@@ -43,7 +43,7 @@ class VoipMsConfig implements IProviderConfig {
 	}
 
 	private function getOrFail(string $key): string {
-		$val = $this->config->getAppValue(Application::APP_NAME, $key, null);
+		$val = $this->config->getAppValue(Application::APP_ID, $key, null);
 		if (is_null($val)) {
 			throw new ConfigurationException();
 		}
@@ -55,7 +55,7 @@ class VoipMsConfig implements IProviderConfig {
 	}
 
 	public function setUser(string $user) {
-		$this->config->setAppValue(Application::APP_NAME, 'voipms_api_username', $user);
+		$this->config->setAppValue(Application::APP_ID, 'voipms_api_username', $user);
 	}
 
 	public function getPassword(): string {
@@ -63,7 +63,7 @@ class VoipMsConfig implements IProviderConfig {
 	}
 
 	public function setPassword(string $password) {
-		$this->config->setAppValue(Application::APP_NAME, 'voipms_api_password', $password);
+		$this->config->setAppValue(Application::APP_ID, 'voipms_api_password', $password);
 	}
 
 	public function getDid(): string {
@@ -71,17 +71,17 @@ class VoipMsConfig implements IProviderConfig {
 	}
 
 	public function setDid(string $did) {
-		$this->config->setAppValue(Application::APP_NAME, 'voipms_did', $did);
+		$this->config->setAppValue(Application::APP_ID, 'voipms_did', $did);
 	}
 
 	public function isComplete(): bool {
-		$set = $this->config->getAppKeys(Application::APP_NAME);
+		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 	
 	public function remove() {
 		foreach (self::expected as $key) {
-			$this->config->deleteAppValue(Application::APP_NAME, $key);
+			$this->config->deleteAppValue(Application::APP_ID, $key);
 		}
 	}
 }
