@@ -41,7 +41,7 @@ class SpryngSMSConfig implements IProviderConfig {
 	}
 
 	private function getOrFail(string $key): string {
-		$val = $this->config->getAppValue(Application::APP_NAME, $key, null);
+		$val = $this->config->getAppValue(Application::APP_ID, $key, null);
 		if ($val === null) {
 			throw new ConfigurationException();
 		}
@@ -53,17 +53,17 @@ class SpryngSMSConfig implements IProviderConfig {
 	}
 
 	public function setApiToken(string $user) {
-		$this->config->setAppValue(Application::APP_NAME, 'spryng_apitoken', $user);
+		$this->config->setAppValue(Application::APP_ID, 'spryng_apitoken', $user);
 	}
 
 	public function isComplete(): bool {
-		$set = $this->config->getAppKeys(Application::APP_NAME);
+		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 	
 	public function remove() {
 		foreach (self::expected as $key) {
-			$this->config->deleteAppValue(Application::APP_NAME, $key);
+			$this->config->deleteAppValue(Application::APP_ID, $key);
 		}
 	}
 }
