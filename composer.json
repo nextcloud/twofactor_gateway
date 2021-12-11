@@ -3,7 +3,7 @@
 	"description": "TwoFactor Gateway for Nextcloud 21-24 with PHP 7.3-8.0",
 	"require": {
 		"php": "^7.3|^8",
-		"christophwurst/nextcloud": "^20.0|^21.0",
+		"christophwurst/nextcloud": "^22.1.1",
 		"telegram-bot/api": "^2.3"
 	},
 	"require-dev": {
