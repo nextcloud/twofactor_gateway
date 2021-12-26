@@ -45,6 +45,8 @@ class ProviderFactory {
 				return $this->container->query(WebSms::class);
 			case ClockworkSMS::PROVIDER_ID:
 				return $this->container->query(ClockworkSMS::class);
+			case CustomSMS::PROVIDER_ID:
+				return $this->container->query(CustomSMS::class);
 			case EcallSMS::PROVIDER_ID:
 				return $this->container->query(EcallSMS::class);
 			case VoipMs::PROVIDER_ID:

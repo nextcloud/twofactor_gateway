@@ -30,6 +30,8 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\GatewayConfig as SMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickSendConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClockworkSMSConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\CustomSMS;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\CustomSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\EcallSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\Sms77IoConfig;
@@ -110,12 +112,101 @@ class Configure extends Command {
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
 
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (customsms, websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend): ', 'customsms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
 		$config = $this->smsGateway->getConfig();
 		switch ($provider) {
+			case 'customsms':
+				$config->setProvider($provider);
+				/** @var CustomSMSConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				ReTypeUrl:
+				$urlQuestion = new Question('Please enter the web service URL: ');
+				$url = $helper->ask($input, $output, $urlQuestion);
+
+				if(!filter_var($url, FILTER_VALIDATE_URL))
+				{
+					$output->writeln('Invalid URL '.$url);
+					goto ReTypeUrl;
+				}
+
+				ReTypeMethod:
+				$methodQuestion = new Question('Please enter the web service method (GET or POST): ');
+				$method = (string)$helper->ask($input, $output, $methodQuestion);
+
+				if(strtolower($method) != 'get' && strtolower($method) != 'post')
+				{
+					$output->writeln('Invalid method '.$method);
+					goto ReTypeMethod;
+				}
+
+				ReTypeIdentifier:
+				$identifierQuestion = new Question('Please enter the identifier parameter for mobile number (Eg. mobile or number): ');
+				$identifier = $helper->ask($input, $output, $identifierQuestion);
+
+				if(empty($identifier))
+				{
+					$output->writeln('Mobile number parameter cannot be empty');
+					goto ReTypeIdentifier;
+				}
+
+				ReTypeMessage:
+				$messageQuestion = new Question('Please enter the message parameter (Eg. msg, sms, message): ');
+				$message = $helper->ask($input, $output, $messageQuestion);
+
+				if(empty($message))
+				{
+					$output->writeln('Message parameter cannot be empty');
+					goto ReTypeMessage;
+				}
+
+				ReTypeHeaders:
+				$headersQuestion = new Question('Please enter any http headers (Eg. x-api-key=123456789&x-api-token=ABCD12345 etc.): ');
+				$headers = $helper->ask($input, $output, $headersQuestion);
+
+				if(!empty($headers))
+				{
+					parse_str($headers, $headers_array);
+					if(!is_array($headers_array))
+					{
+						$output->writeln('headers is invalid');
+						goto ReTypeHeaders;
+					}
+				}
+				else
+				{
+					$headers='';
+				}
+
+				ReTypeParameters:
+				$parametersQuestion = new Question('Please enter any extra parameters (Eg. sender=nextcloud&username=nextcloud&password=1234 etc.): ');
+				$parameters = $helper->ask($input, $output, $parametersQuestion);
+
+				if(!empty($parameters))
+				{
+					parse_str($parameters, $parameters_array);
+					if(!is_array($parameters_array))
+					{
+						$output->writeln('Extra parameters is invalid');
+						goto ReTypeParameters;
+					}
+				}
+				else
+				{
+					$parameters='';
+				}
+
+				$providerConfig->setUrl($url);
+				$providerConfig->setMethod($method);
+				$providerConfig->setIdentifier($identifier);
+				$providerConfig->setMessage($message);
+				$providerConfig->setHeaders($headers);
+				$providerConfig->setParameters($parameters);
+
+				break;
 			case 'websms':
 				$config->setProvider($provider);
 				/** @var WebSmsConfig $providerConfig */

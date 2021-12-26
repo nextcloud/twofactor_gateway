@@ -4,6 +4,23 @@
 
 Here you can find the configuration instructions for the currently supported gateways.
 
+## CustomSMS
+URL: any endpoint
+Stability: Experimental
+
+This provider allow to send sms to any sms api by setting:
+The Webservice `URL`.
+The Webservice `method` accept (GET or POST).
+The `mobile number` parameter .
+The `message` parameter .
+The Webservice required http headers for sending.
+And any others static parameters.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
 ### playSMS
 URL: https://playsms.org/
 Stability: Experimental
