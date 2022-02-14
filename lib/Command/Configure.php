@@ -35,6 +35,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\Sms77IoConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\OvhConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SipGateConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SpryngSMSConfig;
@@ -110,7 +111,7 @@ class Configure extends Command {
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
 
-		$providerQuestion = new Question('Please choose a SMS provider (websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (sipgate, websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -128,6 +129,23 @@ class Configure extends Command {
 
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
+
+				break;
+			case 'sipgate':
+				$config->setProvider($provider);
+				/** @var SipGateConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$tokenIdQuestion = new Question('Please enter your sipgate token-id: ');
+				$tokenId = $helper->ask($input, $output, $tokenIdQuestion);
+				$accessTokenQuestion = new Question('Please enter your sipgate access token: ');
+				$accessToken = $helper->ask($input, $output, $accessTokenQuestion);
+				$webSmsExtensionQuestion = new Question('Please enter your sipgate web-sms extension: ');
+				$webSmsExtension = $helper->ask($input, $output, $webSmsExtensionQuestion);
+
+				$providerConfig->setTokenId($tokenId);
+				$providerConfig->setAccessToken($accessToken);
+				$providerConfig->setWebSmsExtension($webSmsExtension);
 
 				break;
 			case 'playsms':
@@ -220,19 +238,19 @@ class Configure extends Command {
 
 			case 'voipbuster':
 				$config->setProvider($provider);
-		
+
 				/** @var VoipbusterConfig $providerConfig */
 				$providerConfig = $config->getProvider()->getConfig();
-		
+
 				$usernameQuestion = new Question('Please enter your Voipbuster API username: ');
 				$username = $helper->ask($input, $output, $usernameQuestion);
-		
+
 				$passwordQuestion = new Question('Please enter your Voipbuster API password: ');
 				$password = $helper->ask($input, $output, $passwordQuestion);
-		
+
 				$didQuestion = new Question('Please enter your Voipbuster DID: ');
 				$did = $helper->ask($input, $output, $didQuestion);
-		
+
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
 				$providerConfig->setDid($did);
