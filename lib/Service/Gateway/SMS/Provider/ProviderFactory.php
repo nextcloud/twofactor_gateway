@@ -37,6 +37,8 @@ class ProviderFactory {
 
 	public function getProvider(string $id): IProvider {
 		switch ($id) {
+			case SipGate::PROVIDER_ID:
+				return $this->container->query(SipGate::class);
 			case PuzzelSMS::PROVIDER_ID:
 				return $this->container->query(PuzzelSMS::class);
 			case PlaySMS::PROVIDER_ID:
