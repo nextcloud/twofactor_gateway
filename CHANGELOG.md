@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.20.0 - 2020-08-26
+(no code changes, just version bump)
+### Added
+- Nextcloud 24 support
+- PHP 8.1 support
+### Removed
+- Nextcloud 18-20 support
+
+## (0.18.0 / 0.19.0 missing data)
+### Added
+- Nextcloud 23 support
+- PHP 8.0 support
+### Removed
+- PHP 7.2 support
+
 ## 0.17.0 - 2020-08-26
 ### Added
 - Nextcloud 20 support
