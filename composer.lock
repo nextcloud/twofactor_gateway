@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "119f7de48572548df7d2ec7f48cd7f74",
+    "content-hash": "75252bb9ff4eb3d6589ce84b51d7c968",
     "packages": [
         {
             "name": "christophwurst/nextcloud",
@@ -48,16 +48,16 @@
         },
         {
             "name": "telegram-bot/api",
-            "version": "v2.3.23",
+            "version": "v2.3.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TelegramBot/Api.git",
-                "reference": "4565a9f1339d9f584bc9d9073feab1bfe6b0f7ea"
+                "reference": "579f64d0ffe7f21d1f61cb8734e297686b286bf7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TelegramBot/Api/zipball/4565a9f1339d9f584bc9d9073feab1bfe6b0f7ea",
-                "reference": "4565a9f1339d9f584bc9d9073feab1bfe6b0f7ea",
+                "url": "https://api.github.com/repos/TelegramBot/Api/zipball/579f64d0ffe7f21d1f61cb8734e297686b286bf7",
+                "reference": "579f64d0ffe7f21d1f61cb8734e297686b286bf7",
                 "shasum": ""
             },
             "require": {
@@ -102,9 +102,9 @@
             ],
             "support": {
                 "issues": "https://github.com/TelegramBot/Api/issues",
-                "source": "https://github.com/TelegramBot/Api/tree/v2.3.23"
+                "source": "https://github.com/TelegramBot/Api/tree/v2.3.24"
             },
-            "time": "2021-11-05T10:46:23+00:00"
+            "time": "2021-12-06T13:05:34+00:00"
         }
     ],
     "packages-dev": [
@@ -4808,11 +4808,11 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.3|^8"
+        "php": "^7.3|^7.4|^8.0|^8.1"
     },
     "platform-dev": [],
     "platform-overrides": {
         "php": "7.3"
     },
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.3.0"
 }
