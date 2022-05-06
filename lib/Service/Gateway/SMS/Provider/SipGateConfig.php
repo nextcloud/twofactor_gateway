@@ -31,7 +31,7 @@ class SipGateConfig implements IProviderConfig {
 	private const expected = [
 		'sipgate_token_id',
 		'sipgate_access_token',
-                'sipgate_web_sms_extension',
+		'sipgate_web_sms_extension',
 	];
 
 	/** @var IConfig */

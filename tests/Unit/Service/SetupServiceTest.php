@@ -131,7 +131,7 @@ class SetupServiceTest extends TestCase {
 			->method('enableProviderFor');
 		$this->expectException(Exception::class);
 
-		$this->setupService->finishSetup($user, 'telegram','123456');
+		$this->setupService->finishSetup($user, 'telegram', '123456');
 	}
 
 	public function testFinishSetupWithWrongVerificationNumber() {

@@ -95,11 +95,11 @@ class Ovh implements IProvider {
 
 		$this->getTimeDelta();
 
-		$header = $this->getHeader('GET',$this->attrs['endpoint'].'/sms');
-		$response = $this->client->get($this->attrs['endpoint'].'/sms',[
+		$header = $this->getHeader('GET', $this->attrs['endpoint'].'/sms');
+		$response = $this->client->get($this->attrs['endpoint'].'/sms', [
 			'headers' => $header,
 		]);
-		$smsServices = json_decode($response->getBody(),true);
+		$smsServices = json_decode($response->getBody(), true);
 
 		$smsAccountFound = false;
 		foreach ($smsServices as $smsService) {
@@ -123,12 +123,12 @@ class Ovh implements IProvider {
 		];
 		$body = json_encode($content);
 
-		$header = $this->getHeader('POST',$this->attrs['endpoint']."/sms/$smsAccount/jobs",$body);
-		$response = $this->client->post($this->attrs['endpoint']."/sms/$smsAccount/jobs",[
+		$header = $this->getHeader('POST', $this->attrs['endpoint']."/sms/$smsAccount/jobs", $body);
+		$response = $this->client->post($this->attrs['endpoint']."/sms/$smsAccount/jobs", [
 			'headers' => $header,
 			'json' => $content,
 		]);
-		$resultPostJob = json_decode($response->getBody(),true);
+		$resultPostJob = json_decode($response->getBody(), true);
 
 		if (count($resultPostJob["validReceivers"]) === 0) {
 			throw new SmsTransmissionException("Bad receiver $identifier");
@@ -168,7 +168,7 @@ class Ovh implements IProvider {
 	 * @param string $body JSON encoded body content for the POST request
 	 * @return array $header Contains the data for the request need by OVH
 	 */
-	private function getHeader($method,$query,$body = '') {
+	private function getHeader($method, $query, $body = '') {
 		$timestamp = time() + $this->attrs['timedelta'];
 		$prehash = $this->attrs['AS'].'+'.$this->attrs['CK'].'+'.$method.'+'.$query.'+'.$body.'+'.$timestamp;
 		$header = [
