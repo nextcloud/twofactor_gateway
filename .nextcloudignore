@@ -8,7 +8,6 @@
 /.php-cs-fixer.dist.php
 /.travis.yml
 /.tx
-/.scrutinizer.yml
 /build
 /ci
 /CONTRIBUTING.md

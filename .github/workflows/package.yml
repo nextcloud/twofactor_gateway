@@ -6,23 +6,23 @@ on:
     types: [published]
 
 env:
-  KRANKERL_VERSION: 0.13.1
+  KRANKERL_VERSION: 0.13.3
   APP_NAME: twofactor_gateway
 
 jobs:
   package:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout App
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Setup PHP 7.2
-        uses: shivammathur/setup-php@2.11.0
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.2'
+          php-version: '7.4'
           tools: composer
       - name: Setup Node.js
-        uses: actions/setup-node@v2.1.5
+        uses: actions/setup-node@v3
         with:
           node-version: '12' # dependency chokidar@2.1.8 will break with v14+
 
@@ -32,13 +32,13 @@ jobs:
           echo "::set-output name=composer::$(composer config cache-files-dir)"
           echo "::set-output name=npm::$(npm config get cache)"
       - name: Cache composer dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ steps.cache-dir.outputs.composer }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
       - name: Cache npm dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ steps.cache-dir.outputs.npm }}
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -55,7 +55,7 @@ jobs:
         run: krankerl package
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ env.APP_NAME }}.tar.gz
           path: build/artifacts/${{ env.APP_NAME }}.tar.gz

@@ -213,4 +213,15 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure sms
 ```
 
+### SerwerSMS.pl
+URL: https://serwersms.pl
+Stability: Experimental
+
+Use the SMS gateway provided by SerwerSMS.pl (HTTPS JSON API) for sending SMS. The sender name provided during configuration must be added and approved in the SerwerSMS.pl customer portal.
+
+Interactive admin configuration (make sure to provide the full API login including the `webapi_` prefix):
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/

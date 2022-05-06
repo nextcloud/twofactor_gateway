@@ -8,11 +8,12 @@ OC.L10N.register(
     "Authenticate via SMS" : "由簡訊驗證",
     "Telegram verification" : "Telegram 驗證",
     "Authenticate via Telegram" : "由 Telegram 驗證",
-    "Two-Factor Gateway" : "兩階段驗證中心",
-    "Two-factor gateway providers (SMS, Telegram, Signal)" : "雙因素驗證閘道提供者(SMS, Telegram, Signal)",
+    "Two-Factor Gateway" : "兩步驟驗證中心",
+    "Two-factor gateway providers (SMS, Telegram, Signal)" : "兩步驟驗證閘道提供者 (SMS, Telegram, Signal)",
+    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "提供 Nextcloud 兩步驟驗證的組合，通過 Signal、簡訊（SMS）和 Telegram 發送驗證碼。",
     "Authentication code" : "驗證碼",
     "An access code has been sent to %s" : "一個驗証碼已經發送到 %s",
-    "Error while sending the Message. Please try again later or contact the administrator." : "發送簡訊出錯.請重試或聯絡系統管理員.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "你的電話號碼已經更改，但尚未重新驗證，請使用不同的兩階段驗證機制或者聯絡你的管理者。"
+    "Error while sending the Message. Please try again later or contact the administrator." : "發送簡訊出錯。請重試或聯絡系統管理員。",
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "你的電話號碼已經更改，但尚未重新驗證，請使用不同的兩步驟驗證機制或者聯絡你的管理者。"
 },
 "nplurals=1; plural=0;");

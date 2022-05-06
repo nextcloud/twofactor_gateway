@@ -37,6 +37,8 @@ class ProviderFactory {
 
 	public function getProvider(string $id): IProvider {
 		switch ($id) {
+			case SipGate::PROVIDER_ID:
+				return $this->container->query(SipGate::class);
 			case PuzzelSMS::PROVIDER_ID:
 				return $this->container->query(PuzzelSMS::class);
 			case PlaySMS::PROVIDER_ID:
@@ -65,6 +67,8 @@ class ProviderFactory {
 				return $this->container->query(ClickatellCentral::class);
 			case ClickSend::PROVIDER_ID:
 				return $this->container->query(ClickSend::class);
+			case SerwerSMS::PROVIDER_ID:
+				return $this->container->query(SerwerSMS::class);
 			default:
 				throw new InvalidSmsProviderException("Provider <$id> does not exist");
 		}

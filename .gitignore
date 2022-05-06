@@ -11,4 +11,4 @@ vendor/
 
 /tests/clover.*
 
-.php_cs.cache
+.php-cs-fixer.cache

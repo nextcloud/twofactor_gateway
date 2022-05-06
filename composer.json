@@ -1,22 +1,19 @@
 {
-	"name": "twofactor_gateway/0.18.0",
-	"description": "TwoFactor Gateway for Nextcloud 18-21 with PHP 7.2-8.0",
+	"name": "twofactor_gateway/0.20.0",
+	"description": "TwoFactor Gateway for Nextcloud 21-24 with PHP 7.3-8.1",
 	"require": {
-		"php": "^7.2|^8",
-		"christophwurst/nextcloud": "^20.0|^21.0",
+		"php": "^7.4|^8.0|^8.1",
 		"telegram-bot/api": "^2.3"
 	},
 	"require-dev": {
-		"christophwurst/nextcloud_testing": "^0.12",
-		"nextcloud/coding-standard": "^0.5.0",
-		"roave/security-advisories": "dev-master"
+		"phpunit/phpunit": "^9.5",
+		"nextcloud/coding-standard": "^1.0",
+		"roave/security-advisories": "dev-master",
+		"christophwurst/nextcloud": "dev-master"
 	},
 	"config": {
 		"optimize-autoloader": true,
-		"classmap-authoritative": true,
-		"platform": {
-			"php": "7.2"
-		}
+		"classmap-authoritative": true
 	},
 	"scripts": {
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
