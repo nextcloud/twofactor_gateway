@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 /**
- * @author Kim Syversen <kim.syversen@gmail.com>
+ * @author Claus-Justus Heine <himself@claus-justus-heine.de>
  *
- * Nextcloud - Two-factor Gateway
+ * Nextcloud - Two-factor Gateway for SipGate
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
@@ -23,17 +23,15 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use function array_intersect;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 
-class PuzzelSMSConfig implements IProviderConfig {
+class SipGateConfig implements IProviderConfig {
 	private const expected = [
-		'puzzel_url',
-		'puzzel_user',
-		'puzzel_password',
-		'puzzel_serviceid',
+		'sipgate_token_id',
+		'sipgate_access_token',
+		'sipgate_web_sms_extension',
 	];
 
 	/** @var IConfig */
@@ -51,43 +49,34 @@ class PuzzelSMSConfig implements IProviderConfig {
 		return $val;
 	}
 
-	public function getUrl(): string {
-		return $this->getOrFail('puzzel_url');
+	public function getTokenId(): string {
+		return $this->getOrFail('sipgate_token_id');
 	}
 
-	public function setUrl(string $url) {
-		$this->config->setAppValue(Application::APP_ID, 'puzzel_url', $url);
+	public function setTokenId(string $tokenId) {
+		$this->config->setAppValue(Application::APP_ID, 'sipgate_token_id', $tokenId);
 	}
 
-	public function getUser(): string {
-		return $this->getOrFail('puzzel_user');
+	public function getAccessToken(): string {
+		return $this->getOrFail('sipgate_access_token');
 	}
 
-	public function setUser(string $user) {
-		$this->config->setAppValue(Application::APP_ID, 'puzzel_user', $user);
+	public function setAccessToken(string $accessToken) {
+		$this->config->setAppValue(Application::APP_ID, 'sipgate_access_token', $accessToken);
 	}
 
-	public function getPassword(): string {
-		return $this->getOrFail('puzzel_password');
+	public function getWebSmsExtension(): string {
+		return $this->getOrFail('sipgate_web_sms_extension');
 	}
 
-	public function setPassword(string $password) {
-		$this->config->setAppValue(Application::APP_ID, 'puzzel_password', $password);
+	public function setWebSmsExtension(string $webSmsExtension) {
+		$this->config->setAppValue(Application::APP_ID, 'sipgate_web_sms_extension', $webSmsExtension);
 	}
-
-	public function getServiceId() {
-		return $this->getOrFail('puzzel_serviceid');
-	}
-
-	public function setServiceId(string $serviceid) {
-		$this->config->setAppValue(Application::APP_ID, 'puzzel_serviceid', $serviceid);
-	}
-
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
-	
+
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, $key);

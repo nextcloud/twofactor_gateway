@@ -24,8 +24,8 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Service\Gateway;
 
-use ChristophWurst\Nextcloud\Testing\TestCase;
 use OCA\TwoFactorGateway\Service\Gateway\State;
+use PHPUnit\Framework\TestCase;
 
 class StateTest extends TestCase {
 	public function testDisabled() {

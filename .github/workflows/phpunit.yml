@@ -1,0 +1,106 @@
+name: PHPUnit
+
+on:
+  pull_request:
+  push:
+    branches: [ master ]
+
+env:
+  APP_NAME: twofactor_gateway
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    strategy:
+      # do not stop on another job's failure
+      fail-fast: false
+      matrix:
+        php-versions: ['7.4', '8.0']
+        databases: ['sqlite']
+        coverage: ['xdebug']
+        xdebug_mode: ['debug']
+        server-versions: ['stable22', 'stable23', 'stable24', 'master']
+        include:
+          # used to run coverage only on 7.4-stable23
+          - php-versions: '7.4'
+            databases: 'sqlite'
+            server-versions: 'stable22'
+            xdebug_mode: debug
+          - php-versions: '7.4'
+            databases: 'sqlite'
+            server-versions: 'stable23'
+            xdebug_mode: coverage
+          - php-versions: '7.4'
+            databases: 'sqlite'
+            server-versions: 'stable24'
+            xdebug_mode: coverage
+          - php-versions: '7.4'
+            databases: 'sqlite'
+            server-versions: 'master'
+            xdebug_mode: debug
+    name: php${{ matrix.php-versions }}-${{ matrix.databases }}-${{ matrix.server-versions }}
+
+    steps:
+      - name: Checkout server
+        uses: actions/checkout@v3
+        with:
+          repository: nextcloud/server
+          ref: ${{ matrix.server-versions }}
+
+      - name: Checkout submodules
+        shell: bash
+        run: |
+          auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          git submodule sync --recursive
+          git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+
+      - name: Checkout app
+        uses: actions/checkout@v3
+        with:
+          path: apps/${{ env.APP_NAME }}
+
+      - name: Set up php ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          coverage: ${{ matrix.coverage }}
+          tools: phpunit
+          extensions: mbstring, iconv, fileinfo, intl, sqlite, pdo_sqlite
+
+      - name: Set up PHP dependencies
+        working-directory: apps/${{ env.APP_NAME }}
+        run: composer i
+
+      - name: Set up Nextcloud
+        env:
+          DB_PORT: 4444
+        run: |
+          mkdir data
+          ./occ maintenance:install \
+            --verbose \
+            --database=${{ matrix.databases }} \
+            --database-name=nextcloud \
+            --database-host=127.0.0.1 \
+            --database-port=$DB_PORT \
+            --database-user=root \
+            --database-pass=rootpassword \
+            --admin-user=admin \
+            --admin-pass=password
+          ./occ app:enable ${{ env.APP_NAME }}
+          php -S localhost:8080 &
+
+      - name: PHPUnit
+        working-directory: apps/${{ env.APP_NAME }}
+        env:
+          XDEBUG_MODE: ${{ matrix.xdebug_mode }}
+        run: ./vendor/bin/phpunit -c tests/phpunit.xml
+
+      - name: Download scrutinizer ocular.phar
+        if: ${{ matrix.php-versions == '7.4' && matrix.server-versions == 'stable23' }}
+        working-directory: apps/${{ env.APP_NAME }}
+        run: wget https://scrutinizer-ci.com/ocular.phar
+
+      - name: Upload code coverage to scrutinizer
+        if: ${{ matrix.php-versions == '7.4' && matrix.server-versions == 'stable23' }}
+        working-directory: apps/${{ env.APP_NAME }}
+        run: php ocular.phar code-coverage:upload --format=php-clover tests/clover.xml

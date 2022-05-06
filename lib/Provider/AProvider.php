@@ -149,10 +149,10 @@ abstract class AProvider implements IProvider, IProvidesIcons, IProvidesPersonal
 	}
 
 	public function getLightIcon(): String {
-		return image_path(Application::APP_NAME, 'app.svg');
+		return image_path(Application::APP_ID, 'app.svg');
 	}
 
 	public function getDarkIcon(): String {
-		return image_path(Application::APP_NAME, 'app-dark.svg');
+		return image_path(Application::APP_ID, 'app-dark.svg');
 	}
 }

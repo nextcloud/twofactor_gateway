@@ -102,5 +102,6 @@ class Test extends Command {
 		}
 
 		$gateway->send($user, $identifier, 'Test');
+		return 0;
 	}
 }

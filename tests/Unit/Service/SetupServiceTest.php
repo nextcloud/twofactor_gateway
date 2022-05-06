@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
-use ChristophWurst\Nextcloud\Testing\TestCase;
 use Exception;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
@@ -39,6 +38,7 @@ use OCP\Authentication\TwoFactorAuth\IRegistry;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class SetupServiceTest extends TestCase {
 
@@ -131,7 +131,7 @@ class SetupServiceTest extends TestCase {
 			->method('enableProviderFor');
 		$this->expectException(Exception::class);
 
-		$this->setupService->finishSetup($user, 'telegram','123456');
+		$this->setupService->finishSetup($user, 'telegram', '123456');
 	}
 
 	public function testFinishSetupWithWrongVerificationNumber() {

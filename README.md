@@ -2,7 +2,7 @@
 
 A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram.
 
-[![Build Status](https://travis-ci.org/nextcloud/twofactor_gateway.svg?branch=master)](https://travis-ci.org/nextcloud/twofactor_gateway)
+![Test Status](https://github.com/nextcloud/twofactor_gateway/workflows/PHPUnit/badge.svg?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/?branch=master)
 [![Read the Docs](https://img.shields.io/readthedocs/nextcloud-twofactor-gateway.svg)](https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/)

@@ -62,21 +62,41 @@ class Gateway implements IGateway {
 	 */
 	public function send(IUser $user, string $identifier, string $message) {
 		$client = $this->clientService->newClient();
-		$response = $client->post(
-			$this->config->getUrl(),
-			[
-				'body' => [
-					'to' => $identifier,
-					'message' => $message,
-				],
-			]
-		);
-		$body = $response->getBody();
-		$json = json_decode($body, true);
+		// determine type of gateway
+		$response = $client->get($this->config->getUrl() . '/v1/about');
+		if ($response->getStatusCode() === 200) {
+			// New style gateway https://gitlab.com/morph027/signal-cli-dbus-rest-api
+			$response = $client->post(
+				$this->config->getUrl() . '/v1/send/' . $identifier,
+				[
+					'json' => [ 'message' => $message ],
+				]
+			);
+			$body = $response->getBody();
+			$json = json_decode($body, true);
+			if ($response->getStatusCode() !== 201 || is_null($json) || !is_array($json) || !isset($json['timestamp'])) {
+				$status = $response->getStatusCode();
+				throw new SmsTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
+			}
+		} else {
+			// Try old deprecated gateway https://gitlab.com/morph027/signal-web-gateway
+			$response = $client->post(
+				$this->config->getUrl() . '/v1/send/' . $identifier,
+				[
+					'body' => [
+						'to' => $identifier,
+						'message' => $message,
+					],
+					'json' => [ 'message' => $message ],
+				]
+			);
+			$body = $response->getBody();
+			$json = json_decode($body, true);
 
-		if ($response->getStatusCode() !== 200 || is_null($json) || !is_array($json) || !isset($json['success']) || $json['success'] !== true) {
-			$status = $response->getStatusCode();
-			throw new SmsTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
+			if ($response->getStatusCode() !== 200 || is_null($json) || !is_array($json) || !isset($json['success']) || $json['success'] !== true) {
+				$status = $response->getStatusCode();
+				throw new SmsTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
+			}
 		}
 	}
 

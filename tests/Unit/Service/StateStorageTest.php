@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
 
-use ChristophWurst\Nextcloud\Testing\TestCase;
 use OCA\TwoFactorGateway\Provider\SmsProvider;
 use OCA\TwoFactorGateway\Provider\State;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
@@ -32,6 +31,7 @@ use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IConfig;
 use OCP\IUser;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class StateStorageTest extends TestCase {
 
