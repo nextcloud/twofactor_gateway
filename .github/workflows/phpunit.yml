@@ -19,13 +19,9 @@ jobs:
         databases: ['sqlite']
         coverage: ['xdebug']
         xdebug_mode: ['debug']
-        server-versions: ['stable21', 'stable22', 'stable23', 'master']
+        server-versions: ['stable22', 'stable23', 'stable24', 'master']
         include:
           # used to run coverage only on 7.4-stable23
-          - php-versions: '7.4'
-            databases: 'sqlite'
-            server-versions: 'stable21'
-            xdebug_mode: debug
           - php-versions: '7.4'
             databases: 'sqlite'
             server-versions: 'stable22'
@@ -33,6 +29,10 @@ jobs:
           - php-versions: '7.4'
             databases: 'sqlite'
             server-versions: 'stable23'
+            xdebug_mode: coverage
+          - php-versions: '7.4'
+            databases: 'sqlite'
+            server-versions: 'stable24'
             xdebug_mode: coverage
           - php-versions: '7.4'
             databases: 'sqlite'
@@ -93,7 +93,7 @@ jobs:
         working-directory: apps/${{ env.APP_NAME }}
         env:
           XDEBUG_MODE: ${{ matrix.xdebug_mode }}
-        run: ./vendor/phpunit/phpunit/phpunit -c tests/phpunit.xml
+        run: ./vendor/bin/phpunit -c tests/phpunit.xml
 
       - name: Download scrutinizer ocular.phar
         if: ${{ matrix.php-versions == '7.4' && matrix.server-versions == 'stable23' }}
