@@ -10,6 +10,12 @@ Stability: Experimental
 
 Use the Webservices provided by playSMS for sending SMS.
 
+### SMSGlobal 
+URL: https://www.smsglobal.com
+Stability: Experimental
+
+Use the Webservices provided by SMSGlobal for sending SMS.
+
 ### Signal
 URL: https://www.signal.org/
 Stability: Experimental

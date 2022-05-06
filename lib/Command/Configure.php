@@ -32,6 +32,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickSendConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClockworkSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\EcallSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SMSGlobalConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\Sms77IoConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\OvhConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
@@ -112,7 +113,7 @@ class Configure extends Command {
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
 
-		$providerQuestion = new Question('Please choose a SMS provider (sipgate, websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend, serwersms): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (sipgate, websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend, serwersms, smsglobal): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -352,6 +353,24 @@ class Configure extends Command {
 
 				$providerConfig->setUser($username);
 				$providerConfig->setApiKey($apiKey);
+
+				break;
+			case 'smsglobal':
+				$config->setProvider($provider);
+				/** @var SMSGlobalConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$urlproposal = 'https://api.smsglobal.com/http-api.php';
+				$urlQuestion = new Question('Please enter your SMSGlobal http-api:', $urlproposal);
+				$url = $helper->ask($input, $output, $urlQuestion);
+				$usernameQuestion = new Question('Please enter your SMSGlobal username (for http-api):');
+				$username = $helper->ask($input, $output, $usernameQuestion);
+				$passwordQuestion = new Question('Please enter your SMSGlobal password: (for http-api):');
+				$password = $helper->ask($input, $output, $passwordQuestion);
+
+				$providerConfig->setUrl($url);
+				$providerConfig->setUser($username);
+				$providerConfig->setPassword($password);
 
 				break;
 
