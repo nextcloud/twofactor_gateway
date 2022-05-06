@@ -1,8 +1,8 @@
 import Vue from "vue"
 
-import SignalSettings from "views/SignalSettings.vue"
-import SMSSettings from "views/SMSSettings.vue"
-import TelegramSettings from "views/TelegramSettings.vue"
+import SignalSettings from "./views/SignalSettings.vue"
+import SMSSettings from "./views/SMSSettings.vue"
+import TelegramSettings from "./views/TelegramSettings.vue"
 
 Vue.config.productionTip = false
 
