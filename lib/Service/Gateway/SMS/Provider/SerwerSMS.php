@@ -85,4 +85,3 @@ class SerwerSMS implements IProvider {
 		return $this->config;
 	}
 }
-
