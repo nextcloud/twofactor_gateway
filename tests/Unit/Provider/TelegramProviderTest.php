@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
 
-use ChristophWurst\Nextcloud\Testing\TestCase;
 use OCA\TwoFactorGateway\Provider\TelegramProvider;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
@@ -32,6 +31,7 @@ use OCP\IL10N;
 use OCP\ISession;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 class TelegramProviderTest extends TestCase {
 

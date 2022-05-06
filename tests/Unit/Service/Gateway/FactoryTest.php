@@ -24,11 +24,11 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Service\Gateway;
 
-use ChristophWurst\Nextcloud\Testing\TestCase;
 use OCA\TwoFactorGateway\Service\Gateway\Factory;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
+use PHPUnit\Framework\TestCase;
 
 class FactoryTest extends TestCase {
 
