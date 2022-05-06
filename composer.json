@@ -13,10 +13,7 @@
 	},
 	"config": {
 		"optimize-autoloader": true,
-		"classmap-authoritative": true,
-		"platform": {
-			"php": "7.3"
-		}
+		"classmap-authoritative": true
 	},
 	"scripts": {
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
