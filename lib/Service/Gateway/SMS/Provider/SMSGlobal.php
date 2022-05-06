@@ -51,7 +51,7 @@ class SMSGlobal implements IProvider {
 	 */
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
-		$to=str_replace("+", "", $identifier);
+		$to = str_replace("+", "", $identifier);
 
 		try {
 			$this->client->get(
