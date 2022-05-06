@@ -2,13 +2,10 @@ const path = require('path');
 const {VueLoaderPlugin} = require('vue-loader')
 
 module.exports = {
-	entry: './js/init.js',
-	node: {
-		fs: 'empty'
-	},
+	entry: './src/init.js',
 	output: {
 		filename: 'build.js',
-		path: path.resolve(__dirname, 'build')
+		path: path.resolve(__dirname, '../js')
 	},
 	resolve: {
 		modules: [path.resolve(__dirname), 'node_modules'],

@@ -1,7 +1,6 @@
 composer.phar
 
-/build
-/js/build
+/js
 
 /node_modules
 vendor/
