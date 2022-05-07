@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '12' # dependency chokidar@2.1.8 will break with v14+
+          node-version: 16
 
       - name: Get cache directories
         id: cache-dir

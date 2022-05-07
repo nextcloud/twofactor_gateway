@@ -47,13 +47,13 @@
 </template>
 
 <script>
-	import L10n from "components/L10n.vue";
+	import L10n from "./L10n.vue";
 	import {
 		getState,
 		startVerification,
 		tryVerification,
 		disable
-	} from "service/registration";
+	} from "../service/registration";
 
 	export default {
 		name: "GatewaySettings",
