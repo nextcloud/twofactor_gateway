@@ -16,4 +16,4 @@ OC.L10N.register(
     "Error while sending the Message. Please try again later or contact the administrator." : "Erreur lors de l'envoi du message. Veuillez réessayer plus tard ou contacter l'administrateur.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Votre numéro de téléphone a changé et n'a pas été revérifié. Utilisez un autre mécanisme à deux facteurs ou contactez votre administrateur."
 },
-"nplurals=2; plural=(n > 1);");
+"nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
