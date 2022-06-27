@@ -8,6 +8,7 @@
 	<version>0.20.0</version>
 	<licence>agpl</licence>
 	<author>Christoph Wurst</author>
+	<author>Vitor Mattos</author>
 	<namespace>TwoFactorGateway</namespace>
 	<documentation>
 		<admin>https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/Admin%20Documentation/</admin>
@@ -15,8 +16,8 @@
 	<category>security</category>
 	<website>https://github.com/nextcloud/twofactor_gateway</website>
 	<bugs>https://github.com/nextcloud/twofactor_gateway/issues</bugs>
-	<screenshot>https://raw.githubusercontent.com/ChristophWurst/twofactor_gateway/3f895bc997c1a3a38c9bae16ccae8bd499af864e/screenshots/settings.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/ChristophWurst/twofactor_gateway/3f895bc997c1a3a38c9bae16ccae8bd499af864e/screenshots/challenge.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/twofactor_gateway/3f895bc997c1a3a38c9bae16ccae8bd499af864e/screenshots/settings.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/twofactor_gateway/3f895bc997c1a3a38c9bae16ccae8bd499af864e/screenshots/challenge.png</screenshot>
 	<dependencies>
 		<nextcloud min-version="22" max-version="25"/>
 	</dependencies>
