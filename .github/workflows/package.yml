@@ -24,7 +24,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 14
+
+      - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
+        run: |
+          npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
+          npm install --global webpack
+          npm install --global webpack-cli
 
       - name: Get cache directories
         id: cache-dir
