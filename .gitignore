@@ -9,5 +9,6 @@ vendor/
 /.idea/
 
 /tests/clover.*
+/tests/.phpunit.result.cache
 
 .php-cs-fixer.cache
