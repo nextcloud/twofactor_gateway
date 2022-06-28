@@ -41,6 +41,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SpryngSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellCentralConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellPortalConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\VoipbusterConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SerwerSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
@@ -113,7 +114,7 @@ class Configure extends Command {
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
 
-		$providerQuestion = new Question('Please choose a SMS provider (sipgate, websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clicksend, serwersms, smsglobal): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (sipgate, websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clickatellportal, clicksend, serwersms, smsglobal): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -131,8 +132,8 @@ class Configure extends Command {
 
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
-
 				break;
+
 			case 'sipgate':
 				$config->setProvider($provider);
 				/** @var SipGateConfig $providerConfig */
@@ -148,8 +149,8 @@ class Configure extends Command {
 				$providerConfig->setTokenId($tokenId);
 				$providerConfig->setAccessToken($accessToken);
 				$providerConfig->setWebSmsExtension($webSmsExtension);
-
 				break;
+
 			case 'playsms':
 				$config->setProvider($provider);
 				/** @var PlaySMSConfig $providerConfig */
@@ -165,8 +166,8 @@ class Configure extends Command {
 				$providerConfig->setUrl($url);
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
-
 				break;
+
 			case 'clockworksms':
 				$config->setProvider($provider);
 				/** @var ClockworkSMSConfig $providerConfig */
@@ -176,8 +177,8 @@ class Configure extends Command {
 				$apitoken = $helper->ask($input, $output, $apitokenQuestion);
 
 				$providerConfig->setApiToken($apitoken);
-
 				break;
+
 			case 'puzzelsms':
 				$config->setProvider($provider);
 
@@ -201,6 +202,7 @@ class Configure extends Command {
 				$providerConfig->setPassword($password);
 				$providerConfig->setServiceId($serviceId);
 				break;
+
 			case 'ecallsms':
 				$config->setProvider($provider);
 				/** @var EcallSMSConfig $providerConfig */
@@ -278,7 +280,6 @@ class Configure extends Command {
 				$apitoken = $helper->ask($input, $output, $apitokenQuestion);
 
 				$providerConfig->setApiToken($apitoken);
-
 				break;
 
 			case 'sms77io':
@@ -341,6 +342,25 @@ class Configure extends Command {
 				$providerConfig->setPassword($password);
 				break;
 
+			case 'clickatellportal':
+				$config->setProvider($provider);
+				/** @var ClickatellPortalConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$apiQuestion = new Question('Please enter your portal.clickatell.com API-Key: ');
+				$apiKey = $helper->ask($input, $output, $apiQuestion);
+				$fromQuestion = new Question('Please enter your sender number for two-way messaging. Leave it empty for one-way messaging: ');
+				$fromNumber = $helper->ask($input, $output, $fromQuestion);
+
+				$providerConfig->setApiKey($apiKey);
+
+				if (empty($fromNumber)) {
+					$providerConfig->deleteFromNumber();
+				} else {
+					$providerConfig->setFromNumber($fromNumber);
+				}
+				break;
+
 			case 'clicksend':
 				$config->setProvider($provider);
 				/** @var ClickSendConfig $providerConfig */
@@ -353,8 +373,8 @@ class Configure extends Command {
 
 				$providerConfig->setUser($username);
 				$providerConfig->setApiKey($apiKey);
-
 				break;
+
 			case 'smsglobal':
 				$config->setProvider($provider);
 				/** @var SMSGlobalConfig $providerConfig */
@@ -371,7 +391,6 @@ class Configure extends Command {
 				$providerConfig->setUrl($url);
 				$providerConfig->setUser($username);
 				$providerConfig->setPassword($password);
-
 				break;
 
 			case 'serwersms':
@@ -389,7 +408,6 @@ class Configure extends Command {
 				$providerConfig->setLogin($login);
 				$providerConfig->setPassword($password);
 				$providerConfig->setSender($sender);
-
 				break;
 
 			default:
