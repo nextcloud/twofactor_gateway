@@ -27,10 +27,7 @@ jobs:
           node-version: 14
 
       - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
-        run: |
-          npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
-          npm install --global webpack
-          npm install --global webpack-cli
+        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
 
       - name: Get cache directories
         id: cache-dir

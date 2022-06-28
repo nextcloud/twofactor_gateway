@@ -63,10 +63,7 @@ jobs:
       - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
         # Skip if no package.json
         if: ${{ steps.versions.outputs.npmVersion }}
-        run: |
-          npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
-          npm install --global webpack
-          npm install --global webpack-cli
+        run: npm i -g npm@"${{ steps.versions.outputs.npmVersion }}"
 
       - name: Set up php ${{ env.PHP_VERSION }}
         uses: shivammathur/setup-php@v2
