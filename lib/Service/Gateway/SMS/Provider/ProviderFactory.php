@@ -65,6 +65,8 @@ class ProviderFactory {
 				return $this->container->query(SpryngSMS::class);
 			case ClickatellCentral::PROVIDER_ID:
 				return $this->container->query(ClickatellCentral::class);
+			case ClickatellPortal::PROVIDER_ID:
+				return $this->container->query(ClickatellPortal::class);
 			case ClickSend::PROVIDER_ID:
 				return $this->container->query(ClickSend::class);
 			case SerwerSMS::PROVIDER_ID:
