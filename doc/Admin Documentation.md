@@ -184,7 +184,7 @@ Stability: Experimental
 
 Use legacy Clickatell.com API for sending SMS.
 
-* Login with your credencials at [archive.clickatell.com](https://archive.clickatell.com/login)
+* Login with your credencials at [sms-gateway.clickatell.com](https://sms-gateway.clickatell.com/)
 * Add a new HTTP API at [central.clickatell.com](https://central.clickatell.com/api/http/add)
 * Go to `Edit Settings`:
   * Rename your new API
