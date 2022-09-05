@@ -75,7 +75,7 @@ class Gateway implements IGateway {
 
 		$this->logger->debug("sending telegram message to $identifier");
 		try {
-			$api->sendMessage($identifier, $message);
+			$api->sendMessage($identifier, $message, 'MarkdownV2');
 		} catch (TelegramSDKException $e) {
 			$this->logger->logException($e);
 
