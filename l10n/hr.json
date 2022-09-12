@@ -1,5 +1,5 @@
 { "translations": {
-    "%s is your Nextcloud authentication code" : "%s je vaša šifra za autentifikaciju u Nextcloud",
+    "%s is your Nextcloud authentication code" : "`%s` je vaša šifra za autentifikaciju u Nextcloud",
     "Signal verification" : "Provjera signala",
     "Authenticate via Signal" : "Autentifikacija putem signala",
     "Message gateway verification" : "Provjera pristupnog poslužitelja za poruke",

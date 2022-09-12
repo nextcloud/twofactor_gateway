@@ -1,5 +1,5 @@
 { "translations": {
-    "%s is your Nextcloud authentication code" : "%s 是你的 Nextcloud 驗證碼",
+    "%s is your Nextcloud authentication code" : "`%s` 是你的 Nextcloud 驗證碼",
     "Signal verification" : "Signal 驗證",
     "Authenticate via Signal" : "經由 Signal 驗證",
     "Message gateway verification" : "訊息閘道驗證",

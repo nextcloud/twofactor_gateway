@@ -1,5 +1,5 @@
 { "translations": {
-    "%s is your Nextcloud authentication code" : "Zure Nextcloud autentifikazio kodea %s da.",
+    "%s is your Nextcloud authentication code" : "Zure Nextcloud autentifikazio kodea `%s` da.",
     "Signal verification" : "Signal egiaztapena",
     "Authenticate via Signal" : "Autentifikatu Signal bidez",
     "Message gateway verification" : "Mezuaren egiaztaketa",
