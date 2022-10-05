@@ -107,6 +107,9 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		$secret = $this->getSecret();
 
 		try {
+			if ($this->gatewayName == "telegram"){
+				$secret = "`$secret`";
+			}
 			$identifier = $this->stateStorage->get($user, $this->gatewayName)->getIdentifier();
 			$this->gateway->send(
 				$user,

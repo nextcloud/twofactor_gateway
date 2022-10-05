@@ -89,6 +89,9 @@ class SetupService {
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
 		$gateway = $this->gatewayFactory->getGateway($gatewayName);
 		try {
+			if ($gatewayName == "telegram"){
+				$verificationNumber = "`$verificationNumber`";
+			}
 			$gateway->send($user, $identifier, "$verificationNumber is your Nextcloud verification code.");
 		} catch (SmsTransmissionException $ex) {
 			throw new VerificationTransmissionException('could not send verification code', $ex->getCode(), $ex);
