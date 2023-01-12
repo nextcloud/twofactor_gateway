@@ -12,13 +12,18 @@
 	margin-inline-start: 0 !important;
 }
 
-.confirm-inline {
+input[type="text"] + .confirm-inline.icon-confirm {
 	position: absolute;
-	inset-inline-end: 10px;
+	inset-inline-end: 15px;
 	top: 0;
 	margin: 0 !important;
 	padding-inline-end: 25px !important;
 	background-color: transparent !important;
 	border: none !important;
-	opacity: .5;
+	opacity: 1;
+	border-radius: var(--border-radius-element) !important;
+}
+
+input[type="text"]:not(:active):not(:hover):not(:focus) + .confirm-inline.icon-confirm:active, input[type="text"]:not(:active):not(:hover):not(:focus) + .confirm-inline.icon-confirm:hover, input[type="text"]:not(:active):not(:hover):not(:focus) + .confirm-inline.icon-confirm:focus, input[type="password"]:not(:active):not(:hover):not(:focus) + .confirm-inline.icon-confirm:active, input[type="password"]:not(:active):not(:hover):not(:focus) + .confirm-inline.icon-confirm:hover, input[type="password"]:not(:active):not(:hover):not(:focus) + .confirm-inline.icon-confirm:focus, input[type="email"]:not(:active):not(:hover):not(:focus) + .confirm-inline.icon-confirm:active, input[type="email"]:not(:active):not(:hover):not(:focus) + .confirm-inline.icon-confirm:hover, input[type="email"]:not(:active):not(:hover):not(:focus) + .confirm-inline.icon-confirm:focus {
+	border-radius: var(--border-radius-element) !important;
 }
