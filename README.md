@@ -1,6 +1,6 @@
 # Two Factor Gateway
 
-A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram.
+A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, XMPP and Telegram.
 
 ![Test Status](https://github.com/nextcloud/twofactor_gateway/workflows/PHPUnit/badge.svg?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/nextcloud/twofactor_gateway/?branch=master)

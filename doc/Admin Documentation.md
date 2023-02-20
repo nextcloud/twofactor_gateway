@@ -246,4 +246,20 @@ Interactive admin configuration (make sure to provide the full API login includi
 occ twofactorauth:gateway:configure sms
 ```
 
+### XMPP Gateway 
+URL: https://xmpp.org/
+Stability: Experimental
+
+In order to use the service, you need to have an XMPP Account.                                      
+At this time, you'll also need an XMPP Service provider who runs a prosody XMPP-Server with either mod_rest or mod_post_msg on port 443 and standard paths enabled.
+See [mod_rest] and/or [mod_post_msg] for details.
+Or run your own prosody instance and be part of the community ;-)
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure xmpp
+```
+
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
+[mod_rest]: https://modules.prosody.im/mod_rest.html
+[mod_post_msg]: https://modules.prosody.im/mod_post_msg
