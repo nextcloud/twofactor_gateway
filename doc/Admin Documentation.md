@@ -251,7 +251,10 @@ URL: https://xmpp.org/
 Stability: Experimental
 
 In order to use the service, you need to have an XMPP Account.                                      
-At this time, you'll also need an XMPP Service provider who runs a prosody XMPP-Server with either mod_rest or mod_post_msg on port 443 and standard paths enabled.
+At this time, you'll also need an XMPP Service provider who runs a prosody XMPP-Server with either mod_rest or mod_post_msg.
+If port of server differs from 443 (https), please specify in XMPP-address, like someone@xmpp.example.com:5281.
+Standard api path for mod_rest: /rest/message/chat/ 
+Standard api path for mod_post_msg: /msg/ 
 See [mod_rest] and/or [mod_post_msg] for details.
 Or run your own prosody instance and be part of the community ;-)
 

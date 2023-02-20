@@ -27,6 +27,7 @@ namespace OCA\TwoFactorGateway\Command;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
+use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -43,18 +44,23 @@ class Remove extends Command {
 	/** @var TelegramGateway */
 	private $telegramGateway;
 
+        /** @var XMPPGateway */
+        private $xmppGateway;
+
 	public function __construct(SignalGateway $signalGateway,
 								SMSGateway $smsGateway,
-								TelegramGateway $telegramGateway) {
+								TelegramGateway $telegramGateway,
+								XMPPGateway $xmppGateway) {
 		parent::__construct('twofactorauth:gateway:remove');
 		$this->signalGateway = $signalGateway;
 		$this->smsGateway = $smsGateway;
 		$this->telegramGateway = $telegramGateway;
+		$this->xmppGateway = $xmppGateway;
 
 		$this->addArgument(
 			'gateway',
 			InputArgument::REQUIRED,
-			'The name of the gateway, e.g. sms, signal, telegram, etc.'
+			'The name of the gateway, e.g. sms, signal, telegram, xmpp, etc.'
 		);
 	}
 
@@ -73,6 +79,9 @@ class Remove extends Command {
 			case 'telegram':
 				$gateway = $this->telegramGateway;
 				break;
+                        case 'xmpp':
+                                $gateway = $this->xmppGateway;
+                                break;
 			default:
 				$output->writeln("<error>Invalid gateway $gatewayName</error>");
 				return 1;

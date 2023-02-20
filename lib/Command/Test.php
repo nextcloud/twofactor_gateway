@@ -27,6 +27,7 @@ use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
+use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
 use OCP\IUserManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -44,17 +45,22 @@ class Test extends Command {
 	/** @var TelegramGateway */
 	private $telegramGateway;
 
+        /** @var XMPPGateway */
+        private $xmppGateway;
+
 	/** @var IUserManager */
 	private $userManager;
 
 	public function __construct(SignalGateway $signalGateway,
 								SMSGateway $smsGateway,
 								TelegramGateway $telegramGateway,
+                                                                XMPPGateway $xmppGateway,
 								IUserManager $userManager) {
 		parent::__construct('twofactorauth:gateway:test');
 		$this->signalGateway = $signalGateway;
 		$this->smsGateway = $smsGateway;
 		$this->telegramGateway = $telegramGateway;
+		$this->xmppGateway = $xmppGateway;
 		$this->userManager = $userManager;
 
 		$this->addArgument(
@@ -65,7 +71,7 @@ class Test extends Command {
 		$this->addArgument(
 			'gateway',
 			InputArgument::REQUIRED,
-			'The name of the gateway, e.g. sms, signal, telegram, etc.'
+			'The name of the gateway, e.g. sms, signal, telegram, xmpp, etc.'
 		);
 		$this->addArgument(
 			'identifier',
@@ -96,6 +102,9 @@ class Test extends Command {
 			case 'telegram':
 				$gateway = $this->telegramGateway;
 				break;
+                        case 'xmpp':
+                                $gateway = $this->xmppGateway;
+                                break;
 			default:
 				$output->writeln("<error>Invalid gateway $gatewayName</error>");
 				return;
