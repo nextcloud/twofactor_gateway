@@ -251,11 +251,10 @@ URL: https://xmpp.org/
 Stability: Experimental
 
 In order to use the service, you need to have an XMPP Account.                                      
-At this time, you'll also need an XMPP Service provider who runs a prosody XMPP-Server with either mod_rest or mod_post_msg.
+At this time, you'll also need an XMPP Service provider who runs a prosody XMPP-Server with either mod_rest or mod_post_msg or run your own prosody server.
 Standard api path for mod_rest: https://xmpp.example.com/rest/message/chat/ 
 Standard api path for mod_post_msg: https://jabber.example.net/msg/ 
 See [mod_rest] and/or [mod_post_msg] for details.
-Or run your own prosody instance and be part of the community ;-)
 
 Interactive admin configuration:
 ```bash
