@@ -60,8 +60,11 @@ use of the gateway for a user:
    Finally the system should state `Your account was successfully configured to receive
    messages via Telegram.`
 
-### Telegram
-URL: https://www.telegram.org/
+   **Remember:** As a next step you should immediately generate Two-Factor Authentication
+   backup codes to be able to login, in case the Telegram service fails.
+
+### XMPP
+URL: https://xmpp.org/
 Stability: Unstable
 
 This gateway allows you to send messages via the XMPP over HTTP protocol. Once the administrator
@@ -84,8 +87,7 @@ Activate the authentication gateway for a user
    Finally the system should state `Your account was successfully configured to receive
    messages via XMPP.`
 
-
-**Remember:** As a next step you should immediately generate Two-Factor Authentication
-backup codes to be able to login, in case the Telegram service fails.
+   **Remember:** As a next step you should immediately generate Two-Factor Authentication
+   backup codes to be able to login, in case the XMPP service fails.
 
 [Administrator Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/Admin%20Documentation/
