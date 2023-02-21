@@ -453,10 +453,9 @@ class Configure extends Command {
 		  }
 		  else { 
 		    $username = explode('@',$sender)[0];
-		    $server = "https://".explode('@',$sender)[1];
 		  }
 		endwhile;
-                $output->writeln("Using $sender as XMPP-JID.\nUsing $username as user.\nUsing $server as XMPP-Server base URL");
+                $output->writeln("Using $sender as XMPP-JID.\nUsing $username as username.");
 		$password = '';
 		while (empty($password)):
 		  $passwordQuestion = new Question('Please enter your sender XMPP password: ');
@@ -466,15 +465,14 @@ class Configure extends Command {
                    }
 		endwhile;
                 $output->writeln("Password accepted.");
-                $apipath = '';
-                while (empty($apipath)):
-                  $apipathQuestion = new Question('Please enter path without server part to access REST/HTTP API: ');
-                  $apipath = $helper->ask($input, $output, $apipathQuestion);
-                   if (empty($apipath)) {
+                $server = '';
+                while (empty($server)):
+                  $serverQuestion = new Question('Please enter full path to access REST/HTTP API: ');
+                  $server = $helper->ask($input, $output, $serverQuestion);
+                   if (empty($server)) {
                     $output->writeln("API path must not be empty!");
                    }
                 endwhile;
-		$server .= $apipath;
                 $output->writeln("Using $server as full URL to access REST/HTTP API.");
                 $method = 0;
                 while (intval($method) < 1 or intval($method) > 2):
