@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  * @author Rainer Dohmen <rdohmen@pensionmoselblick.de>
  *
  * Nextcloud - Two-factor Gateway
