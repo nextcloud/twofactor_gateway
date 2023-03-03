@@ -246,4 +246,15 @@ Interactive admin configuration (make sure to provide the full API login includi
 occ twofactorauth:gateway:configure sms
 ```
 
+### SMSApi.com
+Url: https://smsapi.com/de
+Stability: Experimental
+
+Use the HTTPS service provided by SMSApi.com for sending SMS.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/

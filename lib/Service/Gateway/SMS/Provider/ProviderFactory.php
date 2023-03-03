@@ -71,6 +71,8 @@ class ProviderFactory {
 				return $this->container->query(ClickSend::class);
 			case SerwerSMS::PROVIDER_ID:
 				return $this->container->query(SerwerSMS::class);
+			case SMSApi::PROVIDER_ID:
+				return $this->container->query(SMSApi::class);
 			default:
 				throw new InvalidSmsProviderException("Provider <$id> does not exist");
 		}
