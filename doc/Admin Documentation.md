@@ -261,6 +261,17 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure xmpp
 ```
 
+### SMSApi.com
+Url: https://smsapi.com/de
+Stability: Experimental
+
+Use the HTTPS service provided by SMSApi.com for sending SMS.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
 [mod_rest]: https://modules.prosody.im/mod_rest.html
 [mod_post_msg]: https://modules.prosody.im/mod_post_msg

@@ -44,6 +44,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellCentralConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellPortalConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\VoipbusterConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SerwerSMSConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SMSApiConfig;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfig;
 use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
@@ -124,7 +125,7 @@ class Configure extends Command {
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
 
-		$providerQuestion = new Question('Please choose a SMS provider (sipgate, websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clickatellportal, clicksend, serwersms, smsglobal): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (sipgate, websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clickatellportal, clicksend, serwersms, smsglobal, smsapi.com): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -417,6 +418,20 @@ class Configure extends Command {
 
 				$providerConfig->setLogin($login);
 				$providerConfig->setPassword($password);
+				$providerConfig->setSender($sender);
+				break;
+
+			case 'smsapi.com':
+				$config->setProvider($provider);
+				/** @var SerwerSMSConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$tokenQuestion = new Question('Please enter your SMSApi.com API token: ');
+				$token = $helper->ask($input, $output, $tokenQuestion);
+				$senderQuestion = new Question('Please enter your SMSApi.com sender name: ');
+				$sender = $helper->ask($input, $output, $senderQuestion);
+
+				$providerConfig->setToken($token);
 				$providerConfig->setSender($sender);
 				break;
 
