@@ -1,7 +1,7 @@
 <!--
-  - @copyright 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
+  - @copyright 2023 Rainer Dohmen <rdohmen@pensionmoselblick.de>
   -
-  - @author 2019 Christoph Wurst <christoph@winzerhof-wurst.at>
+  - @author 2023 Rainer Dohmen <rdohmen@pensionmoselblick.de>
   -
   - @license GNU AGPL version 3 or any later version
   -
