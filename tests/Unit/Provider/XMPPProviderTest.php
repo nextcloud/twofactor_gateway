@@ -33,7 +33,7 @@ use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class TelegramProviderTest extends TestCase {
+class XMPPProviderTest extends TestCase {
 
 	/** @var Gateway|MockObject */
 	private $gateway;
