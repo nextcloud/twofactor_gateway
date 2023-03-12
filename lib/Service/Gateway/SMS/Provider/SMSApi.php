@@ -56,10 +56,10 @@ class SMSApi implements IProvider {
 		$url = 'https://api.smsapi.com/sms.do';
 
 		$params = array(
-			'to'            => $identifier,         //destination number  
-			'from'          => $sender,             //sendername made in https://ssl.smsapi.com/sms_settings/sendernames
-			'message'       => $message,    		//message content
-			'format'        => 'json',           	//get response in json format
+			'to' => $identifier,         //destination number
+			'from' => $sender,             //sendername made in https://ssl.smsapi.com/sms_settings/sendernames
+			'message' => $message,    		//message content
+			'format' => 'json',           	//get response in json format
 		);
 		
 		try {

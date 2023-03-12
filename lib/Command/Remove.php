@@ -44,8 +44,8 @@ class Remove extends Command {
 	/** @var TelegramGateway */
 	private $telegramGateway;
 
-        /** @var XMPPGateway */
-        private $xmppGateway;
+	/** @var XMPPGateway */
+	private $xmppGateway;
 
 	public function __construct(SignalGateway $signalGateway,
 								SMSGateway $smsGateway,
@@ -79,9 +79,9 @@ class Remove extends Command {
 			case 'telegram':
 				$gateway = $this->telegramGateway;
 				break;
-                        case 'xmpp':
-                                $gateway = $this->xmppGateway;
-                                break;
+						case 'xmpp':
+								$gateway = $this->xmppGateway;
+								break;
 			default:
 				$output->writeln("<error>Invalid gateway $gatewayName</error>");
 				return 1;
