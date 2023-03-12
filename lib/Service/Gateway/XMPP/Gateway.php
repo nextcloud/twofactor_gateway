@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * @author Rainer Dohmen <rdohmen@pensionmoselblick.de>
- *
+ * 
  * Nextcloud - Two-factor Gateway for XMPP
  *
  * This code is free software: you can redistribute it and/or modify
@@ -66,32 +66,32 @@ class Gateway implements IGateway {
 	public function send(IUser $user, string $identifier, string $message) {
 		$this->logger->debug("sending xmpp message to $identifier, message: $message");
 
-		$sender = $this->gatewayConfig->getSender();
-		$password = $this->gatewayConfig->getPassword();
-		$server = $this->gatewayConfig->getServer();
+                $sender = $this->gatewayConfig->getSender();
+                $password = $this->gatewayConfig->getPassword();
+                $server = $this->gatewayConfig->getServer();
 		$method = $this->gatewayConfig->getMethod();
 		$user = $this->gatewayConfig->getUsername();
 		$url = $server.$identifier;
 
-		if ($method === "1") {
-			$from = $user;
-		}
+                if ($method === "1") {
+		  $from = $user;
+                }
 		if ($method === "2") {
-			$from = $sender;
+		  $from = $sender;
 		}
 		$this->logger->debug("URL: $url, sender: $sender, method: $method");
 
 		try {
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
-			curl_setopt($ch, CURLOPT_USERPWD, $from.":".$password);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/plain'));
-			$result = curl_exec($ch);
-			curl_close($ch);
-			$this->logger->debug("XMPP message to $identifier sent");
+		  $ch = curl_init();
+                  curl_setopt($ch, CURLOPT_URL,            $url );
+                  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
+                  curl_setopt($ch, CURLOPT_POST,           1 );
+                  curl_setopt($ch, CURLOPT_POSTFIELDS,     $message );
+                  curl_setopt($ch, CURLOPT_USERPWD,        $from.":".$password );
+                  curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: text/plain'));
+		  $result = curl_exec($ch);
+                  curl_close($ch);
+                  $this->logger->debug("XMPP message to $identifier sent");
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}

@@ -42,8 +42,8 @@ class Status extends Command {
 	/** @var TelegramGateway */
 	private $telegramGateway;
 
-	/** @var XMPPGateway */
-	private $xmppGateway;
+        /** @var XMPPGateway */
+        private $xmppGateway;
 
 	public function __construct(SignalGateway $signalGateway,
 								SMSGateway $smsGateway,
@@ -63,8 +63,8 @@ class Status extends Command {
 		$output->writeln('SMS gateway: ' . ($smsConfigured ? 'configured' : 'not configured'));
 		$telegramConfigured = $this->telegramGateway->getConfig()->isComplete();
 		$output->writeln('Telegram gateway: ' . ($telegramConfigured ? 'configured' : 'not configured'));
-		$xmppConfigured = $this->xmppGateway->getConfig()->isComplete();
-		$output->writeln('XMPP gateway: ' . ($xmppConfigured ? 'configured' : 'not configured'));
+                $xmppConfigured = $this->xmppGateway->getConfig()->isComplete();
+                $output->writeln('XMPP gateway: ' . ($xmppConfigured ? 'configured' : 'not configured'));
 		return 0;
 	}
 }

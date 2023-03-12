@@ -42,8 +42,8 @@ class FactoryTest extends TestCase {
 	/** @var TelegramGateway */
 	private $telegramGateway;
 
-	/** @var XMPPGateway */
-	private $xmppGateway;
+        /** @var XMPPGateway */
+        private $xmppGateway;
 
 	/** @var Factory */
 	private $factory;
@@ -82,11 +82,11 @@ class FactoryTest extends TestCase {
 		$this->assertSame($this->telegramGateway, $gateway);
 	}
 
-	public function testGetXMPPGateway() {
-		$gateway = $this->factory->getGateway("xmpp");
+        public function testGetXMPPGateway() {
+                $gateway = $this->factory->getGateway("xmpp");
 
-		$this->assertSame($this->xmppGateway, $gateway);
-	}
+                $this->assertSame($this->xmppGateway, $gateway);
+        }
 
 	public function testGetInvalidGateway() {
 		$this->expectException(\Exception::class);
