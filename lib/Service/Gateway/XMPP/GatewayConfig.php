@@ -60,36 +60,36 @@ class GatewayConfig implements IGatewayConfig {
 		$this->config->setAppValue(Application::APP_ID, 'xmpp_sender', $sender);
 	}
 
-        public function getPassword(): string {
-                return $this->getOrFail('xmpp_password');
-        }
+	public function getPassword(): string {
+		return $this->getOrFail('xmpp_password');
+	}
 
-        public function setPassword(string $password) {
-                $this->config->setAppValue(Application::APP_ID, 'xmpp_password', $password);
-        }
+	public function setPassword(string $password) {
+		$this->config->setAppValue(Application::APP_ID, 'xmpp_password', $password);
+	}
 
-        public function getServer(): string {
-                return $this->getOrFail('xmpp_server');
-        }
+	public function getServer(): string {
+		return $this->getOrFail('xmpp_server');
+	}
 
-        public function setServer(string $server) {
-                $this->config->setAppValue(Application::APP_ID, 'xmpp_server', $server);
-        }
+	public function setServer(string $server) {
+		$this->config->setAppValue(Application::APP_ID, 'xmpp_server', $server);
+	}
 
-        public function getUsername(): string {
-                return $this->getOrFail('xmpp_username');
-        }
+	public function getUsername(): string {
+		return $this->getOrFail('xmpp_username');
+	}
 
-        public function setUsername(string $username) {
-                $this->config->setAppValue(Application::APP_ID, 'xmpp_username', $username);
-        }
-        public function getMethod(): string {
-                return $this->getOrFail('xmpp_method');
-        }
+	public function setUsername(string $username) {
+		$this->config->setAppValue(Application::APP_ID, 'xmpp_username', $username);
+	}
+	public function getMethod(): string {
+		return $this->getOrFail('xmpp_method');
+	}
 
-        public function setMethod(string $method) {
-                $this->config->setAppValue(Application::APP_ID, 'xmpp_method', $method);
-        }
+	public function setMethod(string $method) {
+		$this->config->setAppValue(Application::APP_ID, 'xmpp_method', $method);
+	}
 
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
