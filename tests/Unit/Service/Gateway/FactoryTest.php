@@ -28,6 +28,7 @@ use OCA\TwoFactorGateway\Service\Gateway\Factory;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
+use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
 use PHPUnit\Framework\TestCase;
 
 class FactoryTest extends TestCase {
@@ -41,6 +42,9 @@ class FactoryTest extends TestCase {
 	/** @var TelegramGateway */
 	private $telegramGateway;
 
+	/** @var XMPPGateway */
+	private $xmppGateway;
+
 	/** @var Factory */
 	private $factory;
 
@@ -50,11 +54,13 @@ class FactoryTest extends TestCase {
 		$this->signalGateway = $this->createMock(SignalGateway::class);
 		$this->smsGateway = $this->createMock(SMSGateway::class);
 		$this->telegramGateway = $this->createMock(TelegramGateway::class);
+		$this->xmppGateway = $this->createMock(XMPPGateway::class);
 
 		$this->factory = new Factory(
 			$this->signalGateway,
 			$this->smsGateway,
-			$this->telegramGateway
+			$this->telegramGateway,
+			$this->xmppGateway
 		);
 	}
 
@@ -74,6 +80,12 @@ class FactoryTest extends TestCase {
 		$gateway = $this->factory->getGateway("telegram");
 
 		$this->assertSame($this->telegramGateway, $gateway);
+	}
+
+	public function testGetXMPPGateway() {
+		$gateway = $this->factory->getGateway("xmpp");
+
+		$this->assertSame($this->xmppGateway, $gateway);
 	}
 
 	public function testGetInvalidGateway() {

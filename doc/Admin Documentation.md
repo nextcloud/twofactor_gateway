@@ -246,6 +246,21 @@ Interactive admin configuration (make sure to provide the full API login includi
 occ twofactorauth:gateway:configure sms
 ```
 
+### XMPP Gateway 
+URL: https://xmpp.org/
+Stability: Experimental
+
+In order to use the service, you need to have an XMPP Account.                                      
+At this time, you'll also need an XMPP Service provider who runs a prosody XMPP-Server with either mod_rest or mod_post_msg or run your own prosody server.
+Standard api path for mod_rest: https://xmpp.example.com/rest/message/chat/ 
+Standard api path for mod_post_msg: https://jabber.example.net/msg/ 
+See [mod_rest] and/or [mod_post_msg] for details.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure xmpp
+```
+
 ### SMSApi.com
 Url: https://smsapi.com/de
 Stability: Experimental
@@ -258,3 +273,5 @@ occ twofactorauth:gateway:configure sms
 ```
 
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
+[mod_rest]: https://modules.prosody.im/mod_rest.html
+[mod_post_msg]: https://modules.prosody.im/mod_post_msg

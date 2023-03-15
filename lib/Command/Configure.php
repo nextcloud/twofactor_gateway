@@ -44,9 +44,10 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellCentralConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellPortalConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\VoipbusterConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SerwerSMSConfig;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SMSApiConfig;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfig;
+use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
+use OCA\TwoFactorGateway\Service\Gateway\XMPP\GatewayConfig as XMPPConfig;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -64,18 +65,23 @@ class Configure extends Command {
 	/** @var TelegramGateway */
 	private $telegramGateway;
 
+	/** @var XMPPGateway */
+	private $xmppGateway;
+
 	public function __construct(SignalGateway $signalGateway,
 								SMSGateway $smsGateway,
-								TelegramGateway $telegramGateway) {
+								TelegramGateway $telegramGateway,
+								XMPPGateway $xmppGateway) {
 		parent::__construct('twofactorauth:gateway:configure');
 		$this->signalGateway = $signalGateway;
 		$this->smsGateway = $smsGateway;
 		$this->telegramGateway = $telegramGateway;
+		$this->xmppGateway = $xmppGateway;
 
 		$this->addArgument(
 			'gateway',
 			InputArgument::REQUIRED,
-			'The name of the gateway, e.g. sms, signal, telegram, etc.'
+			'The name of the gateway, e.g. sms, signal, telegram, xmpp, etc.'
 		);
 	}
 
@@ -94,6 +100,9 @@ class Configure extends Command {
 			case 'telegram':
 				$this->configureTelegram($input, $output);
 				return 0;
+						case 'xmpp':
+								$this->configureXMPP($input, $output);
+								return 0;
 			default:
 				$output->writeln("<error>Invalid gateway $gatewayName</error>");
 				return;
@@ -442,5 +451,63 @@ class Configure extends Command {
 		$config = $this->telegramGateway->getConfig();
 
 		$config->setBotToken($token);
+	}
+
+	private function configureXMPP(InputInterface $input, OutputInterface $output) {
+		$helper = $this->getHelper('question');
+		$sender = '';
+		while (empty($sender) or substr_count($sender, '@') !== 1):
+				  $senderQuestion = new Question('Please enter your sender XMPP-JID: ');
+		$sender = $helper->ask($input, $output, $senderQuestion);
+		if (empty($sender)) {
+			$output->writeln("XMPP-JID must not be empty!");
+		} elseif (substr_count($sender, '@') !== 1) {
+			$output->writeln("XMPP-JID not valid!");
+		} else {
+			$username = explode('@', $sender)[0];
+		}
+		endwhile;
+		$output->writeln("Using $sender as XMPP-JID.\nUsing $username as username.");
+		$password = '';
+		while (empty($password)):
+		  $passwordQuestion = new Question('Please enter your sender XMPP password: ');
+		$password = $helper->ask($input, $output, $passwordQuestion);
+		if (empty($password)) {
+			$output->writeln("Password must not be empty!");
+		}
+		endwhile;
+		$output->writeln("Password accepted.");
+		$server = '';
+		while (empty($server)):
+				  $serverQuestion = new Question('Please enter full path to access REST/HTTP API: ');
+		$server = $helper->ask($input, $output, $serverQuestion);
+		if (empty($server)) {
+			$output->writeln("API path must not be empty!");
+		}
+		endwhile;
+		$output->writeln("Using $server as full URL to access REST/HTTP API.");
+		$method = 0;
+		while (intval($method) < 1 or intval($method) > 2):
+		  echo "Please enter 1 or 2 for XMPP sending option:\n";
+		echo "(1) prosody with mod_rest\n";
+		echo "(2) prosody with mod_post_msg\n";
+		$methodQuestion = new Question('Your choice: ');
+		$method = $helper->ask($input, $output, $methodQuestion);
+		endwhile;
+		if ($method === "1") {
+			$output->writeln("Using prosody with mod_rest as XMPP sending option.");
+		} elseif ($method === "2") {
+			$output->writeln("Using prosody with mod_post_msg as XMPP sending option.");
+		}
+		$output->writeln("XMPP Admin Configuration finished.");
+
+		/** @var XMPPConfig $config */
+		$config = $this->xmppGateway->getConfig();
+
+		$config->setSender($sender);
+		$config->setPassword($password);
+		$config->setServer($server);
+		$config->setUsername($username);
+		$config->setMethod($method);
 	}
 }

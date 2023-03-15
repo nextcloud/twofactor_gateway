@@ -37,12 +37,17 @@ class Factory {
 	/** @var TelegramProvider */
 	private $telegramProvider;
 
+	/** @var XMPPProvider */
+	private $xmppProvider;
+
 	public function __construct(SignalProvider $signalProvider,
 								SmsProvider $smsProvider,
-								TelegramProvider $telegramProvider) {
+								TelegramProvider $telegramProvider,
+								XMPPProvider $xmppProvider) {
 		$this->signalProvider = $signalProvider;
 		$this->smsProvider = $smsProvider;
 		$this->telegramProvider = $telegramProvider;
+		$this->xmppProvider = $xmppProvider;
 	}
 
 
@@ -54,6 +59,8 @@ class Factory {
 				return $this->smsProvider;
 			case 'telegram':
 				return $this->telegramProvider;
+			case 'xmpp':
+								return $this->xmppProvider;
 			default:
 				throw new InvalidSmsProviderException();
 		}

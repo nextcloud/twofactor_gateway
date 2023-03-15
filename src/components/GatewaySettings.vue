@@ -28,7 +28,7 @@
 				</button>
 			</p>
 			<p v-if="state === 2">
-				<L10n text="A confirmation code has been sent to {phone} via SMS. Please insert the code here:"
+				<L10n text="A confirmation code has been sent to {phone}. Please insert the code here:"
 					  :options="{phone: phoneNumber}"></L10n>
 				<input v-model="confirmationCode">
 				<button @click="confirm">

@@ -63,4 +63,31 @@ use of the gateway for a user:
    **Remember:** As a next step you should immediately generate Two-Factor Authentication
    backup codes to be able to login, in case the Telegram service fails.
 
+### XMPP
+URL: https://xmpp.org/
+Stability: Unstable
+
+This gateway allows you to send messages via the XMPP over HTTP protocol. Once the administrator
+has finished the general XMPP authentication gateway setup (Check out the [Administrator
+Documentation] for further details), you need to follow these instructions to activate the
+use of the gateway for a user:
+
+Activate the authentication gateway for a user
+
+   * Log in to Nextcloud with the user you want to enable the twofactor gateway for.
+   * Open **Settings -> Personal -> Security** and navigate to the `Message gateway
+     second-factor auth` configuration.
+   * Press the `Enable` button under the XMPP label.
+   * Enter the JID (XMPP Address) you wish to get your authentication code to and press the
+     `Verify` button.
+   * Now you should receive a XMPP message with your Nextcloud authentication code,
+     e.g. `123456`.
+   * Enter the received Nextcloud authentication code and press the `Confirm` button.
+
+   Finally the system should state `Your account was successfully configured to receive
+   messages via XMPP.`
+
+   **Remember:** As a next step you should immediately generate Two-Factor Authentication
+   backup codes to be able to login, in case the XMPP service fails.
+
 [Administrator Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/Admin%20Documentation/
