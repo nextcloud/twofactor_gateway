@@ -6,6 +6,8 @@
     "Authenticate via SMS" : "S'authentifier par SMS",
     "Telegram verification" : "Vérification pour Telegram",
     "Authenticate via Telegram" : "S'authentifier via Telegram",
+    "XMPP verification" : "Vérification XMPP",
+    "Authenticate via XMPP" : "S'authentifier par XMPP",
     "Two-Factor Gateway" : "Passerelle à deux facteurs",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Fournisseurs de la passerelle à deux facteurs (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Un ensemble de services à deux facteurs de Nextcloud pour envoyer des codes d'authentification via Signal, SMS et Telegram.",

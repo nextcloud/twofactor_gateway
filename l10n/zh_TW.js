@@ -8,6 +8,8 @@ OC.L10N.register(
     "Authenticate via SMS" : "由簡訊驗證",
     "Telegram verification" : "Telegram 驗證",
     "Authenticate via Telegram" : "由 Telegram 驗證",
+    "XMPP verification" : "XMPP 驗證",
+    "Authenticate via XMPP" : "透過 XMPP 驗證",
     "Two-Factor Gateway" : "兩步驟驗證中心",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "兩步驟驗證閘道提供者 (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "提供 Nextcloud 兩步驟驗證的組合，通過 Signal、簡訊（SMS）和 Telegram 發送驗證碼。",
