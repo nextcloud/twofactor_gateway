@@ -8,6 +8,8 @@ OC.L10N.register(
     "Authenticate via SMS" : "SMS ile kimlik doğrulama",
     "Telegram verification" : "Telegram doğrulaması",
     "Authenticate via Telegram" : "Telegram ile kimlik doğrulama",
+    "XMPP verification" : "XMPP doğrulaması",
+    "Authenticate via XMPP" : "XMPP ile kimlik doğrulama",
     "Two-Factor Gateway" : "İki aşamalı kimlik doğrulama hizmeti sağlayıcısı",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "İki aşamalı ağ geçidi hizmeti sağlayıcıları (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Signal, SMS ve Telegram ile kimlik doğrulama kodlarını göndermek için kullanılabilecek Nextcloud iki aşamalı hizmet sağlayıcı kümesi.",
