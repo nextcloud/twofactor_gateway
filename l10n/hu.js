@@ -8,6 +8,8 @@ OC.L10N.register(
     "Authenticate via SMS" : "Hitelesítés SMS-sel",
     "Telegram verification" : "Telegram-ellenőrzés",
     "Authenticate via Telegram" : "Hitelesítés Telegrammal",
+    "XMPP verification" : "XMPP ellenőrzés",
+    "Authenticate via XMPP" : "Hitelesítés XMPP-vel",
     "Two-Factor Gateway" : "Kétlépcsős hitelesítési átjáró",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Kétlépcsős hitelesítési átjáró szolgáltatók (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Kétlépcsős hitelesítési szolgáltatók, amelyek Signalon, SMS-ben és Telegramon keresztül küldenek hitelesítőkódokat.",

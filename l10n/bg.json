@@ -6,6 +6,8 @@
     "Authenticate via SMS" : "Удостоверяване с SMS",
     "Telegram verification" : "Telegram удостоверяване",
     "Authenticate via Telegram" : "Удостоверяване с Telegram",
+    "XMPP verification" : "XMPP потвърждение",
+    "Authenticate via XMPP" : "Удостоверяване с XMPP",
     "Two-Factor Gateway" : "Двустепенен шлюз",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Доставчици на двустепенен шлюз (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Набор от доставчици на двустепенни шлюзове на Nextcloud за изпращане на кодове за удостоверяване чрез Signal, SMS и Telegram.",

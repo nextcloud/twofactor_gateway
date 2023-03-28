@@ -6,6 +6,8 @@
     "Authenticate via SMS" : "Провери идентитет преко SMS-а",
     "Telegram verification" : "Телеграм верификација",
     "Authenticate via Telegram" : "Провери идентитет преко Телеграма",
+    "XMPP verification" : "XMPP потврђивање",
+    "Authenticate via XMPP" : "Провери идентитет преко XMPP",
     "Two-Factor Gateway" : "Мрежни пролаз за двофакторску проверу идентитета",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Мрежни пролаз за провајдере двофакторске провере идентитета (SMS, Телеграм, Сигнал)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Скуп провајдера двофакторске провере идентитета којима треба послати кодове за проверу идентитета преко Сигнала, SMS-а и Телеграма.",

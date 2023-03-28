@@ -8,6 +8,8 @@ OC.L10N.register(
     "Authenticate via SMS" : "Authenticar via SMS",
     "Telegram verification" : "Verificação de Telegram",
     "Authenticate via Telegram" : "Authenticar via Telegram",
+    "XMPP verification" : "XMPP verification",
+    "Authenticate via XMPP" : "Authenticate via XMPP",
     "Two-Factor Gateway" : "Gateway de dois fatores",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Provedores de gateway de dois fatores (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Um conjunto de provedores de dois fatores Nextcloud para enviar códigos de autenticação via Signal, SMS e Telegram.",
