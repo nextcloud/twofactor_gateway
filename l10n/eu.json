@@ -6,6 +6,8 @@
     "Authenticate via SMS" : "Autentifikatu SMS bidez",
     "Telegram verification" : "Telegram egiaztapena",
     "Authenticate via Telegram" : "Autentifikatu Telegram bidez",
+    "XMPP verification" : "XMPP egiaztapena",
+    "Authenticate via XMPP" : "Autentifikatu XMPP bidez",
     "Two-Factor Gateway" : "Bi faktoreko atebidea",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Bi faktoreko zerbitzuak (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Nextclouden bi faktoreko autentifikazioa eskaintzen duten zerbitzuek Signal, SMS eta Telegram bidez bidali ditzakete kodeak.",
