@@ -1,8 +1,7 @@
 <template>
 	<div>
 		<div v-if="!isAvailable">
-			<L10n text="The {displayName} gateway is not configured."
-				:options="{displayName: displayName}" />
+			{{ t('twofactor_gateway', 'The {displayName} gateway is not configured.', {displayName: displayName}) }}
 		</div>
 		<div v-else-if="loading">
 			<span class="icon-loading-small" />
@@ -10,36 +9,33 @@
 		<div v-else>
 			<p v-if="state === 0">
 				<slot name="instructions" />
-				<L10n text="You are not using {displayName} for two-factor authentication at the moment."
-					:options="{displayName: displayName}" />
+				{{ t('twofactor_gateway', 'You are not using {displayName} for two-factor authentication at the moment.', {displayName: displayName}) }}
 				<button @click="enable">
-					<L10n text="Enable" />
+					{{ t('twofactor_gateway', 'Enable') }}
 				</button>
 			</p>
 			<p v-if="state === 1">
 				<slot name="instructions" />
 				<strong v-if="verificationError === true">
-					<L10n text="Could not verify your code. Please try again." />
+					{{ t('twofactor_gateway', 'Could not verify your code. Please try again.') }}
 				</strong>
-				<L10n text="Enter your identification (e.g. phone number to start the verification):" />
+				{{ t('twofactor_gateway', 'Enter your identification (e.g. phone number to start the verification):') }}
 				<input v-model="identifier">
 				<button @click="verify">
-					<L10n text="Verify" />
+					{{ t('twofactor_gateway', 'Verify') }}
 				</button>
 			</p>
 			<p v-if="state === 2">
-				<L10n text="A confirmation code has been sent to {phone}. Please insert the code here:"
-					:options="{phone: phoneNumber}" />
+				{{ t('twofactor_gateway', 'A confirmation code has been sent to {phone}. Please insert the code here:', {phone: phoneNumber}) }}
 				<input v-model="confirmationCode">
 				<button @click="confirm">
-					<L10n text="Confirm" />
+					{{ t('twofactor_gateway', 'Confirm') }}
 				</button>
 			</p>
 			<p v-if="state === 3">
-				<L10n text="Your account was successfully configured to receive messages via {displayName}."
-					:options="{displayName: displayName}" />
+				{{ t('twofactor_gateway', 'Your account was successfully configured to receive messages via {displayName}.', {displayName: displayName}) }}
 				<button @click="disable">
-					<L10n text="Disable" />
+					{{ t('twofactor_gateway', 'Disable') }}
 				</button>
 			</p>
 		</div>
@@ -47,23 +43,21 @@
 </template>
 
 <script>
-import L10n from './L10n.vue'
-import {
-	getState,
-	startVerification,
-	tryVerification,
-	disable,
-} from '../service/registration'
+import axios from '@nextcloud/axios'
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 	name: 'GatewaySettings',
-	components: {
-		L10n,
+	props: {
+		gatewayName: {
+			type: String,
+			required: true,
+		},
+		displayName: {
+			type: String,
+			required: true,
+		},
 	},
-	props: [
-		'gatewayName',
-		'displayName',
-	],
 	data() {
 		return {
 			loading: true,
@@ -76,15 +70,17 @@ export default {
 		}
 	},
 	mounted() {
-		getState(this.gatewayName)
-			.then(res => {
-				console.debug('loaded state for gateway ' + this.gatewayName, res)
-				this.isAvailable = res.isAvailable
-				this.state = res.state
-				this.phoneNumber = res.phoneNumber
+		axios.get(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
+			.then(({ data }) => {
+				console.debug('loaded state for gateway ' + this.gatewayName, data)
+				this.isAvailable = data.isAvailable
+				this.state = data.state
+				this.phoneNumber = data.phoneNumber
 			})
-			.catch(console.error.bind(this))
-			.then(() => this.loading = false)
+			.catch(err => console.info(this.gatewayName + ' gateway is not available', err))
+			.then(() => {
+				this.loading = false
+			})
 	},
 	methods: {
 		enable() {
@@ -95,7 +91,9 @@ export default {
 		verify() {
 			this.loading = true
 			this.verificationError = false
-			startVerification(this.gatewayName, this.identifier)
+			axios.post(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/start', { gateway: this.gatewayName }), {
+				identifier: this.identifier,
+			})
 				.then(res => {
 					this.state = 2
 					this.phoneNumber = res.phoneNumber
@@ -111,7 +109,9 @@ export default {
 		confirm() {
 			this.loading = true
 
-			tryVerification(this.gatewayName, this.confirmationCode)
+			axios.post(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish'), { gateway: this.gatewayName }, {
+				verificationCode: this.confirmationCode,
+			})
 				.then(res => {
 					this.state = 3
 					this.loading = false
@@ -125,8 +125,7 @@ export default {
 
 		disable() {
 			this.loading = true
-
-			disable(this.gatewayName)
+			axios.delete(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
 				.then(res => {
 					this.state = res.state
 					this.phoneNumber = res.phoneNumber

@@ -24,6 +24,8 @@
   "author": "",
   "license": "AGPL-3.0",
   "dependencies": {
+    "@nextcloud/axios": "^2.3.0",
+    "@nextcloud/router": "^2.1.1",
     "nextcloud_fetch": "^2.1.0",
     "vue": "^2.6.14"
   },
