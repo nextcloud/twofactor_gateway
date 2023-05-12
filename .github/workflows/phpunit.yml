@@ -15,29 +15,38 @@ jobs:
       # do not stop on another job's failure
       fail-fast: false
       matrix:
-        php-versions: ['7.4', '8.0']
-        databases: ['sqlite']
-        coverage: ['xdebug']
-        xdebug_mode: ['debug']
-        server-versions: ['stable22', 'stable23', 'stable24', 'master']
         include:
-          # used to run coverage only on 7.4-stable23
+          # used to run coverage only on 8.0-master
           - php-versions: '7.4'
             databases: 'sqlite'
             server-versions: 'stable22'
+            coverage: xdebug
             xdebug_mode: debug
           - php-versions: '7.4'
             databases: 'sqlite'
             server-versions: 'stable23'
-            xdebug_mode: coverage
+            coverage: xdebug
+            xdebug_mode: debug
           - php-versions: '7.4'
             databases: 'sqlite'
             server-versions: 'stable24'
-            xdebug_mode: coverage
+            coverage: xdebug
+            xdebug_mode: debug
           - php-versions: '7.4'
             databases: 'sqlite'
-            server-versions: 'master'
+            server-versions: 'stable25'
+            coverage: xdebug
             xdebug_mode: debug
+          - php-versions: '8.0'
+            databases: 'sqlite'
+            server-versions: 'stable26'
+            coverage: xdebug
+            xdebug_mode: debug
+          - php-versions: '8.0'
+            databases: 'sqlite'
+            server-versions: 'master'
+            coverage: xdebug
+            xdebug_mode: coverage
     name: php${{ matrix.php-versions }}-${{ matrix.databases }}-${{ matrix.server-versions }}
 
     steps:
@@ -96,11 +105,11 @@ jobs:
         run: ./vendor/bin/phpunit -c tests/phpunit.xml
 
       - name: Download scrutinizer ocular.phar
-        if: ${{ matrix.php-versions == '7.4' && matrix.server-versions == 'stable23' }}
+        if: ${{ matrix.php-versions == '7.4' && matrix.server-versions == 'stable26' }}
         working-directory: apps/${{ env.APP_NAME }}
         run: wget https://scrutinizer-ci.com/ocular.phar
 
       - name: Upload code coverage to scrutinizer
-        if: ${{ matrix.php-versions == '7.4' && matrix.server-versions == 'stable23' }}
+        if: ${{ matrix.php-versions == '7.4' && matrix.server-versions == 'stable26' }}
         working-directory: apps/${{ env.APP_NAME }}
         run: php ocular.phar code-coverage:upload --format=php-clover tests/clover.xml
