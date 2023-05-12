@@ -1,11 +1,15 @@
-import {nc_fetch_json} from 'nextcloud_fetch';
+import { nc_fetch_json } from 'nextcloud_fetch'
 
-export function getState (gateway) {
-	let url = OC.generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', {
-		gateway: gateway
+/**
+ *
+ * @param gateway
+ */
+export function getState(gateway) {
+	const url = OC.generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', {
+		gateway,
 	})
 
-	return nc_fetch_json(url).then(function (resp) {
+	return nc_fetch_json(url).then(function(resp) {
 		if (resp.ok) {
 			return resp.json().then(json => {
 				json.isAvailable = true
@@ -15,60 +19,74 @@ export function getState (gateway) {
 		if (resp.status === 503) {
 			console.info(gateway + ' gateway is not available')
 			return {
-				isAvailable: false
+				isAvailable: false,
 			}
 		}
 		throw resp
 	})
 }
 
-export function startVerification (gateway, identifier) {
-	let url = OC.generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/start', {
-		gateway: gateway
+/**
+ *
+ * @param gateway
+ * @param identifier
+ */
+export function startVerification(gateway, identifier) {
+	const url = OC.generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/start', {
+		gateway,
 	})
 
 	return nc_fetch_json(url, {
 		method: 'POST',
 		body: JSON.stringify({
-			identifier: identifier
-		})
-	}).then(function (resp) {
+			identifier,
+		}),
+	}).then(function(resp) {
 		if (resp.ok) {
-			return resp.json();
+			return resp.json()
 		}
-		throw resp;
+		throw resp
 	})
 }
 
-export function tryVerification (gateway, code) {
-	let url = OC.generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish', {
-		gateway: gateway
+/**
+ *
+ * @param gateway
+ * @param code
+ */
+export function tryVerification(gateway, code) {
+	const url = OC.generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish', {
+		gateway,
 	})
 
 	return nc_fetch_json(url, {
 		method: 'POST',
 		body: JSON.stringify({
-			verificationCode: code
-		})
-	}).then(function (resp) {
+			verificationCode: code,
+		}),
+	}).then(function(resp) {
 		if (resp.ok) {
-			return resp.json();
+			return resp.json()
 		}
-		throw resp;
+		throw resp
 	})
 }
 
-export function disable (gateway) {
-	let url = OC.generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', {
-		gateway: gateway
+/**
+ *
+ * @param gateway
+ */
+export function disable(gateway) {
+	const url = OC.generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', {
+		gateway,
 	})
 
 	return nc_fetch_json(url, {
-		method: 'DELETE'
-	}).then(function (resp) {
+		method: 'DELETE',
+	}).then(function(resp) {
 		if (resp.ok) {
-			return resp.json();
+			return resp.json()
 		}
-		throw resp;
+		throw resp
 	})
 }

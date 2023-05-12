@@ -1,14 +1,14 @@
 <template>
-    <span>{{ translated }}</span>
+	<span>{{ translated }}</span>
 </template>
 
 <script>
 export default {
-  computed: {
-    translated: function() {
-      return t("twofactor_gateway", this.text, this.options || {});
-    }
-  },
-  props: ["text", "options"]
-};
+	props: ['text', 'options'],
+	computed: {
+		translated() {
+			return t('twofactor_gateway', this.text, this.options || {})
+		},
+	},
+}
 </script>

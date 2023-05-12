@@ -21,18 +21,18 @@
 
 <template>
 	<GatewaySettings gateway-name="telegram" display-name="Telegram">
-		<TelegramInstructions slot="instructions"/>
+		<TelegramInstructions slot="instructions" />
 	</GatewaySettings>
 </template>
 
 <script>
-	import GatewaySettings from "../components/GatewaySettings.vue";
-	import TelegramInstructions from "../components/TelegramInstructions.vue";
+import GatewaySettings from '../components/GatewaySettings.vue'
+import TelegramInstructions from '../components/TelegramInstructions.vue'
 
-	export default {
-		components: {
-			TelegramInstructions,
-			GatewaySettings,
-		}
-	};
+export default {
+	components: {
+		TelegramInstructions,
+		GatewaySettings,
+	},
+}
 </script>
