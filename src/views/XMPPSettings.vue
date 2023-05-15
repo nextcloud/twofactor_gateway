@@ -21,18 +21,18 @@
 
 <template>
 	<GatewaySettings gateway-name="xmpp" display-name="XMPP">
-		<XMPPInstructions slot="instructions"/>
+		<XMPPInstructions slot="instructions" />
 	</GatewaySettings>
 </template>
 
 <script>
-	import GatewaySettings from "../components/GatewaySettings.vue";
-	import XMPPInstructions from "../components/XMPPInstructions.vue";
+import GatewaySettings from '../components/GatewaySettings.vue'
+import XMPPInstructions from '../components/XMPPInstructions.vue'
 
-	export default {
-		components: {
-			XMPPInstructions,
-			GatewaySettings,
-		}
-	};
+export default {
+	components: {
+		XMPPInstructions,
+		GatewaySettings,
+	},
+}
 </script>

@@ -3,11 +3,11 @@
 </template>
 
 <script>
-	import GatewaySettings from "../components/GatewaySettings.vue";
+import GatewaySettings from '../components/GatewaySettings.vue'
 
-	export default {
-		components: {
-			GatewaySettings,
-		}
-	};
+export default {
+	components: {
+		GatewaySettings,
+	},
+}
 </script>

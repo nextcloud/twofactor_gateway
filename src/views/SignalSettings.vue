@@ -21,18 +21,18 @@
 
 <template>
 	<GatewaySettings gateway-name="signal" display-name="Signal">
-		<SignalInstructions slot="instructions"/>
+		<SignalInstructions slot="instructions" />
 	</GatewaySettings>
 </template>
 
 <script>
-	import GatewaySettings from "../components/GatewaySettings.vue";
-	import SignalInstructions from "../components/SignalInstructions.vue";
+import GatewaySettings from '../components/GatewaySettings.vue'
+import SignalInstructions from '../components/SignalInstructions.vue'
 
-	export default {
-		components: {
-			SignalInstructions,
-			GatewaySettings,
-		}
-	};
+export default {
+	components: {
+		SignalInstructions,
+		GatewaySettings,
+	},
+}
 </script>
