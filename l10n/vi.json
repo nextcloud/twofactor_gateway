@@ -1,4 +1,8 @@
 { "translations": {
+    "Enable" : "Bật",
+    "Verify" : "Xác minh",
+    "Confirm" : "Xác nhận",
+    "Disable" : "Tắt",
     "Authentication code" : "Mã xác thực"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

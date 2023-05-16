@@ -3,6 +3,9 @@ OC.L10N.register(
     {
     "%s is your Nextcloud authentication code" : "%ser Nextcloud autorisasjons koden deira",
     "Two-Factor Gateway" : "To-faktor inngangsport",
+    "Enable" : "SLå på",
+    "Verify" : "Stadfest",
+    "Disable" : "Slå av",
     "Authentication code" : "Autentifikasjons kode",
     "An access code has been sent to %s" : "Ein tilgangskode har blitt sendt til %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Feil under sending av meldninga. Forsøk att sinarare, eller ta kontakt med administratoren.",

@@ -5,6 +5,10 @@
     "Authenticate via SMS" : "Tekstiviestivahvistus",
     "Telegram verification" : "Telegram-vahvistus",
     "Authenticate via Telegram" : "Tunnistaudu Telegramin välityksellä",
+    "Enable" : "Käytä",
+    "Verify" : "Vahvista",
+    "Confirm" : "Vahvista",
+    "Disable" : "Poista käytöstä",
     "Authentication code" : "Vahvistuskoodi",
     "An access code has been sent to %s" : "Vahvistuskoodi lähetettiin kohteelle %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Tapahtui virhe viestiä lähetettäessä. Yritä uudelleen myöhemmin tai ota yhteys ylläpitäjään."

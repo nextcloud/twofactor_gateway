@@ -1,4 +1,6 @@
 { "translations": {
+    "Confirm" : "Confirmar",
+    "Disable" : "Disactivar",
     "Authentication code" : "Codice de authentication"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
