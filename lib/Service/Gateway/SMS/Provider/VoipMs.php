@@ -38,7 +38,7 @@ class VoipMs implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-								VoipMsConfig $config) {
+		VoipMsConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

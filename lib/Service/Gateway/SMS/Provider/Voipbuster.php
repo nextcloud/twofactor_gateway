@@ -38,7 +38,7 @@ class Voipbuster implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-								VoipbusterConfig $config) {
+		VoipbusterConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

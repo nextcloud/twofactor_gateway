@@ -48,9 +48,9 @@ class Remove extends Command {
 	private $xmppGateway;
 
 	public function __construct(SignalGateway $signalGateway,
-								SMSGateway $smsGateway,
-								TelegramGateway $telegramGateway,
-								XMPPGateway $xmppGateway) {
+		SMSGateway $smsGateway,
+		TelegramGateway $telegramGateway,
+		XMPPGateway $xmppGateway) {
 		parent::__construct('twofactorauth:gateway:remove');
 		$this->signalGateway = $signalGateway;
 		$this->smsGateway = $smsGateway;
@@ -79,9 +79,9 @@ class Remove extends Command {
 			case 'telegram':
 				$gateway = $this->telegramGateway;
 				break;
-						case 'xmpp':
-								$gateway = $this->xmppGateway;
-								break;
+			case 'xmpp':
+				$gateway = $this->xmppGateway;
+				break;
 			default:
 				$output->writeln("<error>Invalid gateway $gatewayName</error>");
 				return 1;

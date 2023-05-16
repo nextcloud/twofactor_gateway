@@ -30,8 +30,8 @@ use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
 use OCA\TwoFactorGateway\Provider\Factory;
-use OCA\TwoFactorGateway\Service\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\State;
+use OCA\TwoFactorGateway\Service\Gateway\Factory as GatewayFactory;
 use OCP\Authentication\TwoFactorAuth\IRegistry;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
@@ -54,10 +54,10 @@ class SetupService {
 	private $providerRegistry;
 
 	public function __construct(StateStorage $stateStorage,
-								GatewayFactory $gatewayFactory,
-								Factory $providerFactory,
-								ISecureRandom $random,
-								IRegistry $providerRegistry) {
+		GatewayFactory $gatewayFactory,
+		Factory $providerFactory,
+		ISecureRandom $random,
+		IRegistry $providerRegistry) {
 		$this->stateStorage = $stateStorage;
 		$this->gatewayFactory = $gatewayFactory;
 		$this->providerFactory = $providerFactory;

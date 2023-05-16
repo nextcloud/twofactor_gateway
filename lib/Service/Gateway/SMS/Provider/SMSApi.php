@@ -38,7 +38,7 @@ class SMSApi implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-							SMSApiConfig $config) {
+		SMSApiConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

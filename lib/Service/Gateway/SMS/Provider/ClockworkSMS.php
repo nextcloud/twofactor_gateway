@@ -38,7 +38,7 @@ class ClockworkSMS implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-								ClockworkSMSConfig $config) {
+		ClockworkSMSConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

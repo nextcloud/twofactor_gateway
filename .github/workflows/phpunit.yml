@@ -16,27 +16,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # used to run coverage only on 8.0-master
-          - php-versions: '7.4'
-            databases: 'sqlite'
-            server-versions: 'stable22'
-            coverage: xdebug
-            xdebug_mode: debug
-          - php-versions: '7.4'
-            databases: 'sqlite'
-            server-versions: 'stable23'
-            coverage: xdebug
-            xdebug_mode: debug
-          - php-versions: '7.4'
-            databases: 'sqlite'
-            server-versions: 'stable24'
-            coverage: xdebug
-            xdebug_mode: debug
-          - php-versions: '7.4'
-            databases: 'sqlite'
-            server-versions: 'stable25'
-            coverage: xdebug
-            xdebug_mode: debug
           - php-versions: '8.0'
             databases: 'sqlite'
             server-versions: 'stable26'

@@ -2,18 +2,20 @@
 	"name": "twofactor_gateway/0.20.0",
 	"description": "TwoFactor Gateway for Nextcloud 21-24 with PHP 7.3-8.1",
 	"require": {
-		"php": "^7.4|^8.0|^8.1",
-		"telegram-bot/api": "^2.3"
+		"php": "^8.0|^8.1",
+		"telegram-bot/api": "^2.4",
+		"bamarni/composer-bin-plugin": "^1.8"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "^9.5",
-		"nextcloud/coding-standard": "^1.0",
 		"roave/security-advisories": "dev-master",
-		"christophwurst/nextcloud": "dev-master"
+		"nextcloud/ocp": "dev-master"
 	},
 	"config": {
 		"optimize-autoloader": true,
-		"classmap-authoritative": true
+		"classmap-authoritative": true,
+		"allow-plugins": {
+			"bamarni/composer-bin-plugin": true
+		}
 	},
 	"scripts": {
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
@@ -21,6 +23,14 @@
 		"lint": "find . -name \\*.php -not -path './vendor/*' -print0 | xargs -0 -n1 php -l",
 		"test": "phpunit -c tests/phpunit.xml",
 		"test:unit": "phpunit -c tests/phpunit.xml tests/Unit",
-		"test:unit:dev": "phpunit -c tests/phpunit.xml tests/Unit --no-coverage"
+		"test:unit:dev": "phpunit -c tests/phpunit.xml tests/Unit --no-coverage",
+		"post-install-cmd": [
+		  "@composer bin all install --ansi",
+		  "composer dump-autoload"
+		],
+		"post-update-cmd": [
+		  "@composer bin all update --ansi",
+		  "composer dump-autoload"
+		]
 	}
 }

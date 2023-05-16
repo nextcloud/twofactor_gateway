@@ -57,8 +57,7 @@ class ClickatellPortalConfig implements IProviderConfig {
 		$this->config->setAppValue(Application::APP_NAME, 'clickatell_portal_apikey', $apiKey);
 	}
 
-	public function getFromNumber() /* ?string */
-	{
+	public function getFromNumber() { /* ?string */
 		return $this->config->getAppValue(Application::APP_NAME, 'clickatell_portal_from', null);
 	}
 

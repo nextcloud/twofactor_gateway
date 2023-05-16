@@ -52,10 +52,10 @@ class Test extends Command {
 	private $userManager;
 
 	public function __construct(SignalGateway $signalGateway,
-								SMSGateway $smsGateway,
-								TelegramGateway $telegramGateway,
-																XMPPGateway $xmppGateway,
-								IUserManager $userManager) {
+		SMSGateway $smsGateway,
+		TelegramGateway $telegramGateway,
+		XMPPGateway $xmppGateway,
+		IUserManager $userManager) {
 		parent::__construct('twofactorauth:gateway:test');
 		$this->signalGateway = $signalGateway;
 		$this->smsGateway = $smsGateway;
@@ -102,9 +102,9 @@ class Test extends Command {
 			case 'telegram':
 				$gateway = $this->telegramGateway;
 				break;
-						case 'xmpp':
-								$gateway = $this->xmppGateway;
-								break;
+			case 'xmpp':
+				$gateway = $this->xmppGateway;
+				break;
 			default:
 				$output->writeln("<error>Invalid gateway $gatewayName</error>");
 				return;

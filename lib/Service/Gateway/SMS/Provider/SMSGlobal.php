@@ -38,7 +38,7 @@ class SMSGlobal implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-								SMSGlobalConfig $config) {
+		SMSGlobalConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

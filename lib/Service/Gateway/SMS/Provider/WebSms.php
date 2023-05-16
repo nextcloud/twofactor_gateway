@@ -38,7 +38,7 @@ class WebSms implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-								WebSmsConfig $config) {
+		WebSmsConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

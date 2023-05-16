@@ -39,7 +39,7 @@ class ClickatellCentral implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-								ClickatellCentralConfig $config) {
+		ClickatellCentralConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

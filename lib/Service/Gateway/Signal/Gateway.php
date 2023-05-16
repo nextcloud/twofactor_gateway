@@ -46,8 +46,8 @@ class Gateway implements IGateway {
 	private $logger;
 
 	public function __construct(IClientService $clientService,
-								GatewayConfig $config,
-								ILogger $logger) {
+		GatewayConfig $config,
+		ILogger $logger) {
 		$this->clientService = $clientService;
 		$this->config = $config;
 		$this->logger = $logger;

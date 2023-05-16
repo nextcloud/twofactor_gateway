@@ -38,7 +38,7 @@ class SipGate implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-								SipGateConfig $config) {
+		SipGateConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

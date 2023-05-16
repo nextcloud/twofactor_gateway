@@ -23,10 +23,10 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use function array_intersect;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
+use function array_intersect;
 
 class SMSapiConfig implements IProviderConfig {
 	private const expected = [
