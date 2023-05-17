@@ -1,0 +1,7 @@
+{ "translations": {
+    "Enable" : "فعالسازی",
+    "Verify" : "تأیید",
+    "Confirm" : "تائید",
+    "Disable" : "غیرفعال کردن"
+},"pluralForm" :"nplurals=2; plural=(n > 1);"
+}

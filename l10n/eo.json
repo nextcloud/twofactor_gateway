@@ -1,0 +1,7 @@
+{ "translations": {
+    "Enable" : "Ŝalti",
+    "Verify" : "Kontroli",
+    "Confirm" : "Konfirmi",
+    "Disable" : "Malŝalti"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
