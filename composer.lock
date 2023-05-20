@@ -8,31 +8,32 @@
     "packages": [
         {
             "name": "telegram-bot/api",
-            "version": "v2.3.24",
+            "version": "v2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TelegramBot/Api.git",
-                "reference": "579f64d0ffe7f21d1f61cb8734e297686b286bf7"
+                "reference": "7bf57218c5b03df490a97e166b96d064291b9ab2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TelegramBot/Api/zipball/579f64d0ffe7f21d1f61cb8734e297686b286bf7",
-                "reference": "579f64d0ffe7f21d1f61cb8734e297686b286bf7",
+                "url": "https://api.github.com/repos/TelegramBot/Api/zipball/7bf57218c5b03df490a97e166b96d064291b9ab2",
+                "reference": "7bf57218c5b03df490a97e166b96d064291b9ab2",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
+                "ext-json": "*",
                 "php": ">=5.5.0"
             },
             "require-dev": {
-                "codeception/codeception": "*",
-                "phpunit/phpunit": "~4.0",
-                "squizlabs/php_codesniffer": "2.*"
+                "friendsofphp/php-cs-fixer": "^3.16",
+                "symfony/phpunit-bridge": "*",
+                "vimeo/psalm": "^5.9"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev"
+                    "dev-master": "2.4-dev"
                 }
             },
             "autoload": {
@@ -62,9 +63,9 @@
             ],
             "support": {
                 "issues": "https://github.com/TelegramBot/Api/issues",
-                "source": "https://github.com/TelegramBot/Api/tree/v2.3.24"
+                "source": "https://github.com/TelegramBot/Api/tree/v2.4.0"
             },
-            "time": "2021-12-06T13:05:34+00:00"
+            "time": "2023-05-11T15:20:55+00:00"
         }
     ],
     "packages-dev": [
