@@ -44,9 +44,9 @@ class Factory {
 	private $xmppGateway;
 
 	public function __construct(SignalGateway $signalGateway,
-								SMSGateway $smsGateway,
-								TelegramGateway $telegramGateway,
-								XMPPGateway $xmppGateway) {
+		SMSGateway $smsGateway,
+		TelegramGateway $telegramGateway,
+		XMPPGateway $xmppGateway) {
 		$this->signalGateway = $signalGateway;
 		$this->smsGateway = $smsGateway;
 		$this->telegramGateway = $telegramGateway;
@@ -61,8 +61,8 @@ class Factory {
 				return $this->smsGateway;
 			case 'telegram':
 				return $this->telegramGateway;
-						case 'xmpp':
-								return $this->xmppGateway;
+			case 'xmpp':
+				return $this->xmppGateway;
 			default:
 				throw new Exception("Invalid gateway <$name>");
 		}

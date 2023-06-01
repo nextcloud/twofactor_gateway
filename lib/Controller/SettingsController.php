@@ -45,9 +45,9 @@ class SettingsController extends Controller {
 	private $gatewayFactory;
 
 	public function __construct(IRequest $request,
-								IUserSession $userSession,
-								SetupService $setup,
-								GatewayFactory $gatewayFactory) {
+		IUserSession $userSession,
+		SetupService $setup,
+		GatewayFactory $gatewayFactory) {
 		parent::__construct('twofactor_gateway', $request);
 
 		$this->userSession = $userSession;

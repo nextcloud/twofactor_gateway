@@ -38,7 +38,7 @@ class PlaySMS implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-								PlaySMSConfig $config) {
+		PlaySMSConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

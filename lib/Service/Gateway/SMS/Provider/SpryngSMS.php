@@ -38,7 +38,7 @@ class SpryngSMS implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-								SpryngSMSConfig $config) {
+		SpryngSMSConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

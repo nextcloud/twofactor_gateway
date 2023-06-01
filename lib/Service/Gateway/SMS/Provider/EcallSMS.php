@@ -38,7 +38,7 @@ class EcallSMS implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-								EcallSMSConfig $config) {
+		EcallSMSConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

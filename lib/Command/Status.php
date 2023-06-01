@@ -46,9 +46,9 @@ class Status extends Command {
 	private $xmppGateway;
 
 	public function __construct(SignalGateway $signalGateway,
-								SMSGateway $smsGateway,
-								TelegramGateway $telegramGateway,
-								XMPPGateway $xmppGateway) {
+		SMSGateway $smsGateway,
+		TelegramGateway $telegramGateway,
+		XMPPGateway $xmppGateway) {
 		parent::__construct('twofactorauth:gateway:status');
 		$this->signalGateway = $signalGateway;
 		$this->smsGateway = $smsGateway;

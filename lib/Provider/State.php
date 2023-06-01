@@ -45,10 +45,10 @@ class State implements JsonSerializable {
 	private $verificationCode;
 
 	public function __construct(IUser $user,
-								int $state,
-								string $gatewayName,
-								string $identifier = null,
-								string $verificationCode = null) {
+		int $state,
+		string $gatewayName,
+		string $identifier = null,
+		string $verificationCode = null) {
 		$this->user = $user;
 		$this->gatewayName = $gatewayName;
 		$this->state = $state;
@@ -57,9 +57,9 @@ class State implements JsonSerializable {
 	}
 
 	public static function verifying(IUser $user,
-									 string $gatewayName,
-									 string $identifier,
-									 string $verificationCode): State {
+		string $gatewayName,
+		string $identifier,
+		string $verificationCode): State {
 		return new State(
 			$user,
 			SmsProvider::STATE_VERIFYING,

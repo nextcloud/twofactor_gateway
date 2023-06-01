@@ -69,11 +69,11 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 	}
 
 	public function __construct(string $gatewayId,
-								IGateway $gateway,
-								StateStorage $stateStorage,
-								ISession $session,
-								ISecureRandom $secureRandom,
-								IL10N $l10n) {
+		IGateway $gateway,
+		StateStorage $stateStorage,
+		ISession $session,
+		ISecureRandom $secureRandom,
+		IL10N $l10n) {
 		$this->gateway = $gateway;
 		$this->gatewayName = $gatewayId;
 		$this->stateStorage = $stateStorage;

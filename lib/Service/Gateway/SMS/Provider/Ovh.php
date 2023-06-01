@@ -24,8 +24,8 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
+use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -68,7 +68,7 @@ class Ovh implements IProvider {
 
 
 	public function __construct(IClientService $clientService,
-								OvhConfig $config) {
+		OvhConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

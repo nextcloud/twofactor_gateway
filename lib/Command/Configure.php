@@ -28,22 +28,22 @@ use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\GatewayConfig as SignalConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\GatewayConfig as SMSConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellCentralConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellPortalConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickSendConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClockworkSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\EcallSMSConfig;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SMSGlobalConfig;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\Sms77IoConfig;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\OvhConfig;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SipGateConfig;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SpryngSMSConfig;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellCentralConfig;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellPortalConfig;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\VoipbusterConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\OvhConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SerwerSMSConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SipGateConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\Sms77IoConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SMSGlobalConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SpryngSMSConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\VoipbusterConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfig;
 use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
@@ -69,9 +69,9 @@ class Configure extends Command {
 	private $xmppGateway;
 
 	public function __construct(SignalGateway $signalGateway,
-								SMSGateway $smsGateway,
-								TelegramGateway $telegramGateway,
-								XMPPGateway $xmppGateway) {
+		SMSGateway $smsGateway,
+		TelegramGateway $telegramGateway,
+		XMPPGateway $xmppGateway) {
 		parent::__construct('twofactorauth:gateway:configure');
 		$this->signalGateway = $signalGateway;
 		$this->smsGateway = $smsGateway;
@@ -100,9 +100,9 @@ class Configure extends Command {
 			case 'telegram':
 				$this->configureTelegram($input, $output);
 				return 0;
-						case 'xmpp':
-								$this->configureXMPP($input, $output);
-								return 0;
+			case 'xmpp':
+				$this->configureXMPP($input, $output);
+				return 0;
 			default:
 				$output->writeln("<error>Invalid gateway $gatewayName</error>");
 				return;
@@ -457,42 +457,42 @@ class Configure extends Command {
 		$helper = $this->getHelper('question');
 		$sender = '';
 		while (empty($sender) or substr_count($sender, '@') !== 1):
-				  $senderQuestion = new Question('Please enter your sender XMPP-JID: ');
-		$sender = $helper->ask($input, $output, $senderQuestion);
-		if (empty($sender)) {
-			$output->writeln("XMPP-JID must not be empty!");
-		} elseif (substr_count($sender, '@') !== 1) {
-			$output->writeln("XMPP-JID not valid!");
-		} else {
-			$username = explode('@', $sender)[0];
-		}
+			$senderQuestion = new Question('Please enter your sender XMPP-JID: ');
+			$sender = $helper->ask($input, $output, $senderQuestion);
+			if (empty($sender)) {
+				$output->writeln("XMPP-JID must not be empty!");
+			} elseif (substr_count($sender, '@') !== 1) {
+				$output->writeln("XMPP-JID not valid!");
+			} else {
+				$username = explode('@', $sender)[0];
+			}
 		endwhile;
 		$output->writeln("Using $sender as XMPP-JID.\nUsing $username as username.");
 		$password = '';
 		while (empty($password)):
-		  $passwordQuestion = new Question('Please enter your sender XMPP password: ');
-		$password = $helper->ask($input, $output, $passwordQuestion);
-		if (empty($password)) {
-			$output->writeln("Password must not be empty!");
-		}
+			$passwordQuestion = new Question('Please enter your sender XMPP password: ');
+			$password = $helper->ask($input, $output, $passwordQuestion);
+			if (empty($password)) {
+				$output->writeln("Password must not be empty!");
+			}
 		endwhile;
 		$output->writeln("Password accepted.");
 		$server = '';
 		while (empty($server)):
-				  $serverQuestion = new Question('Please enter full path to access REST/HTTP API: ');
-		$server = $helper->ask($input, $output, $serverQuestion);
-		if (empty($server)) {
-			$output->writeln("API path must not be empty!");
-		}
+			$serverQuestion = new Question('Please enter full path to access REST/HTTP API: ');
+			$server = $helper->ask($input, $output, $serverQuestion);
+			if (empty($server)) {
+				$output->writeln("API path must not be empty!");
+			}
 		endwhile;
 		$output->writeln("Using $server as full URL to access REST/HTTP API.");
 		$method = 0;
 		while (intval($method) < 1 or intval($method) > 2):
-		  echo "Please enter 1 or 2 for XMPP sending option:\n";
-		echo "(1) prosody with mod_rest\n";
-		echo "(2) prosody with mod_post_msg\n";
-		$methodQuestion = new Question('Your choice: ');
-		$method = $helper->ask($input, $output, $methodQuestion);
+			echo "Please enter 1 or 2 for XMPP sending option:\n";
+			echo "(1) prosody with mod_rest\n";
+			echo "(2) prosody with mod_post_msg\n";
+			$methodQuestion = new Question('Your choice: ');
+			$method = $helper->ask($input, $output, $methodQuestion);
 		endwhile;
 		if ($method === "1") {
 			$output->writeln("Using prosody with mod_rest as XMPP sending option.");

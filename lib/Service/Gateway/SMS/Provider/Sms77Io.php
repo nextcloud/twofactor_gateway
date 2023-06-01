@@ -38,7 +38,7 @@ class Sms77Io implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-							Sms77IoConfig $config) {
+		Sms77IoConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

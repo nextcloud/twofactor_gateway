@@ -39,7 +39,7 @@ class GatewayConfig implements IGatewayConfig {
 	private $providerFactory;
 
 	public function __construct(IConfig $config,
-								ProviderFactory $providerFactory) {
+		ProviderFactory $providerFactory) {
 		$this->config = $config;
 		$this->providerFactory = $providerFactory;
 	}

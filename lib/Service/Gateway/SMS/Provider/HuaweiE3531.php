@@ -38,7 +38,7 @@ class HuaweiE3531 implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-								HuaweiE3531Config $config) {
+		HuaweiE3531Config $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

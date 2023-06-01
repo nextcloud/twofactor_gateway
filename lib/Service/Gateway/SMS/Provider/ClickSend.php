@@ -38,7 +38,7 @@ class ClickSend implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-							ClickSendConfig $config) {
+		ClickSendConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}

@@ -31,10 +31,10 @@ use OCP\Security\ISecureRandom;
 
 class SignalProvider extends AProvider {
 	public function __construct(Gateway $smsGateway,
-								StateStorage $stateStorage,
-								ISession $session,
-								ISecureRandom $secureRandom,
-								IL10N $l10n) {
+		StateStorage $stateStorage,
+		ISession $session,
+		ISecureRandom $secureRandom,
+		IL10N $l10n) {
 		parent::__construct(
 			'signal',
 			$smsGateway,

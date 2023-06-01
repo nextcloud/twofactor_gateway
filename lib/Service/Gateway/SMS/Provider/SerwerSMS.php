@@ -38,7 +38,7 @@ class SerwerSMS implements IProvider {
 	private $config;
 
 	public function __construct(IClientService $clientService,
-							SerwerSMSConfig $config) {
+		SerwerSMSConfig $config) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}
