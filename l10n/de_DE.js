@@ -16,7 +16,7 @@ OC.L10N.register(
     "The {displayName} gateway is not configured." : "Das {displayName} Gateway ist nicht eingerichtet",
     "You are not using {displayName} for two-factor authentication at the moment." : "Aktuell verwenden Sie {displayName} nicht für die Zwei-Faktor-Anmeldung.",
     "Enable" : "Aktivieren",
-    "Could not verify your code. Please try again." : "Ihr Code konnte nicht überprüft werden. Bitte erneut versuchen.",
+    "Could not verify your code. Please try again." : "Ihr Code konnte nicht verifiziertt werden. Bitte erneut versuchen.",
     "Enter your identification (e.g. phone number to start the verification):" : "Geben Sie Ihre Identifikation ein (z. B. Telefonnummer, um die Verifizierung zu starten):",
     "Verify" : "Überprüfen",
     "A confirmation code has been sent to {phone}. Please insert the code here:" : "Ein Bestätigungscode wurde an {phone} gesendet. Bitte geben Sie hier den Code ein:",
