@@ -7,6 +7,8 @@ import XMPPSettings from './views/XMPPSettings.vue'
 
 Vue.config.productionTip = false
 
+Vue.mixin({ methods: { t, n } })
+
 new Vue({
 	render: h => h(SignalSettings),
 }).$mount('#twofactor-gateway-signal')
