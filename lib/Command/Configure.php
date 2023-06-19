@@ -110,15 +110,20 @@ class Configure extends Command {
 	}
 
 	private function configureSignal(InputInterface $input, OutputInterface $output) {
+		/** @var SignalConfig $config */
+		$config = $this->signalGateway->getConfig();
+
 		$helper = $this->getHelper('question');
 		$urlQuestion = new Question('Please enter the URL of the Signal gateway (leave blank to use default): ', 'http://localhost:5000');
 		$url = $helper->ask($input, $output, $urlQuestion);
 		$output->writeln("Using $url.");
-
-		/** @var SignalConfig $config */
-		$config = $this->signalGateway->getConfig();
-
 		$config->setUrl($url);
+
+		$helper = $this->getHelper('question');
+		$accountQuestion = new Question('Please enter the account (phone-number) of the sending signal user: ', null);
+		$account = $helper->ask($input, $output, $accountQuestion);
+		$output->writeln("Using $account.");
+		$config->setAccount($account);
 	}
 
 	private function configureSms(InputInterface $input, OutputInterface $output) {

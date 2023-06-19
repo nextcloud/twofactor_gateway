@@ -31,6 +31,7 @@ use OCP\IConfig;
 class GatewayConfig implements IGatewayConfig {
 	private const expected = [
 		'signal_url',
+		'signal_account',
 	];
 
 	/** @var IConfig */
@@ -54,6 +55,14 @@ class GatewayConfig implements IGatewayConfig {
 
 	public function setUrl(string $url) {
 		$this->config->setAppValue(Application::APP_ID, 'signal_url', $url);
+	}
+
+	public function getAccount(): string {
+		return $this->getOrFail('signal_account');
+	}
+
+	public function setAccount(string $account) {
+		$this->config->setAppValue(Application::APP_ID, 'signal_account', $account);
 	}
 
 	public function isComplete(): bool {

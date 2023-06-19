@@ -27,6 +27,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\Signal;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
 use OCP\ILogger;
 use OCP\IUser;
@@ -45,12 +46,19 @@ class Gateway implements IGateway {
 	/** @var ILogger */
 	private $logger;
 
-	public function __construct(IClientService $clientService,
+	/** @var ITimeFactory */
+	private $timeFactory;
+
+	public function __construct(
+		IClientService $clientService,
 		GatewayConfig $config,
-		ILogger $logger) {
+		ILogger $logger,
+		ITimeFactory $timeFactory,
+	) {
 		$this->clientService = $clientService;
 		$this->config = $config;
 		$this->logger = $logger;
+		$this->timeFactory = $timeFactory;
 	}
 
 	/**
@@ -63,39 +71,97 @@ class Gateway implements IGateway {
 	public function send(IUser $user, string $identifier, string $message) {
 		$client = $this->clientService->newClient();
 		// determine type of gateway
-		$response = $client->get($this->config->getUrl() . '/v1/about');
-		if ($response->getStatusCode() === 200) {
-			// New style gateway https://gitlab.com/morph027/signal-cli-dbus-rest-api
-			$response = $client->post(
-				$this->config->getUrl() . '/v1/send/' . $identifier,
+		$response = $client->post(
+			$this->config->getUrl() . '/api/v1/rpc',
+			[
+				'http_errors' => false,
+				'json' => [
+					'jsonrpc' => '2.0',
+					'method' => 'version',
+					'id' => 'version_' . $this->timeFactory->getTime(),
+				],
+			]);
+		if ($response->getStatusCode() === 200 || $response->getStatusCode() === 201) {
+			// native signal-cli JSON RPC. The 201 "created" is probably a bug.
+			$response = $response = $client->post(
+				$this->config->getUrl() . '/api/v1/rpc',
 				[
-					'json' => [ 'message' => $message ],
-				]
-			);
+					'json' => [
+						'jsonrpc' => '2.0',
+						'method' => 'send',
+						'id' => 'code_' . $this->timeFactory->getTime(),
+						'params' => [
+							'recipient' => $identifier,
+							'message' => $message,
+							'account' => $this->config->getAccount(),
+						],
+					],
+				]);
 			$body = $response->getBody();
 			$json = json_decode($body, true);
-			if ($response->getStatusCode() !== 201 || is_null($json) || !is_array($json) || (!isset($json['timestamps']) && !isset($json['timestamp']))) {
-				$status = $response->getStatusCode();
-				throw new SmsTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
+			$statusCode = $response->getStatusCode();
+			if ($statusCode < 200 || $statusCode >= 300 || is_null($json) || !is_array($json) || ($json['jsonrpc'] ?? null) != '2.0' || !isset($json['result']['timestamp'])) {
+				throw new SmsTransmissionException("error reported by Signal gateway, status=$statusCode, body=$body}");
 			}
 		} else {
-			// Try old deprecated gateway https://gitlab.com/morph027/signal-web-gateway
-			$response = $client->post(
-				$this->config->getUrl() . '/v1/send/' . $identifier,
+			$response = $client->get(
+				$this->config->getUrl() . '/v1/about',
 				[
-					'body' => [
-						'to' => $identifier,
-						'message' => $message,
-					],
-					'json' => [ 'message' => $message ],
-				]
+					'http_errors' => false,
+				],
 			);
-			$body = $response->getBody();
-			$json = json_decode($body, true);
+			if ($response->getStatusCode() === 200) {
+				// New style gateway
+				// https://gitlab.com/morph027/signal-cli-dbus-rest-api
+				// https://gitlab.com/morph027/python-signal-cli-rest-api
+				// https://bbernhard.github.io/signal-cli-rest-api/
+				$body = $response->getBody();
+				$json = json_decode($body, true);
+				$versions = $json['versions'] || [];
+				if (is_array($versions) && in_array('v2', $versions)) {
+					$response = $client->post(
+						$this->config->getUrl() . '/v2/send',
+						[
+							'json' => [
+								'recipients' => $identifier,
+								'message' => $message,
+								'account' => $this->config->getAccount(),
+							],
+						]
+					);
+				} else {
+					$response = $client->post(
+						$this->config->getUrl() . '/v1/send/' . $identifier,
+						[
+							'json' => [ 'message' => $message ],
+						]
+					);
+				}
+				$body = $response->getBody();
+				$json = json_decode($body, true);
+				$statusCode = $response->getStatusCode();
+				if ($statusCode !== 201 || is_null($json) || !is_array($json) || (!isset($json['timestamps']) && !isset($json['timestamp']))) {
+					throw new SmsTransmissionException("error reported by Signal gateway, status=$statusCode, body=$body}");
+				}
+			} else {
+				// Try old deprecated gateway https://gitlab.com/morph027/signal-web-gateway
+				$response = $client->post(
+					$this->config->getUrl() . '/v1/send/' . $identifier,
+					[
+						'body' => [
+							'to' => $identifier,
+							'message' => $message,
+						],
+						'json' => [ 'message' => $message ],
+					]
+				);
+				$body = $response->getBody();
+				$json = json_decode($body, true);
+				$statusCode = $response->getStatusCode();
 
-			if ($response->getStatusCode() !== 200 || is_null($json) || !is_array($json) || !isset($json['success']) || $json['success'] !== true) {
-				$status = $response->getStatusCode();
-				throw new SmsTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
+				if ($statusCode !== 200 || is_null($json) || !is_array($json) || !isset($json['success']) || $json['success'] !== true) {
+					throw new SmsTransmissionException("error reported by Signal gateway, status=$statusCode, body=$body}");
+				}
 			}
 		}
 	}

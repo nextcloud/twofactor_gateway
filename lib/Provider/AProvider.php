@@ -116,6 +116,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 				])
 			);
 		} catch (SmsTransmissionException $ex) {
+			\OC::$server->get(\OCP\ILogger::class)->logException($ex);
 			return new Template('twofactor_gateway', 'error');
 		}
 
