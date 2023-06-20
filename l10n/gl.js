@@ -10,7 +10,7 @@ OC.L10N.register(
     "Authenticate via Telegram" : "Autenticar a través do Telegram",
     "Two-Factor Gateway" : "Pasarela para a verificación de dous factores",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Provedores de pasarelas para a verificación de dous factores (SMS, Telegram, Signal) ",
-    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Un grupo de provedores de verificación de dous fctores para o Nextcloud, para enviar códigos de autenticación mediante Signal, SMS ou Telegram. ",
+    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Un grupo de provedores de verificación de dous fctores para Nextcloud, para enviar códigos de autenticación mediante Signal, SMS ou Telegram. ",
     "Verify" : "Verificar",
     "Confirm" : "Confirmar",
     "Disable" : "Desactivar",
