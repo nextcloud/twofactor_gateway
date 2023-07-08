@@ -16,7 +16,7 @@ OC.L10N.register(
     "Disable" : "Desactivar",
     "Authentication code" : "Código de autenticación",
     "An access code has been sent to %s" : "Envióuselle un código de acceso a %s",
-    "Error while sending the Message. Please try again later or contact the administrator." : "Produciuse un erro ao enviar a mensaxe. Ténteo de novo máis adiante ou póñase en contacto co administrador.",
+    "Error while sending the Message. Please try again later or contact the administrator." : "Produciuse un erro ao enviar a mensaxe. Ténteo de novo máis adiante ou póñase en contacto coa administración desta instancia.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "O seu número de teléfono cambiou e non foi verificado de novo. Empregue un mecanismo de verificación de dous factores diferente ou contacte co seu administrador. "
 },
 "nplurals=2; plural=(n != 1);");
