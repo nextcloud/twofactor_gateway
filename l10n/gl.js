@@ -12,7 +12,7 @@ OC.L10N.register(
     "Authenticate via XMPP" : "Autenticar a través de XMPP",
     "Two-Factor Gateway" : "Pasarela para a verificación de dous factores",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Provedores de pasarelas para a verificación de dous factores (SMS, Telegram, Signal) ",
-    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Un grupo de provedores de verificación de dous fctores para Nextcloud, para enviar códigos de autenticación mediante Signal, SMS ou Telegram. ",
+    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Un conxunto de provedores de verificación de dous fctores para Nextcloud, para enviar códigos de autenticación mediante Signal, SMS ou Telegram. ",
     "The {displayName} gateway is not configured." : "A pasarela {displayName} non está configurada.",
     "You are not using {displayName} for two-factor authentication at the moment." : "Neste momento non está a empregar {displayName} para a autenticación de dous factores.",
     "Enable" : "Activar",
