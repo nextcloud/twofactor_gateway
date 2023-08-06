@@ -4,6 +4,7 @@ OC.L10N.register(
     "Enable" : "فعالسازی",
     "Verify" : "تأیید",
     "Confirm" : "تائید",
-    "Disable" : "غیرفعال کردن"
+    "Disable" : "غیرفعال کردن",
+    "Authentication code" : "کد هویت"
 },
 "nplurals=2; plural=(n > 1);");
