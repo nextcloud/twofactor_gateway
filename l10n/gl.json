@@ -8,9 +8,9 @@
     "Authenticate via Telegram" : "Autenticar a través do Telegram",
     "XMPP verification" : "Verificación por XMPP",
     "Authenticate via XMPP" : "Autenticar a través de XMPP",
-    "Two-Factor Gateway" : "Pasarela para a verificación de dous factores",
-    "Two-factor gateway providers (SMS, Telegram, Signal)" : "Provedores de pasarelas para a verificación de dous factores (SMS, Telegram, Signal) ",
-    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Un conxunto de provedores de verificación de dous fctores para Nextcloud, para enviar códigos de autenticación mediante Signal, SMS ou Telegram. ",
+    "Two-Factor Gateway" : "Pasarela para a autenticación de dous factores",
+    "Two-factor gateway providers (SMS, Telegram, Signal)" : "Provedores de pasarelas para a autenticación de dous factores (SMS, Telegram, Signal) ",
+    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Un conxunto de provedores de autenticación de dous factores para Nextcloud, para enviar códigos de autenticación mediante Signal, SMS ou Telegram. ",
     "The {displayName} gateway is not configured." : "A pasarela {displayName} non está configurada.",
     "You are not using {displayName} for two-factor authentication at the moment." : "Neste momento non está a empregar {displayName} para a autenticación de dous factores.",
     "Enable" : "Activar",
@@ -24,6 +24,6 @@
     "Authentication code" : "Código de autenticación",
     "An access code has been sent to %s" : "Envióuselle un código de acceso a %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Produciuse un erro ao enviar a mensaxe. Ténteo de novo máis adiante ou póñase en contacto coa administración desta instancia.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "O seu número de teléfono cambiou e non foi verificado de novo. Empregue un mecanismo de verificación de dous factores diferente ou contacte co seu administrador. "
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "O seu número de teléfono cambiou e non foi verificado de novo. Empregue un mecanismo de autenticación de dous factores diferente ou contacte co seu administrador. "
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
