@@ -1,10 +1,31 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "%s is your Nextcloud authentication code" : "%s is your Nextcloud authentication code",
+    "Signal verification" : "Signal verification",
+    "Authenticate via Signal" : "Authenticate via Signal",
+    "Message gateway verification" : "Message gateway verification",
+    "Authenticate via SMS" : "Authenticate via SMS",
+    "Telegram verification" : "Telegram verification",
+    "Authenticate via Telegram" : "Authenticate via Telegram",
+    "XMPP verification" : "XMPP verification",
+    "Authenticate via XMPP" : "Authenticate via XMPP",
+    "Two-Factor Gateway" : "Two-Factor Gateway",
+    "Two-factor gateway providers (SMS, Telegram, Signal)" : "Two-factor gateway providers (SMS, Telegram, Signal)",
+    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram.",
+    "The {displayName} gateway is not configured." : "The {displayName} gateway is not configured.",
+    "You are not using {displayName} for two-factor authentication at the moment." : "You are not using {displayName} for two-factor authentication at the moment.",
     "Enable" : "فعالسازی",
+    "Could not verify your code. Please try again." : "Could not verify your code. Please try again.",
+    "Enter your identification (e.g. phone number to start the verification):" : "Enter your identification (e.g. phone number to start the verification):",
     "Verify" : "تأیید",
+    "A confirmation code has been sent to {phone}. Please insert the code here:" : "A confirmation code has been sent to {phone}. Please insert the code here:",
     "Confirm" : "تائید",
+    "Your account was successfully configured to receive messages via {displayName}." : "Your account was successfully configured to receive messages via {displayName}.",
     "Disable" : "غیرفعال کردن",
-    "Authentication code" : "کد هویت"
+    "Authentication code" : "کد هویت",
+    "An access code has been sent to %s" : "An access code has been sent to %s",
+    "Error while sending the Message. Please try again later or contact the administrator." : "Error while sending the Message. Please try again later or contact the administrator.",
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin."
 },
 "nplurals=2; plural=(n > 1);");
