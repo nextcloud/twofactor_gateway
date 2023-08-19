@@ -9,6 +9,7 @@
     "Two-Factor Gateway" : "Шлюз для передачи второго фактора",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Каналы второго фактора аутентификации (СМС, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Второй фактор аутентификации отправкой кодов подтверждения входа в менеджеры Signal, Telegram или по СМС.",
+    "Enable" : "Включить",
     "Verify" : "Подтвердить",
     "Confirm" : "Подтвердить",
     "Disable" : "Отключить",
