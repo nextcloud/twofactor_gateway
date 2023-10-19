@@ -11,6 +11,7 @@ OC.L10N.register(
     "Two-Factor Gateway" : "Dvostopenjski prehod",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Ponudniki dvostopenjskega prehoda (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Nabor ponudnikov dvostopenjske overitve za preverjanje overitvenih kod prek sistema Signal, sporočil SMS ali programa Telegram.",
+    "Enable" : "Omogoči",
     "Verify" : "Overi",
     "Confirm" : "Potrdi",
     "Disable" : "Onemogoči",
