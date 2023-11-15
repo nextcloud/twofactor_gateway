@@ -73,6 +73,8 @@ class ProviderFactory {
 				return $this->container->query(SerwerSMS::class);
 			case SMSApi::PROVIDER_ID:
 				return $this->container->query(SMSApi::class);
+			case CegedimVortext::PROVIDER_ID:
+				return $this->container->query(CegedimVortext::class);
 			default:
 				throw new InvalidSmsProviderException("Provider <$id> does not exist");
 		}

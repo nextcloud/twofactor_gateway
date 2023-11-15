@@ -35,6 +35,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClockworkSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\EcallSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\HuaweiE3531Config;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\OvhConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\CegedimCloudConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PlaySMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SerwerSMSConfig;
@@ -124,7 +125,7 @@ class Configure extends Command {
 	private function configureSms(InputInterface $input, OutputInterface $output) {
 		$helper = $this->getHelper('question');
 
-		$providerQuestion = new Question('Please choose a SMS provider (sipgate, websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clickatellportal, clicksend, serwersms, smsglobal, smsapi.com): ', 'websms');
+		$providerQuestion = new Question('Please choose a SMS provider (sipgate, websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clickatellportal, clicksend, serwersms, smsglobal, smsapi.com, cegedim.cloud): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
 
 		/** @var SMSConfig $config */
@@ -433,7 +434,26 @@ class Configure extends Command {
 				$providerConfig->setToken($token);
 				$providerConfig->setSender($sender);
 				break;
+			case 'cegedimcloud':
+				$config->setProvider($provider);
 
+				/** @var CegedimVortextConfig $providerConfig */
+				$providerConfig = $config->getProvider()->getConfig();
+
+				$endpointQ = new Question('Please enter the endpoint to use (eb4): ');
+				$endpoint = $helper->ask($input, $output, $endpointQ);
+
+				$usernameQ = new Question('Please enter your username: ');
+				$appUsername = $helper->ask($input, $output, $usernameQ);
+
+				$passwordQ = new Question('Please enter your password: ');
+				$appPassword = $helper->ask($input, $output, $passwordQ);
+
+				$providerConfig->setEndpoint($endpoint);
+				$providerConfig->setUsername($appUsername);
+				$providerConfig->setPassword($appPassword);
+				break;
+	
 			default:
 				$output->writeln("Invalid provider $provider");
 				break;
