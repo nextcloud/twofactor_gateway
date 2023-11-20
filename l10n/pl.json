@@ -9,6 +9,7 @@
     "Two-Factor Gateway" : "Bramka uwierzytelnienia dwuskładnikowego",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Dostawcy bramki uwierzytelnienia dwuskładnikowego (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Zestaw dostawców uwierzytelnienia dwuskładnikowego Nextcloud do wysyłania kodów uwierzytelniających za pośrednictwem Signal, SMS i Telegram.",
+    "Enable" : "Włącz",
     "Verify" : "Zweryfikuj",
     "Confirm" : "Potwierdź",
     "Disable" : "Wyłącz",
