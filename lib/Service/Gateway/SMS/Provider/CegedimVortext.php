@@ -95,7 +95,7 @@ class CegedimVortext implements IProvider {
 		);
 		$resultPostJob = json_decode($response->getBody(),true);
 
-		if (count($resultPostJob["messageId"]) === 0) {
+		if (strlen($resultPostJob["messageId"]) === 0) {
 			throw new SmsTransmissionException("Bad receiver $identifier");
 		}
 	}
