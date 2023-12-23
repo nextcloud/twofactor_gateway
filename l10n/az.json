@@ -1,5 +1,6 @@
 { "translations": {
     "Verify" : "Təsdiq et",
+    "Confirm" : "Təsdiq edin",
     "Disable" : "Dayandır"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
