@@ -1,0 +1,8 @@
+{ "translations": {
+    "Enable" : "Enable",
+    "Verify" : "Verify",
+    "Confirm" : "Confirm",
+    "Disable" : "Disable",
+    "Authentication code" : "Authentication code"
+},"pluralForm" :"nplurals=2; plural=(n!=1);"
+}
