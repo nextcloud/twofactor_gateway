@@ -11,6 +11,7 @@
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Un insieme di fornitori a due fattori di Nextcloud per inviare i codici di autenticazione tramite Signal, SMS e Telegram.",
     "Verify" : "Verifica",
     "Confirm" : "Conferma",
+    "Your account was successfully configured to receive messages via {displayName}." : "Il tuo account è stato configurato correttamente per ricevere messaggi tramite {displayName}.",
     "Disable" : "Disabilita",
     "Authentication code" : "Codice di autenticazione",
     "An access code has been sent to %s" : "Un codice di accesso è stato inviato a %s",
