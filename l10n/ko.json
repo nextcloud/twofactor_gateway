@@ -12,6 +12,7 @@
     "Enable" : "활성화",
     "Verify" : "인증",
     "Confirm" : "확인",
+    "Your account was successfully configured to receive messages via {displayName}." : "이 계정이 {displayName}을(를) 통해 메시지를 수신하도록 설정됨.",
     "Disable" : "사용 안함",
     "Authentication code" : "인증 코드",
     "An access code has been sent to %s" : "접근 코드를 %s(으)로 보냄",
