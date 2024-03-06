@@ -1,0 +1,6 @@
+{ "translations": {
+    "Enable" : "Activar",
+    "Confirm" : "Confirmar",
+    "Disable" : "Desactivar"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
