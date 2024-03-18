@@ -19,4 +19,4 @@ OC.L10N.register(
     "Error while sending the Message. Please try again later or contact the administrator." : "אירעה שגיאה בעת שליחת ההודעה. נא לנסות שוב מאוחר יותר או ליצור קשר עם ההנהלה.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "מספר הטלפון שלך השתנה ולא אומת מחדש. יש להשתמש במנגנון דו־שלבי או ליצור קשר עם המנהל שלך."
 },
-"nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");
+"nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;");
