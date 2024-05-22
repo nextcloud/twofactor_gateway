@@ -11,6 +11,7 @@ OC.L10N.register(
     "Two-Factor Gateway" : "Gateway a due fattori",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Fornitori gateway a due fattori (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Un insieme di fornitori a due fattori di Nextcloud per inviare i codici di autenticazione tramite Signal, SMS e Telegram.",
+    "Enable" : "Abilita",
     "Verify" : "Verifica",
     "Confirm" : "Conferma",
     "Your account was successfully configured to receive messages via {displayName}." : "Il tuo account è stato configurato correttamente per ricevere messaggi tramite {displayName}.",

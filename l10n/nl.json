@@ -9,6 +9,7 @@
     "Two-Factor Gateway" : "Two-Factor Gateway",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Two-factor gateway providers (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Een stel Nextcloud two-factor providers om authenticatiecodes via Signal, SMS of Telegram te versturen",
+    "Enable" : "Inschakelen",
     "Verify" : "Verifiëren",
     "Confirm" : "Bevestigen",
     "Disable" : "Uitschakelen",

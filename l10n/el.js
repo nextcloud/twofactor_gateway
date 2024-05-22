@@ -11,6 +11,7 @@ OC.L10N.register(
     "Two-Factor Gateway" : "Πύλη Δύο-Παραγόντων",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Πάροχοι Δύο-Παραγόντων (SMS, Telegram, Sigmal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Κάποιοι πάροχοι δύο-παραγόντων για το Nextcloud για αποστολή κωδικού πιστοποίησης μέσω Signal, SMS, Telegram.",
+    "Enable" : "Ενεργοποίηση",
     "Verify" : "Επαλήθευση",
     "Confirm" : "Επιβεβαίωση",
     "Disable" : "Απενεργοποίηση",
