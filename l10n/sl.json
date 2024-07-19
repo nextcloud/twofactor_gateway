@@ -6,6 +6,8 @@
     "Authenticate via SMS" : "Overi prek SMS",
     "Telegram verification" : "Preverjanje s Telegram",
     "Authenticate via Telegram" : "Overi s programom Telegram",
+    "XMPP verification" : "Overitev XMPP",
+    "Authenticate via XMPP" : "Overitev prek XMPP",
     "Two-Factor Gateway" : "Dvostopenjski prehod",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Ponudniki dvostopenjskega prehoda (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Nabor ponudnikov dvostopenjske overitve za preverjanje overitvenih kod prek sistema Signal, sporočil SMS ali programa Telegram.",
