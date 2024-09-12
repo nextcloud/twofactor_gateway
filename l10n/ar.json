@@ -11,7 +11,7 @@
     "Two-Factor Gateway" : "بوابة التحقق المُثنى",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "موفرو بوابات التحقق المُثنّى (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "مجموعة من موفري التحقق المُثنّى لإرسال رموز المصادقة من خلال Signal  أو SMS أو Telegram.",
-    "The {displayName} gateway is not configured." : "البوابة {dispalyName} لم يتم إعدادها.",
+    "The {displayName} gateway is not configured." : "البوابة {displayName} لم يتم إعدادها.",
     "You are not using {displayName} for two-factor authentication at the moment." : "أنت لا تستخدم {displayName} لغرض التحقق المُثنّى من الهويّة في الوقت الحاضر.",
     "Enable" : "تنشيط",
     "Could not verify your code. Please try again." : "لم يُمكن التحقّق من رمزك. رجاءً، حاول مرةً أخرى",
