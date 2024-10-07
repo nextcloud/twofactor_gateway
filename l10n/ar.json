@@ -9,10 +9,10 @@
     "XMPP verification" : "التحقّق من XMPP",
     "Authenticate via XMPP" : "التحقّق عبر XMPP",
     "Two-Factor Gateway" : "بوابة التحقق المُثنى",
-    "Two-factor gateway providers (SMS, Telegram, Signal)" : "موفرو بوابات التحقق المُثنّى (SMS, Telegram, Signal)",
-    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "مجموعة من موفري التحقق المُثنّى لإرسال رموز المصادقة من خلال Signal  أو SMS أو Telegram.",
+    "Two-factor gateway providers (SMS, Telegram, Signal)" : "مزودو بوابات التحقق ثنائي العوامل (SMS, Telegram, Signal)",
+    "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "مجموعة من موفري التحقق ثنائي العوامل لإرسال رموز المصادقة من خلال Signal  أو SMS أو Telegram.",
     "The {displayName} gateway is not configured." : "البوابة {displayName} لم يتم إعدادها.",
-    "You are not using {displayName} for two-factor authentication at the moment." : "أنت لا تستخدم {displayName} لغرض التحقق المُثنّى من الهويّة في الوقت الحاضر.",
+    "You are not using {displayName} for two-factor authentication at the moment." : "أنت لا تستخدم {displayName} لغرض التحقق ثنائي العوامل من الهويّة في الوقت الحاضر.",
     "Enable" : "تنشيط",
     "Could not verify your code. Please try again." : "لم يُمكن التحقّق من رمزك. رجاءً، حاول مرةً أخرى",
     "Enter your identification (e.g. phone number to start the verification):" : "أدخل مُعرّفك (مثلاً: رقم الهاتف لبدء عملية التحقّق):",
@@ -24,6 +24,6 @@
     "Authentication code" : "رمز المصادقة",
     "An access code has been sent to %s" : "تم إرسال رمزٍ للنفاذ إلى %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "حدث خطأ أثناء إرسال الرسالة. الرجاء إعادة المحاولة لاحقا أو الاتصال بالمشرف.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "رقم هاتفك تغّير و لم يتم التحقّق منه. إستخدم آليّةً أخرى للتحقّق المُثنّى أو تواصل مع مشرفك."
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "رقم هاتفك تغير و لم يتم التحقّق منه. إستخدم آليّةً أخرى للتحقق ثنائي العوامل أو تواصل مع المشرف."
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }
