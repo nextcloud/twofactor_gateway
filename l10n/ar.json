@@ -23,7 +23,7 @@
     "Disable" : "تعطيل",
     "Authentication code" : "رمز المصادقة",
     "An access code has been sent to %s" : "تم إرسال رمزٍ للنفاذ إلى %s",
-    "Error while sending the Message. Please try again later or contact the administrator." : "حدث خطأ أثناء إرسال الرسالة. الرجاء إعادة المحاولة لاحقا أو الاتصال بالمشرف.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "رقم هاتفك تغير و لم يتم التحقّق منه. إستخدم آليّةً أخرى للتحقق ثنائي العوامل أو تواصل مع المشرف."
+    "Error while sending the Message. Please try again later or contact the administrator." : "حدث خطأ أثناء إرسال الرسالة. الرجاء إعادة المحاولة لاحقا أو الاتصال بمسؤول النظام.",
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "رقم هاتفك تغير و لم يتم التحقّق منه. إستخدم آليّةً أخرى للتحقق ثنائي العوامل أو تواصل مع المدير."
 },"pluralForm" :"nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;"
 }
