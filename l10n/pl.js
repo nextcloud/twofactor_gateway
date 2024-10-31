@@ -14,6 +14,7 @@ OC.L10N.register(
     "Enable" : "Włącz",
     "Verify" : "Zweryfikuj",
     "Confirm" : "Potwierdź",
+    "Your account was successfully configured to receive messages via {displayName}." : "Twoje konto zostało pomyślnie skonfigurowane do odbierania wiadomości za pośrednictwem {displayName}.",
     "Disable" : "Wyłącz",
     "Authentication code" : "Kod uwierzytelnienia",
     "An access code has been sent to %s" : "Kod uwierzytelnienia został wysłany do %s",
