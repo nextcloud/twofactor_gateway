@@ -2,7 +2,7 @@ OC.L10N.register(
     "twofactor_gateway",
     {
     "%s is your Nextcloud authentication code" : "%s é o seu código de autenticação Nextcloud",
-    "Enable" : "Activar",
+    "Enable" : "Ativar",
     "Verify" : "Verificar",
     "Confirm" : "Confirmar",
     "Disable" : "Desativar",
