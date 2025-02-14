@@ -74,7 +74,7 @@ class Gateway implements IGateway {
 			);
 			$body = $response->getBody();
 			$json = json_decode($body, true);
-			if ($response->getStatusCode() !== 201 || is_null($json) || !is_array($json) || !isset($json['timestamp'])) {
+			if ($response->getStatusCode() !== 201 || is_null($json) || !is_array($json) || (!isset($json['timestamps']) && !isset($json['timestamp']))) {
 				$status = $response->getStatusCode();
 				throw new SmsTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
 			}
