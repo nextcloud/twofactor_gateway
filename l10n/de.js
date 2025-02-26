@@ -25,7 +25,7 @@ OC.L10N.register(
     "Disable" : "Deaktivieren",
     "Authentication code" : "Authentifizierungscode",
     "An access code has been sent to %s" : "Ein Zugriffscode wurde an %s gesendet",
-    "Error while sending the Message. Please try again later or contact the administrator." : "Fehler beim Senden der Nachricht. Bitte versuche es noch einmal oder kontaktiere deinen Administrator.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Deine Telefonnummer hat sich geändert und wurde nicht erneut verifiziert. Nutze einen anderen Zwei-Faktor-Mechanismus oder wende dich an den Administrator."
+    "Error while sending the Message. Please try again later or contact the administrator." : "Fehler beim Senden der Nachricht. Bitte versuche es noch einmal oder kontaktiere deine Administration.",
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Deine Telefonnummer hat sich geändert und wurde nicht erneut verifiziert. Nutze einen anderen Zwei-Faktor-Mechanismus oder wende dich an die Administration."
 },
 "nplurals=2; plural=(n != 1);");
