@@ -65,16 +65,16 @@
         },
         {
             "name": "telegram-bot/api",
-            "version": "v2.4.0",
+            "version": "v2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TelegramBot/Api.git",
-                "reference": "7bf57218c5b03df490a97e166b96d064291b9ab2"
+                "reference": "eaae3526223db49a1bad76a2dfa501dc287979cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TelegramBot/Api/zipball/7bf57218c5b03df490a97e166b96d064291b9ab2",
-                "reference": "7bf57218c5b03df490a97e166b96d064291b9ab2",
+                "url": "https://api.github.com/repos/TelegramBot/Api/zipball/eaae3526223db49a1bad76a2dfa501dc287979cf",
+                "reference": "eaae3526223db49a1bad76a2dfa501dc287979cf",
                 "shasum": ""
             },
             "require": {
@@ -90,7 +90,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4-dev"
+                    "dev-master": "2.5-dev"
                 }
             },
             "autoload": {
@@ -120,9 +120,9 @@
             ],
             "support": {
                 "issues": "https://github.com/TelegramBot/Api/issues",
-                "source": "https://github.com/TelegramBot/Api/tree/v2.4.0"
+                "source": "https://github.com/TelegramBot/Api/tree/v2.5.0"
             },
-            "time": "2023-05-11T15:20:55+00:00"
+            "time": "2023-08-09T13:53:12+00:00"
         }
     ],
     "packages-dev": [
