@@ -29,7 +29,7 @@ use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IConfig;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 use OCP\IUser;
 
 class Gateway implements IGateway {
@@ -37,23 +37,11 @@ class Gateway implements IGateway {
 	/** @var IClient */
 	private $client;
 
-	/** @var GatewayConfig */
-	private $gatewayConfig;
-
-	/** @var IConfig */
-	private $config;
-
-	/** @var ILogger */
-	private $logger;
-
 	public function __construct(IClientService $clientService,
-		GatewayConfig $gatewayConfig,
-		IConfig $config,
-		ILogger $logger) {
+		private GatewayConfig $gatewayConfig,
+		private IConfig $config,
+		private LoggerInterface $logger) {
 		$this->client = $clientService->newClient();
-		$this->gatewayConfig = $gatewayConfig;
-		$this->config = $config;
-		$this->logger = $logger;
 	}
 
 	/**

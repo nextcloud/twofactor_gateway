@@ -28,7 +28,7 @@ use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClientService;
-use OCP\ILogger;
+use Psr\Log\LoggerInterface;
 use OCP\IUser;
 
 /**
@@ -36,21 +36,9 @@ use OCP\IUser;
  */
 class Gateway implements IGateway {
 
-	/** @var IClientService */
-	private $clientService;
-
-	/** @var GatewayConfig */
-	private $config;
-
-	/** @var ILogger */
-	private $logger;
-
-	public function __construct(IClientService $clientService,
-		GatewayConfig $config,
-		ILogger $logger) {
-		$this->clientService = $clientService;
-		$this->config = $config;
-		$this->logger = $logger;
+	public function __construct(private IClientService $clientService,
+		private GatewayConfig $config,
+		private LoggerInterface $logger) {
 	}
 
 	/**
