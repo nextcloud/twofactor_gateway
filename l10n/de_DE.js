@@ -21,7 +21,7 @@ OC.L10N.register(
     "Verify" : "Überprüfen",
     "A confirmation code has been sent to {phone}. Please insert the code here:" : "Ein Bestätigungscode wurde an {phone} gesendet. Bitte geben Sie hier den Code ein:",
     "Confirm" : "Bestätigen",
-    "Your account was successfully configured to receive messages via {displayName}." : "Ihr Konto wurde erfolgreich für den Empfang von Nachrichten über {displayName} eingerichtet.",
+    "Your account was successfully configured to receive messages via {displayName}." : "Ihr Konto wurde für den Empfang von Nachrichten über {displayName} eingerichtet.",
     "Disable" : "Deaktivieren",
     "Authentication code" : "Authentifizierungscode",
     "An access code has been sent to %s" : "Ein Zugriffscode wurde an %s versendet",
