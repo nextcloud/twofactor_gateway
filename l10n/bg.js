@@ -13,6 +13,7 @@ OC.L10N.register(
     "Two-Factor Gateway" : "Двустепенен шлюз",
     "Two-factor gateway providers (SMS, Telegram, Signal)" : "Доставчици на двустепенен шлюз (SMS, Telegram, Signal)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Набор от доставчици на двустепенни шлюзове на Nextcloud за изпращане на кодове за удостоверяване чрез Signal, SMS и Telegram.",
+    "You are not using {displayName} for two-factor authentication at the moment." : "В момента не използвате двустепенно удостоверяване за {displayName}",
     "Enable" : "Включена",
     "Verify" : "Потвърждаване",
     "Confirm" : "Потвърдете",
