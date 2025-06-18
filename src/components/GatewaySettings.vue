@@ -73,7 +73,7 @@ export default {
 		axios.get(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
 			.then(({ data }) => {
 				console.debug('loaded state for gateway ' + this.gatewayName, data)
-				this.isAvailable = data.isAvailable
+				this.isAvailable = true // data.isAvailable
 				this.state = data.state
 				this.phoneNumber = data.phoneNumber
 			})
@@ -109,7 +109,7 @@ export default {
 		confirm() {
 			this.loading = true
 
-			axios.post(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish'), { gateway: this.gatewayName }, {
+			axios.post(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish', { gateway: this.gatewayName }), {
 				verificationCode: this.confirmationCode,
 			})
 				.then(res => {
