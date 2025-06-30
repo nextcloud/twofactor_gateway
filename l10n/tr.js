@@ -15,7 +15,7 @@ OC.L10N.register(
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram." : "Signal, SMS ve Telegram ile kimlik doğrulama kodlarını göndermek için kullanılabilecek Nextcloud iki adımlı doğrulama hizmeti sağlayıcı kümesi.",
     "The {displayName} gateway is not configured." : "{displayName} ödeme aracı yapılandırılmamış.",
     "You are not using {displayName} for two-factor authentication at the moment." : "Şu anda iki adımlı doğrulama için {displayName} kullanmıyorsunuz.",
-    "Enable" : "Etkinleştir",
+    "Enable" : "Kullanıma al",
     "Could not verify your code. Please try again." : "Kodunuz doğrulanamadı. Lütfen yeniden deneyin",
     "Enter your identification (e.g. phone number to start the verification):" : "Kimlik tanıtıcınızı yazın (örneğin doğrulamayı başlatmak için telefon numarası):",
     "Verify" : "Doğrula",
