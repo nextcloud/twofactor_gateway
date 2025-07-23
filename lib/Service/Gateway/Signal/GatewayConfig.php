@@ -26,6 +26,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\Signal;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
+use Psr\Log\LoggerInterface;
 use OCP\IConfig;
 
 class GatewayConfig implements IGatewayConfig {
@@ -33,11 +34,8 @@ class GatewayConfig implements IGatewayConfig {
 		'signal_url',
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(private IConfig $config,
+		private LoggerInterface $logger) {
 	}
 
 	private function getOrFail(string $key): string {
