@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Enable" : "Уключыць",
     "Verify" : "Спраўдзіць",
     "Confirm" : "Пацвердзіць",
     "Disable" : "Адключыць"
