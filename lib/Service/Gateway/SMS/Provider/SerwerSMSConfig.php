@@ -35,11 +35,9 @@ class SerwerSMSConfig implements IProviderConfig {
 		'serwersms_sender',
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+	) {
 	}
 
 	private function getOrFail(string $key): string {
@@ -62,23 +60,25 @@ class SerwerSMSConfig implements IProviderConfig {
 		return $this->getOrFail('serwersms_sender');
 	}
 
-	public function setLogin(string $login) {
+	public function setLogin(string $login): void {
 		$this->config->setAppValue(Application::APP_NAME, 'serwersms_login', $login);
 	}
 
-	public function setPassword(string $password) {
+	public function setPassword(string $password): void {
 		$this->config->setAppValue(Application::APP_NAME, 'serwersms_password', $password);
 	}
 
-	public function setSender(string $sender) {
+	public function setSender(string $sender): void {
 		$this->config->setAppValue(Application::APP_NAME, 'serwersms_sender', $sender);
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_NAME, $key);

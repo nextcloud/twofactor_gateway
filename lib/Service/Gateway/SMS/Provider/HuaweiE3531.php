@@ -31,24 +31,16 @@ use OCP\Http\Client\IClientService;
 class HuaweiE3531 implements IProvider {
 	public const PROVIDER_ID = 'huawei_e3531';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var HuaweiE3531Config */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		HuaweiE3531Config $config) {
+	public function __construct(
+		IClientService $clientService,
+		private HuaweiE3531Config $config,
+	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 		$url = $config->getUrl();
@@ -82,6 +74,7 @@ class HuaweiE3531 implements IProvider {
 	/**
 	 * @return HuaweiE3531Config
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}

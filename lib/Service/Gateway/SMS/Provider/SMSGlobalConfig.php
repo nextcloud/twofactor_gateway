@@ -35,11 +35,9 @@ class SMSGlobalConfig implements IProviderConfig {
 		'smsglobal_password',
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+	) {
 	}
 
 	private function getOrFail(string $key): string {
@@ -54,7 +52,7 @@ class SMSGlobalConfig implements IProviderConfig {
 		return $this->getOrFail('smsglobal_url');
 	}
 
-	public function setUrl(string $url) {
+	public function setUrl(string $url): void {
 		$this->config->setAppValue(Application::APP_NAME, 'smsglobal_url', $url);
 	}
 
@@ -62,7 +60,7 @@ class SMSGlobalConfig implements IProviderConfig {
 		return $this->getOrFail('smsglobal_user');
 	}
 
-	public function setUser(string $user) {
+	public function setUser(string $user): void {
 		$this->config->setAppValue(Application::APP_NAME, 'smsglobal_user', $user);
 	}
 
@@ -70,15 +68,17 @@ class SMSGlobalConfig implements IProviderConfig {
 		return $this->getOrFail('smsglobal_password');
 	}
 
-	public function setPassword(string $password) {
+	public function setPassword(string $password): void {
 		$this->config->setAppValue(Application::APP_NAME, 'smsglobal_password', $password);
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_NAME, $key);

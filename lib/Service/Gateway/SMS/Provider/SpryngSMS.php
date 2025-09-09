@@ -31,24 +31,16 @@ use OCP\Http\Client\IClientService;
 class SpryngSMS implements IProvider {
 	public const PROVIDER_ID = 'spryng';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var SpryngSMSConfig */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		SpryngSMSConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private SpryngSMSConfig $config,
+	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 		/** @var SpryngSMSConfig $providerConfig */
@@ -78,6 +70,7 @@ class SpryngSMS implements IProvider {
 	/**
 	 * @return SpryngSMSConfig
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}

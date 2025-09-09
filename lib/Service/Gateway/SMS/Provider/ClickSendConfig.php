@@ -34,11 +34,9 @@ class ClickSendConfig implements IProviderConfig {
 		'clicksend_apikey',
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+	) {
 	}
 
 	private function getOrFail(string $key): string {
@@ -53,7 +51,7 @@ class ClickSendConfig implements IProviderConfig {
 		return $this->getOrFail('clicksend_user');
 	}
 
-	public function setUser(string $user) {
+	public function setUser(string $user): void {
 		$this->config->setAppValue(Application::APP_ID, 'clicksend_user', $user);
 	}
 
@@ -61,15 +59,17 @@ class ClickSendConfig implements IProviderConfig {
 		return $this->getOrFail('clicksend_apikey');
 	}
 
-	public function setApiKey(string $password) {
+	public function setApiKey(string $password): void {
 		$this->config->setAppValue(Application::APP_ID, 'clicksend_apikey', $password);
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, $key);

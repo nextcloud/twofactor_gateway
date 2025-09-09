@@ -45,16 +45,12 @@ class SignalProvider extends AProvider {
 		);
 	}
 
-	/**
-	 * Get the display name for selecting the 2FA provider
-	 */
+	#[\Override]
 	public function getDisplayName(): string {
 		return $this->l10n->t('Signal verification');
 	}
 
-	/**
-	 * Get the description for selecting the 2FA provider
-	 */
+	#[\Override]
 	public function getDescription(): string {
 		return $this->l10n->t('Authenticate via Signal');
 	}

@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Command;
 
+use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
@@ -64,6 +65,7 @@ class Remove extends Command {
 		);
 	}
 
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$gatewayName = $input->getArgument('gateway');
 

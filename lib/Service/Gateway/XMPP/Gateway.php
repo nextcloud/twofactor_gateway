@@ -44,13 +44,7 @@ class Gateway implements IGateway {
 		$this->client = $clientService->newClient();
 	}
 
-	/**
-	 * @param IUser $user
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(IUser $user, string $identifier, string $message) {
 		$this->logger->debug("sending xmpp message to $identifier, message: $message");
 
@@ -86,10 +80,9 @@ class Gateway implements IGateway {
 	}
 
 	/**
-	 * Get the gateway-specific configuration
-	 *
 	 * @return IGatewayConfig
 	 */
+	#[\Override]
 	public function getConfig(): IGatewayConfig {
 		return $this->gatewayConfig;
 	}

@@ -35,11 +35,9 @@ class EcallSMSConfig implements IProviderConfig {
 		'ecallsms_senderid',
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+	) {
 	}
 
 	private function getOrFail(string $key): string {
@@ -54,7 +52,7 @@ class EcallSMSConfig implements IProviderConfig {
 		return $this->getOrFail('ecallsms_username');
 	}
 
-	public function setUser(string $user) {
+	public function setUser(string $user): void {
 		$this->config->setAppValue(Application::APP_ID, 'ecallsms_username', $user);
 	}
 
@@ -62,7 +60,7 @@ class EcallSMSConfig implements IProviderConfig {
 		return $this->getOrFail('ecallsms_password');
 	}
 
-	public function setPassword(string $password) {
+	public function setPassword(string $password): void {
 		$this->config->setAppValue(Application::APP_ID, 'ecallsms_password', $password);
 	}
 
@@ -70,15 +68,17 @@ class EcallSMSConfig implements IProviderConfig {
 		return $this->getOrFail('ecallsms_senderid');
 	}
 
-	public function setSenderId(string $senderid) {
+	public function setSenderId(string $senderid): void {
 		$this->config->setAppValue(Application::APP_ID, 'ecallsms_senderid', $senderid);
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, $key);

@@ -36,11 +36,11 @@ class ClickatellCentralConfig implements IProviderConfig {
 		'clickatell_central_password',
 	];
 
-	/** @var IConfig */
-	private $config;
+	private IConfig $config;
 
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+	) {
 	}
 
 	private function getOrFail(string $key): string {
@@ -55,7 +55,7 @@ class ClickatellCentralConfig implements IProviderConfig {
 		return $this->getOrFail('clickatell_central_api');
 	}
 
-	public function setApi(string $api) {
+	public function setApi(string $api): void {
 		$this->config->setAppValue(Application::APP_ID, 'clickatell_central_api', $api);
 	}
 
@@ -63,7 +63,7 @@ class ClickatellCentralConfig implements IProviderConfig {
 		return $this->getOrFail('clickatell_central_user');
 	}
 
-	public function setUser(string $user) {
+	public function setUser(string $user): void {
 		$this->config->setAppValue(Application::APP_ID, 'clickatell_central_user', $user);
 	}
 
@@ -71,15 +71,17 @@ class ClickatellCentralConfig implements IProviderConfig {
 		return $this->getOrFail('clickatell_central_password');
 	}
 
-	public function setPassword(string $password) {
+	public function setPassword(string $password): void {
 		$this->config->setAppValue(Application::APP_ID, 'clickatell_central_password', $password);
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, $key);

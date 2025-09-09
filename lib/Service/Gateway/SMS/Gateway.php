@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS;
 
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\IUser;
@@ -35,22 +34,12 @@ class Gateway implements IGateway {
 	) {
 	}
 
-	/**
-	 * @param IUser $user
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(IUser $user, string $identifier, string $message) {
 		$this->config->getProvider()->send($identifier, $message);
 	}
 
-	/**
-	 * Get the gateway-specific configuration
-	 *
-	 * @return GatewayConfig
-	 */
+	#[\Override]
 	public function getConfig(): IGatewayConfig {
 		return $this->config;
 	}

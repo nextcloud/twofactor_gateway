@@ -31,24 +31,17 @@ use OCP\Http\Client\IClientService;
 class EcallSMS implements IProvider {
 	public const PROVIDER_ID = 'ecallsms';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var EcallSMSConfig */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		EcallSMSConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private EcallSMSConfig $config,
+	) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 		$user = $config->getUser();
@@ -72,6 +65,7 @@ class EcallSMS implements IProvider {
 	/**
 	 * @return EcallSMSConfig
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}

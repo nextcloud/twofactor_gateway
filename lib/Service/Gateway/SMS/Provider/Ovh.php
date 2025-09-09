@@ -32,11 +32,7 @@ use OCP\Http\Client\IClientService;
 class Ovh implements IProvider {
 	public const PROVIDER_ID = 'ovh';
 
-	/** @var IClient */
-	private $client;
-
-	/** @var OvhConfig */
-	private $config;
+	private IClient $client;
 
 	/**
 	 * Url to communicate with Ovh API
@@ -67,18 +63,14 @@ class Ovh implements IProvider {
 	];
 
 
-	public function __construct(IClientService $clientService,
-		OvhConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private OvhConfig $config,
+	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 		$endpoint = $config->getEndpoint();
@@ -138,15 +130,17 @@ class Ovh implements IProvider {
 	/**
 	 * @return OvhConfig
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}
 
 	/**
 	 * Compute time delta between this server and OVH endpoint
+	 *
 	 * @throws InvalidSmsProviderException
 	 */
-	private function getTimeDelta() {
+	private function getTimeDelta(): void {
 		if (!isset($this->attrs['timedelta'])) {
 			if (!isset($this->attrs['endpoint'])) {
 				throw new InvalidSmsProviderException('Need to set the endpoint');

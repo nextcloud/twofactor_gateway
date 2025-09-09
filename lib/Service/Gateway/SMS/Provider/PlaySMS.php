@@ -31,24 +31,16 @@ use OCP\Http\Client\IClientService;
 class PlaySMS implements IProvider {
 	public const PROVIDER_ID = 'playsms';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var PlaySMSConfig */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		PlaySMSConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private PlaySMSConfig $config,
+	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 
@@ -74,6 +66,7 @@ class PlaySMS implements IProvider {
 	/**
 	 * @return PlaySMSConfig
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}

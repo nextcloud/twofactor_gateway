@@ -45,23 +45,17 @@ class XMPPProvider extends AProvider {
 		);
 	}
 
-	/**
-	 * Get unique identifier of this 2FA provider
-	 */
+	#[\Override]
 	public function getId(): string {
 		return 'gateway_xmpp';
 	}
 
-	/**
-	 * Get the display name for selecting the 2FA provider
-	 */
+	#[\Override]
 	public function getDisplayName(): string {
 		return $this->l10n->t('XMPP verification');
 	}
 
-	/**
-	 * Get the description for selecting the 2FA provider
-	 */
+	#[\Override]
 	public function getDescription(): string {
 		return $this->l10n->t('Authenticate via XMPP');
 	}

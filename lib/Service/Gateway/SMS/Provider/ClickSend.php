@@ -31,24 +31,16 @@ use OCP\Http\Client\IClientService;
 class ClickSend implements IProvider {
 	public const PROVIDER_ID = 'clicksend';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var ClickSendConfig */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		ClickSendConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private ClickSendConfig $config,
+	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 		$apiKey = $config->getApiKey();
@@ -72,6 +64,7 @@ class ClickSend implements IProvider {
 	/**
 	 * @return ClickSendConfig
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}

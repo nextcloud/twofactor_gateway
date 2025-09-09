@@ -52,15 +52,17 @@ class HuaweiE3531Config implements IProviderConfig {
 		return $this->getOrFail('huawei_e3531_api');
 	}
 
-	public function setUrl(string $url) {
+	public function setUrl(string $url): void {
 		$this->config->setAppValue(Application::APP_ID, 'huawei_e3531_api', $url);
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, $key);

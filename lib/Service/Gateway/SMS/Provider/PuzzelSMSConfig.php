@@ -36,11 +36,9 @@ class PuzzelSMSConfig implements IProviderConfig {
 		'puzzel_serviceid',
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+	) {
 	}
 
 	private function getOrFail(string $key): string {
@@ -55,7 +53,7 @@ class PuzzelSMSConfig implements IProviderConfig {
 		return $this->getOrFail('puzzel_url');
 	}
 
-	public function setUrl(string $url) {
+	public function setUrl(string $url): void {
 		$this->config->setAppValue(Application::APP_ID, 'puzzel_url', $url);
 	}
 
@@ -63,7 +61,7 @@ class PuzzelSMSConfig implements IProviderConfig {
 		return $this->getOrFail('puzzel_user');
 	}
 
-	public function setUser(string $user) {
+	public function setUser(string $user): void {
 		$this->config->setAppValue(Application::APP_ID, 'puzzel_user', $user);
 	}
 
@@ -71,23 +69,25 @@ class PuzzelSMSConfig implements IProviderConfig {
 		return $this->getOrFail('puzzel_password');
 	}
 
-	public function setPassword(string $password) {
+	public function setPassword(string $password): void {
 		$this->config->setAppValue(Application::APP_ID, 'puzzel_password', $password);
 	}
 
-	public function getServiceId() {
+	public function getServiceId(): string {
 		return $this->getOrFail('puzzel_serviceid');
 	}
 
-	public function setServiceId(string $serviceid) {
+	public function setServiceId(string $serviceid): void {
 		$this->config->setAppValue(Application::APP_ID, 'puzzel_serviceid', $serviceid);
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, $key);

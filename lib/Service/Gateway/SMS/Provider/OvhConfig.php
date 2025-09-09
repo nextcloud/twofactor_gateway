@@ -77,35 +77,37 @@ class OvhConfig implements IProviderConfig {
 		return $this->getOrFail('ovh_sender');
 	}
 
-	public function setApplicationKey(string $appKey) {
+	public function setApplicationKey(string $appKey): void {
 		$this->config->setAppValue(Application::APP_ID, 'ovh_application_key', $appKey);
 	}
 
-	public function setApplicationSecret(string $appSecret) {
+	public function setApplicationSecret(string $appSecret): void {
 		$this->config->setAppValue(Application::APP_ID, 'ovh_application_secret', $appSecret);
 	}
 
-	public function setConsumerKey(string $consumerKey) {
+	public function setConsumerKey(string $consumerKey): void {
 		$this->config->setAppValue(Application::APP_ID, 'ovh_consumer_key', $consumerKey);
 	}
 
-	public function setEndpoint(string $endpoint) {
+	public function setEndpoint(string $endpoint): void {
 		$this->config->setAppValue(Application::APP_ID, 'ovh_endpoint', $endpoint);
 	}
 
-	public function setAccount($account) {
+	public function setAccount($account): void {
 		$this->config->setAppValue(Application::APP_ID, 'ovh_account', $account);
 	}
 
-	public function setSender($sender) {
+	public function setSender($sender): void {
 		$this->config->setAppValue(Application::APP_ID, 'ovh_sender', $sender);
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, $key);

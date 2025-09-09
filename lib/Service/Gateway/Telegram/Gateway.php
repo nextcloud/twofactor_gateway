@@ -47,13 +47,7 @@ class Gateway implements IGateway {
 		$this->client = $clientService->newClient();
 	}
 
-	/**
-	 * @param IUser $user
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(IUser $user, string $identifier, string $message) {
 		$this->logger->debug("sending telegram message to $identifier, message: $message");
 		$botToken = $this->gatewayConfig->getBotToken();
@@ -73,10 +67,9 @@ class Gateway implements IGateway {
 	}
 
 	/**
-	 * Get the gateway-specific configuration
-	 *
 	 * @return IGatewayConfig
 	 */
+	#[\Override]
 	public function getConfig(): IGatewayConfig {
 		return $this->gatewayConfig;
 	}

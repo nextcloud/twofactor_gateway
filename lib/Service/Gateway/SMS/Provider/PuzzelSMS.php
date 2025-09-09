@@ -31,24 +31,16 @@ use OCP\Http\Client\IClientService;
 class PuzzelSMS implements IProvider {
 	public const PROVIDER_ID = 'puzzelsms';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var PuzzelConfig */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		PuzzelSMSConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private PuzzelSMSConfig $config,
+	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 
@@ -73,6 +65,7 @@ class PuzzelSMS implements IProvider {
 	/**
 	 * @return PuzzelConfig
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}

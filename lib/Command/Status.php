@@ -56,6 +56,7 @@ class Status extends Command {
 		$this->xmppGateway = $xmppGateway;
 	}
 
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$signalConfigured = $this->signalGateway->getConfig()->isComplete();
 		$output->writeln('Signal gateway: ' . ($signalConfigured ? 'configured' : 'not configured'));

@@ -32,24 +32,17 @@ use OCP\Http\Client\IClientService;
 class ClickatellPortal implements IProvider {
 	public const PROVIDER_ID = 'clickatellportal';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var ClickatellPortalConfig */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		ClickatellPortalConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private ClickatellPortalConfig $config,
+	) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 		try {
@@ -70,9 +63,7 @@ class ClickatellPortal implements IProvider {
 		}
 	}
 
-	/**
-	 * @return ClickatellPortalConfig
-	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}

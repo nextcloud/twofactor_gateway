@@ -31,24 +31,16 @@ use OCP\Http\Client\IClientService;
 class Voipbuster implements IProvider {
 	public const PROVIDER_ID = 'voipbuster';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var VoipbusterConfig */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		VoipbusterConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private VoipbusterConfig $config,
+	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 		$user = $config->getUser();
@@ -70,8 +62,9 @@ class Voipbuster implements IProvider {
 	}
 
 	/**
-	 * @return VoipMsConfig
+	 * @return VoipbusterConfig
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}

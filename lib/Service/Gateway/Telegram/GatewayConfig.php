@@ -52,16 +52,17 @@ class GatewayConfig implements IGatewayConfig {
 		return $this->getOrFail('telegram_bot_token');
 	}
 
-	public function setBotToken(string $token) {
+	public function setBotToken(string $token): void {
 		$this->config->setAppValue(Application::APP_ID, 'telegram_bot_token', $token);
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
-	public function remove() {
+	public function remove(): void {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, $key);
 		}

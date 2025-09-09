@@ -36,29 +36,14 @@ use Psr\Log\LoggerInterface;
  */
 class Gateway implements IGateway {
 
-	/** @var IClientService */
-	private $clientService;
-
-	/** @var GatewayConfig */
-	private $config;
-
 	public function __construct(
-		IClientService $clientService,
-		GatewayConfig $config,
+		private IClientService $clientService,
+		private GatewayConfig $config,
 		private LoggerInterface $logger,
 	) {
-		$this->clientService = $clientService;
-		$this->config = $config;
-		$this->logger = $logger;
 	}
 
-	/**
-	 * @param IUser $user
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(IUser $user, string $identifier, string $message) {
 		$client = $this->clientService->newClient();
 		// determine type of gateway
@@ -99,11 +84,7 @@ class Gateway implements IGateway {
 		}
 	}
 
-	/**
-	 * Get the gateway-specific configuration
-	 *
-	 * @return IGatewayConfig
-	 */
+	#[\Override]
 	public function getConfig(): IGatewayConfig {
 		return $this->config;
 	}

@@ -80,12 +80,13 @@ class Test extends Command {
 		);
 	}
 
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$uid = $input->getArgument('uid');
 		$user = $this->userManager->get($uid);
 		if (is_null($user)) {
 			$output->writeln('<error>Invalid UID</error>');
-			return;
+			return 1;
 		}
 		$gatewayName = $input->getArgument('gateway');
 		$identifier = $input->getArgument('identifier');
@@ -107,7 +108,7 @@ class Test extends Command {
 				break;
 			default:
 				$output->writeln("<error>Invalid gateway $gatewayName</error>");
-				return;
+				return 1;
 		}
 
 		$gateway->send($user, $identifier, 'Test');

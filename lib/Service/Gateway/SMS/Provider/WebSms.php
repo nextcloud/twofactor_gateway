@@ -31,24 +31,16 @@ use OCP\Http\Client\IClientService;
 class WebSms implements IProvider {
 	public const PROVIDER_ID = 'websms';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var WebSmsConfig */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		WebSmsConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private WebSmsConfig $config,
+	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 		$user = $config->getUser();
@@ -73,6 +65,7 @@ class WebSms implements IProvider {
 	/**
 	 * @return WebSmsConfig
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}

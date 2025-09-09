@@ -34,11 +34,9 @@ class SipGateConfig implements IProviderConfig {
 		'sipgate_web_sms_extension',
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+	) {
 	}
 
 	private function getOrFail(string $key): string {
@@ -53,7 +51,7 @@ class SipGateConfig implements IProviderConfig {
 		return $this->getOrFail('sipgate_token_id');
 	}
 
-	public function setTokenId(string $tokenId) {
+	public function setTokenId(string $tokenId): void {
 		$this->config->setAppValue(Application::APP_ID, 'sipgate_token_id', $tokenId);
 	}
 
@@ -61,7 +59,7 @@ class SipGateConfig implements IProviderConfig {
 		return $this->getOrFail('sipgate_access_token');
 	}
 
-	public function setAccessToken(string $accessToken) {
+	public function setAccessToken(string $accessToken): void {
 		$this->config->setAppValue(Application::APP_ID, 'sipgate_access_token', $accessToken);
 	}
 
@@ -69,14 +67,16 @@ class SipGateConfig implements IProviderConfig {
 		return $this->getOrFail('sipgate_web_sms_extension');
 	}
 
-	public function setWebSmsExtension(string $webSmsExtension) {
+	public function setWebSmsExtension(string $webSmsExtension): void {
 		$this->config->setAppValue(Application::APP_ID, 'sipgate_web_sms_extension', $webSmsExtension);
 	}
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, $key);

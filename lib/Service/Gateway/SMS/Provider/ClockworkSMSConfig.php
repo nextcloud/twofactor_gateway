@@ -33,10 +33,9 @@ class ClockworkSMSConfig implements IProviderConfig {
 		'clockworksms_apitoken'
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
+	public function __construct(
+		private IConfig $config,
+	) {
 		$this->config = $config;
 	}
 
@@ -52,15 +51,17 @@ class ClockworkSMSConfig implements IProviderConfig {
 		return $this->getOrFail('clockworksms_apitoken');
 	}
 
-	public function setApiToken(string $user) {
+	public function setApiToken(string $user): void {
 		$this->config->setAppValue(Application::APP_ID, 'clockworksms_apitoken', $user);
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, $key);

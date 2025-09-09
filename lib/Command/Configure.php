@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Command;
 
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\GatewayConfig as SignalConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
@@ -40,6 +39,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\PuzzelSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SerwerSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SipGateConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\Sms77IoConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SMSApiConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SMSGlobalConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SpryngSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\VoipbusterConfig;
@@ -91,8 +91,6 @@ class Configure extends Command {
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$gatewayName = $input->getArgument('gateway');
 
-		/** @var IGateway $gateway */
-		$gateway = null;
 		switch ($gatewayName) {
 			case 'signal':
 				$this->configureSignal($input, $output);
@@ -108,11 +106,11 @@ class Configure extends Command {
 				return 0;
 			default:
 				$output->writeln("<error>Invalid gateway $gatewayName</error>");
-				return;
+				return 1;
 		}
 	}
 
-	private function configureSignal(InputInterface $input, OutputInterface $output) {
+	private function configureSignal(InputInterface $input, OutputInterface $output): void {
 		$helper = new QuestionHelper();
 		$urlQuestion = new Question('Please enter the URL of the Signal gateway (leave blank to use default): ', 'http://localhost:5000');
 		$url = $helper->ask($input, $output, $urlQuestion);
@@ -124,7 +122,7 @@ class Configure extends Command {
 		$config->setUrl($url);
 	}
 
-	private function configureSms(InputInterface $input, OutputInterface $output) {
+	private function configureSms(InputInterface $input, OutputInterface $output): int {
 		$helper = new QuestionHelper();
 
 		$providerQuestion = new Question('Please choose a SMS provider (sipgate, websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clickatellportal, clicksend, serwersms, smsglobal, smsapi.com): ', 'websms');
@@ -425,7 +423,7 @@ class Configure extends Command {
 
 			case 'smsapi.com':
 				$config->setProvider($provider);
-				/** @var SerwerSMSConfig $providerConfig */
+				/** @var SMSApiConfig $providerConfig */
 				$providerConfig = $config->getProvider()->getConfig();
 
 				$tokenQuestion = new Question('Please enter your SMSApi.com API token: ');
@@ -444,7 +442,7 @@ class Configure extends Command {
 		return 0;
 	}
 
-	private function configureTelegram(InputInterface $input, OutputInterface $output) {
+	private function configureTelegram(InputInterface $input, OutputInterface $output): void {
 		$helper = new QuestionHelper();
 		$tokenQuestion = new Question('Please enter your Telegram bot token: ');
 		$token = $helper->ask($input, $output, $tokenQuestion);
@@ -456,7 +454,7 @@ class Configure extends Command {
 		$config->setBotToken($token);
 	}
 
-	private function configureXMPP(InputInterface $input, OutputInterface $output) {
+	private function configureXMPP(InputInterface $input, OutputInterface $output): void {
 		$helper = new QuestionHelper();
 		$sender = '';
 		while (empty($sender) or substr_count($sender, '@') !== 1):

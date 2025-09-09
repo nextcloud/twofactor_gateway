@@ -31,24 +31,16 @@ use OCP\Http\Client\IClientService;
 class SMSGlobal implements IProvider {
 	public const PROVIDER_ID = 'smsglobal';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var SMSGlobalConfig */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		SMSGlobalConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private SMSGlobalConfig $config,
+	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 		$to = str_replace('+', '', $identifier);
@@ -78,6 +70,7 @@ class SMSGlobal implements IProvider {
 	/**
 	 * @return SMSGlobalConfig
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}

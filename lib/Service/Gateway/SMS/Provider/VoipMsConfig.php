@@ -35,11 +35,9 @@ class VoipMsConfig implements IProviderConfig {
 		'voipms_did',
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+	) {
 	}
 
 	private function getOrFail(string $key): string {
@@ -54,7 +52,7 @@ class VoipMsConfig implements IProviderConfig {
 		return $this->getOrFail('voipms_api_username');
 	}
 
-	public function setUser(string $user) {
+	public function setUser(string $user): void {
 		$this->config->setAppValue(Application::APP_ID, 'voipms_api_username', $user);
 	}
 
@@ -62,7 +60,7 @@ class VoipMsConfig implements IProviderConfig {
 		return $this->getOrFail('voipms_api_password');
 	}
 
-	public function setPassword(string $password) {
+	public function setPassword(string $password): void {
 		$this->config->setAppValue(Application::APP_ID, 'voipms_api_password', $password);
 	}
 
@@ -70,15 +68,17 @@ class VoipMsConfig implements IProviderConfig {
 		return $this->getOrFail('voipms_did');
 	}
 
-	public function setDid(string $did) {
+	public function setDid(string $did): void {
 		$this->config->setAppValue(Application::APP_ID, 'voipms_did', $did);
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, $key);

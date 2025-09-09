@@ -64,7 +64,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 	/** @var IL10N */
 	protected $l10n;
 
-	private function getSessionKey() {
+	private function getSessionKey(): string {
 		return 'twofactor_gateway_' . $this->gatewayName . '_secret';
 	}
 
@@ -82,9 +82,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		$this->l10n = $l10n;
 	}
 
-	/**
-	 * Get unique identifier of this 2FA provider
-	 */
+	#[\Override]
 	public function getId(): string {
 		return "gateway_$this->gatewayName";
 	}
@@ -100,9 +98,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		return $secret;
 	}
 
-	/**
-	 * Get the template for rending the 2FA provider view
-	 */
+	#[\Override]
 	public function getTemplate(IUser $user): Template {
 		$secret = $this->getSecret();
 
@@ -124,9 +120,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		return $tmpl;
 	}
 
-	/**
-	 * Verify the given challenge
-	 */
+	#[\Override]
 	public function verifyChallenge(IUser $user, string $challenge): bool {
 		$valid = $this->session->exists($this->getSessionKey())
 			&& $this->session->get($this->getSessionKey()) === $challenge;
@@ -138,25 +132,27 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		return $valid;
 	}
 
-	/**
-	 * Decides whether 2FA is enabled for the given user
-	 */
+	#[\Override]
 	public function isTwoFactorAuthEnabledForUser(IUser $user): bool {
 		return $this->stateStorage->get($user, $this->gatewayName)->getState() === self::STATE_ENABLED;
 	}
 
+	#[\Override]
 	public function getPersonalSettings(IUser $user): IPersonalProviderSettings {
 		return new PersonalSettings($this->gatewayName);
 	}
 
+	#[\Override]
 	public function getLightIcon(): String {
 		return image_path(Application::APP_ID, 'app.svg');
 	}
 
+	#[\Override]
 	public function getDarkIcon(): String {
 		return image_path(Application::APP_ID, 'app-dark.svg');
 	}
 
+	#[\Override]
 	public function disableFor(IUser $user) {
 		$state = $this->stateStorage->get($user, $this->gatewayName);
 		if ($state->getState() === self::STATE_ENABLED) {

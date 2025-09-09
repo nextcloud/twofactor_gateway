@@ -31,24 +31,16 @@ use OCP\Http\Client\IClientService;
 class ClockworkSMS implements IProvider {
 	public const PROVIDER_ID = 'clockworksms';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var ClockworkSMSConfig */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		ClockworkSMSConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private ClockworkSMSConfig $config,
+	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 
@@ -71,6 +63,7 @@ class ClockworkSMS implements IProvider {
 	/**
 	 * @return ClockworkSMSConfig
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}

@@ -54,7 +54,7 @@ class GatewayConfig implements IGatewayConfig {
 		return $this->getOrFail('xmpp_sender');
 	}
 
-	public function setSender(string $sender) {
+	public function setSender(string $sender): void {
 		$this->config->setValueString(Application::APP_ID, 'xmpp_sender', $sender);
 	}
 
@@ -62,7 +62,7 @@ class GatewayConfig implements IGatewayConfig {
 		return $this->getOrFail('xmpp_password');
 	}
 
-	public function setPassword(string $password) {
+	public function setPassword(string $password): void {
 		$this->config->setValueString(Application::APP_ID, 'xmpp_password', $password);
 	}
 
@@ -70,7 +70,7 @@ class GatewayConfig implements IGatewayConfig {
 		return $this->getOrFail('xmpp_server');
 	}
 
-	public function setServer(string $server) {
+	public function setServer(string $server): void {
 		$this->config->setValueString(Application::APP_ID, 'xmpp_server', $server);
 	}
 
@@ -78,14 +78,14 @@ class GatewayConfig implements IGatewayConfig {
 		return $this->getOrFail('xmpp_username');
 	}
 
-	public function setUsername(string $username) {
+	public function setUsername(string $username): void {
 		$this->config->setValueString(Application::APP_ID, 'xmpp_username', $username);
 	}
 	public function getMethod(): string {
 		return $this->getOrFail('xmpp_method');
 	}
 
-	public function setMethod(string $method) {
+	public function setMethod(string $method): void {
 		$this->config->setValueString(Application::APP_ID, 'xmpp_method', $method);
 	}
 
@@ -95,7 +95,7 @@ class GatewayConfig implements IGatewayConfig {
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
-	public function remove() {
+	public function remove(): void {
 		foreach (self::expected as $key) {
 			$this->config->deleteKey(Application::APP_ID, $key);
 		}

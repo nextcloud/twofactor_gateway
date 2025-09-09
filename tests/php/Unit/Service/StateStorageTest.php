@@ -34,15 +34,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class StateStorageTest extends TestCase {
-
-	/** @var IConfig|MockObject */
-	private $config;
-
-	/** @var IGateway|MockObject */
-	private $gateway;
-
-	/** @var StateStorage */
-	private $storage;
+	private IConfig|MockObject $config;
+	private IGateway|MockObject $gateway;
+	private StateStorage $storage;
 
 	protected function setUp(): void {
 		parent::setUp();

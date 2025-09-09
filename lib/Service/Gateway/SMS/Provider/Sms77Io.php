@@ -31,24 +31,16 @@ use OCP\Http\Client\IClientService;
 class Sms77Io implements IProvider {
 	public const PROVIDER_ID = 'sms77io';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var Sms77IoConfig */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		Sms77IoConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private Sms77IoConfig $config,
+	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 		$apiKey = $config->getApiKey();
@@ -69,6 +61,7 @@ class Sms77Io implements IProvider {
 	/**
 	 * @return Sms77IoConfig
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}

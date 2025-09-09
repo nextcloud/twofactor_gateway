@@ -45,23 +45,17 @@ class TelegramProvider extends AProvider {
 		);
 	}
 
-	/**
-	 * Get unique identifier of this 2FA provider
-	 */
+	#[\Override]
 	public function getId(): string {
 		return 'gateway_telegram';
 	}
 
-	/**
-	 * Get the display name for selecting the 2FA provider
-	 */
+	#[\Override]
 	public function getDisplayName(): string {
 		return $this->l10n->t('Telegram verification');
 	}
 
-	/**
-	 * Get the description for selecting the 2FA provider
-	 */
+	#[\Override]
 	public function getDescription(): string {
 		return $this->l10n->t('Authenticate via Telegram');
 	}

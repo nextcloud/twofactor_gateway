@@ -34,11 +34,9 @@ class ClickatellPortalConfig implements IProviderConfig {
 		'clickatell_portal_apikey',
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+	) {
 	}
 
 	private function getOrFail(string $key): string {
@@ -53,27 +51,29 @@ class ClickatellPortalConfig implements IProviderConfig {
 		return $this->getOrFail('clickatell_portal_apikey');
 	}
 
-	public function setApiKey(string $apiKey) {
+	public function setApiKey(string $apiKey): void {
 		$this->config->setAppValue(Application::APP_NAME, 'clickatell_portal_apikey', $apiKey);
 	}
 
-	public function getFromNumber() { /* ?string */
+	public function getFromNumber(): string { /* ?string */
 		return $this->config->getAppValue(Application::APP_NAME, 'clickatell_portal_from', null);
 	}
 
-	public function setFromNumber(string $fromNumber) {
+	public function setFromNumber(string $fromNumber): void {
 		$this->config->setAppValue(Application::APP_NAME, 'clickatell_portal_from', $fromNumber);
 	}
 
-	public function deleteFromNumber() {
+	public function deleteFromNumber(): void {
 		$this->config->deleteAppValue(Application::APP_NAME, 'clickatell_portal_from');
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_NAME);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_NAME, $key);

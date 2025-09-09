@@ -33,10 +33,9 @@ class Sms77IoConfig implements IProviderConfig {
 		'sms77io_api_key',
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
+	public function __construct(
+		private IConfig $config,
+	) {
 		$this->config = $config;
 	}
 
@@ -52,15 +51,17 @@ class Sms77IoConfig implements IProviderConfig {
 		return $this->getOrFail('sms77io_api_key');
 	}
 
-	public function setApiKey(string $apiKey) {
+	public function setApiKey(string $apiKey): void {
 		$this->config->setAppValue(Application::APP_ID, 'sms77io_api_key', $apiKey);
 	}
 
+	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getAppKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, $key);

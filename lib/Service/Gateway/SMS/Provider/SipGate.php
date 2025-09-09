@@ -31,24 +31,16 @@ use OCP\Http\Client\IClientService;
 class SipGate implements IProvider {
 	public const PROVIDER_ID = 'sipgate';
 
-	/** @var IClient */
-	private $client;
+	private IClient $client;
 
-	/** @var WebSmsConfig */
-	private $config;
-
-	public function __construct(IClientService $clientService,
-		SipGateConfig $config) {
+	public function __construct(
+		IClientService $clientService,
+		private SipGateConfig $config,
+	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
-	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
-	 * @throws SmsTransmissionException
-	 */
+	#[\Override]
 	public function send(string $identifier, string $message) {
 		$config = $this->getConfig();
 		$tokenId = $config->getTokenId();
@@ -77,6 +69,7 @@ class SipGate implements IProvider {
 	/**
 	 * @return SipGateConfig
 	 */
+	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
 	}
