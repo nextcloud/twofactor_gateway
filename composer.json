@@ -1,16 +1,17 @@
 {
 	"description": "TwoFactor Gateway for Nextcloud",
 	"require": {
-		"telegram-bot/api": "^2.5",
-		"bamarni/composer-bin-plugin": "^1.8"
+		"bamarni/composer-bin-plugin": "^1.8",
+		"telegram-bot/api": "^2.5"
 	},
 	"require-dev": {
-		"roave/security-advisories": "dev-master",
-		"nextcloud/ocp": "dev-master"
+		"nextcloud/ocp": "dev-master",
+		"roave/security-advisories": "dev-master"
 	},
 	"config": {
 		"optimize-autoloader": true,
 		"classmap-authoritative": true,
+		"sort-packages": true,
 		"allow-plugins": {
 			"bamarni/composer-bin-plugin": true
 		},
