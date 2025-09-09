@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+		 bootstrap="bootstrap.php"
+		 beStrictAboutCoverageMetadata="true"
+		 beStrictAboutOutputDuringTests="true"
+		 failOnDeprecation="true"
+		 failOnIncomplete="true"
+		 failOnRisky="true"
+		 failOnWarning="true"
+		 failOnEmptyTestSuite="true"
+		 failOnNotice="true"
+		 colors="true"
+		 cacheDirectory="../../build/logs/.phpunit.cache"
+		 displayDetailsOnTestsThatTriggerWarnings="true">
+	<testsuites>
+		<testsuite name="twofactor_gateway tests">
+			<directory suffix="Test.php">.</directory>
+		</testsuite>
+	</testsuites>
+	<source>
+		<include>
+			<directory suffix=".php">../../lib</directory>
+		</include>
+		<exclude>
+			<directory suffix=".php">../../lib/Migration</directory>
+		</exclude>
+	</source>
+	<coverage>
+		<report>
+			<clover outputFile="../../build/logs/clover.xml"/>
+			<html outputDirectory="../../build/logs/html-coverage" lowUpperBound="50" highLowerBound="90"/>
+		</report>
+	</coverage>
+</phpunit>

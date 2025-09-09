@@ -16,6 +16,7 @@ $config
 	->setParallelConfig(ParallelConfigFactory::detect())
 	->getFinder()
 	->ignoreVCSIgnored(true)
+	->notPath('build')
 	->notPath('l10n')
 	->notPath('src')
 	->notPath('vendor')

@@ -133,14 +133,35 @@ class StateStorageTest extends TestCase {
 			'0123456789',
 			'1234'
 		);
+
+		$callCount = 0;
 		$this->config
 			->expects($this->exactly(3))
 			->method('setUserValue')
-			->withConsecutive(
-				[$uid, 'twofactor_gateway', 'telegram_identifier', '0123456789'],
-				[$uid, 'twofactor_gateway', 'telegram_verification_code', '1234'],
-				[$uid, 'twofactor_gateway', 'telegram_verified', 'false']
-			);
+			->willReturnCallback(function ($uid, $gateway, $key, $value) use (&$callCount) {
+				$callCount++;
+
+				switch ($callCount) {
+					case 1:
+						$this->assertSame($uid, 'user321');
+						$this->assertSame($gateway, 'twofactor_gateway');
+						$this->assertSame($key, 'telegram_identifier');
+						$this->assertSame($value, '0123456789');
+						break;
+					case 2:
+						$this->assertSame($uid, 'user321');
+						$this->assertSame($gateway, 'twofactor_gateway');
+						$this->assertSame($key, 'telegram_verification_code');
+						$this->assertSame($value, '1234');
+						break;
+					case 3:
+						$this->assertSame($uid, 'user321');
+						$this->assertSame($gateway, 'twofactor_gateway');
+						$this->assertSame($key, 'telegram_verified');
+						$this->assertSame($value, 'false');
+						break;
+				}
+			});
 
 		$persisted = $this->storage->persist($state);
 
@@ -158,14 +179,35 @@ class StateStorageTest extends TestCase {
 			'0123456789',
 			'1234'
 		);
+
+		$callCount = 0;
 		$this->config
 			->expects($this->exactly(3))
 			->method('setUserValue')
-			->withConsecutive(
-				[$uid, 'twofactor_gateway', 'telegram_identifier', '0123456789'],
-				[$uid, 'twofactor_gateway', 'telegram_verification_code', '1234'],
-				[$uid, 'twofactor_gateway', 'telegram_verified', 'true']
-			);
+			->willReturnCallback(function ($uid, $gateway, $key, $value) use (&$callCount) {
+				$callCount++;
+
+				switch ($callCount) {
+					case 1:
+						$this->assertSame($uid, 'user321');
+						$this->assertSame($gateway, 'twofactor_gateway');
+						$this->assertSame($key, 'telegram_identifier');
+						$this->assertSame($value, '0123456789');
+						break;
+					case 2:
+						$this->assertSame($uid, 'user321');
+						$this->assertSame($gateway, 'twofactor_gateway');
+						$this->assertSame($key, 'telegram_verification_code');
+						$this->assertSame($value, '1234');
+						break;
+					case 3:
+						$this->assertSame($uid, 'user321');
+						$this->assertSame($gateway, 'twofactor_gateway');
+						$this->assertSame($key, 'telegram_verified');
+						$this->assertSame($value, 'true');
+						break;
+				}
+			});
 
 		$persisted = $this->storage->persist($state);
 

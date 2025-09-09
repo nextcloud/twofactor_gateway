@@ -122,7 +122,7 @@ class State implements JsonSerializable {
 		return $this->verificationCode;
 	}
 
-	public function jsonSerialize() {
+	public function jsonSerialize(): mixed {
 		return [
 			'gatewayName' => $this->gatewayName,
 			'state' => $this->state,

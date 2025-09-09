@@ -7,8 +7,8 @@ vendor/
 
 /nbproject/
 /.idea/
+.vscode
 
-/tests/clover.*
-/tests/.phpunit.result.cache
+/build/
 
 .php-cs-fixer.cache

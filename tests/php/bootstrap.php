@@ -19,9 +19,14 @@
  *
  */
 
-define('PHPUNIT_RUN', 1);
+use OCP\App\IAppManager;
+use OCP\Server;
 
-require_once __DIR__ . '/../../../lib/base.php';
-require_once __DIR__ . '/../vendor/autoload.php';
+if (!defined('PHPUNIT_RUN')) {
+	define('PHPUNIT_RUN', 1);
+}
 
-\OC_App::loadApp('twofactor_gateway');
+require_once __DIR__ . '/../../../../lib/base.php';
+require_once __DIR__ . '/../../../../tests/autoload.php';
+
+Server::get(IAppManager::class)->loadApp('twofactor_gateway');
