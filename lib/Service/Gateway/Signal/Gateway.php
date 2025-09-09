@@ -28,8 +28,8 @@ use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClientService;
-use OCP\ILogger;
 use OCP\IUser;
+use Psr\Log\LoggerInterface;
 
 /**
  * An integration of https://gitlab.com/morph027/signal-web-gateway
@@ -42,12 +42,11 @@ class Gateway implements IGateway {
 	/** @var GatewayConfig */
 	private $config;
 
-	/** @var ILogger */
-	private $logger;
-
-	public function __construct(IClientService $clientService,
+	public function __construct(
+		IClientService $clientService,
 		GatewayConfig $config,
-		ILogger $logger) {
+		private LoggerInterface $logger,
+	) {
 		$this->clientService = $clientService;
 		$this->config = $config;
 		$this->logger = $logger;
