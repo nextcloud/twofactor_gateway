@@ -35,11 +35,9 @@ class GatewayConfig implements IGatewayConfig {
 		'telegram_bot_token',
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+	) {
 	}
 
 	private function getOrFail(string $key): string {

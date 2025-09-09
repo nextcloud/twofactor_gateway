@@ -30,27 +30,12 @@ use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
 
 class Factory {
-
-	/** @var SignalGateway */
-	private $signalGateway;
-
-	/** @var SMSGateway */
-	private $smsGateway;
-
-	/** @var TelegramGateway */
-	private $telegramGateway;
-
-	/** @var XMPPGateway */
-	private $xmppGateway;
-
-	public function __construct(SignalGateway $signalGateway,
-		SMSGateway $smsGateway,
-		TelegramGateway $telegramGateway,
-		XMPPGateway $xmppGateway) {
-		$this->signalGateway = $signalGateway;
-		$this->smsGateway = $smsGateway;
-		$this->telegramGateway = $telegramGateway;
-		$this->xmppGateway = $xmppGateway;
+	public function __construct(
+		private SignalGateway $signalGateway,
+		private SMSGateway $smsGateway,
+		private TelegramGateway $telegramGateway,
+		private XMPPGateway $xmppGateway,
+	) {
 	}
 
 	public function getGateway(string $name): IGateway {

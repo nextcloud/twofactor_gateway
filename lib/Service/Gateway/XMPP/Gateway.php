@@ -33,26 +33,15 @@ use OCP\IUser;
 use Psr\Log\LoggerInterface;
 
 class Gateway implements IGateway {
-
-	/** @var IClient */
-	private $client;
-
-	/** @var GatewayConfig */
-	private $gatewayConfig;
-
-	/** @var IConfig */
-	private $config;
+	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		GatewayConfig $gatewayConfig,
-		IConfig $config,
+		private GatewayConfig $gatewayConfig,
+		private IConfig $config,
 		private LoggerInterface $logger,
 	) {
 		$this->client = $clientService->newClient();
-		$this->gatewayConfig = $gatewayConfig;
-		$this->config = $config;
-		$this->logger = $logger;
 	}
 
 	/**
@@ -91,7 +80,7 @@ class Gateway implements IGateway {
 			$result = curl_exec($ch);
 			curl_close($ch);
 			$this->logger->debug("XMPP message to $identifier sent");
-		} catch (Exception $ex) {
+		} catch (\Exception $ex) {
 			throw new SmsTransmissionException();
 		}
 	}

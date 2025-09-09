@@ -36,26 +36,15 @@ use TelegramBot\Api\BotApi;
 use TelegramBot\Api\Exception as TelegramSDKException;
 
 class Gateway implements IGateway {
-
-	/** @var IClient */
-	private $client;
-
-	/** @var GatewayConfig */
-	private $gatewayConfig;
-
-	/** @var IConfig */
-	private $config;
+	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		GatewayConfig $gatewayConfig,
-		IConfig $config,
+		private GatewayConfig $gatewayConfig,
+		private IConfig $config,
 		private LoggerInterface $logger,
 	) {
 		$this->client = $clientService->newClient();
-		$this->gatewayConfig = $gatewayConfig;
-		$this->config = $config;
-		$this->logger = $logger;
 	}
 
 	/**

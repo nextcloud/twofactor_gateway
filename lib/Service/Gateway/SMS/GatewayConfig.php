@@ -31,17 +31,10 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ProviderFactory;
 use OCP\IConfig;
 
 class GatewayConfig implements IGatewayConfig {
-
-	/** @var IConfig */
-	private $config;
-
-	/** @var ProviderFactory */
-	private $providerFactory;
-
-	public function __construct(IConfig $config,
-		ProviderFactory $providerFactory) {
-		$this->config = $config;
-		$this->providerFactory = $providerFactory;
+	public function __construct(
+		private IConfig $config,
+		private ProviderFactory $providerFactory,
+	) {
 	}
 
 	public function getProvider(): IProvider {

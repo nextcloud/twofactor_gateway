@@ -24,7 +24,9 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Settings;
 
 use OCP\Authentication\TwoFactorAuth\IPersonalProviderSettings;
-use OCP\Template;
+use OCP\Server;
+use OCP\Template\ITemplate;
+use OCP\Template\ITemplateManager;
 
 class PersonalSettings implements IPersonalProviderSettings {
 
@@ -35,14 +37,10 @@ class PersonalSettings implements IPersonalProviderSettings {
 		$this->gateway = $gateway;
 	}
 
-	/**
-	 * @return Template
-	 *
-	 * @since 15.0.0
-	 */
-	public function getBody(): Template {
-		$tmpl = new Template('twofactor_gateway', 'personal_settings');
-		$tmpl->assign('gateway', $this->gateway);
-		return $tmpl;
+	#[\Override]
+	public function getBody(): ITemplate {
+		$template = Server::get(ITemplateManager::class)->getTemplate('twofactor_gateway', 'personal_settings');
+		$template->assign('gateway', $this->gateway);
+		return $template;
 	}
 }

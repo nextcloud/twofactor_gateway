@@ -30,11 +30,9 @@ use OCP\IUser;
 
 class Gateway implements IGateway {
 
-	/** @var GatewayConfig */
-	private $config;
-
-	public function __construct(GatewayConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private GatewayConfig $config,
+	) {
 	}
 
 	/**

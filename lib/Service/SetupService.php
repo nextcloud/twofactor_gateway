@@ -37,32 +37,13 @@ use OCP\IUser;
 use OCP\Security\ISecureRandom;
 
 class SetupService {
-
-	/** @var StateStorage */
-	private $stateStorage;
-
-	/** @var GatewayFactory */
-	private $gatewayFactory;
-
-	/** @var Factory */
-	private $providerFactory;
-
-	/** @var ISecureRandom */
-	private $random;
-
-	/** @var IRegistry */
-	private $providerRegistry;
-
-	public function __construct(StateStorage $stateStorage,
-		GatewayFactory $gatewayFactory,
-		Factory $providerFactory,
-		ISecureRandom $random,
-		IRegistry $providerRegistry) {
-		$this->stateStorage = $stateStorage;
-		$this->gatewayFactory = $gatewayFactory;
-		$this->providerFactory = $providerFactory;
-		$this->random = $random;
-		$this->providerRegistry = $providerRegistry;
+	public function __construct(
+		private StateStorage $stateStorage,
+		private GatewayFactory $gatewayFactory,
+		private Factory $providerFactory,
+		private ISecureRandom $random,
+		private IRegistry $providerRegistry,
+	) {
 	}
 
 	public function getState(IUser $user, string $gatewayName): State {
