@@ -43,6 +43,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\Sms77IoConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SMSGlobalConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SpryngSMSConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\VoipbusterConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\VoipMsConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\WebSmsConfig;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfig;
