@@ -86,6 +86,7 @@ class Configure extends Command {
 		);
 	}
 
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$gatewayName = $input->getArgument('gateway');
 
