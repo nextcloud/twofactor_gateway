@@ -28,7 +28,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IConfig;
 use function array_intersect;
 
-class SMSapiConfig implements IProviderConfig {
+class SMSApiConfig implements IProviderConfig {
 	private const expected = [
 		'smsapi_token',
 		'smsapi_sender',

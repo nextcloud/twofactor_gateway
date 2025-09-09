@@ -460,9 +460,9 @@ class Configure extends Command {
 			$senderQuestion = new Question('Please enter your sender XMPP-JID: ');
 			$sender = $helper->ask($input, $output, $senderQuestion);
 			if (empty($sender)) {
-				$output->writeln("XMPP-JID must not be empty!");
+				$output->writeln('XMPP-JID must not be empty!');
 			} elseif (substr_count($sender, '@') !== 1) {
-				$output->writeln("XMPP-JID not valid!");
+				$output->writeln('XMPP-JID not valid!');
 			} else {
 				$username = explode('@', $sender)[0];
 			}
@@ -473,16 +473,16 @@ class Configure extends Command {
 			$passwordQuestion = new Question('Please enter your sender XMPP password: ');
 			$password = $helper->ask($input, $output, $passwordQuestion);
 			if (empty($password)) {
-				$output->writeln("Password must not be empty!");
+				$output->writeln('Password must not be empty!');
 			}
 		endwhile;
-		$output->writeln("Password accepted.");
+		$output->writeln('Password accepted.');
 		$server = '';
 		while (empty($server)):
 			$serverQuestion = new Question('Please enter full path to access REST/HTTP API: ');
 			$server = $helper->ask($input, $output, $serverQuestion);
 			if (empty($server)) {
-				$output->writeln("API path must not be empty!");
+				$output->writeln('API path must not be empty!');
 			}
 		endwhile;
 		$output->writeln("Using $server as full URL to access REST/HTTP API.");
@@ -494,12 +494,12 @@ class Configure extends Command {
 			$methodQuestion = new Question('Your choice: ');
 			$method = $helper->ask($input, $output, $methodQuestion);
 		endwhile;
-		if ($method === "1") {
-			$output->writeln("Using prosody with mod_rest as XMPP sending option.");
-		} elseif ($method === "2") {
-			$output->writeln("Using prosody with mod_post_msg as XMPP sending option.");
+		if ($method === '1') {
+			$output->writeln('Using prosody with mod_rest as XMPP sending option.');
+		} elseif ($method === '2') {
+			$output->writeln('Using prosody with mod_post_msg as XMPP sending option.');
 		}
-		$output->writeln("XMPP Admin Configuration finished.");
+		$output->writeln('XMPP Admin Configuration finished.');
 
 		/** @var XMPPConfig $config */
 		$config = $this->xmppGateway->getConfig();

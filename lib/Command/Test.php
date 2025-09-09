@@ -84,7 +84,7 @@ class Test extends Command {
 		$uid = $input->getArgument('uid');
 		$user = $this->userManager->get($uid);
 		if (is_null($user)) {
-			$output->writeln("<error>Invalid UID</error>");
+			$output->writeln('<error>Invalid UID</error>');
 			return;
 		}
 		$gatewayName = $input->getArgument('gateway');

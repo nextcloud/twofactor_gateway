@@ -65,31 +65,31 @@ class FactoryTest extends TestCase {
 	}
 
 	public function testGetSignalGateway() {
-		$gateway = $this->factory->getGateway("signal");
+		$gateway = $this->factory->getGateway('signal');
 
 		$this->assertSame($this->signalGateway, $gateway);
 	}
 
 	public function testGetSMSGateway() {
-		$gateway = $this->factory->getGateway("sms");
+		$gateway = $this->factory->getGateway('sms');
 
 		$this->assertSame($this->smsGateway, $gateway);
 	}
 
 	public function testGetTelegamGateway() {
-		$gateway = $this->factory->getGateway("telegram");
+		$gateway = $this->factory->getGateway('telegram');
 
 		$this->assertSame($this->telegramGateway, $gateway);
 	}
 
 	public function testGetXMPPGateway() {
-		$gateway = $this->factory->getGateway("xmpp");
+		$gateway = $this->factory->getGateway('xmpp');
 
 		$this->assertSame($this->xmppGateway, $gateway);
 	}
 
 	public function testGetInvalidGateway() {
 		$this->expectException(\Exception::class);
-		$this->factory->getGateway("wrong");
+		$this->factory->getGateway('wrong');
 	}
 }

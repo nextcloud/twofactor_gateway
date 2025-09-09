@@ -55,13 +55,13 @@ class SMSApi implements IProvider {
 		$token = $config->getToken();
 		$url = 'https://api.smsapi.com/sms.do';
 
-		$params = array(
+		$params = [
 			'to' => $identifier,         //destination number
 			'from' => $sender,             //sendername made in https://ssl.smsapi.com/sms_settings/sendernames
 			'message' => $message,    		//message content
 			'format' => 'json',           	//get response in json format
-		);
-		
+		];
+
 		try {
 			static $content;
 
@@ -70,9 +70,9 @@ class SMSApi implements IProvider {
 			curl_setopt($c, CURLOPT_POST, true);
 			curl_setopt($c, CURLOPT_POSTFIELDS, $params);
 			curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($c, CURLOPT_HTTPHEADER, array(
+			curl_setopt($c, CURLOPT_HTTPHEADER, [
 				"Authorization: Bearer $token"
-			));
+			]);
 
 			$content = curl_exec($c);
 			$http_status = curl_getinfo($c, CURLINFO_HTTP_CODE);

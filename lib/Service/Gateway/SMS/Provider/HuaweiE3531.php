@@ -63,9 +63,9 @@ class HuaweiE3531 implements IProvider {
 			$sendResponse = $this->client->post("$url/sms/send-sms", [
 				'body' => "<request><Index>-1</Index><Phones><Phone>$identifier</Phone></Phones><Sca/><Content>$messageEscaped</Content><Length>-1</Length><Reserved>1</Reserved><Date>$date</Date></request>",
 				'headers' => [
-					'Cookie' => (string) $sessionTokenXml->SesInfo,
+					'Cookie' => (string)$sessionTokenXml->SesInfo,
 					'X-Requested-With' => 'XMLHttpRequest',
-					'__RequestVerificationToken' => (string) $sessionTokenXml->TokInfo,
+					'__RequestVerificationToken' => (string)$sessionTokenXml->TokInfo,
 					'Content-Type' => 'text/xml',
 				],
 			]);
@@ -74,7 +74,7 @@ class HuaweiE3531 implements IProvider {
 			throw new SmsTransmissionException();
 		}
 
-		if ((string) $sendXml !== "OK") {
+		if ((string)$sendXml !== 'OK') {
 			throw new SmsTransmissionException();
 		}
 	}

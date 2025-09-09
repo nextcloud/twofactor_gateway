@@ -95,8 +95,8 @@ class Ovh implements IProvider {
 
 		$this->getTimeDelta();
 
-		$header = $this->getHeader('GET', $this->attrs['endpoint'].'/sms');
-		$response = $this->client->get($this->attrs['endpoint'].'/sms', [
+		$header = $this->getHeader('GET', $this->attrs['endpoint'] . '/sms');
+		$response = $this->client->get($this->attrs['endpoint'] . '/sms', [
 			'headers' => $header,
 		]);
 		$smsServices = json_decode($response->getBody(), true);
@@ -112,25 +112,25 @@ class Ovh implements IProvider {
 			throw new InvalidSmsProviderException("SMS account $smsAccount not found");
 		}
 		$content = [
-			"charset" => "UTF-8",
-			"message" => $message,
-			"noStopClause" => true,
-			"priority" => "high",
-			"receivers" => [ $identifier ],
-			"senderForResponse" => false,
-			"sender" => $sender,
-			"validityPeriod" => 3600
+			'charset' => 'UTF-8',
+			'message' => $message,
+			'noStopClause' => true,
+			'priority' => 'high',
+			'receivers' => [ $identifier ],
+			'senderForResponse' => false,
+			'sender' => $sender,
+			'validityPeriod' => 3600
 		];
 		$body = json_encode($content);
 
-		$header = $this->getHeader('POST', $this->attrs['endpoint']."/sms/$smsAccount/jobs", $body);
-		$response = $this->client->post($this->attrs['endpoint']."/sms/$smsAccount/jobs", [
+		$header = $this->getHeader('POST', $this->attrs['endpoint'] . "/sms/$smsAccount/jobs", $body);
+		$response = $this->client->post($this->attrs['endpoint'] . "/sms/$smsAccount/jobs", [
 			'headers' => $header,
 			'json' => $content,
 		]);
 		$resultPostJob = json_decode($response->getBody(), true);
 
-		if (count($resultPostJob["validReceivers"]) === 0) {
+		if (count($resultPostJob['validReceivers']) === 0) {
 			throw new SmsTransmissionException("Bad receiver $identifier");
 		}
 	}
@@ -152,11 +152,11 @@ class Ovh implements IProvider {
 				throw new InvalidSmsProviderException('Need to set the endpoint');
 			}
 			try {
-				$response = $this->client->get($this->attrs['endpoint'].'/auth/time');
+				$response = $this->client->get($this->attrs['endpoint'] . '/auth/time');
 				$serverTimestamp = (int)$response->getBody();
 				$this->attrs['timedelta'] = $serverTimestamp - time();
 			} catch (Exception $ex) {
-				throw new InvalidSmsProviderException('Unable to calculate time delta:'.$ex->getMessage());
+				throw new InvalidSmsProviderException('Unable to calculate time delta:' . $ex->getMessage());
 			}
 		}
 	}
@@ -170,12 +170,12 @@ class Ovh implements IProvider {
 	 */
 	private function getHeader($method, $query, $body = '') {
 		$timestamp = time() + $this->attrs['timedelta'];
-		$prehash = $this->attrs['AS'].'+'.$this->attrs['CK'].'+'.$method.'+'.$query.'+'.$body.'+'.$timestamp;
+		$prehash = $this->attrs['AS'] . '+' . $this->attrs['CK'] . '+' . $method . '+' . $query . '+' . $body . '+' . $timestamp;
 		$header = [
 			'Content-Type' => 'application/json; charset=utf-8',
 			'X-Ovh-Application' => $this->attrs['AK'],
 			'X-Ovh-Timestamp' => $timestamp,
-			'X-Ovh-Signature' => '$1$'.sha1($prehash),
+			'X-Ovh-Signature' => '$1$' . sha1($prehash),
 			'X-Ovh-Consumer' => $this->attrs['CK'],
 		];
 		return $header;

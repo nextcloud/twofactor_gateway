@@ -65,7 +65,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 	protected $l10n;
 
 	private function getSessionKey() {
-		return "twofactor_gateway_" . $this->gatewayName . "_secret";
+		return 'twofactor_gateway_' . $this->gatewayName . '_secret';
 	}
 
 	public function __construct(string $gatewayId,

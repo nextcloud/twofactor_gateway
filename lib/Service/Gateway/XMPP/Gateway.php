@@ -70,12 +70,12 @@ class Gateway implements IGateway {
 		$server = $this->gatewayConfig->getServer();
 		$method = $this->gatewayConfig->getMethod();
 		$user = $this->gatewayConfig->getUsername();
-		$url = $server.$identifier;
+		$url = $server . $identifier;
 
-		if ($method === "1") {
+		if ($method === '1') {
 			$from = $user;
 		}
-		if ($method === "2") {
+		if ($method === '2') {
 			$from = $sender;
 		}
 		$this->logger->debug("URL: $url, sender: $sender, method: $method");
@@ -86,8 +86,8 @@ class Gateway implements IGateway {
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
-			curl_setopt($ch, CURLOPT_USERPWD, $from.":".$password);
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/plain'));
+			curl_setopt($ch, CURLOPT_USERPWD, $from . ':' . $password);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: text/plain']);
 			$result = curl_exec($ch);
 			curl_close($ch);
 			$this->logger->debug("XMPP message to $identifier sent");

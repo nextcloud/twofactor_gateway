@@ -63,10 +63,10 @@ class SipGate implements IProvider {
 					'Accept' => 'application/json',
 				],
 				'json' => [
-					"smsId" => $webSmsExtension,
-					"message" => $message,
-					"recipient" => $identifier,
-					"sendAt" => null,
+					'smsId' => $webSmsExtension,
+					'message' => $message,
+					'recipient' => $identifier,
+					'sendAt' => null,
 				],
 			]);
 		} catch (Exception $ex) {

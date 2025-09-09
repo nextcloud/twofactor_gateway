@@ -47,8 +47,8 @@ class State implements JsonSerializable {
 	public function __construct(IUser $user,
 		int $state,
 		string $gatewayName,
-		string $identifier = null,
-		string $verificationCode = null) {
+		?string $identifier = null,
+		?string $verificationCode = null) {
 		$this->user = $user;
 		$this->gatewayName = $gatewayName;
 		$this->state = $state;
