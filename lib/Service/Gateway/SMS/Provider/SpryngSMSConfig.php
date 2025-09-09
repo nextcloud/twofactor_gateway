@@ -25,7 +25,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use function array_intersect;
 
 class SpryngSMSConfig implements IProviderConfig {
@@ -34,13 +34,13 @@ class SpryngSMSConfig implements IProviderConfig {
 	];
 
 	public function __construct(
-		private IConfig $config,
+		private IAppConfig $config,
 	) {
 	}
 
 	private function getOrFail(string $key): string {
-		$val = $this->config->getAppValue(Application::APP_ID, $key, null);
-		if ($val === null) {
+		$val = $this->config->getValueString(Application::APP_ID, $key, '');
+		if (empty($val)) {
 			throw new ConfigurationException();
 		}
 		return $val;
@@ -51,19 +51,19 @@ class SpryngSMSConfig implements IProviderConfig {
 	}
 
 	public function setApiToken(string $user): void {
-		$this->config->setAppValue(Application::APP_ID, 'spryng_apitoken', $user);
+		$this->config->getValueString(Application::APP_ID, 'spryng_apitoken', $user);
 	}
 
 	#[\Override]
 	public function isComplete(): bool {
-		$set = $this->config->getAppKeys(Application::APP_ID);
+		$set = $this->config->getKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
 	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
-			$this->config->deleteAppValue(Application::APP_ID, $key);
+			$this->config->deleteKey(Application::APP_ID, $key);
 		}
 	}
 }

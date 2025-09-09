@@ -27,7 +27,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 
 class ClickatellCentralConfig implements IProviderConfig {
 	private const expected = [
@@ -36,16 +36,14 @@ class ClickatellCentralConfig implements IProviderConfig {
 		'clickatell_central_password',
 	];
 
-	private IConfig $config;
-
 	public function __construct(
-		private IConfig $config,
+		private IAppConfig $config,
 	) {
 	}
 
 	private function getOrFail(string $key): string {
-		$val = $this->config->getAppValue(Application::APP_ID, $key, null);
-		if (is_null($val)) {
+		$val = $this->config->getValueString(Application::APP_ID, $key);
+		if (empty($val)) {
 			throw new ConfigurationException();
 		}
 		return $val;
@@ -56,7 +54,7 @@ class ClickatellCentralConfig implements IProviderConfig {
 	}
 
 	public function setApi(string $api): void {
-		$this->config->setAppValue(Application::APP_ID, 'clickatell_central_api', $api);
+		$this->config->setValueString(Application::APP_ID, 'clickatell_central_api', $api);
 	}
 
 	public function getUser(): string {
@@ -64,7 +62,7 @@ class ClickatellCentralConfig implements IProviderConfig {
 	}
 
 	public function setUser(string $user): void {
-		$this->config->setAppValue(Application::APP_ID, 'clickatell_central_user', $user);
+		$this->config->setValueString(Application::APP_ID, 'clickatell_central_user', $user);
 	}
 
 	public function getPassword(): string {
@@ -72,19 +70,19 @@ class ClickatellCentralConfig implements IProviderConfig {
 	}
 
 	public function setPassword(string $password): void {
-		$this->config->setAppValue(Application::APP_ID, 'clickatell_central_password', $password);
+		$this->config->setValueString(Application::APP_ID, 'clickatell_central_password', $password);
 	}
 
 	#[\Override]
 	public function isComplete(): bool {
-		$set = $this->config->getAppKeys(Application::APP_ID);
+		$set = $this->config->getKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
 	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
-			$this->config->deleteAppValue(Application::APP_ID, $key);
+			$this->config->deleteKey(Application::APP_ID, $key);
 		}
 	}
 }

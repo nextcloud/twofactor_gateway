@@ -63,7 +63,7 @@ class PuzzelSMS implements IProvider {
 	}
 
 	/**
-	 * @return PuzzelConfig
+	 * @return PuzzelSMSConfig
 	 */
 	#[\Override]
 	public function getConfig(): IProviderConfig {

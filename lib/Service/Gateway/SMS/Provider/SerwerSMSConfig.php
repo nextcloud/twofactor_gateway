@@ -25,7 +25,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use function array_intersect;
 
 class SerwerSMSConfig implements IProviderConfig {
@@ -36,13 +36,13 @@ class SerwerSMSConfig implements IProviderConfig {
 	];
 
 	public function __construct(
-		private IConfig $config,
+		private IAppConfig $config,
 	) {
 	}
 
 	private function getOrFail(string $key): string {
-		$val = $this->config->getAppValue(Application::APP_NAME, $key, null);
-		if (is_null($val)) {
+		$val = $this->config->getValueString(Application::APP_ID, $key);
+		if (empty($val)) {
 			throw new ConfigurationException();
 		}
 		return $val;
@@ -61,27 +61,27 @@ class SerwerSMSConfig implements IProviderConfig {
 	}
 
 	public function setLogin(string $login): void {
-		$this->config->setAppValue(Application::APP_NAME, 'serwersms_login', $login);
+		$this->config->getValueString(Application::APP_ID, 'serwersms_login', $login);
 	}
 
 	public function setPassword(string $password): void {
-		$this->config->setAppValue(Application::APP_NAME, 'serwersms_password', $password);
+		$this->config->getValueString(Application::APP_ID, 'serwersms_password', $password);
 	}
 
 	public function setSender(string $sender): void {
-		$this->config->setAppValue(Application::APP_NAME, 'serwersms_sender', $sender);
+		$this->config->getValueString(Application::APP_ID, 'serwersms_sender', $sender);
 	}
 
 	#[\Override]
 	public function isComplete(): bool {
-		$set = $this->config->getAppKeys(Application::APP_NAME);
+		$set = $this->config->getKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
 	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
-			$this->config->deleteAppValue(Application::APP_NAME, $key);
+			$this->config->deleteKey(Application::APP_ID, $key);
 		}
 	}
 }

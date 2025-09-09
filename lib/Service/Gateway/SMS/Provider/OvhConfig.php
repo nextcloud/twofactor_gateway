@@ -25,7 +25,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use function array_intersect;
 
 class OvhConfig implements IProviderConfig {
@@ -38,16 +38,14 @@ class OvhConfig implements IProviderConfig {
 		'ovh_sender'
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IAppConfig $config,
+	) {
 	}
 
 	private function getOrFail(string $key): string {
-		$val = $this->config->getAppValue(Application::APP_ID, $key, null);
-		if (is_null($val)) {
+		$val = $this->config->getValueString(Application::APP_ID, $key);
+		if (empty($val)) {
 			throw new ConfigurationException();
 		}
 		return $val;
@@ -78,39 +76,39 @@ class OvhConfig implements IProviderConfig {
 	}
 
 	public function setApplicationKey(string $appKey): void {
-		$this->config->setAppValue(Application::APP_ID, 'ovh_application_key', $appKey);
+		$this->config->getValueString(Application::APP_ID, 'ovh_application_key', $appKey);
 	}
 
 	public function setApplicationSecret(string $appSecret): void {
-		$this->config->setAppValue(Application::APP_ID, 'ovh_application_secret', $appSecret);
+		$this->config->getValueString(Application::APP_ID, 'ovh_application_secret', $appSecret);
 	}
 
 	public function setConsumerKey(string $consumerKey): void {
-		$this->config->setAppValue(Application::APP_ID, 'ovh_consumer_key', $consumerKey);
+		$this->config->getValueString(Application::APP_ID, 'ovh_consumer_key', $consumerKey);
 	}
 
 	public function setEndpoint(string $endpoint): void {
-		$this->config->setAppValue(Application::APP_ID, 'ovh_endpoint', $endpoint);
+		$this->config->getValueString(Application::APP_ID, 'ovh_endpoint', $endpoint);
 	}
 
 	public function setAccount($account): void {
-		$this->config->setAppValue(Application::APP_ID, 'ovh_account', $account);
+		$this->config->getValueString(Application::APP_ID, 'ovh_account', $account);
 	}
 
 	public function setSender($sender): void {
-		$this->config->setAppValue(Application::APP_ID, 'ovh_sender', $sender);
+		$this->config->getValueString(Application::APP_ID, 'ovh_sender', $sender);
 	}
 
 	#[\Override]
 	public function isComplete(): bool {
-		$set = $this->config->getAppKeys(Application::APP_ID);
+		$set = $this->config->getKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
 	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
-			$this->config->deleteAppValue(Application::APP_ID, $key);
+			$this->config->deleteKey(Application::APP_ID, $key);
 		}
 	}
 }

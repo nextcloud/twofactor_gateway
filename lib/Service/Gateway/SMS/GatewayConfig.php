@@ -28,17 +28,17 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\IProvider;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ProviderFactory;
-use OCP\IConfig;
+use OCP\IAppConfig;
 
 class GatewayConfig implements IGatewayConfig {
 	public function __construct(
-		private IConfig $config,
+		private IAppConfig $config,
 		private ProviderFactory $providerFactory,
 	) {
 	}
 
 	public function getProvider(): IProvider {
-		$providerName = $this->config->getAppValue(Application::APP_ID, 'sms_provider_name');
+		$providerName = $this->config->getValueString(Application::APP_ID, 'sms_provider_name');
 		if ($providerName === '') {
 			throw new ConfigurationException();
 		}
@@ -47,7 +47,7 @@ class GatewayConfig implements IGatewayConfig {
 	}
 
 	public function setProvider(string $provider): void {
-		$this->config->setAppValue(Application::APP_ID, 'sms_provider_name', $provider);
+		$this->config->setValueString(Application::APP_ID, 'sms_provider_name', $provider);
 	}
 
 	#[\Override]

@@ -25,7 +25,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use function array_intersect;
 
 class SMSGlobalConfig implements IProviderConfig {
@@ -36,13 +36,13 @@ class SMSGlobalConfig implements IProviderConfig {
 	];
 
 	public function __construct(
-		private IConfig $config,
+		private IAppConfig $config,
 	) {
 	}
 
 	private function getOrFail(string $key): string {
-		$val = $this->config->getAppValue(Application::APP_NAME, $key, null);
-		if (is_null($val)) {
+		$val = $this->config->getValueString(Application::APP_ID, $key);
+		if (empty($val)) {
 			throw new ConfigurationException();
 		}
 		return $val;
@@ -53,7 +53,7 @@ class SMSGlobalConfig implements IProviderConfig {
 	}
 
 	public function setUrl(string $url): void {
-		$this->config->setAppValue(Application::APP_NAME, 'smsglobal_url', $url);
+		$this->config->getValueString(Application::APP_ID, 'smsglobal_url', $url);
 	}
 
 	public function getUser(): string {
@@ -61,7 +61,7 @@ class SMSGlobalConfig implements IProviderConfig {
 	}
 
 	public function setUser(string $user): void {
-		$this->config->setAppValue(Application::APP_NAME, 'smsglobal_user', $user);
+		$this->config->getValueString(Application::APP_ID, 'smsglobal_user', $user);
 	}
 
 	public function getPassword(): string {
@@ -69,19 +69,19 @@ class SMSGlobalConfig implements IProviderConfig {
 	}
 
 	public function setPassword(string $password): void {
-		$this->config->setAppValue(Application::APP_NAME, 'smsglobal_password', $password);
+		$this->config->getValueString(Application::APP_ID, 'smsglobal_password', $password);
 	}
 
 	#[\Override]
 	public function isComplete(): bool {
-		$set = $this->config->getAppKeys(Application::APP_NAME);
+		$set = $this->config->getKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
 	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
-			$this->config->deleteAppValue(Application::APP_NAME, $key);
+			$this->config->deleteKey(Application::APP_ID, $key);
 		}
 	}
 }

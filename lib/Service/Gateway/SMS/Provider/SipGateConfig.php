@@ -25,7 +25,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCP\IConfig;
+use OCP\IAppConfig;
 
 class SipGateConfig implements IProviderConfig {
 	private const expected = [
@@ -35,13 +35,13 @@ class SipGateConfig implements IProviderConfig {
 	];
 
 	public function __construct(
-		private IConfig $config,
+		private IAppConfig $config,
 	) {
 	}
 
 	private function getOrFail(string $key): string {
-		$val = $this->config->getAppValue(Application::APP_ID, $key, null);
-		if (is_null($val)) {
+		$val = $this->config->getValueString(Application::APP_ID, $key);
+		if (empty($val)) {
 			throw new ConfigurationException();
 		}
 		return $val;
@@ -52,7 +52,7 @@ class SipGateConfig implements IProviderConfig {
 	}
 
 	public function setTokenId(string $tokenId): void {
-		$this->config->setAppValue(Application::APP_ID, 'sipgate_token_id', $tokenId);
+		$this->config->getValueString(Application::APP_ID, 'sipgate_token_id', $tokenId);
 	}
 
 	public function getAccessToken(): string {
@@ -60,7 +60,7 @@ class SipGateConfig implements IProviderConfig {
 	}
 
 	public function setAccessToken(string $accessToken): void {
-		$this->config->setAppValue(Application::APP_ID, 'sipgate_access_token', $accessToken);
+		$this->config->getValueString(Application::APP_ID, 'sipgate_access_token', $accessToken);
 	}
 
 	public function getWebSmsExtension(): string {
@@ -68,18 +68,18 @@ class SipGateConfig implements IProviderConfig {
 	}
 
 	public function setWebSmsExtension(string $webSmsExtension): void {
-		$this->config->setAppValue(Application::APP_ID, 'sipgate_web_sms_extension', $webSmsExtension);
+		$this->config->getValueString(Application::APP_ID, 'sipgate_web_sms_extension', $webSmsExtension);
 	}
 	#[\Override]
 	public function isComplete(): bool {
-		$set = $this->config->getAppKeys(Application::APP_ID);
+		$set = $this->config->getKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
 	#[\Override]
 	public function remove() {
 		foreach (self::expected as $key) {
-			$this->config->deleteAppValue(Application::APP_ID, $key);
+			$this->config->deleteKey(Application::APP_ID, $key);
 		}
 	}
 }

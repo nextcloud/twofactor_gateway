@@ -28,7 +28,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\Telegram;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
-use OCP\IConfig;
+use OCP\IAppConfig;
 
 class GatewayConfig implements IGatewayConfig {
 	private const expected = [
@@ -36,13 +36,13 @@ class GatewayConfig implements IGatewayConfig {
 	];
 
 	public function __construct(
-		private IConfig $config,
+		private IAppConfig $config,
 	) {
 	}
 
 	private function getOrFail(string $key): string {
-		$val = $this->config->getAppValue(Application::APP_ID, $key);
-		if ($val === '') {
+		$val = $this->config->getValueString(Application::APP_ID, $key);
+		if (empty($val)) {
 			throw new ConfigurationException();
 		}
 		return $val;
@@ -53,18 +53,18 @@ class GatewayConfig implements IGatewayConfig {
 	}
 
 	public function setBotToken(string $token): void {
-		$this->config->setAppValue(Application::APP_ID, 'telegram_bot_token', $token);
+		$this->config->getValueString(Application::APP_ID, 'telegram_bot_token', $token);
 	}
 
 	#[\Override]
 	public function isComplete(): bool {
-		$set = $this->config->getAppKeys(Application::APP_ID);
+		$set = $this->config->getKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
 	public function remove(): void {
 		foreach (self::expected as $key) {
-			$this->config->deleteAppValue(Application::APP_ID, $key);
+			$this->config->deleteKey(Application::APP_ID, $key);
 		}
 	}
 }

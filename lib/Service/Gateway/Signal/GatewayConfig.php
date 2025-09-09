@@ -26,22 +26,20 @@ namespace OCA\TwoFactorGateway\Service\Gateway\Signal;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
-use OCP\IConfig;
+use OCP\IAppConfig;
 
 class GatewayConfig implements IGatewayConfig {
 	private const expected = [
 		'signal_url',
 	];
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IAppConfig $config,
+	) {
 	}
 
 	private function getOrFail(string $key): string {
-		$val = $this->config->getAppValue(Application::APP_ID, $key);
+		$val = $this->config->getValueString(Application::APP_ID, $key);
 		if ($val === '') {
 			throw new ConfigurationException();
 		}
@@ -53,18 +51,18 @@ class GatewayConfig implements IGatewayConfig {
 	}
 
 	public function setUrl(string $url): void {
-		$this->config->setAppValue(Application::APP_ID, 'signal_url', $url);
+		$this->config->getValueString(Application::APP_ID, 'signal_url', $url);
 	}
 
 	#[\Override]
 	public function isComplete(): bool {
-		$set = $this->config->getAppKeys(Application::APP_ID);
+		$set = $this->config->getKeys(Application::APP_ID);
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
 	public function remove(): void {
 		foreach (self::expected as $key) {
-			$this->config->deleteAppValue(Application::APP_ID, $key);
+			$this->config->deleteKey(Application::APP_ID, $key);
 		}
 	}
 }

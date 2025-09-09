@@ -29,7 +29,7 @@ use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\IUser;
 use Psr\Log\LoggerInterface;
 use TelegramBot\Api\BotApi;
@@ -41,7 +41,7 @@ class Gateway implements IGateway {
 	public function __construct(
 		IClientService $clientService,
 		private GatewayConfig $gatewayConfig,
-		private IConfig $config,
+		private IAppConfig $config,
 		private LoggerInterface $logger,
 	) {
 		$this->client = $clientService->newClient();
