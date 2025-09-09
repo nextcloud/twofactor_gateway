@@ -1,9 +1,7 @@
 {
-	"name": "twofactor_gateway/0.20.0",
-	"description": "TwoFactor Gateway for Nextcloud 21-24 with PHP 7.3-8.1",
+	"description": "TwoFactor Gateway for Nextcloud",
 	"require": {
-		"php": "^8.0|^8.1",
-		"telegram-bot/api": "^2.4",
+		"telegram-bot/api": "^2.5",
 		"bamarni/composer-bin-plugin": "^1.8"
 	},
 	"require-dev": {
@@ -15,6 +13,9 @@
 		"classmap-authoritative": true,
 		"allow-plugins": {
 			"bamarni/composer-bin-plugin": true
+		},
+		"platform": {
+			"php": "8.1"
 		}
 	},
 	"scripts": {
@@ -32,5 +33,10 @@
 		  "@composer bin all update --ansi",
 		  "composer dump-autoload"
 		]
+	},
+	"autoload": {
+		"psr-4": {
+			"OCA\\TwoFactorGateway\\": "lib/"
+		}
 	}
 }
