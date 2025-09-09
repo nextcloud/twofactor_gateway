@@ -49,6 +49,7 @@ use OCA\TwoFactorGateway\Service\Gateway\Telegram\GatewayConfig as TelegramConfi
 use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
 use OCA\TwoFactorGateway\Service\Gateway\XMPP\GatewayConfig as XMPPConfig;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -110,7 +111,7 @@ class Configure extends Command {
 	}
 
 	private function configureSignal(InputInterface $input, OutputInterface $output) {
-		$helper = $this->getHelper('question');
+		$helper = new QuestionHelper();
 		$urlQuestion = new Question('Please enter the URL of the Signal gateway (leave blank to use default): ', 'http://localhost:5000');
 		$url = $helper->ask($input, $output, $urlQuestion);
 		$output->writeln("Using $url.");
@@ -122,7 +123,7 @@ class Configure extends Command {
 	}
 
 	private function configureSms(InputInterface $input, OutputInterface $output) {
-		$helper = $this->getHelper('question');
+		$helper = new QuestionHelper();
 
 		$providerQuestion = new Question('Please choose a SMS provider (sipgate, websms, playsms, clockworksms, puzzelsms, ecallsms, voipms, voipbuster, huawei_e3531, spryng, sms77io, ovh, clickatellcentral, clickatellportal, clicksend, serwersms, smsglobal, smsapi.com): ', 'websms');
 		$provider = $helper->ask($input, $output, $providerQuestion);
@@ -442,7 +443,7 @@ class Configure extends Command {
 	}
 
 	private function configureTelegram(InputInterface $input, OutputInterface $output) {
-		$helper = $this->getHelper('question');
+		$helper = new QuestionHelper();
 		$tokenQuestion = new Question('Please enter your Telegram bot token: ');
 		$token = $helper->ask($input, $output, $tokenQuestion);
 		$output->writeln("Using $token.");
@@ -454,7 +455,7 @@ class Configure extends Command {
 	}
 
 	private function configureXMPP(InputInterface $input, OutputInterface $output) {
-		$helper = $this->getHelper('question');
+		$helper = new QuestionHelper();
 		$sender = '';
 		while (empty($sender) or substr_count($sender, '@') !== 1):
 			$senderQuestion = new Question('Please enter your sender XMPP-JID: ');
