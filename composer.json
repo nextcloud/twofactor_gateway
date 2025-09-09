@@ -22,16 +22,16 @@
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"cs:fix": "php-cs-fixer fix",
 		"lint": "find . -name \\*.php -not -path './vendor/*' -print0 | xargs -0 -n1 php -l",
-		"test:unit": "vendor/bin/phpunit -c tests/php/phpunit.xml --no-coverage --colors=always --fail-on-warning --fail-on-risky --display-deprecations --display-phpunit-deprecations",
-		"test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit -c tests/php/phpunit.xml",
 		"post-install-cmd": [
-		  "@composer bin all install --ansi",
-		  "composer dump-autoload"
+			"@composer bin all install --ansi",
+			"composer dump-autoload"
 		],
 		"post-update-cmd": [
-		  "@composer bin all update --ansi",
-		  "composer dump-autoload"
-		]
+			"@composer bin all update --ansi",
+			"composer dump-autoload"
+		],
+		"test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit -c tests/php/phpunit.xml",
+		"test:unit": "vendor/bin/phpunit -c tests/php/phpunit.xml --no-coverage --colors=always --fail-on-warning --fail-on-risky --display-deprecations --display-phpunit-deprecations"
 	},
 	"autoload": {
 		"psr-4": {
