@@ -30,28 +30,18 @@ use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\Security\ISecureRandom;
+use OCP\Template\ITemplateManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class XMPPProviderTest extends TestCase {
-
-	/** @var Gateway|MockObject */
-	private $gateway;
-
-	/** @var StateStorage|MockObject */
-	private $stateStorage;
-
-	/** @var ISession|MockObject */
-	private $session;
-
-	/** @var ISecureRandom|MockObject */
-	private $random;
-
-	/** @var IL10N|MockObject */
-	private $l10n;
-
-	/** @var XMPPProvider */
-	private $provider;
+	private Gateway&MockObject $gateway;
+	private StateStorage&MockObject $stateStorage;
+	private ISession&MockObject $session;
+	private ISecureRandom&MockObject $random;
+	private IL10N&MockObject $l10n;
+	private ITemplateManager&MockObject $templateManager;
+	private XMPPProvider $provider;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -61,13 +51,15 @@ class XMPPProviderTest extends TestCase {
 		$this->session = $this->createMock(ISession::class);
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->l10n = $this->createMock(IL10N::class);
+		$this->templateManager = $this->createMock(ITemplateManager::class);
 
 		$this->provider = new XMPPProvider(
 			$this->gateway,
 			$this->stateStorage,
 			$this->session,
 			$this->random,
-			$this->l10n
+			$this->l10n,
+			$this->templateManager,
 		);
 	}
 

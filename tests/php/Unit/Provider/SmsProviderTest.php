@@ -33,28 +33,18 @@ use OCP\IL10N;
 use OCP\ISession;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
+use OCP\Template\ITemplateManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SmsProviderTest extends TestCase {
-
-	/** @var IGateway|MockObject */
-	private $smsGateway;
-
-	/** @var StateStorage|MockObject */
-	private $stateStorage;
-
-	/** @var ISession|MockObject */
-	private $session;
-
-	/** @var ISecureRandom|MockObject */
-	private $random;
-
-	/** @var IL10n|MockObject */
-	private $l10n;
-
-	/** @var SmsProvider */
-	private $provider;
+	private IGateway&MockObject $smsGateway;
+	private StateStorage&MockObject $stateStorage;
+	private ISession&MockObject $session;
+	private ISecureRandom&MockObject $random;
+	private IL10n&MockObject $l10n;
+	private ITemplateManager&MockObject $templateManager;
+	private SmsProvider $provider;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -64,13 +54,15 @@ class SmsProviderTest extends TestCase {
 		$this->session = $this->createMock(ISession::class);
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->l10n = $this->createMock(IL10N::class);
+		$this->templateManager = $this->createMock(ITemplateManager::class);
 
 		$this->provider = new SmsProvider(
 			$this->smsGateway,
 			$this->stateStorage,
 			$this->session,
 			$this->random,
-			$this->l10n
+			$this->l10n,
+			$this->templateManager,
 		);
 	}
 
