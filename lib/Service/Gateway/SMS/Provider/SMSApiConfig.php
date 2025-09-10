@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * @author Marcin Kot <kodek11@gmail.com>
  *
- * Nextcloud - Two-factor Gateway for SMSApi.com
+ * @license GNU AGPL version 3 or any later version
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * @author Claus-Justus Heine <himself@claus-justus-heine.de>
  *
- * Nextcloud - Two-factor Gateway
+ * @license GNU AGPL version 3 or any later version
  *
  * This code is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License, version 3,
