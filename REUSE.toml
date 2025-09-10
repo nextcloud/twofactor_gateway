@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2025 LibreCode coop and contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+version = 1
+SPDX-PackageName = "libresign"
+SPDX-PackageSupplier = "LibreCode <contact@librecode.coop>"
+SPDX-PackageDownloadLocation = "https://github.com/LibreSign/twofactor_gateway/"
+
+default-license = "AGPL-3.0-or-later"
+default-copyright = "2025 LibreCode coop and contributors"
+
+[[annotations]]
+path = ".github/CODEOWNERS"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "none"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = [
+	".tx/config",
+	"composer.json",
+	"composer.lock",
+	"img/*.svg",
+	"krankerl.toml",
+	"package-lock.json",
+	"package.json",
+	"screenshots/*.png",
+	"tests/php/phpunit.xml",
+	"tests/psalm-baseline.xml",
+	"l10n/*.js",
+	"l10n/*.json",
+	"vendor-bin/**/composer.json",
+	"vendor-bin/**/composer.lock"
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 LibreCode coop and contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
