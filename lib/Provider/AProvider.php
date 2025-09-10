@@ -110,7 +110,10 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 
 	#[\Override]
 	public function getPersonalSettings(IUser $user): IPersonalProviderSettings {
-		return new PersonalSettings($this->gatewayName);
+		return new PersonalSettings(
+			$this->gatewayName,
+			$this->gateway->getConfig()->isComplete(),
+		);
 	}
 
 	#[\Override]

@@ -4,10 +4,7 @@
 -->
 <template>
 	<div>
-		<div v-if="!isAvailable">
-			{{ t('twofactor_gateway', 'The {displayName} gateway is not configured.', {displayName: displayName}) }}
-		</div>
-		<div v-else-if="loading">
+		<div v-if="loading">
 			<span class="icon-loading-small" />
 		</div>
 		<div v-else>
@@ -49,6 +46,7 @@
 <script>
 import axios from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
+import { t } from '@nextcloud/l10n'
 
 export default {
 	name: 'GatewaySettings',
@@ -62,11 +60,17 @@ export default {
 			required: true,
 		},
 	},
+
+	setup() {
+		return {
+			t,
+		}
+	},
 	data() {
 		return {
-			loading: true,
+			loading: false,
 			state: 0,
-			isAvailable: true,
+			isAvailable: false,
 			phoneNumber: '',
 			confirmationCode: '',
 			identifier: '',
@@ -77,14 +81,11 @@ export default {
 		axios.get(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
 			.then(({ data }) => {
 				console.debug('loaded state for gateway ' + this.gatewayName, data)
-				this.isAvailable = data.isAvailable
 				this.state = data.state
 				this.phoneNumber = data.phoneNumber
 			})
 			.catch(err => console.info(this.gatewayName + ' gateway is not available', err))
-			.then(() => {
-				this.loading = false
-			})
+			.finally(() => { this.loading = false })
 	},
 	methods: {
 		enable() {
@@ -101,14 +102,13 @@ export default {
 				.then(res => {
 					this.state = 2
 					this.phoneNumber = res.phoneNumber
-					this.loading = false
 				})
 				.catch(e => {
 					console.error(e)
 					this.state = 1
 					this.verificationError = true
-					this.loading = false
 				})
+				.finally(() => { this.loading = false })
 		},
 		confirm() {
 			this.loading = true
@@ -116,33 +116,39 @@ export default {
 			axios.post(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish'), { gateway: this.gatewayName }, {
 				verificationCode: this.confirmationCode,
 			})
-				.then(res => {
+				.then(() => {
 					this.state = 3
-					this.loading = false
 				})
-				.catch(res => {
+				.catch(() => {
 					this.state = 1
 					this.verificationError = true
-					this.loading = false
 				})
+				.finally(() => { this.loading = false })
 		},
-
 		disable() {
 			this.loading = true
 			axios.delete(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
 				.then(res => {
 					this.state = res.state
 					this.phoneNumber = res.phoneNumber
-					this.loading = false
 				})
 				.catch(console.error.bind(this))
+				.finally(() => { this.loading = false })
 		},
 	},
 }
 </script>
 
-<style>
+<style lang="scss">
+li:has(#twofactor-gateway-telegram-is-complete[value="0"]),
+li:has(#twofactor-gateway-sms-is-complete[value="0"]),
+li:has(#twofactor-gateway-xmpp-is-complete[value="0"]),
+li:has(#twofactor-gateway-signal-is-complete[value="0"]) {
+	display: none;
+}
+</style>
+<style lang="scss" scoped>
 	.icon-loading-small {
-		padding-left: 15px;
+		padding-inline-start: 15px;
 	}
 </style>

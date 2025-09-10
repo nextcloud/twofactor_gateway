@@ -2,42 +2,38 @@
   "name": "twofactor_gateway",
   "version": "3.0.0-dev.0",
   "description": "A two-factor auth provider for Nextcloud",
-  "main": "index.js",
-  "directories": {
-    "lib": "lib",
-    "test": "tests"
-  },
+  "type": "module",
   "scripts": {
-    "build": "webpack --node-env production --progress",
-    "dev": "webpack --node-env development --progress",
-    "watch": "webpack --node-env development --progress --watch",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vite build --mode production",
+    "dev": "vite build --mode development",
+    "watch": "vite build --mode development --watch",
     "lint": "eslint --ext .js,.vue src",
     "lint:fix": "eslint --ext .js,.vue src --fix",
     "stylelint": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue",
     "stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --fix"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ChristophWurst/twofactor_gateway.git"
-  },
-  "author": "",
+  "browserslist": [
+    "extends @nextcloud/browserslist-config"
+  ],
+  "author": "Christoph Wurst <christoph@winzerhof-wurst.at>",
   "license": "AGPL-3.0",
   "dependencies": {
-    "@nextcloud/axios": "^2.3.0",
-    "@nextcloud/router": "^2.1.1",
-    "nextcloud_fetch": "^2.1.0",
-    "vue": "^2.7.14"
+    "@nextcloud/axios": "^2.5.1",
+    "@nextcloud/l10n": "^3.4.0",
+    "@nextcloud/router": "^3.0.1",
+    "@nextcloud/vue": "^8.30.0",
+    "vue": "^3.5.21"
   },
   "devDependencies": {
-    "@nextcloud/browserslist-config": "^2.3.0",
-    "@nextcloud/eslint-config": "^8.3.0-beta.0",
-    "@nextcloud/stylelint-config": "^2.3.0",
-    "@nextcloud/webpack-vue-config": "^5.5.1",
-    "webpack-merge": "^5.9.0"
+    "@nextcloud/browserslist-config": "^3.0.1",
+    "@nextcloud/eslint-config": "^8.4.2",
+    "@nextcloud/stylelint-config": "^3.1.0",
+    "@nextcloud/vite-config": "^2.5.0",
+    "vite-plugin-eslint": "^1.8.1",
+    "vite-plugin-stylelint": "^6.0.2"
   },
   "engines": {
-    "node": "^16.0.0",
-    "npm": "^7.0.0 || ^8.0.0"
+    "node": "^22.0.0",
+    "npm": "^10.5.0"
   }
 }

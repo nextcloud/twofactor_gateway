@@ -16,17 +16,17 @@ use OCP\Template\ITemplateManager;
 
 class PersonalSettings implements IPersonalProviderSettings {
 
-	/** @var string */
-	private $gateway;
-
-	public function __construct(string $gateway) {
-		$this->gateway = $gateway;
+	public function __construct(
+		private string $gateway,
+		private bool $isComplete,
+	) {
 	}
 
 	#[\Override]
 	public function getBody(): ITemplate {
 		$template = Server::get(ITemplateManager::class)->getTemplate('twofactor_gateway', 'personal_settings');
 		$template->assign('gateway', $this->gateway);
+		$template->assign('isComplete', $this->isComplete);
 		return $template;
 	}
 }
