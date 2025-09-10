@@ -34,8 +34,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class StateStorageTest extends TestCase {
-	private IConfig|MockObject $config;
-	private IGateway|MockObject $gateway;
+	private IConfig&MockObject $config;
+	private IGateway&MockObject $gateway;
 	private StateStorage $storage;
 
 	protected function setUp(): void {
@@ -90,6 +90,7 @@ class StateStorageTest extends TestCase {
 			->willReturnMap([
 				[$uid, 'twofactor_gateway', 'telegram_verified', 'false', 'true'],
 				[$uid, 'twofactor_gateway', 'telegram_identifier', '', '0123456789'],
+				[$uid, 'twofactor_gateway', 'telegram_verification_code', '', '123456'],
 			]);
 
 		$state = $this->storage->get($user, 'telegram');

@@ -29,24 +29,15 @@ use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class FactoryTest extends TestCase {
-
-	/** @var SignalGateway */
-	private $signalGateway;
-
-	/** @var SMSGateway */
-	private $smsGateway;
-
-	/** @var TelegramGateway */
-	private $telegramGateway;
-
-	/** @var XMPPGateway */
-	private $xmppGateway;
-
-	/** @var Factory */
-	private $factory;
+	private SignalGateway&MockObject $signalGateway;
+	private SMSGateway&MockObject $smsGateway;
+	private TelegramGateway&MockObject $telegramGateway;
+	private XMPPGateway&MockObject $xmppGateway;
+	private Factory $factory;
 
 	protected function setUp(): void {
 		parent::setUp();

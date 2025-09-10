@@ -41,24 +41,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SetupServiceTest extends TestCase {
-
-	/** @var StateStorage|MockObject */
-	private $stateStorage;
-
-	/** @var GatewayFactory|MockObject */
-	private $gatewayFactory;
-
-	/** @var ISecureRandom|MockObject */
-	private $random;
-
-	/** @var ProviderFactory|MockObject */
-	private $providerFactory;
-
-	/** @var IRegistry|MockObject */
-	private $registry;
-
-	/** @var SetupService */
-	private $setupService;
+	private StateStorage&MockObject $stateStorage;
+	private GatewayFactory&MockObject $gatewayFactory;
+	private ISecureRandom&MockObject $random;
+	private ProviderFactory&MockObject $providerFactory;
+	private IRegistry&MockObject $registry;
+	private SetupService $setupService;
 
 	protected function setUp(): void {
 		parent::setUp();
