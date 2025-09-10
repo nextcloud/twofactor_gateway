@@ -14,8 +14,6 @@ use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 
-include_once __DIR__ . '/../../vendor/autoload.php';
-
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'twofactor_gateway';
 
