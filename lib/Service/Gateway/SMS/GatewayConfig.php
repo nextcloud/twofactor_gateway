@@ -60,6 +60,7 @@ class GatewayConfig implements IGatewayConfig {
 		}
 	}
 
+	#[\Override]
 	public function remove(): void {
 		$this->getProvider()->getConfig()->remove();
 	}

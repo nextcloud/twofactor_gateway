@@ -25,4 +25,5 @@ namespace OCA\TwoFactorGateway\Service\Gateway;
 
 interface IGatewayConfig {
 	public function isComplete(): bool;
+	public function remove(): void;
 }

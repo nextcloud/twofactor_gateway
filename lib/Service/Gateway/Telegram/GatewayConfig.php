@@ -62,6 +62,7 @@ class GatewayConfig implements IGatewayConfig {
 		return count(array_intersect($set, self::expected)) === count(self::expected);
 	}
 
+	#[\Override]
 	public function remove(): void {
 		foreach (self::expected as $key) {
 			$this->config->deleteKey(Application::APP_ID, $key);

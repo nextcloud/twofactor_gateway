@@ -36,9 +36,12 @@ use OCP\Authentication\TwoFactorAuth\IProvidesIcons;
 use OCP\Authentication\TwoFactorAuth\IProvidesPersonalSettings;
 use OCP\IL10N;
 use OCP\ISession;
+use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
-use OCP\Template;
+use OCP\Server;
+use OCP\Template\ITemplate;
+use OCP\Template\ITemplateManager;
 
 abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByAdmin, IProvidesPersonalSettings {
 	public const STATE_DISABLED = 0;
@@ -46,40 +49,22 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 	public const STATE_VERIFYING = 2;
 	public const STATE_ENABLED = 3;
 
-	/** @var string */
-	protected $gatewayName;
-
-	/** @var IGateway */
-	protected $gateway;
-
-	/** @var StateStorage */
-	protected $stateStorage;
-
-	/** @var ISession */
-	protected $session;
-
-	/** @var ISecureRandom */
-	protected $secureRandom;
-
-	/** @var IL10N */
-	protected $l10n;
+	protected string $gatewayName;
 
 	private function getSessionKey(): string {
 		return 'twofactor_gateway_' . $this->gatewayName . '_secret';
 	}
 
-	public function __construct(string $gatewayId,
-		IGateway $gateway,
-		StateStorage $stateStorage,
-		ISession $session,
-		ISecureRandom $secureRandom,
-		IL10N $l10n) {
-		$this->gateway = $gateway;
+	public function __construct(
+		string $gatewayId,
+		protected IGateway $gateway,
+		protected StateStorage $stateStorage,
+		protected ISession $session,
+		protected ISecureRandom $secureRandom,
+		protected IL10N $l10n,
+		protected ITemplateManager $templateManager,
+	) {
 		$this->gatewayName = $gatewayId;
-		$this->stateStorage = $stateStorage;
-		$this->session = $session;
-		$this->secureRandom = $secureRandom;
-		$this->l10n = $l10n;
 	}
 
 	#[\Override]
@@ -99,7 +84,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 	}
 
 	#[\Override]
-	public function getTemplate(IUser $user): Template {
+	public function getTemplate(IUser $user): ITemplate {
 		$secret = $this->getSecret();
 
 		try {
@@ -111,11 +96,11 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 					$secret
 				])
 			);
-		} catch (SmsTransmissionException $ex) {
-			return new Template('twofactor_gateway', 'error');
+		} catch (SmsTransmissionException) {
+			return $this->templateManager->getTemplate('twofactor_gateway', 'error');
 		}
 
-		$tmpl = new Template('twofactor_gateway', 'challenge');
+		$tmpl = $this->templateManager->getTemplate('twofactor_gateway', 'challenge');
 		$tmpl->assign('phone', PhoneNumberMask::maskNumber($identifier));
 		return $tmpl;
 	}
@@ -144,12 +129,12 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 
 	#[\Override]
 	public function getLightIcon(): String {
-		return image_path(Application::APP_ID, 'app.svg');
+		return Server::get(IURLGenerator::class)->imagePath(Application::APP_ID, 'app.svg');
 	}
 
 	#[\Override]
 	public function getDarkIcon(): String {
-		return image_path(Application::APP_ID, 'app-dark.svg');
+		return Server::get(IURLGenerator::class)->imagePath(Application::APP_ID, 'app-dark.svg');
 	}
 
 	#[\Override]

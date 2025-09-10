@@ -28,28 +28,13 @@ use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
 
 class Factory {
 
-	/** @var SignalProvider */
-	private $signalProvider;
-
-	/** @var SmsProvider */
-	private $smsProvider;
-
-	/** @var TelegramProvider */
-	private $telegramProvider;
-
-	/** @var XMPPProvider */
-	private $xmppProvider;
-
-	public function __construct(SignalProvider $signalProvider,
-		SmsProvider $smsProvider,
-		TelegramProvider $telegramProvider,
-		XMPPProvider $xmppProvider) {
-		$this->signalProvider = $signalProvider;
-		$this->smsProvider = $smsProvider;
-		$this->telegramProvider = $telegramProvider;
-		$this->xmppProvider = $xmppProvider;
+	public function __construct(
+		private SignalProvider $signalProvider,
+		private SmsProvider $smsProvider,
+		private TelegramProvider $telegramProvider,
+		private XMPPProvider $xmppProvider,
+	) {
 	}
-
 
 	public function getProvider(string $name): AProvider {
 		switch ($name) {

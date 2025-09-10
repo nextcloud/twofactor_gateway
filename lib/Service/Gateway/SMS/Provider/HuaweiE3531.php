@@ -48,6 +48,9 @@ class HuaweiE3531 implements IProvider {
 		try {
 			$sessionTokenResponse = $this->client->get("$url/webserver/SesTokInfo");
 			$sessionTokenXml = simplexml_load_string($sessionTokenResponse->getBody());
+			if ($sessionTokenXml === false) {
+				throw new Exception();
+			}
 
 			$date = date('Y-m-d H:i:s');
 			$messageEscaped = htmlspecialchars($message, ENT_XML1);

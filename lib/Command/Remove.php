@@ -36,27 +36,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Remove extends Command {
 
-	/** @var SignalGateway */
-	private $signalGateway;
-
-	/** @var SMSGateway */
-	private $smsGateway;
-
-	/** @var TelegramGateway */
-	private $telegramGateway;
-
-	/** @var XMPPGateway */
-	private $xmppGateway;
-
-	public function __construct(SignalGateway $signalGateway,
-		SMSGateway $smsGateway,
-		TelegramGateway $telegramGateway,
-		XMPPGateway $xmppGateway) {
+	public function __construct(
+		private SignalGateway $signalGateway,
+		private SMSGateway $smsGateway,
+		private TelegramGateway $telegramGateway,
+		private XMPPGateway $xmppGateway,
+	) {
 		parent::__construct('twofactorauth:gateway:remove');
-		$this->signalGateway = $signalGateway;
-		$this->smsGateway = $smsGateway;
-		$this->telegramGateway = $telegramGateway;
-		$this->xmppGateway = $xmppGateway;
 
 		$this->addArgument(
 			'gateway',

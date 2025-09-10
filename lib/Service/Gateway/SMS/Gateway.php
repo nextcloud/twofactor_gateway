@@ -39,6 +39,9 @@ class Gateway implements IGateway {
 		$this->config->getProvider()->send($identifier, $message);
 	}
 
+	/**
+	 * @return GatewayConfig
+	 */
 	#[\Override]
 	public function getConfig(): IGatewayConfig {
 		return $this->config;

@@ -29,31 +29,13 @@ use OCP\IUser;
 
 class State implements JsonSerializable {
 
-	/** @var IUser */
-	private $user;
-
-	/** @var int */
-	private $state;
-
-	/** @var string */
-	private $gatewayName;
-
-	/** @var string|null */
-	private $identifier;
-
-	/** @var string|null */
-	private $verificationCode;
-
-	public function __construct(IUser $user,
-		int $state,
-		string $gatewayName,
-		?string $identifier = null,
-		?string $verificationCode = null) {
-		$this->user = $user;
-		$this->gatewayName = $gatewayName;
-		$this->state = $state;
-		$this->identifier = $identifier;
-		$this->verificationCode = $verificationCode;
+	public function __construct(
+		private IUser $user,
+		private int $state,
+		private string $gatewayName,
+		private ?string $identifier = null,
+		private ?string $verificationCode = null,
+	) {
 	}
 
 	public static function verifying(IUser $user,
@@ -87,38 +69,23 @@ class State implements JsonSerializable {
 		);
 	}
 
-	/**
-	 * @return IUser
-	 */
 	public function getUser(): IUser {
 		return $this->user;
 	}
 
-	/**
-	 * @return int
-	 */
 	public function getState(): int {
 		return $this->state;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getGatewayName(): string {
 		return $this->gatewayName;
 	}
 
-	/**
-	 * @return string|null
-	 */
-	public function getIdentifier() {
+	public function getIdentifier(): ?string {
 		return $this->identifier;
 	}
 
-	/**
-	 * @return null|string
-	 */
-	public function getVerificationCode() {
+	public function getVerificationCode(): ?string {
 		return $this->verificationCode;
 	}
 

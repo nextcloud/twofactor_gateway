@@ -84,6 +84,9 @@ class Gateway implements IGateway {
 		}
 	}
 
+	/**
+	 * @return GatewayConfig
+	 */
 	#[\Override]
 	public function getConfig(): IGatewayConfig {
 		return $this->config;

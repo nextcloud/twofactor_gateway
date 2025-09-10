@@ -68,10 +68,13 @@ class SMSApi implements IProvider {
 			]);
 
 			$content = curl_exec($c);
+			if ($content === false) {
+				throw new SmsTransmissionException();
+			}
 			$http_status = curl_getinfo($c, CURLINFO_HTTP_CODE);
 
 			curl_close($c);
-			$responseData = json_decode($content->getBody(), true);
+			$responseData = json_decode($content, true);
 
 			if ($responseData['count'] !== 1) {
 				throw new SmsTransmissionException();

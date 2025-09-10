@@ -80,7 +80,7 @@ class Gateway implements IGateway {
 	}
 
 	/**
-	 * @return IGatewayConfig
+	 * @return GatewayConfig
 	 */
 	#[\Override]
 	public function getConfig(): IGatewayConfig {

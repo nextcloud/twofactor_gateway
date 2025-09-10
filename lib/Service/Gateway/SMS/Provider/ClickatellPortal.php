@@ -63,6 +63,9 @@ class ClickatellPortal implements IProvider {
 		}
 	}
 
+	/**
+	 * @return ClickatellPortalConfig
+	 */
 	#[\Override]
 	public function getConfig(): IProviderConfig {
 		return $this->config;
