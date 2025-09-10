@@ -38,7 +38,7 @@ class StateStorage {
 	}
 
 	private function buildConfigKey(string $gatewayName, string $key): string {
-		return "$gatewayName" . "_$key";
+		return $gatewayName . "_$key";
 	}
 
 	private function getUserValue(IUser $user, string $gatewayName, string $key, string $default = ''): string {
