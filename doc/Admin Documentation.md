@@ -275,3 +275,26 @@ occ twofactorauth:gateway:configure sms
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
 [mod_rest]: https://modules.prosody.im/mod_rest.html
 [mod_post_msg]: https://modules.prosody.im/mod_post_msg
+
+
+### Cegedim.Cloud
+URL: https://vortext.cloud.cegedim.com/
+Stability: Experimental
+
+Use the SMS gateway provided by Vortext for sending SMS.
+
+1. First create an user password through an ITCare request : https://itcare.cegedim.cloud/messages
+
+2. Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
+   * Choose the `cegedimcloud` SMS provider.
+   * Choose the endpoint connexion.
+   * Enter successively the application key, the application secret, the consumer key, the account, and the sender.
+
+5. Try to send a test with
+```bash
+occ twofactorauth:gateway:test <uid> sms <receiver>
+```
