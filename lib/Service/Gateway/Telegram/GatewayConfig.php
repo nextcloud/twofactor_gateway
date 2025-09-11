@@ -38,7 +38,7 @@ class GatewayConfig implements IGatewayConfig {
 	}
 
 	public function setBotToken(string $token): void {
-		$this->config->getValueString(Application::APP_ID, 'telegram_bot_token', $token);
+		$this->config->setValueString(Application::APP_ID, 'telegram_bot_token', $token);
 	}
 
 	#[\Override]
