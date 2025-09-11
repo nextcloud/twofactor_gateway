@@ -99,7 +99,7 @@ export default {
 			axios.post(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification/start', { gateway: this.gatewayName }), {
 				identifier: this.identifier,
 			})
-				.then(({ data })=> {
+				.then(({ data }) => {
 					this.state = 2
 					this.phoneNumber = data.ocs.data.phoneNumber
 				})
