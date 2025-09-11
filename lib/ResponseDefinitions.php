@@ -9,6 +9,11 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway;
 
 /**
+ * @psalm-type TwoFactorGatewayState = array{
+ *     gatewayName: string,
+ *     state: int,
+ *     phoneNumber: ?string,
+ * }
  * @psalm-type TwoFactorGatewayCapabilities = array{
  *     features: list<string>,
  *     config: array{

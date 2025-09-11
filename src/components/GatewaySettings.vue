@@ -45,7 +45,7 @@
 
 <script>
 import axios from '@nextcloud/axios'
-import { generateUrl } from '@nextcloud/router'
+import { generateOcsUrl } from '@nextcloud/router'
 import { t } from '@nextcloud/l10n'
 
 export default {
@@ -78,11 +78,11 @@ export default {
 		}
 	},
 	mounted() {
-		axios.get(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
+		axios.get(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
 			.then(({ data }) => {
-				console.debug('loaded state for gateway ' + this.gatewayName, data)
-				this.state = data.state
-				this.phoneNumber = data.phoneNumber
+				console.debug('loaded state for gateway ' + this.gatewayName, data.ocs.data)
+				this.state = data.ocs.data.state
+				this.phoneNumber = data.ocs.data.phoneNumber
 			})
 			.catch(err => console.info(this.gatewayName + ' gateway is not available', err))
 			.finally(() => { this.loading = false })
@@ -96,12 +96,12 @@ export default {
 		verify() {
 			this.loading = true
 			this.verificationError = false
-			axios.post(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/start', { gateway: this.gatewayName }), {
+			axios.post(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification/start', { gateway: this.gatewayName }), {
 				identifier: this.identifier,
 			})
-				.then(res => {
+				.then(data => {
 					this.state = 2
-					this.phoneNumber = res.phoneNumber
+					this.phoneNumber = data.ocs.data.phoneNumber
 				})
 				.catch(e => {
 					console.error(e)
@@ -113,7 +113,7 @@ export default {
 		confirm() {
 			this.loading = true
 
-			axios.post(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish'), { gateway: this.gatewayName }, {
+			axios.post(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish'), { gateway: this.gatewayName }, {
 				verificationCode: this.confirmationCode,
 			})
 				.then(() => {
@@ -127,10 +127,10 @@ export default {
 		},
 		disable() {
 			this.loading = true
-			axios.delete(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
-				.then(res => {
-					this.state = res.state
-					this.phoneNumber = res.phoneNumber
+			axios.delete(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
+				.then(data => {
+					this.state = data.ocs.data.state
+					this.phoneNumber = data.ocs.data.phoneNumber
 				})
 				.catch(console.error.bind(this))
 				.finally(() => { this.loading = false })
