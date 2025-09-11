@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Service;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
+use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
@@ -18,6 +19,7 @@ use OCA\TwoFactorGateway\Provider\Factory;
 use OCA\TwoFactorGateway\Provider\State;
 use OCA\TwoFactorGateway\Service\Gateway\Factory as GatewayFactory;
 use OCP\Authentication\TwoFactorAuth\IRegistry;
+use OCP\IL10N;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
 
@@ -28,6 +30,7 @@ class SetupService {
 		private Factory $providerFactory,
 		private ISecureRandom $random,
 		private IRegistry $providerRegistry,
+		private IL10N $l10n,
 	) {
 	}
 
@@ -50,6 +53,8 @@ class SetupService {
 
 	/**
 	 * Send out confirmation message and save current identifier in user settings
+	 *
+	 * @throws VerificationTransmissionException
 	 */
 	public function startSetup(IUser $user, string $gatewayName, string $identifier): State {
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
@@ -68,29 +73,44 @@ class SetupService {
 	public function finishSetup(IUser $user, string $gatewayName, string $token): State {
 		$state = $this->stateStorage->get($user, $gatewayName);
 		if (is_null($state->getVerificationCode())) {
-			throw new Exception('no verification code set');
+			throw new VerificationException($this->l10n->t('no verification code set'));
 		}
 
 		if ($state->getVerificationCode() !== $token) {
-			throw new VerificationException('verification token mismatch');
+			throw new VerificationException($this->l10n->t('verification token mismatch'));
 		}
 
-		$provider = $this->providerFactory->getProvider($gatewayName);
+		try {
+			$provider = $this->providerFactory->getProvider($gatewayName);
+		} catch (InvalidSmsProviderException) {
+			throw new VerificationException('Invalid provider');
+		}
 		$this->providerRegistry->enableProviderFor($provider, $user);
 
-		return $this->stateStorage->persist(
-			$state->verify()
-		);
+		try {
+			return $this->stateStorage->persist(
+				$state->verify()
+			);
+		} catch (Exception $e) {
+			throw new VerificationException($e->getMessage());
+		}
 	}
 
 	public function disable(IUser $user, string $gatewayName): State {
-		$provider = $this->providerFactory->getProvider($gatewayName);
+		try {
+			$provider = $this->providerFactory->getProvider($gatewayName);
+		} catch (InvalidSmsProviderException) {
+			throw new VerificationException('Invalid provider');
+		}
 		$this->providerRegistry->enableProviderFor($provider, $user);
 		$this->providerRegistry->disableProviderFor($provider, $user);
 
-
-		return $this->stateStorage->persist(
-			State::disabled($user, $gatewayName)
-		);
+		try {
+			return $this->stateStorage->persist(
+				State::disabled($user, $gatewayName)
+			);
+		} catch (Exception $e) {
+			throw new VerificationException($e->getMessage());
+		}
 	}
 }

@@ -37,7 +37,7 @@ class SettingsController extends OCSController {
 	 * Check if the gateway was configured
 	 *
 	 * @param string $gateway The gateway name
-	 * @return JSONResponse<Http::STATUS_OK, TwoFactorGatewayState, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{}, array{}>|JSONResponse<Http::STATUS_SERVICE_UNAVAILABLE, array{}, array{}>
+	 * @return JSONResponse<Http::STATUS_OK, TwoFactorGatewayState, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>|JSONResponse<Http::STATUS_SERVICE_UNAVAILABLE, array{}, array{}>
 	 *
 	 * 200: OK
 	 * 400: User not found
@@ -49,7 +49,7 @@ class SettingsController extends OCSController {
 		$user = $this->userSession->getUser();
 
 		if (is_null($user)) {
-			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+			return new JSONResponse(['message' => 'User not found'], Http::STATUS_BAD_REQUEST);
 		}
 
 		$gatewayConfig = $this->gatewayFactory->getGateway($gateway)->getConfig();
@@ -66,7 +66,7 @@ class SettingsController extends OCSController {
 	 * @param string $gateway The gateway type
 	 * @param string $identifier The identifier to use this gateway
 	 *
-	 * @return JSONResponse<Http::STATUS_OK, array{phoneNumber: ?string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{}, array{}>
+	 * @return JSONResponse<Http::STATUS_OK, array{phoneNumber: ?string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
 	 * 200: OK
 	 * 400: User not found
@@ -77,13 +77,13 @@ class SettingsController extends OCSController {
 		$user = $this->userSession->getUser();
 
 		if (is_null($user)) {
-			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+			return new JSONResponse(['message' => 'User not found'], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
 			$state = $this->setup->startSetup($user, $gateway, $identifier);
-		} catch (VerificationException) {
-			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+		} catch (VerificationException $e) {
+			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new JSONResponse([
@@ -97,7 +97,7 @@ class SettingsController extends OCSController {
 	 * @param string $gateway The gateway type
 	 * @param string $verificationCode Verification code
 	 *
-	 * @return JSONResponse<Http::STATUS_OK, array{}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{}, array{}>
+	 * @return JSONResponse<Http::STATUS_OK, array{}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
 	 * 200: OK
 	 * 400: User not found
@@ -108,7 +108,7 @@ class SettingsController extends OCSController {
 		$user = $this->userSession->getUser();
 
 		if (is_null($user)) {
-			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+			return new JSONResponse(['message' => 'User not found'], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
@@ -124,7 +124,7 @@ class SettingsController extends OCSController {
 	 * Disable a gateway
 	 *
 	 * @param string $gateway The gateway name
-	 * @return JSONResponse<Http::STATUS_OK, array{}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{}, array{}>>
+	 * @return JSONResponse<Http::STATUS_OK, array{}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>>
 	 *
 	 * 200: OK
 	 * 400: User not found
@@ -135,7 +135,7 @@ class SettingsController extends OCSController {
 		$user = $this->userSession->getUser();
 
 		if (is_null($user)) {
-			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+			return new JSONResponse(['message' => 'User not found'], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new JSONResponse($this->setup->disable($user, $gateway));

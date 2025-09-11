@@ -20,7 +20,9 @@ use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\SetupService;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\Authentication\TwoFactorAuth\IRegistry;
+use OCP\IL10N;
 use OCP\IUser;
+use OCP\L10N\IFactory as IL10NFactory;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -32,6 +34,7 @@ class SetupServiceTest extends TestCase {
 	private ProviderFactory&MockObject $providerFactory;
 	private IRegistry&MockObject $registry;
 	private SetupService $setupService;
+	private IL10N $l10n;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -41,13 +44,15 @@ class SetupServiceTest extends TestCase {
 		$this->providerFactory = $this->createMock(ProviderFactory::class);
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->registry = $this->createMock(IRegistry::class);
+		$this->l10n = \OCP\Server::get(IL10NFactory::class)->get(\OCA\Libresign\AppInfo\Application::APP_ID);
 
 		$this->setupService = new SetupService(
 			$this->stateStorage,
 			$this->gatewayFactory,
 			$this->providerFactory,
 			$this->random,
-			$this->registry
+			$this->registry,
+			$this->l10n,
 		);
 	}
 
