@@ -46,7 +46,7 @@ class Gateway implements IGateway {
 		} catch (TelegramSDKException $e) {
 			$this->logger->error($e);
 
-			throw new SmsTransmissionException($e);
+			throw new SmsTransmissionException($e->getMessage());
 		}
 		$this->logger->debug("telegram message to chat $identifier sent");
 	}

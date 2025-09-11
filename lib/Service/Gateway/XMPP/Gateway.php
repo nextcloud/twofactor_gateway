@@ -60,7 +60,7 @@ class Gateway implements IGateway {
 			$result = curl_exec($ch);
 			curl_close($ch);
 			$this->logger->debug("XMPP message to $identifier sent");
-		} catch (\Exception $ex) {
+		} catch (\Exception) {
 			throw new SmsTransmissionException();
 		}
 	}

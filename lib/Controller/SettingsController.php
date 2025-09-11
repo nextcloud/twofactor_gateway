@@ -80,7 +80,11 @@ class SettingsController extends OCSController {
 			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$state = $this->setup->startSetup($user, $gateway, $identifier);
+		try {
+			$state = $this->setup->startSetup($user, $gateway, $identifier);
+		} catch (VerificationException) {
+			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+		}
 
 		return new JSONResponse([
 			'phoneNumber' => $state->getIdentifier(),
