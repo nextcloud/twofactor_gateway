@@ -10,7 +10,9 @@
     "lint": "eslint --ext .js,.vue src",
     "lint:fix": "eslint --ext .js,.vue src --fix",
     "stylelint": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue",
-    "stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --fix"
+    "stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --fix",
+    "typescript:check": "tsc --noEmit",
+    "typescript:generate": "npx openapi-typescript ./openapi.json -t -o src/types/openapi/openapi.ts"
   },
   "browserslist": [
     "extends @nextcloud/browserslist-config"
@@ -29,6 +31,7 @@
     "@nextcloud/eslint-config": "^8.4.2",
     "@nextcloud/stylelint-config": "^3.1.0",
     "@nextcloud/vite-config": "^2.5.0",
+    "openapi-typescript": "^7.9.1",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-stylelint": "^6.0.2"
   },
