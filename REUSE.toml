@@ -28,6 +28,8 @@ path = [
 	"tests/psalm-baseline.xml",
 	"l10n/*.js",
 	"l10n/*.json",
+	"openapi.json",
+	"src/types/openapi/openapi.ts",
 	"vendor-bin/**/composer.json",
 	"vendor-bin/**/composer.lock"
 ]
