@@ -5,7 +5,9 @@
 
 <template>
 	<GatewaySettings gateway-name="telegram" display-name="Telegram">
-		<TelegramInstructions slot="instructions" />
+		<template #instructions>
+			<TelegramInstructions />
+		</template>
 	</GatewaySettings>
 </template>
 

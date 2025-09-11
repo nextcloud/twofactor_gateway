@@ -5,7 +5,9 @@
 
 <template>
 	<GatewaySettings gateway-name="signal" display-name="Signal">
-		<SignalInstructions slot="instructions" />
+		<template #instructions>
+			<SignalInstructions />
+		</template>
 	</GatewaySettings>
 </template>
 

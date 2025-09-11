@@ -5,7 +5,9 @@
 
 <template>
 	<GatewaySettings gateway-name="xmpp" display-name="XMPP">
-		<XMPPInstructions slot="instructions" />
+		<template #instructions>
+			<XMPPInstructions />
+		</template>
 	</GatewaySettings>
 </template>
 
