@@ -113,7 +113,7 @@ export default {
 		confirm() {
 			this.loading = true
 
-			axios.post(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish'), { gateway: this.gatewayName }, {
+			axios.post(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish', { gateway: this.gatewayName }), {
 				verificationCode: this.confirmationCode,
 			})
 				.then(() => {
