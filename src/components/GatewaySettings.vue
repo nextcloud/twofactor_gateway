@@ -19,9 +19,9 @@
 					{{ t('twofactor_gateway', 'Could not verify your code. Please try again.') }}
 				</strong>
 				{{ t('twofactor_gateway', 'Enter your identification (e.g. phone number to start the verification):') }}
-				<NcTextField class="input"
+				<NcTextField v-model="identifier"
+					class="input"
 					spellcheck="false"
-					:value.sync="identifier"
 					:error="verificationError.length > 0"
 					:helper-text="verificationError" />
 				<NcButton @click="verify">
@@ -30,7 +30,8 @@
 			</p>
 			<p v-if="state === 2">
 				{{ t('twofactor_gateway', 'A confirmation code has been sent to {phone}. Please insert the code here:', {phone: phoneNumber}) }}
-				<NcTextField :value.sync="confirmationCode" />
+				<NcTextField v-model="confirmationCode"
+					class="input" />
 				<NcButton @click="confirm">
 					{{ t('twofactor_gateway', 'Confirm') }}
 				</NcButton>
