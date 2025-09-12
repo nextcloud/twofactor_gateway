@@ -25,8 +25,9 @@ interface IGateway {
 	 * @param IUser $user
 	 * @param string $identifier
 	 * @param string $message
+	 * @param array $extra
 	 *
 	 * @throws SmsTransmissionException
 	 */
-	public function send(IUser $user, string $identifier, string $message);
+	public function send(IUser $user, string $identifier, string $message, array $extra = []);
 }

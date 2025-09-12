@@ -15,6 +15,7 @@ use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
+use OCP\IL10N;
 use OCP\IUser;
 use Psr\Log\LoggerInterface;
 use TelegramBot\Api\BotApi;
@@ -28,12 +29,14 @@ class Gateway implements IGateway {
 		private GatewayConfig $gatewayConfig,
 		private IAppConfig $config,
 		private LoggerInterface $logger,
+		private IL10N $l10n,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
-	public function send(IUser $user, string $identifier, string $message) {
+	public function send(IUser $user, string $identifier, string $message, array $extra = []) {
+		$message = $this->l10n->t('`%s` is your Nextcloud verification code.', [$extra['code']]);
 		$this->logger->debug("sending telegram message to $identifier, message: $message");
 		$botToken = $this->gatewayConfig->getBotToken();
 		$this->logger->debug("telegram bot token: $botToken");
@@ -42,7 +45,7 @@ class Gateway implements IGateway {
 
 		$this->logger->debug("sending telegram message to $identifier");
 		try {
-			$api->sendMessage($identifier, $message);
+			$api->sendMessage($identifier, $message, parseMode: 'markdown');
 		} catch (TelegramSDKException $e) {
 			$this->logger->error($e);
 

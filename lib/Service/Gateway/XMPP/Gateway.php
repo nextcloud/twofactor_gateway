@@ -31,7 +31,7 @@ class Gateway implements IGateway {
 	}
 
 	#[\Override]
-	public function send(IUser $user, string $identifier, string $message) {
+	public function send(IUser $user, string $identifier, string $message, array $extra = []) {
 		$this->logger->debug("sending xmpp message to $identifier, message: $message");
 
 		$sender = $this->gatewayConfig->getSender();
