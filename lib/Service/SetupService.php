@@ -59,7 +59,7 @@ class SetupService {
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
 		$gateway = $this->gatewayFactory->getGateway($gatewayName);
 		try {
-			$gateway->send($user, $identifier, $this->l10n->t('%s is your Nextcloud verification code.', [$verificationNumber]));
+			$gateway->send($user, $identifier, $this->l10n->t('%s is your verification code.', [$verificationNumber]));
 		} catch (SmsTransmissionException $ex) {
 			throw new VerificationException($ex->getMessage(), $ex->getCode(), $ex);
 		}
