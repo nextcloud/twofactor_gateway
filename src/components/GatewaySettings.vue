@@ -17,18 +17,22 @@
 			</p>
 			<p v-if="state === 1">
 				<slot name="instructions" />
-				<strong v-if="verificationError === true">
+				<strong v-if="verificationError.length">
 					{{ t('twofactor_gateway', 'Could not verify your code. Please try again.') }}
 				</strong>
 				{{ t('twofactor_gateway', 'Enter your identification (e.g. phone number to start the verification):') }}
-				<input v-model="identifier">
+				<NcTextField class="input"
+					spellcheck="false"
+					:value.sync="identifier"
+					:error="verificationError.length > 0"
+					:helper-text="verificationError" />
 				<button @click="verify">
 					{{ t('twofactor_gateway', 'Verify') }}
 				</button>
 			</p>
 			<p v-if="state === 2">
 				{{ t('twofactor_gateway', 'A confirmation code has been sent to {phone}. Please insert the code here:', {phone: phoneNumber}) }}
-				<input v-model="confirmationCode">
+				<NcTextField :value.sync="confirmationCode" />
 				<button @click="confirm">
 					{{ t('twofactor_gateway', 'Confirm') }}
 				</button>
@@ -46,10 +50,14 @@
 <script>
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
 
 export default {
 	name: 'GatewaySettings',
+	components: {
+		NcTextField,
+	},
 	props: {
 		gatewayName: {
 			type: String,
@@ -74,7 +82,7 @@ export default {
 			phoneNumber: '',
 			confirmationCode: '',
 			identifier: '',
-			verificationError: false,
+			verificationError: '',
 		}
 	},
 	mounted() {
@@ -90,12 +98,12 @@ export default {
 	methods: {
 		enable() {
 			this.state = 1
-			this.verificationError = false
+			this.verificationError = ''
 			this.loading = false
 		},
 		verify() {
 			this.loading = true
-			this.verificationError = false
+			this.verificationError = ''
 			axios.post(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification/start', { gateway: this.gatewayName }), {
 				identifier: this.identifier,
 			})
@@ -103,10 +111,10 @@ export default {
 					this.state = 2
 					this.phoneNumber = data.ocs.data.phoneNumber
 				})
-				.catch(e => {
-					console.error(e)
+				.catch(({ response }) => {
+					console.debug(response.data)
 					this.state = 1
-					this.verificationError = true
+					this.verificationError = response?.data?.message ?? ''
 				})
 				.finally(() => { this.loading = false })
 		},
@@ -119,9 +127,9 @@ export default {
 				.then(() => {
 					this.state = 3
 				})
-				.catch(() => {
+				.catch(({ response }) => {
 					this.state = 1
-					this.verificationError = true
+					this.verificationError = response?.data?.ocs?.data?.message ?? ''
 				})
 				.finally(() => { this.loading = false })
 		},
@@ -150,5 +158,11 @@ li:has(#twofactor-gateway-signal-is-complete[value="0"]) {
 <style lang="scss" scoped>
 	.icon-loading-small {
 		padding-inline-start: 15px;
+	}
+	.input {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		max-width: 400px;
 	}
 </style>
