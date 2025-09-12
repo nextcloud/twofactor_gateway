@@ -4,16 +4,14 @@
 -->
 <template>
 	<div>
-		<div v-if="loading">
-			<span class="icon-loading-small" />
-		</div>
+		<NcLoadingIcon v-if="loading" :size="20" />
 		<div v-else>
 			<p v-if="state === 0">
 				<slot name="instructions" />
 				{{ t('twofactor_gateway', 'You are not using {displayName} for two-factor authentication at the moment.', {displayName: displayName}) }}
-				<button @click="enable">
+				<NcButton @click="enable">
 					{{ t('twofactor_gateway', 'Enable') }}
-				</button>
+				</NcButton>
 			</p>
 			<p v-if="state === 1">
 				<slot name="instructions" />
@@ -26,22 +24,22 @@
 					:value.sync="identifier"
 					:error="verificationError.length > 0"
 					:helper-text="verificationError" />
-				<button @click="verify">
+				<NcButton @click="verify">
 					{{ t('twofactor_gateway', 'Verify') }}
-				</button>
+				</NcButton>
 			</p>
 			<p v-if="state === 2">
 				{{ t('twofactor_gateway', 'A confirmation code has been sent to {phone}. Please insert the code here:', {phone: phoneNumber}) }}
 				<NcTextField :value.sync="confirmationCode" />
-				<button @click="confirm">
+				<NcButton @click="confirm">
 					{{ t('twofactor_gateway', 'Confirm') }}
-				</button>
+				</NcButton>
 			</p>
 			<p v-if="state === 3">
 				{{ t('twofactor_gateway', 'Your account was successfully configured to receive messages via {displayName}.', {displayName: displayName}) }}
-				<button @click="disable">
+				<NcButton @click="disable">
 					{{ t('twofactor_gateway', 'Disable') }}
-				</button>
+				</NcButton>
 			</p>
 		</div>
 	</div>
@@ -50,12 +48,16 @@
 <script>
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
 
 export default {
 	name: 'GatewaySettings',
 	components: {
+		NcButton,
+		NcLoadingIcon,
 		NcTextField,
 	},
 	props: {
