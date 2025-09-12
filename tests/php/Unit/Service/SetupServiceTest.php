@@ -11,7 +11,6 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\VerificationException;
-use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
 use OCA\TwoFactorGateway\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\Factory as ProviderFactory;
 use OCA\TwoFactorGateway\Provider\State;
@@ -66,8 +65,8 @@ class SetupServiceTest extends TestCase {
 			->willReturn($gateway);
 		$gateway->expects($this->once())
 			->method('send')
-			->willThrowException(new VerificationTransmissionException());
-		$this->expectException(VerificationTransmissionException::class);
+			->willThrowException(new VerificationException());
+		$this->expectException(VerificationException::class);
 
 		$this->setupService->startSetup($user, 'sms', $identifier);
 	}

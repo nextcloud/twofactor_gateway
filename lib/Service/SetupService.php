@@ -14,7 +14,6 @@ use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
 use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
-use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
 use OCA\TwoFactorGateway\Provider\Factory;
 use OCA\TwoFactorGateway\Provider\State;
 use OCA\TwoFactorGateway\Service\Gateway\Factory as GatewayFactory;
@@ -54,7 +53,7 @@ class SetupService {
 	/**
 	 * Send out confirmation message and save current identifier in user settings
 	 *
-	 * @throws VerificationTransmissionException
+	 * @throws VerificationException
 	 */
 	public function startSetup(IUser $user, string $gatewayName, string $identifier): State {
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
@@ -62,7 +61,7 @@ class SetupService {
 		try {
 			$gateway->send($user, $identifier, "$verificationNumber is your Nextcloud verification code.");
 		} catch (SmsTransmissionException $ex) {
-			throw new VerificationTransmissionException('could not send verification code', $ex->getCode(), $ex);
+			throw new VerificationException('could not send verification code', $ex->getCode(), $ex);
 		}
 
 		return $this->stateStorage->persist(

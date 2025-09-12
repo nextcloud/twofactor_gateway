@@ -113,7 +113,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Record<string, never>;
+                    "application/json": {
+                        message: string;
+                    };
                 };
             };
             /** @description Gateway wasn't configured yed */
@@ -157,7 +159,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Record<string, never>;
+                    "application/json": {
+                        message: string;
+                    };
                 };
             };
         };
@@ -201,7 +205,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Record<string, never>;
+                    "application/json": {
+                        message: string;
+                    };
                 };
             };
         };
@@ -243,7 +249,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Record<string, never>;
+                    "application/json": {
+                        message: string;
+                    };
                 };
             };
         };
