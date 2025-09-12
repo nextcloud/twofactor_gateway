@@ -21,7 +21,7 @@
 				{{ t('twofactor_gateway', 'Enter your identification (e.g. phone number to start the verification):') }}
 				<NcTextField v-model="identifier"
 					class="input"
-					spellcheck="false"
+					:spellcheck="false"
 					:error="verificationError.length > 0"
 					:helper-text="verificationError" />
 				<NcButton @click="verify">
@@ -31,7 +31,8 @@
 			<p v-if="state === 2">
 				{{ t('twofactor_gateway', 'A confirmation code has been sent to {phone}. Please insert the code here:', {phone: phoneNumber}) }}
 				<NcTextField v-model="confirmationCode"
-					class="input" />
+					class="input"
+					:spellcheck="false" />
 				<NcButton @click="confirm">
 					{{ t('twofactor_gateway', 'Confirm') }}
 				</NcButton>
