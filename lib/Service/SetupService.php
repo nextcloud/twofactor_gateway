@@ -61,7 +61,7 @@ class SetupService {
 		try {
 			$gateway->send($user, $identifier, "$verificationNumber is your Nextcloud verification code.");
 		} catch (SmsTransmissionException $ex) {
-			throw new VerificationException('could not send verification code', $ex->getCode(), $ex);
+			throw new VerificationException($this->l10n->t('could not send verification code'), $ex->getCode(), $ex);
 		}
 
 		return $this->stateStorage->persist(
