@@ -28,6 +28,6 @@ class GatewayConfig extends AGatewayConfig {
 	}
 
 	public function setUrl(string $url): void {
-		$this->config->getValueString(Application::APP_ID, 'signal_url', $url);
+		$this->config->setValueString(Application::APP_ID, 'signal_url', $url);
 	}
 }

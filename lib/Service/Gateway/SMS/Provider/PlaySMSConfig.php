@@ -24,7 +24,7 @@ class PlaySMSConfig extends AGatewayConfig {
 	}
 
 	public function setUrl(string $url): void {
-		$this->config->getValueString(Application::APP_ID, 'playsms_url', $url);
+		$this->config->setValueString(Application::APP_ID, 'playsms_url', $url);
 	}
 
 	public function getUser(): string {
@@ -32,7 +32,7 @@ class PlaySMSConfig extends AGatewayConfig {
 	}
 
 	public function setUser(string $user): void {
-		$this->config->getValueString(Application::APP_ID, 'playsms_user', $user);
+		$this->config->setValueString(Application::APP_ID, 'playsms_user', $user);
 	}
 
 	public function getPassword(): string {
@@ -40,6 +40,6 @@ class PlaySMSConfig extends AGatewayConfig {
 	}
 
 	public function setPassword(string $password): void {
-		$this->config->getValueString(Application::APP_ID, 'playsms_password', $password);
+		$this->config->setValueString(Application::APP_ID, 'playsms_password', $password);
 	}
 }

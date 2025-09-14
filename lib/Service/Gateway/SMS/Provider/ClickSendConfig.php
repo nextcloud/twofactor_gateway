@@ -23,7 +23,7 @@ class ClickSendConfig extends AGatewayConfig {
 	}
 
 	public function setUser(string $user): void {
-		$this->config->getValueString(Application::APP_ID, 'clicksend_user', $user);
+		$this->config->setValueString(Application::APP_ID, 'clicksend_user', $user);
 	}
 
 	public function getApiKey(): string {
@@ -31,6 +31,6 @@ class ClickSendConfig extends AGatewayConfig {
 	}
 
 	public function setApiKey(string $password): void {
-		$this->config->getValueString(Application::APP_ID, 'clicksend_apikey', $password);
+		$this->config->setValueString(Application::APP_ID, 'clicksend_apikey', $password);
 	}
 }

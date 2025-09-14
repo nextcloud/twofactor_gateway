@@ -47,26 +47,26 @@ class OvhConfig extends AGatewayConfig {
 	}
 
 	public function setApplicationKey(string $appKey): void {
-		$this->config->getValueString(Application::APP_ID, 'ovh_application_key', $appKey);
+		$this->config->setValueString(Application::APP_ID, 'ovh_application_key', $appKey);
 	}
 
 	public function setApplicationSecret(string $appSecret): void {
-		$this->config->getValueString(Application::APP_ID, 'ovh_application_secret', $appSecret);
+		$this->config->setValueString(Application::APP_ID, 'ovh_application_secret', $appSecret);
 	}
 
 	public function setConsumerKey(string $consumerKey): void {
-		$this->config->getValueString(Application::APP_ID, 'ovh_consumer_key', $consumerKey);
+		$this->config->setValueString(Application::APP_ID, 'ovh_consumer_key', $consumerKey);
 	}
 
 	public function setEndpoint(string $endpoint): void {
-		$this->config->getValueString(Application::APP_ID, 'ovh_endpoint', $endpoint);
+		$this->config->setValueString(Application::APP_ID, 'ovh_endpoint', $endpoint);
 	}
 
 	public function setAccount($account): void {
-		$this->config->getValueString(Application::APP_ID, 'ovh_account', $account);
+		$this->config->setValueString(Application::APP_ID, 'ovh_account', $account);
 	}
 
 	public function setSender($sender): void {
-		$this->config->getValueString(Application::APP_ID, 'ovh_sender', $sender);
+		$this->config->setValueString(Application::APP_ID, 'ovh_sender', $sender);
 	}
 }

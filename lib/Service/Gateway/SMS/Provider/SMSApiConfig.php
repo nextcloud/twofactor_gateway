@@ -27,10 +27,10 @@ class SMSApiConfig extends AGatewayConfig {
 	}
 
 	public function setToken(string $token): void {
-		$this->config->getValueString(Application::APP_ID, 'smsapi_token', $token);
+		$this->config->setValueString(Application::APP_ID, 'smsapi_token', $token);
 	}
 
 	public function setSender(string $sender): void {
-		$this->config->getValueString(Application::APP_ID, 'smsapi_sender', $sender);
+		$this->config->setValueString(Application::APP_ID, 'smsapi_sender', $sender);
 	}
 }

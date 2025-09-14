@@ -24,7 +24,7 @@ class SipGateConfig extends AGatewayConfig {
 	}
 
 	public function setTokenId(string $tokenId): void {
-		$this->config->getValueString(Application::APP_ID, 'sipgate_token_id', $tokenId);
+		$this->config->setValueString(Application::APP_ID, 'sipgate_token_id', $tokenId);
 	}
 
 	public function getAccessToken(): string {
@@ -32,7 +32,7 @@ class SipGateConfig extends AGatewayConfig {
 	}
 
 	public function setAccessToken(string $accessToken): void {
-		$this->config->getValueString(Application::APP_ID, 'sipgate_access_token', $accessToken);
+		$this->config->setValueString(Application::APP_ID, 'sipgate_access_token', $accessToken);
 	}
 
 	public function getWebSmsExtension(): string {
@@ -40,6 +40,6 @@ class SipGateConfig extends AGatewayConfig {
 	}
 
 	public function setWebSmsExtension(string $webSmsExtension): void {
-		$this->config->getValueString(Application::APP_ID, 'sipgate_web_sms_extension', $webSmsExtension);
+		$this->config->setValueString(Application::APP_ID, 'sipgate_web_sms_extension', $webSmsExtension);
 	}
 }

@@ -22,6 +22,6 @@ class SpryngSMSConfig extends AGatewayConfig {
 	}
 
 	public function setApiToken(string $user): void {
-		$this->config->getValueString(Application::APP_ID, 'spryng_apitoken', $user);
+		$this->config->setValueString(Application::APP_ID, 'spryng_apitoken', $user);
 	}
 }

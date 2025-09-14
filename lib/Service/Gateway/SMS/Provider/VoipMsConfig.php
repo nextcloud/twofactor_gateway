@@ -24,7 +24,7 @@ class VoipMsConfig extends AGatewayConfig {
 	}
 
 	public function setUser(string $user): void {
-		$this->config->getValueString(Application::APP_ID, 'voipms_api_username', $user);
+		$this->config->setValueString(Application::APP_ID, 'voipms_api_username', $user);
 	}
 
 	public function getPassword(): string {
@@ -32,7 +32,7 @@ class VoipMsConfig extends AGatewayConfig {
 	}
 
 	public function setPassword(string $password): void {
-		$this->config->getValueString(Application::APP_ID, 'voipms_api_password', $password);
+		$this->config->setValueString(Application::APP_ID, 'voipms_api_password', $password);
 	}
 
 	public function getDid(): string {
@@ -40,6 +40,6 @@ class VoipMsConfig extends AGatewayConfig {
 	}
 
 	public function setDid(string $did): void {
-		$this->config->getValueString(Application::APP_ID, 'voipms_did', $did);
+		$this->config->setValueString(Application::APP_ID, 'voipms_did', $did);
 	}
 }

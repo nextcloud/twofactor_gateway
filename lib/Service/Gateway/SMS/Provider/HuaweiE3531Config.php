@@ -22,6 +22,6 @@ class HuaweiE3531Config extends AGatewayConfig {
 	}
 
 	public function setUrl(string $url): void {
-		$this->config->getValueString(Application::APP_ID, 'huawei_e3531_api', $url);
+		$this->config->setValueString(Application::APP_ID, 'huawei_e3531_api', $url);
 	}
 }

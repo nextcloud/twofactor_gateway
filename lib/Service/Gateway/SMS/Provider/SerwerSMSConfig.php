@@ -32,14 +32,14 @@ class SerwerSMSConfig extends AGatewayConfig {
 	}
 
 	public function setLogin(string $login): void {
-		$this->config->getValueString(Application::APP_ID, 'serwersms_login', $login);
+		$this->config->setValueString(Application::APP_ID, 'serwersms_login', $login);
 	}
 
 	public function setPassword(string $password): void {
-		$this->config->getValueString(Application::APP_ID, 'serwersms_password', $password);
+		$this->config->setValueString(Application::APP_ID, 'serwersms_password', $password);
 	}
 
 	public function setSender(string $sender): void {
-		$this->config->getValueString(Application::APP_ID, 'serwersms_sender', $sender);
+		$this->config->setValueString(Application::APP_ID, 'serwersms_sender', $sender);
 	}
 }

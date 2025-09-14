@@ -22,7 +22,7 @@ class ClickatellPortalConfig extends AGatewayConfig {
 	}
 
 	public function setApiKey(string $apiKey): void {
-		$this->config->getValueString(Application::APP_ID, 'clickatell_portal_apikey', $apiKey);
+		$this->config->setValueString(Application::APP_ID, 'clickatell_portal_apikey', $apiKey);
 	}
 
 	public function getFromNumber(): string {
@@ -30,7 +30,7 @@ class ClickatellPortalConfig extends AGatewayConfig {
 	}
 
 	public function setFromNumber(string $fromNumber): void {
-		$this->config->getValueString(Application::APP_ID, 'clickatell_portal_from', $fromNumber);
+		$this->config->setValueString(Application::APP_ID, 'clickatell_portal_from', $fromNumber);
 	}
 
 	public function deleteFromNumber(): void {

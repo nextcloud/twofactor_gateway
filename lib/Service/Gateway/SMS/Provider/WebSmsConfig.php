@@ -23,7 +23,7 @@ class WebSmsConfig extends AGatewayConfig {
 	}
 
 	public function setUser(string $user): void {
-		$this->config->getValueString(Application::APP_ID, 'websms_de_user', $user);
+		$this->config->setValueString(Application::APP_ID, 'websms_de_user', $user);
 	}
 
 	public function getPassword(): string {
@@ -31,6 +31,6 @@ class WebSmsConfig extends AGatewayConfig {
 	}
 
 	public function setPassword(string $password): void {
-		$this->config->getValueString(Application::APP_ID, 'websms_de_password', $password);
+		$this->config->setValueString(Application::APP_ID, 'websms_de_password', $password);
 	}
 }

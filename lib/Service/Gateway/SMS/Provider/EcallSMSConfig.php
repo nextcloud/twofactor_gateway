@@ -24,7 +24,7 @@ class EcallSMSConfig extends AGatewayConfig {
 	}
 
 	public function setUser(string $user): void {
-		$this->config->getValueString(Application::APP_ID, 'ecallsms_username', $user);
+		$this->config->setValueString(Application::APP_ID, 'ecallsms_username', $user);
 	}
 
 	public function getPassword(): string {
@@ -32,7 +32,7 @@ class EcallSMSConfig extends AGatewayConfig {
 	}
 
 	public function setPassword(string $password): void {
-		$this->config->getValueString(Application::APP_ID, 'ecallsms_password', $password);
+		$this->config->setValueString(Application::APP_ID, 'ecallsms_password', $password);
 	}
 
 	public function getSenderId(): string {
@@ -40,6 +40,6 @@ class EcallSMSConfig extends AGatewayConfig {
 	}
 
 	public function setSenderId(string $senderid): void {
-		$this->config->getValueString(Application::APP_ID, 'ecallsms_senderid', $senderid);
+		$this->config->setValueString(Application::APP_ID, 'ecallsms_senderid', $senderid);
 	}
 }

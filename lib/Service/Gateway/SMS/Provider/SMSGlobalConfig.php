@@ -24,7 +24,7 @@ class SMSGlobalConfig extends AGatewayConfig {
 	}
 
 	public function setUrl(string $url): void {
-		$this->config->getValueString(Application::APP_ID, 'smsglobal_url', $url);
+		$this->config->setValueString(Application::APP_ID, 'smsglobal_url', $url);
 	}
 
 	public function getUser(): string {
@@ -32,7 +32,7 @@ class SMSGlobalConfig extends AGatewayConfig {
 	}
 
 	public function setUser(string $user): void {
-		$this->config->getValueString(Application::APP_ID, 'smsglobal_user', $user);
+		$this->config->setValueString(Application::APP_ID, 'smsglobal_user', $user);
 	}
 
 	public function getPassword(): string {
@@ -40,6 +40,6 @@ class SMSGlobalConfig extends AGatewayConfig {
 	}
 
 	public function setPassword(string $password): void {
-		$this->config->getValueString(Application::APP_ID, 'smsglobal_password', $password);
+		$this->config->setValueString(Application::APP_ID, 'smsglobal_password', $password);
 	}
 }

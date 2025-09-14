@@ -22,6 +22,6 @@ class Sms77IoConfig extends AGatewayConfig {
 	}
 
 	public function setApiKey(string $apiKey): void {
-		$this->config->getValueString(Application::APP_ID, 'sms77io_api_key', $apiKey);
+		$this->config->setValueString(Application::APP_ID, 'sms77io_api_key', $apiKey);
 	}
 }
