@@ -163,6 +163,7 @@ li:has(#twofactor-gateway-signal-is-complete[value="0"]) {
 	.icon-loading-small {
 		padding-inline-start: 15px;
 	}
+
 	.input {
 		display: flex;
 		flex-direction: column;
