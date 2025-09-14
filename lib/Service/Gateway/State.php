@@ -12,11 +12,9 @@ class State {
 	public const VERIFYING = 1;
 	public const ENABLED = 2;
 
-	/** @var int */
-	private $state;
-
-	private function __construct(int $state) {
-		$this->state = $state;
+	private function __construct(
+		private int $state,
+	) {
 	}
 
 	public static function disabled(): State {
