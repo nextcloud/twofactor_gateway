@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider;
 
-use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway;
+use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IL10N;
 use OCP\ISession;
@@ -17,7 +17,8 @@ use OCP\Security\ISecureRandom;
 use OCP\Template\ITemplateManager;
 
 class XMPPProvider extends AProvider {
-	public function __construct(Gateway $smsGateway,
+	public function __construct(
+		XMPPGateway $smsGateway,
 		StateStorage $stateStorage,
 		ISession $session,
 		ISecureRandom $secureRandom,

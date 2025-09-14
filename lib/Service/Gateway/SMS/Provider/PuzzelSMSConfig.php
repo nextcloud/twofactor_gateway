@@ -10,37 +10,22 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCP\IAppConfig;
-use function array_intersect;
+use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
-class PuzzelSMSConfig implements IProviderConfig {
-	private const expected = [
+class PuzzelSMSConfig extends AGatewayConfig {
+	protected const expected = [
 		'puzzel_url',
 		'puzzel_user',
 		'puzzel_password',
 		'puzzel_serviceid',
 	];
 
-	public function __construct(
-		private IAppConfig $config,
-	) {
-	}
-
-	private function getOrFail(string $key): string {
-		$val = $this->config->getValueString(Application::APP_ID, $key);
-		if (empty($val)) {
-			throw new ConfigurationException();
-		}
-		return $val;
-	}
-
 	public function getUrl(): string {
 		return $this->getOrFail('puzzel_url');
 	}
 
 	public function setUrl(string $url): void {
-		$this->config->getValueString(Application::APP_ID, 'puzzel_url', $url);
+		$this->config->setValueString(Application::APP_ID, 'puzzel_url', $url);
 	}
 
 	public function getUser(): string {
@@ -48,7 +33,7 @@ class PuzzelSMSConfig implements IProviderConfig {
 	}
 
 	public function setUser(string $user): void {
-		$this->config->getValueString(Application::APP_ID, 'puzzel_user', $user);
+		$this->config->setValueString(Application::APP_ID, 'puzzel_user', $user);
 	}
 
 	public function getPassword(): string {
@@ -56,7 +41,7 @@ class PuzzelSMSConfig implements IProviderConfig {
 	}
 
 	public function setPassword(string $password): void {
-		$this->config->getValueString(Application::APP_ID, 'puzzel_password', $password);
+		$this->config->setValueString(Application::APP_ID, 'puzzel_password', $password);
 	}
 
 	public function getServiceId(): string {
@@ -64,19 +49,6 @@ class PuzzelSMSConfig implements IProviderConfig {
 	}
 
 	public function setServiceId(string $serviceid): void {
-		$this->config->getValueString(Application::APP_ID, 'puzzel_serviceid', $serviceid);
-	}
-
-	#[\Override]
-	public function isComplete(): bool {
-		$set = $this->config->getKeys(Application::APP_ID);
-		return count(array_intersect($set, self::expected)) === count(self::expected);
-	}
-
-	#[\Override]
-	public function remove() {
-		foreach (self::expected as $key) {
-			$this->config->deleteKey(Application::APP_ID, $key);
-		}
+		$this->config->setValueString(Application::APP_ID, 'puzzel_serviceid', $serviceid);
 	}
 }

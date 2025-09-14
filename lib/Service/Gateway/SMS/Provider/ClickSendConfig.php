@@ -10,35 +10,20 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCP\IAppConfig;
-use function array_intersect;
+use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
-class ClickSendConfig implements IProviderConfig {
-	private const expected = [
+class ClickSendConfig extends AGatewayConfig {
+	protected const expected = [
 		'clicksend_user',
 		'clicksend_apikey',
 	];
-
-	public function __construct(
-		private IAppConfig $config,
-	) {
-	}
-
-	private function getOrFail(string $key): string {
-		$val = $this->config->getValueString(Application::APP_ID, $key);
-		if (empty($val)) {
-			throw new ConfigurationException();
-		}
-		return $val;
-	}
 
 	public function getUser(): string {
 		return $this->getOrFail('clicksend_user');
 	}
 
 	public function setUser(string $user): void {
-		$this->config->getValueString(Application::APP_ID, 'clicksend_user', $user);
+		$this->config->setValueString(Application::APP_ID, 'clicksend_user', $user);
 	}
 
 	public function getApiKey(): string {
@@ -46,19 +31,6 @@ class ClickSendConfig implements IProviderConfig {
 	}
 
 	public function setApiKey(string $password): void {
-		$this->config->getValueString(Application::APP_ID, 'clicksend_apikey', $password);
-	}
-
-	#[\Override]
-	public function isComplete(): bool {
-		$set = $this->config->getKeys(Application::APP_ID);
-		return count(array_intersect($set, self::expected)) === count(self::expected);
-	}
-
-	#[\Override]
-	public function remove() {
-		foreach (self::expected as $key) {
-			$this->config->deleteKey(Application::APP_ID, $key);
-		}
+		$this->config->setValueString(Application::APP_ID, 'clicksend_apikey', $password);
 	}
 }

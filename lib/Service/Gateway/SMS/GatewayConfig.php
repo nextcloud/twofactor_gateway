@@ -11,14 +11,14 @@ namespace OCA\TwoFactorGateway\Service\Gateway\SMS;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
+use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\IProvider;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ProviderFactory;
 use OCP\IAppConfig;
 
-class GatewayConfig implements IGatewayConfig {
+class GatewayConfig extends AGatewayConfig {
 	public function __construct(
-		private IAppConfig $config,
+		public IAppConfig $config,
 		private ProviderFactory $providerFactory,
 	) {
 	}
@@ -40,7 +40,7 @@ class GatewayConfig implements IGatewayConfig {
 	public function isComplete(): bool {
 		try {
 			$provider = $this->getProvider();
-			return $provider->getConfig()->isComplete();
+			return $provider->config->isComplete();
 		} catch (ConfigurationException $ex) {
 			return false;
 		}
@@ -48,6 +48,6 @@ class GatewayConfig implements IGatewayConfig {
 
 	#[\Override]
 	public function remove(): void {
-		$this->getProvider()->getConfig()->remove();
+		$this->getProvider()->config->remove();
 	}
 }

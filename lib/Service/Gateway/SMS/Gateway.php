@@ -10,26 +10,17 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS;
 
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\IUser;
 
 class Gateway implements IGateway {
 
 	public function __construct(
-		private GatewayConfig $config,
+		public GatewayConfig $config,
 	) {
 	}
 
 	#[\Override]
-	public function send(IUser $user, string $identifier, string $message) {
+	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
 		$this->config->getProvider()->send($identifier, $message);
-	}
-
-	/**
-	 * @return GatewayConfig
-	 */
-	#[\Override]
-	public function getConfig(): IGatewayConfig {
-		return $this->config;
 	}
 }

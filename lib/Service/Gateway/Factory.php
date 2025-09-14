@@ -25,17 +25,12 @@ class Factory {
 	}
 
 	public function getGateway(string $name): IGateway {
-		switch ($name) {
-			case 'signal':
-				return $this->signalGateway;
-			case 'sms':
-				return $this->smsGateway;
-			case 'telegram':
-				return $this->telegramGateway;
-			case 'xmpp':
-				return $this->xmppGateway;
-			default:
-				throw new Exception("Invalid gateway <$name>");
-		}
+		return match ($name) {
+			'signal' => $this->signalGateway,
+			'sms' => $this->smsGateway,
+			'telegram' => $this->telegramGateway,
+			'xmpp' => $this->xmppGateway,
+			default => throw new Exception("Invalid gateway $name"),
+		};
 	}
 }

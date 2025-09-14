@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -21,16 +21,15 @@ class ClickSend implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private ClickSendConfig $config,
+		public ClickSendConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$apiKey = $config->getApiKey();
-		$username = $config->getUser();
+		$apiKey = $this->config->getApiKey();
+		$username = $this->config->getUser();
 		try {
 			$this->client->get('https://api-mapper.clicksend.com/http/v2/send.php', [
 				'query' => [
@@ -43,15 +42,7 @@ class ClickSend implements IProvider {
 				],
 			]);
 		} catch (Exception $ex) {
-			throw new SmsTransmissionException();
+			throw new MessageTransmissionException();
 		}
-	}
-
-	/**
-	 * @return ClickSendConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

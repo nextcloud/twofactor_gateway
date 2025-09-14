@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -21,18 +21,16 @@ class EcallSMS implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private EcallSMSConfig $config,
+		public EcallSMSConfig $config,
 	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$user = $config->getUser();
-		$password = $config->getPassword();
-		$senderId = $config->getSenderId();
+		$user = $this->config->getUser();
+		$password = $this->config->getPassword();
+		$senderId = $this->config->getSenderId();
 		try {
 			$this->client->get('https://url.ecall.ch/api/sms', [
 				'query' => [
@@ -44,15 +42,7 @@ class EcallSMS implements IProvider {
 				],
 			]);
 		} catch (Exception $ex) {
-			throw new SmsTransmissionException();
+			throw new MessageTransmissionException();
 		}
-	}
-
-	/**
-	 * @return EcallSMSConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

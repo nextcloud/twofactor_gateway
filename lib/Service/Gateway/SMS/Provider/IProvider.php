@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 
 interface IProvider {
 
@@ -17,9 +17,7 @@ interface IProvider {
 	 * @param string $identifier
 	 * @param string $message
 	 *
-	 * @throws SmsTransmissionException
+	 * @throws MessageTransmissionException
 	 */
 	public function send(string $identifier, string $message);
-
-	public function getConfig(): IProviderConfig;
 }

@@ -9,31 +9,27 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\Telegram;
 
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
-use OCP\Http\Client\IClient;
-use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
+use OCP\IL10N;
 use OCP\IUser;
 use Psr\Log\LoggerInterface;
 use TelegramBot\Api\BotApi;
 use TelegramBot\Api\Exception as TelegramSDKException;
 
 class Gateway implements IGateway {
-	private IClient $client;
-
 	public function __construct(
-		IClientService $clientService,
-		private GatewayConfig $gatewayConfig,
-		private IAppConfig $config,
+		public GatewayConfig $gatewayConfig,
+		public IAppConfig $config,
 		private LoggerInterface $logger,
+		private IL10N $l10n,
 	) {
-		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
-	public function send(IUser $user, string $identifier, string $message) {
+	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
+		$message = $this->l10n->t('`%s` is your Nextcloud verification code.', [$extra['code']]);
 		$this->logger->debug("sending telegram message to $identifier, message: $message");
 		$botToken = $this->gatewayConfig->getBotToken();
 		$this->logger->debug("telegram bot token: $botToken");
@@ -42,20 +38,12 @@ class Gateway implements IGateway {
 
 		$this->logger->debug("sending telegram message to $identifier");
 		try {
-			$api->sendMessage($identifier, $message);
+			$api->sendMessage($identifier, $message, parseMode: 'markdown');
 		} catch (TelegramSDKException $e) {
 			$this->logger->error($e);
 
-			throw new SmsTransmissionException($e);
+			throw new MessageTransmissionException($e->getMessage());
 		}
 		$this->logger->debug("telegram message to chat $identifier sent");
-	}
-
-	/**
-	 * @return GatewayConfig
-	 */
-	#[\Override]
-	public function getConfig(): IGatewayConfig {
-		return $this->gatewayConfig;
 	}
 }

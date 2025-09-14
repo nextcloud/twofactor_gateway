@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -21,7 +21,7 @@ class SMSApi implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private SMSApiConfig $config,
+		public SMSApiConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
@@ -29,9 +29,8 @@ class SMSApi implements IProvider {
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$sender = $config->getSender();
-		$token = $config->getToken();
+		$sender = $this->config->getSender();
+		$token = $this->config->getToken();
 		$url = 'https://api.smsapi.com/sms.do';
 
 		$params = [
@@ -55,7 +54,7 @@ class SMSApi implements IProvider {
 
 			$content = curl_exec($c);
 			if ($content === false) {
-				throw new SmsTransmissionException();
+				throw new MessageTransmissionException();
 			}
 			$http_status = curl_getinfo($c, CURLINFO_HTTP_CODE);
 
@@ -63,18 +62,10 @@ class SMSApi implements IProvider {
 			$responseData = json_decode($content, true);
 
 			if ($responseData['count'] !== 1) {
-				throw new SmsTransmissionException();
+				throw new MessageTransmissionException();
 			}
 		} catch (Exception $ex) {
-			throw new SmsTransmissionException();
+			throw new MessageTransmissionException();
 		}
-	}
-
-	/**
-	 * @return SMSApiConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

@@ -10,6 +10,15 @@ namespace OCA\TwoFactorGateway\Provider;
 use JsonSerializable;
 use OCP\IUser;
 
+/**
+ * @psalm-type TwoFactorGatewayState = array{
+ *     gatewayName: string,
+ *     state: int,
+ *     phoneNumber: ?string,
+ * }
+ *
+ * @psalm-assert-if-true TwoFactorGatewayState $this
+ */
 class State implements JsonSerializable {
 
 	public function __construct(

@@ -9,29 +9,23 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\XMPP;
 
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
-use OCP\Http\Client\IClient;
-use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
 use OCP\IUser;
 use Psr\Log\LoggerInterface;
 
 class Gateway implements IGateway {
-	private IClient $client;
 
 	public function __construct(
-		IClientService $clientService,
-		private GatewayConfig $gatewayConfig,
-		private IAppConfig $config,
+		public GatewayConfig $gatewayConfig,
+		public IAppConfig $config,
 		private LoggerInterface $logger,
 	) {
-		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
-	public function send(IUser $user, string $identifier, string $message) {
+	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
 		$this->logger->debug("sending xmpp message to $identifier, message: $message");
 
 		$sender = $this->gatewayConfig->getSender();
@@ -60,16 +54,8 @@ class Gateway implements IGateway {
 			$result = curl_exec($ch);
 			curl_close($ch);
 			$this->logger->debug("XMPP message to $identifier sent");
-		} catch (\Exception $ex) {
-			throw new SmsTransmissionException();
+		} catch (\Exception) {
+			throw new MessageTransmissionException();
 		}
-	}
-
-	/**
-	 * @return GatewayConfig
-	 */
-	#[\Override]
-	public function getConfig(): IGatewayConfig {
-		return $this->gatewayConfig;
 	}
 }

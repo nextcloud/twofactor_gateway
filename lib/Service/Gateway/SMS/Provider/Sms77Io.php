@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -21,15 +21,14 @@ class Sms77Io implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private Sms77IoConfig $config,
+		public Sms77IoConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$apiKey = $config->getApiKey();
+		$apiKey = $this->config->getApiKey();
 		try {
 			$this->client->get('https://gateway.sms77.io/api/sms', [
 				'query' => [
@@ -40,15 +39,7 @@ class Sms77Io implements IProvider {
 				],
 			]);
 		} catch (Exception $ex) {
-			throw new SmsTransmissionException();
+			throw new MessageTransmissionException();
 		}
-	}
-
-	/**
-	 * @return Sms77IoConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

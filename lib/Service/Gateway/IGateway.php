@@ -9,24 +9,17 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway;
 
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\IUser;
 
 interface IGateway {
-
-	/**
-	 * Get the gateway-specific configuration
-	 *
-	 * @return IGatewayConfig
-	 */
-	public function getConfig(): IGatewayConfig;
-
 	/**
 	 * @param IUser $user
 	 * @param string $identifier
 	 * @param string $message
+	 * @param array $extra
 	 *
-	 * @throws SmsTransmissionException
+	 * @throws MessageTransmissionException
 	 */
-	public function send(IUser $user, string $identifier, string $message);
+	public function send(IUser $user, string $identifier, string $message, array $extra = []): void;
 }

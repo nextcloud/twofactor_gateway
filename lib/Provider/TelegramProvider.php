@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider;
 
-use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway;
+use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IL10N;
 use OCP\ISession;
@@ -17,7 +17,8 @@ use OCP\Security\ISecureRandom;
 use OCP\Template\ITemplateManager;
 
 class TelegramProvider extends AProvider {
-	public function __construct(Gateway $smsGateway,
+	public function __construct(
+		TelegramGateway $smsGateway,
 		StateStorage $stateStorage,
 		ISession $session,
 		ISecureRandom $secureRandom,

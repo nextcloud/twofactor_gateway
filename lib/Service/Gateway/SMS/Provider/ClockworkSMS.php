@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -21,36 +21,26 @@ class ClockworkSMS implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private ClockworkSMSConfig $config,
+		public ClockworkSMSConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-
 		try {
 			$response = $this->client->get(
 				'https://api.clockworksms.com/http/send.aspx',
 				[
 					'query' => [
-						'key' => $config->getApiToken(),
+						'key' => $this->config->getApiToken(),
 						'to' => $identifier,
 						'content' => $message,
 					],
 				]
 			);
 		} catch (Exception $ex) {
-			throw new SmsTransmissionException();
+			throw new MessageTransmissionException();
 		}
-	}
-
-	/**
-	 * @return ClockworkSMSConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

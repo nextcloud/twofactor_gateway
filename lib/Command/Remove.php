@@ -9,11 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Command;
 
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
-use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
-use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
+use Exception;
+use OCA\TwoFactorGateway\Service\Gateway\Factory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,10 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Remove extends Command {
 
 	public function __construct(
-		private SignalGateway $signalGateway,
-		private SMSGateway $smsGateway,
-		private TelegramGateway $telegramGateway,
-		private XMPPGateway $xmppGateway,
+		private Factory $gatewayFactory,
 	) {
 		parent::__construct('twofactorauth:gateway:remove');
 
@@ -38,29 +32,16 @@ class Remove extends Command {
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$gatewayName = $input->getArgument('gateway');
+		$gatewayName = strtolower((string)$input->getArgument('gateway'));
 
-		/** @var IGateway $gateway */
-		$gateway = null;
-		switch ($gatewayName) {
-			case 'signal':
-				$gateway = $this->signalGateway;
-				break;
-			case 'sms':
-				$gateway = $this->smsGateway;
-				break;
-			case 'telegram':
-				$gateway = $this->telegramGateway;
-				break;
-			case 'xmpp':
-				$gateway = $this->xmppGateway;
-				break;
-			default:
-				$output->writeln("<error>Invalid gateway $gatewayName</error>");
-				return 1;
+		try {
+			$gateway = $this->gatewayFactory->getGateway($gatewayName);
+		} catch (Exception $e) {
+			$output->writeln('<error>' . $e->getMessage() . '</error>');
+			return 1;
 		}
 
-		$gateway->getConfig()->remove();
+		$gateway->gatewayConfig->remove();
 		$output->writeln("Removed configuration for gateway $gatewayName");
 		return 0;
 	}

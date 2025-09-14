@@ -9,9 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\Signal;
 
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClientService;
 use OCP\IUser;
 use Psr\Log\LoggerInterface;
@@ -23,20 +22,20 @@ class Gateway implements IGateway {
 
 	public function __construct(
 		private IClientService $clientService,
-		private GatewayConfig $config,
+		public GatewayConfig $gatewayConfig,
 		private LoggerInterface $logger,
 	) {
 	}
 
 	#[\Override]
-	public function send(IUser $user, string $identifier, string $message) {
+	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
 		$client = $this->clientService->newClient();
 		// determine type of gateway
-		$response = $client->get($this->config->getUrl() . '/v1/about');
+		$response = $client->get($this->gatewayConfig->getUrl() . '/v1/about');
 		if ($response->getStatusCode() === 200) {
 			// New style gateway https://gitlab.com/morph027/signal-cli-dbus-rest-api
 			$response = $client->post(
-				$this->config->getUrl() . '/v1/send/' . $identifier,
+				$this->gatewayConfig->getUrl() . '/v1/send/' . $identifier,
 				[
 					'json' => [ 'message' => $message ],
 				]
@@ -45,12 +44,12 @@ class Gateway implements IGateway {
 			$json = json_decode($body, true);
 			if ($response->getStatusCode() !== 201 || is_null($json) || !is_array($json) || !isset($json['timestamp'])) {
 				$status = $response->getStatusCode();
-				throw new SmsTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
+				throw new MessageTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
 			}
 		} else {
 			// Try old deprecated gateway https://gitlab.com/morph027/signal-web-gateway
 			$response = $client->post(
-				$this->config->getUrl() . '/v1/send/' . $identifier,
+				$this->gatewayConfig->getUrl() . '/v1/send/' . $identifier,
 				[
 					'body' => [
 						'to' => $identifier,
@@ -64,16 +63,8 @@ class Gateway implements IGateway {
 
 			if ($response->getStatusCode() !== 200 || is_null($json) || !is_array($json) || !isset($json['success']) || $json['success'] !== true) {
 				$status = $response->getStatusCode();
-				throw new SmsTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
+				throw new MessageTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
 			}
 		}
-	}
-
-	/**
-	 * @return GatewayConfig
-	 */
-	#[\Override]
-	public function getConfig(): IGatewayConfig {
-		return $this->config;
 	}
 }

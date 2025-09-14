@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider;
 
-use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
+use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 
 class Factory {
 
@@ -22,17 +22,12 @@ class Factory {
 	}
 
 	public function getProvider(string $name): AProvider {
-		switch ($name) {
-			case 'signal':
-				return $this->signalProvider;
-			case 'sms':
-				return $this->smsProvider;
-			case 'telegram':
-				return $this->telegramProvider;
-			case 'xmpp':
-				return $this->xmppProvider;
-			default:
-				throw new InvalidSmsProviderException();
-		}
+		return match (strtolower($name)) {
+			'signal' => $this->signalProvider,
+			'sms' => $this->smsProvider,
+			'telegram' => $this->telegramProvider,
+			'xmpp' => $this->xmppProvider,
+			default => throw new InvalidProviderException(),
+		};
 	}
 }

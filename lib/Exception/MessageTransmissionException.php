@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * SPDX-FileCopyrightText: 2024 Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -11,5 +11,5 @@ namespace OCA\TwoFactorGateway\Exception;
 
 use Exception;
 
-class InvalidSmsProviderException extends Exception {
+class MessageTransmissionException extends Exception {
 }

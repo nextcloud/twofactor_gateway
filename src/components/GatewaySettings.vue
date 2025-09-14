@@ -4,40 +4,44 @@
 -->
 <template>
 	<div>
-		<div v-if="loading">
-			<span class="icon-loading-small" />
-		</div>
+		<NcLoadingIcon v-if="loading" :size="20" />
 		<div v-else>
 			<p v-if="state === 0">
 				<slot name="instructions" />
 				{{ t('twofactor_gateway', 'You are not using {displayName} for two-factor authentication at the moment.', {displayName: displayName}) }}
-				<button @click="enable">
+				<NcButton @click="enable">
 					{{ t('twofactor_gateway', 'Enable') }}
-				</button>
+				</NcButton>
 			</p>
 			<p v-if="state === 1">
 				<slot name="instructions" />
-				<strong v-if="verificationError === true">
+				<strong v-if="verificationError.length">
 					{{ t('twofactor_gateway', 'Could not verify your code. Please try again.') }}
 				</strong>
 				{{ t('twofactor_gateway', 'Enter your identification (e.g. phone number to start the verification):') }}
-				<input v-model="identifier">
-				<button @click="verify">
+				<NcTextField v-model="identifier"
+					class="input"
+					:spellcheck="false"
+					:error="verificationError.length > 0"
+					:helper-text="verificationError" />
+				<NcButton @click="verify">
 					{{ t('twofactor_gateway', 'Verify') }}
-				</button>
+				</NcButton>
 			</p>
 			<p v-if="state === 2">
 				{{ t('twofactor_gateway', 'A confirmation code has been sent to {phone}. Please insert the code here:', {phone: phoneNumber}) }}
-				<input v-model="confirmationCode">
-				<button @click="confirm">
+				<NcTextField v-model="confirmationCode"
+					class="input"
+					:spellcheck="false" />
+				<NcButton @click="confirm">
 					{{ t('twofactor_gateway', 'Confirm') }}
-				</button>
+				</NcButton>
 			</p>
 			<p v-if="state === 3">
 				{{ t('twofactor_gateway', 'Your account was successfully configured to receive messages via {displayName}.', {displayName: displayName}) }}
-				<button @click="disable">
+				<NcButton @click="disable">
 					{{ t('twofactor_gateway', 'Disable') }}
-				</button>
+				</NcButton>
 			</p>
 		</div>
 	</div>
@@ -45,11 +49,19 @@
 
 <script>
 import axios from '@nextcloud/axios'
-import { generateUrl } from '@nextcloud/router'
+import { generateOcsUrl } from '@nextcloud/router'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
 
 export default {
 	name: 'GatewaySettings',
+	components: {
+		NcButton,
+		NcLoadingIcon,
+		NcTextField,
+	},
 	props: {
 		gatewayName: {
 			type: String,
@@ -74,15 +86,15 @@ export default {
 			phoneNumber: '',
 			confirmationCode: '',
 			identifier: '',
-			verificationError: false,
+			verificationError: '',
 		}
 	},
 	mounted() {
-		axios.get(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
+		axios.get(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
 			.then(({ data }) => {
-				console.debug('loaded state for gateway ' + this.gatewayName, data)
-				this.state = data.state
-				this.phoneNumber = data.phoneNumber
+				console.debug('loaded state for gateway ' + this.gatewayName, data.ocs.data)
+				this.state = data.ocs.data.state
+				this.phoneNumber = data.ocs.data.phoneNumber
 			})
 			.catch(err => console.info(this.gatewayName + ' gateway is not available', err))
 			.finally(() => { this.loading = false })
@@ -90,47 +102,47 @@ export default {
 	methods: {
 		enable() {
 			this.state = 1
-			this.verificationError = false
+			this.verificationError = ''
 			this.loading = false
 		},
 		verify() {
 			this.loading = true
-			this.verificationError = false
-			axios.post(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/start', { gateway: this.gatewayName }), {
+			this.verificationError = ''
+			axios.post(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification/start', { gateway: this.gatewayName }), {
 				identifier: this.identifier,
 			})
-				.then(res => {
+				.then(({ data }) => {
 					this.state = 2
-					this.phoneNumber = res.phoneNumber
+					this.phoneNumber = data.ocs.data.phoneNumber
 				})
-				.catch(e => {
-					console.error(e)
+				.catch(({ response }) => {
+					console.debug(response.data)
 					this.state = 1
-					this.verificationError = true
+					this.verificationError = response?.data?.message ?? ''
 				})
 				.finally(() => { this.loading = false })
 		},
 		confirm() {
 			this.loading = true
 
-			axios.post(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish'), { gateway: this.gatewayName }, {
+			axios.post(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish', { gateway: this.gatewayName }), {
 				verificationCode: this.confirmationCode,
 			})
 				.then(() => {
 					this.state = 3
 				})
-				.catch(() => {
+				.catch(({ response }) => {
 					this.state = 1
-					this.verificationError = true
+					this.verificationError = response?.data?.ocs?.data?.message ?? ''
 				})
 				.finally(() => { this.loading = false })
 		},
 		disable() {
 			this.loading = true
-			axios.delete(generateUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
-				.then(res => {
-					this.state = res.state
-					this.phoneNumber = res.phoneNumber
+			axios.delete(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
+				.then(data => {
+					this.state = data.ocs.data.state
+					this.phoneNumber = data.ocs.data.phoneNumber
 				})
 				.catch(console.error.bind(this))
 				.finally(() => { this.loading = false })
@@ -150,5 +162,12 @@ li:has(#twofactor-gateway-signal-is-complete[value="0"]) {
 <style lang="scss" scoped>
 	.icon-loading-small {
 		padding-inline-start: 15px;
+	}
+
+	.input {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		max-width: 400px;
 	}
 </style>

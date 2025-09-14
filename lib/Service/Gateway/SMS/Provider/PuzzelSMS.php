@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -21,38 +21,28 @@ class PuzzelSMS implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private PuzzelSMSConfig $config,
+		public PuzzelSMSConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-
 		try {
 			$this->client->get(
-				$config->getUrl(),
+				$this->config->getUrl(),
 				[
 					'query' => [
-						'username' => $config->getUser(),
-						'password' => $config->getPassword(),
+						'username' => $this->config->getUser(),
+						'password' => $this->config->getPassword(),
 						'message[0].recipient' => '+' . $identifier,
 						'message[0].content' => $message,
-						'serviceId' => $config->getServiceId(),
+						'serviceId' => $this->config->getServiceId(),
 					],
 				]
 			);
 		} catch (Exception $ex) {
-			throw new SmsTransmissionException();
+			throw new MessageTransmissionException();
 		}
-	}
-
-	/**
-	 * @return PuzzelSMSConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -21,36 +21,27 @@ class ClickatellCentral implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private ClickatellCentralConfig $config,
+		public ClickatellCentralConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
 		try {
 			$response = $this->client->get(vsprintf('https://api.clickatell.com/http/sendmsg?user=%s&password=%s&api_id=%u&to=%s&text=%s', [
-				urlencode($config->getUser()),
-				urlencode($config->getPassword()),
-				$config->getApi(),
+				urlencode($this->config->getUser()),
+				urlencode($this->config->getPassword()),
+				$this->config->getApi(),
 				urlencode($identifier),
 				urlencode($message),
 			]));
 		} catch (Exception $ex) {
-			throw new SmsTransmissionException();
+			throw new MessageTransmissionException();
 		}
 
 		if ($response->getStatusCode() !== 200 || substr($response->getBody(), 0, 4) !== 'ID: ') {
-			throw new SmsTransmissionException($response->getBody());
+			throw new MessageTransmissionException($response->getBody());
 		}
-	}
-
-	/**
-	 * @return ClickatellCentralConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

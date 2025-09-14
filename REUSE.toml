@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2025 LibreCode coop and contributors
 # SPDX-License-Identifier: AGPL-3.0-or-later
 version = 1
-SPDX-PackageName = "libresign"
+SPDX-PackageName = "TwoFactorGateway"
 SPDX-PackageSupplier = "LibreCode <contact@librecode.coop>"
 SPDX-PackageDownloadLocation = "https://github.com/LibreSign/twofactor_gateway/"
 
@@ -28,6 +28,8 @@ path = [
 	"tests/psalm-baseline.xml",
 	"l10n/*.js",
 	"l10n/*.json",
+	"openapi.json",
+	"src/types/openapi/openapi.ts",
 	"vendor-bin/**/composer.json",
 	"vendor-bin/**/composer.lock"
 ]

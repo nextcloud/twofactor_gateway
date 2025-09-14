@@ -10,35 +10,21 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCP\IAppConfig;
+use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
-class SipGateConfig implements IProviderConfig {
-	private const expected = [
+class SipGateConfig extends AGatewayConfig {
+	protected const expected = [
 		'sipgate_token_id',
 		'sipgate_access_token',
 		'sipgate_web_sms_extension',
 	];
-
-	public function __construct(
-		private IAppConfig $config,
-	) {
-	}
-
-	private function getOrFail(string $key): string {
-		$val = $this->config->getValueString(Application::APP_ID, $key);
-		if (empty($val)) {
-			throw new ConfigurationException();
-		}
-		return $val;
-	}
 
 	public function getTokenId(): string {
 		return $this->getOrFail('sipgate_token_id');
 	}
 
 	public function setTokenId(string $tokenId): void {
-		$this->config->getValueString(Application::APP_ID, 'sipgate_token_id', $tokenId);
+		$this->config->setValueString(Application::APP_ID, 'sipgate_token_id', $tokenId);
 	}
 
 	public function getAccessToken(): string {
@@ -46,7 +32,7 @@ class SipGateConfig implements IProviderConfig {
 	}
 
 	public function setAccessToken(string $accessToken): void {
-		$this->config->getValueString(Application::APP_ID, 'sipgate_access_token', $accessToken);
+		$this->config->setValueString(Application::APP_ID, 'sipgate_access_token', $accessToken);
 	}
 
 	public function getWebSmsExtension(): string {
@@ -54,18 +40,6 @@ class SipGateConfig implements IProviderConfig {
 	}
 
 	public function setWebSmsExtension(string $webSmsExtension): void {
-		$this->config->getValueString(Application::APP_ID, 'sipgate_web_sms_extension', $webSmsExtension);
-	}
-	#[\Override]
-	public function isComplete(): bool {
-		$set = $this->config->getKeys(Application::APP_ID);
-		return count(array_intersect($set, self::expected)) === count(self::expected);
-	}
-
-	#[\Override]
-	public function remove() {
-		foreach (self::expected as $key) {
-			$this->config->deleteKey(Application::APP_ID, $key);
-		}
+		$this->config->setValueString(Application::APP_ID, 'sipgate_web_sms_extension', $webSmsExtension);
 	}
 }
