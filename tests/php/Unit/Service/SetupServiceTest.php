@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
 use Exception;
+use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\Factory as ProviderFactory;
@@ -43,7 +44,7 @@ class SetupServiceTest extends TestCase {
 		$this->providerFactory = $this->createMock(ProviderFactory::class);
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->registry = $this->createMock(IRegistry::class);
-		$this->l10n = \OCP\Server::get(IL10NFactory::class)->get(\OCA\Libresign\AppInfo\Application::APP_ID);
+		$this->l10n = \OCP\Server::get(IL10NFactory::class)->get(Application::APP_ID);
 
 		$this->setupService = new SetupService(
 			$this->stateStorage,
