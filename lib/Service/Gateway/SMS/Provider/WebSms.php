@@ -21,16 +21,15 @@ class WebSms implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private WebSmsConfig $config,
+		public WebSmsConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$user = $config->getUser();
-		$password = $config->getPassword();
+		$user = $this->config->getUser();
+		$password = $this->config->getPassword();
 		try {
 			$this->client->post('https://api.websms.com/rest/smsmessaging/text', [
 				'headers' => [
@@ -46,13 +45,5 @@ class WebSms implements IProvider {
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
-	}
-
-	/**
-	 * @return WebSmsConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

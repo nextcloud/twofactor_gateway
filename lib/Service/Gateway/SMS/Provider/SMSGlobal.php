@@ -21,24 +21,23 @@ class SMSGlobal implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private SMSGlobalConfig $config,
+		public SMSGlobalConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
 		$to = str_replace('+', '', $identifier);
 
 		try {
 			$this->client->get(
-				$config->getUrl(),
+				$this->config->getUrl(),
 				[
 					'query' => [
 						'action' => 'sendsms',
-						'user' => $config->getUser(),
-						'password' => $config->getPassword(),
+						'user' => $this->config->getUser(),
+						'password' => $this->config->getPassword(),
 						'origin' => 'nextcloud',
 						'from' => 'nextcloud',
 						'to' => $to,
@@ -51,13 +50,5 @@ class SMSGlobal implements IProvider {
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
-	}
-
-	/**
-	 * @return SMSGlobalConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

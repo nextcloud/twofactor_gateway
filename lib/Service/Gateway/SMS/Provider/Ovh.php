@@ -22,10 +22,8 @@ class Ovh implements IProvider {
 
 	/**
 	 * Url to communicate with Ovh API
-	 *
-	 * @var array
 	 */
-	private $endpoints = [
+	private array $endpoints = [
 		'ovh-eu' => 'https://api.ovh.com/1.0',
 		'ovh-us' => 'https://api.us.ovhcloud.com/1.0',
 		'ovh-ca' => 'https://ca.api.ovh.com/1.0',
@@ -38,9 +36,8 @@ class Ovh implements IProvider {
 
 	/**
 	 * Array of the 4 needed parameters to connect to the API
-	 * @var array
 	 */
-	private $attrs = [
+	private array $attrs = [
 		'AK' => null,
 		'AS' => null,
 		'CK' => null,
@@ -51,21 +48,20 @@ class Ovh implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private OvhConfig $config,
+		public OvhConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$endpoint = $config->getEndpoint();
-		$sender = $config->getSender();
-		$smsAccount = $config->getAccount();
+		$endpoint = $this->config->getEndpoint();
+		$sender = $this->config->getSender();
+		$smsAccount = $this->config->getAccount();
 
-		$this->attrs['AK'] = $config->getApplicationKey();
-		$this->attrs['AS'] = $config->getApplicationSecret();
-		$this->attrs['CK'] = $config->getConsumerKey();
+		$this->attrs['AK'] = $this->config->getApplicationKey();
+		$this->attrs['AS'] = $this->config->getApplicationSecret();
+		$this->attrs['CK'] = $this->config->getConsumerKey();
 		if (!isset($this->endpoints[$endpoint])) {
 			throw new InvalidSmsProviderException("Endpoint $endpoint not found");
 		}
@@ -111,14 +107,6 @@ class Ovh implements IProvider {
 		if (count($resultPostJob['validReceivers']) === 0) {
 			throw new SmsTransmissionException("Bad receiver $identifier");
 		}
-	}
-
-	/**
-	 * @return OvhConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 
 	/**

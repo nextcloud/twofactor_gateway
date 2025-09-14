@@ -21,15 +21,14 @@ class HuaweiE3531 implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private HuaweiE3531Config $config,
+		public HuaweiE3531Config $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$url = $config->getUrl();
+		$url = $this->config->getUrl();
 
 		try {
 			$sessionTokenResponse = $this->client->get("$url/webserver/SesTokInfo");
@@ -58,13 +57,5 @@ class HuaweiE3531 implements IProvider {
 		if ((string)$sendXml !== 'OK') {
 			throw new SmsTransmissionException();
 		}
-	}
-
-	/**
-	 * @return HuaweiE3531Config
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

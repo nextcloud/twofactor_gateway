@@ -21,17 +21,16 @@ class VoipMs implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private VoipMsConfig $config,
+		public VoipMsConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$user = $config->getUser();
-		$password = $config->getPassword();
-		$did = $config->getDid();
+		$user = $this->config->getUser();
+		$password = $this->config->getPassword();
+		$did = $this->config->getDid();
 		try {
 			$this->client->get('https://voip.ms/api/v1/rest.php', [
 				'query' => [
@@ -46,13 +45,5 @@ class VoipMs implements IProvider {
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
-	}
-
-	/**
-	 * @return VoipMsConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

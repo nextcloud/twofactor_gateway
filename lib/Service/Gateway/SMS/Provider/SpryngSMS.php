@@ -21,22 +21,20 @@ class SpryngSMS implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private SpryngSMSConfig $config,
+		public SpryngSMSConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		/** @var SpryngSMSConfig $providerConfig */
 		try {
-			$response = $this->client->post(
+			$this->client->post(
 				'https://rest.spryngsms.com/v1/messages?with%5B%5D=recipients',
 				[
 					'headers' => [
 						'Accept' => 'application/json',
-						'Authorization' => 'Bearer ' . $config->getApiToken(),
+						'Authorization' => 'Bearer ' . $this->config->getApiToken(),
 						'Content-Type' => 'application/json',
 					],
 					'json' => [
@@ -51,13 +49,5 @@ class SpryngSMS implements IProvider {
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
-	}
-
-	/**
-	 * @return SpryngSMSConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

@@ -20,6 +20,4 @@ interface IProvider {
 	 * @throws SmsTransmissionException
 	 */
 	public function send(string $identifier, string $message);
-
-	public function getConfig(): IProviderConfig;
 }

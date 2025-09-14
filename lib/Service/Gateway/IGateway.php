@@ -13,14 +13,6 @@ use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCP\IUser;
 
 interface IGateway {
-
-	/**
-	 * Get the gateway-specific configuration
-	 *
-	 * @return IGatewayConfig
-	 */
-	public function getConfig(): IGatewayConfig;
-
 	/**
 	 * @param IUser $user
 	 * @param string $identifier

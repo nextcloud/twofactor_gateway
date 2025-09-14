@@ -21,17 +21,16 @@ class SipGate implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private SipGateConfig $config,
+		public SipGateConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$tokenId = $config->getTokenId();
-		$accessToken = $config->getAccessToken();
-		$webSmsExtension = $config->getWebSmsExtension();
+		$tokenId = $this->config->getTokenId();
+		$accessToken = $this->config->getAccessToken();
+		$webSmsExtension = $this->config->getWebSmsExtension();
 
 		try {
 			$this->client->post('https://api.sipgate.com/v2/sessions/sms', [
@@ -50,13 +49,5 @@ class SipGate implements IProvider {
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException('SipGate Send Failed', $ex->getCode(), $ex);
 		}
-	}
-
-	/**
-	 * @return SipGateConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

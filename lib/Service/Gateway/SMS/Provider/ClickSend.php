@@ -21,16 +21,15 @@ class ClickSend implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private ClickSendConfig $config,
+		public ClickSendConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$apiKey = $config->getApiKey();
-		$username = $config->getUser();
+		$apiKey = $this->config->getApiKey();
+		$username = $this->config->getUser();
 		try {
 			$this->client->get('https://api-mapper.clicksend.com/http/v2/send.php', [
 				'query' => [
@@ -45,13 +44,5 @@ class ClickSend implements IProvider {
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
-	}
-
-	/**
-	 * @return ClickSendConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

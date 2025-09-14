@@ -11,31 +11,16 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\XMPP;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
-use OCP\IAppConfig;
+use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
-class GatewayConfig implements IGatewayConfig {
-	private const expected = [
+class GatewayConfig extends AGatewayConfig {
+	protected const expected = [
 		'xmpp_sender',
 		'xmpp_password',
 		'xmpp_server',
 		'xmpp_username',
 		'xmpp_method',
 	];
-
-	public function __construct(
-		private IAppConfig $config,
-	) {
-	}
-
-	private function getOrFail(string $key): string {
-		$val = $this->config->getValueString(Application::APP_ID, $key);
-		if ($val === '') {
-			throw new ConfigurationException();
-		}
-		return $val;
-	}
 
 	public function getSender(): string {
 		return $this->getOrFail('xmpp_sender');
@@ -74,18 +59,5 @@ class GatewayConfig implements IGatewayConfig {
 
 	public function setMethod(string $method): void {
 		$this->config->setValueString(Application::APP_ID, 'xmpp_method', $method);
-	}
-
-	#[\Override]
-	public function isComplete(): bool {
-		$set = $this->config->getAllValues(Application::APP_ID);
-		return count(array_intersect($set, self::expected)) === count(self::expected);
-	}
-
-	#[\Override]
-	public function remove(): void {
-		foreach (self::expected as $key) {
-			$this->config->deleteKey(Application::APP_ID, $key);
-		}
 	}
 }

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway;
 
 interface IGatewayConfig {
+	public function getOrFail(string $key): string;
 	public function isComplete(): bool;
 	public function remove(): void;
 }

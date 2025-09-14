@@ -10,57 +10,36 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
-use OCP\AppFramework\IAppContainer;
+use Psr\Container\ContainerInterface;
 
 class ProviderFactory {
 
-	/** @var IAppContainer */
-	private $container;
-
-	public function __construct(IAppContainer $container) {
-		$this->container = $container;
+	public function __construct(
+		private ContainerInterface $container,
+	) {
 	}
 
 	public function getProvider(string $id): IProvider {
-		switch ($id) {
-			case SipGate::PROVIDER_ID:
-				return $this->container->query(SipGate::class);
-			case PuzzelSMS::PROVIDER_ID:
-				return $this->container->query(PuzzelSMS::class);
-			case PlaySMS::PROVIDER_ID:
-				return $this->container->query(PlaySMS::class);
-			case SMSGlobal::PROVIDER_ID:
-				return $this->container->query(SMSGlobal::class);
-			case WebSms::PROVIDER_ID:
-				return $this->container->query(WebSms::class);
-			case ClockworkSMS::PROVIDER_ID:
-				return $this->container->query(ClockworkSMS::class);
-			case EcallSMS::PROVIDER_ID:
-				return $this->container->query(EcallSMS::class);
-			case VoipMs::PROVIDER_ID:
-				return $this->container->query(VoipMs::class);
-			case Voipbuster::PROVIDER_ID:
-				return $this->container->query(Voipbuster::class);
-			case HuaweiE3531::PROVIDER_ID:
-				return $this->container->query(HuaweiE3531::class);
-			case Sms77Io::PROVIDER_ID:
-				return $this->container->query(Sms77Io::class);
-			case Ovh::PROVIDER_ID:
-				return $this->container->query(Ovh::class);
-			case SpryngSMS::PROVIDER_ID:
-				return $this->container->query(SpryngSMS::class);
-			case ClickatellCentral::PROVIDER_ID:
-				return $this->container->query(ClickatellCentral::class);
-			case ClickatellPortal::PROVIDER_ID:
-				return $this->container->query(ClickatellPortal::class);
-			case ClickSend::PROVIDER_ID:
-				return $this->container->query(ClickSend::class);
-			case SerwerSMS::PROVIDER_ID:
-				return $this->container->query(SerwerSMS::class);
-			case SMSApi::PROVIDER_ID:
-				return $this->container->query(SMSApi::class);
-			default:
-				throw new InvalidSmsProviderException("Provider <$id> does not exist");
-		}
+		return match ($id) {
+			SipGate::PROVIDER_ID => $this->container->get(SipGate::class),
+			PuzzelSMS::PROVIDER_ID => $this->container->get(PuzzelSMS::class),
+			PlaySMS::PROVIDER_ID => $this->container->get(PlaySMS::class),
+			SMSGlobal::PROVIDER_ID => $this->container->get(SMSGlobal::class),
+			WebSms::PROVIDER_ID => $this->container->get(WebSms::class),
+			ClockworkSMS::PROVIDER_ID => $this->container->get(ClockworkSMS::class),
+			EcallSMS::PROVIDER_ID => $this->container->get(EcallSMS::class),
+			VoipMs::PROVIDER_ID => $this->container->get(VoipMs::class),
+			Voipbuster::PROVIDER_ID => $this->container->get(Voipbuster::class),
+			HuaweiE3531::PROVIDER_ID => $this->container->get(HuaweiE3531::class),
+			Sms77Io::PROVIDER_ID => $this->container->get(Sms77Io::class),
+			Ovh::PROVIDER_ID => $this->container->get(Ovh::class),
+			SpryngSMS::PROVIDER_ID => $this->container->get(SpryngSMS::class),
+			ClickatellCentral::PROVIDER_ID => $this->container->get(ClickatellCentral::class),
+			ClickatellPortal::PROVIDER_ID => $this->container->get(ClickatellPortal::class),
+			ClickSend::PROVIDER_ID => $this->container->get(ClickSend::class),
+			SerwerSMS::PROVIDER_ID => $this->container->get(SerwerSMS::class),
+			SMSApi::PROVIDER_ID => $this->container->get(SMSApi::class),
+			default => throw new InvalidSmsProviderException("Provider <$id> does not exist"),
+		};
 	}
 }

@@ -21,17 +21,16 @@ class SerwerSMS implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private SerwerSMSConfig $config,
+		public SerwerSMSConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$login = $config->getLogin();
-		$password = $config->getPassword();
-		$sender = $config->getSender();
+		$login = $this->config->getLogin();
+		$password = $this->config->getPassword();
+		$sender = $this->config->getSender();
 		try {
 			$response = $this->client->post('https://api2.serwersms.pl/messages/send_sms', [
 				'headers' => [
@@ -54,13 +53,5 @@ class SerwerSMS implements IProvider {
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
-	}
-
-	/**
-	 * @return SerwerSMSConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

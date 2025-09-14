@@ -18,39 +18,24 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Status extends Command {
-
-	/** @var SignalGateway */
-	private $signalGateway;
-
-	/** @var SMSGateway */
-	private $smsGateway;
-
-	/** @var TelegramGateway */
-	private $telegramGateway;
-
-	/** @var XMPPGateway */
-	private $xmppGateway;
-
-	public function __construct(SignalGateway $signalGateway,
-		SMSGateway $smsGateway,
-		TelegramGateway $telegramGateway,
-		XMPPGateway $xmppGateway) {
+	public function __construct(
+		private SignalGateway $signalGateway,
+		private SMSGateway $smsGateway,
+		private TelegramGateway $telegramGateway,
+		private XMPPGateway $xmppGateway,
+	) {
 		parent::__construct('twofactorauth:gateway:status');
-		$this->signalGateway = $signalGateway;
-		$this->smsGateway = $smsGateway;
-		$this->telegramGateway = $telegramGateway;
-		$this->xmppGateway = $xmppGateway;
 	}
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$signalConfigured = $this->signalGateway->getConfig()->isComplete();
+		$signalConfigured = $this->signalGateway->gatewayConfig->isComplete();
 		$output->writeln('Signal gateway: ' . ($signalConfigured ? 'configured' : 'not configured'));
-		$smsConfigured = $this->smsGateway->getConfig()->isComplete();
+		$smsConfigured = $this->smsGateway->config->isComplete();
 		$output->writeln('SMS gateway: ' . ($smsConfigured ? 'configured' : 'not configured'));
-		$telegramConfigured = $this->telegramGateway->getConfig()->isComplete();
+		$telegramConfigured = $this->telegramGateway->gatewayConfig->isComplete();
 		$output->writeln('Telegram gateway: ' . ($telegramConfigured ? 'configured' : 'not configured'));
-		$xmppConfigured = $this->xmppGateway->getConfig()->isComplete();
+		$xmppConfigured = $this->xmppGateway->gatewayConfig->isComplete();
 		$output->writeln('XMPP gateway: ' . ($xmppConfigured ? 'configured' : 'not configured'));
 		return 0;
 	}

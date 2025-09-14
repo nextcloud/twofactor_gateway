@@ -21,7 +21,7 @@ class SMSApi implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private SMSApiConfig $config,
+		public SMSApiConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 		$this->config = $config;
@@ -29,9 +29,8 @@ class SMSApi implements IProvider {
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$sender = $config->getSender();
-		$token = $config->getToken();
+		$sender = $this->config->getSender();
+		$token = $this->config->getToken();
 		$url = 'https://api.smsapi.com/sms.do';
 
 		$params = [
@@ -68,13 +67,5 @@ class SMSApi implements IProvider {
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
-	}
-
-	/**
-	 * @return SMSApiConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

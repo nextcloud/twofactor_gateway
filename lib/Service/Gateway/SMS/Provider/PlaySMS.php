@@ -21,23 +21,21 @@ class PlaySMS implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private PlaySMSConfig $config,
+		public PlaySMSConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-
 		try {
 			$this->client->get(
-				$config->getUrl(),
+				$this->config->getUrl(),
 				[
 					'query' => [
 						'app' => 'ws',
-						'u' => $config->getUser(),
-						'h' => $config->getPassword(),
+						'u' => $this->config->getUser(),
+						'h' => $this->config->getPassword(),
 						'op' => 'pv',
 						'to' => $identifier,
 						'msg' => $message,
@@ -47,13 +45,5 @@ class PlaySMS implements IProvider {
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
-	}
-
-	/**
-	 * @return PlaySMSConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

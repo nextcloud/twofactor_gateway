@@ -11,23 +11,17 @@ namespace OCA\TwoFactorGateway\Service\Gateway\XMPP;
 
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
-use OCP\Http\Client\IClient;
-use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
 use OCP\IUser;
 use Psr\Log\LoggerInterface;
 
 class Gateway implements IGateway {
-	private IClient $client;
 
 	public function __construct(
-		IClientService $clientService,
-		private GatewayConfig $gatewayConfig,
-		private IAppConfig $config,
+		public GatewayConfig $gatewayConfig,
+		public IAppConfig $config,
 		private LoggerInterface $logger,
 	) {
-		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
@@ -63,13 +57,5 @@ class Gateway implements IGateway {
 		} catch (\Exception) {
 			throw new SmsTransmissionException();
 		}
-	}
-
-	/**
-	 * @return GatewayConfig
-	 */
-	#[\Override]
-	public function getConfig(): IGatewayConfig {
-		return $this->gatewayConfig;
 	}
 }

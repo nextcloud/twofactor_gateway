@@ -21,17 +21,16 @@ class Voipbuster implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private VoipbusterConfig $config,
+		public VoipbusterConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
-		$user = $config->getUser();
-		$password = $config->getPassword();
-		$did = $config->getDid();
+		$user = $this->config->getUser();
+		$password = $this->config->getPassword();
+		$did = $this->config->getDid();
 		try {
 			$this->client->get('https://www.voipbuster.com/myaccount/sendsms.php', [
 				'query' => [
@@ -45,13 +44,5 @@ class Voipbuster implements IProvider {
 		} catch (Exception $ex) {
 			throw new SmsTransmissionException();
 		}
-	}
-
-	/**
-	 * @return VoipbusterConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

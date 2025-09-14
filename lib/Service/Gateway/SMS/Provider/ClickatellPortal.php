@@ -21,20 +21,18 @@ class ClickatellPortal implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		private ClickatellPortalConfig $config,
+		public ClickatellPortalConfig $config,
 	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$config = $this->getConfig();
 		try {
-			$from = $config->getFromNumber();
+			$from = $this->config->getFromNumber();
 			$from = !is_null($from) ? sprintf('&from=%s', urlencode($from)) : '';
 			$response = $this->client->get(vsprintf('https://platform.clickatell.com/messages/http/send?apiKey=%s&to=%s&content=%s%s', [
-				urlencode($config->getApiKey()),
+				urlencode($this->config->getApiKey()),
 				urlencode($identifier),
 				urlencode($message),
 				$from,
@@ -46,13 +44,5 @@ class ClickatellPortal implements IProvider {
 		if ($response->getStatusCode() !== 202) {
 			throw new SmsTransmissionException($response->getBody());
 		}
-	}
-
-	/**
-	 * @return ClickatellPortalConfig
-	 */
-	#[\Override]
-	public function getConfig(): IProviderConfig {
-		return $this->config;
 	}
 }

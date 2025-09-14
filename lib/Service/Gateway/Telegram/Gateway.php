@@ -11,9 +11,6 @@ namespace OCA\TwoFactorGateway\Service\Gateway\Telegram;
 
 use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
-use OCP\Http\Client\IClient;
-use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
 use OCP\IL10N;
 use OCP\IUser;
@@ -22,16 +19,12 @@ use TelegramBot\Api\BotApi;
 use TelegramBot\Api\Exception as TelegramSDKException;
 
 class Gateway implements IGateway {
-	private IClient $client;
-
 	public function __construct(
-		IClientService $clientService,
-		private GatewayConfig $gatewayConfig,
-		private IAppConfig $config,
+		public GatewayConfig $gatewayConfig,
+		public IAppConfig $config,
 		private LoggerInterface $logger,
 		private IL10N $l10n,
 	) {
-		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
@@ -52,13 +45,5 @@ class Gateway implements IGateway {
 			throw new SmsTransmissionException($e->getMessage());
 		}
 		$this->logger->debug("telegram message to chat $identifier sent");
-	}
-
-	/**
-	 * @return GatewayConfig
-	 */
-	#[\Override]
-	public function getConfig(): IGatewayConfig {
-		return $this->gatewayConfig;
 	}
 }
