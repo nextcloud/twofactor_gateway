@@ -28,7 +28,7 @@ class Gateway implements IGateway {
 	}
 
 	#[\Override]
-	public function send(IUser $user, string $identifier, string $message, array $extra = []) {
+	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
 		$message = $this->l10n->t('`%s` is your Nextcloud verification code.', [$extra['code']]);
 		$this->logger->debug("sending telegram message to $identifier, message: $message");
 		$botToken = $this->gatewayConfig->getBotToken();

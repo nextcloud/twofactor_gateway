@@ -20,7 +20,7 @@ class Gateway implements IGateway {
 	}
 
 	#[\Override]
-	public function send(IUser $user, string $identifier, string $message, array $extra = []) {
+	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
 		$this->config->getProvider()->send($identifier, $message);
 	}
 }
