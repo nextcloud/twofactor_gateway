@@ -32,7 +32,7 @@ class Remove extends Command {
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$gatewayName = $input->getArgument('gateway');
+		$gatewayName = strtolower((string) $input->getArgument('gateway'));
 
 		try {
 			$gateway = $this->gatewayFactory->getGateway($gatewayName);
