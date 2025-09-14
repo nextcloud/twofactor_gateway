@@ -57,7 +57,7 @@ class Configure extends Command {
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$gatewayName = strtolower((string) $input->getArgument('gateway'));
+		$gatewayName = strtolower((string)$input->getArgument('gateway'));
 
 		switch ($gatewayName) {
 			case 'signal':
