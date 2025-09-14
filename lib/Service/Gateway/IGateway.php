@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway;
 
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\IUser;
 
 interface IGateway {
@@ -19,7 +19,7 @@ interface IGateway {
 	 * @param string $message
 	 * @param array $extra
 	 *
-	 * @throws SmsTransmissionException
+	 * @throws MessageTransmissionException
 	 */
 	public function send(IUser $user, string $identifier, string $message, array $extra = []);
 }

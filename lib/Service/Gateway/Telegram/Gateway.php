@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\Telegram;
 
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCP\IAppConfig;
 use OCP\IL10N;
@@ -42,7 +42,7 @@ class Gateway implements IGateway {
 		} catch (TelegramSDKException $e) {
 			$this->logger->error($e);
 
-			throw new SmsTransmissionException($e->getMessage());
+			throw new MessageTransmissionException($e->getMessage());
 		}
 		$this->logger->debug("telegram message to chat $identifier sent");
 	}

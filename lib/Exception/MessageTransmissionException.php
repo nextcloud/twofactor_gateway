@@ -11,5 +11,5 @@ namespace OCA\TwoFactorGateway\Exception;
 
 use Exception;
 
-class SmsTransmissionException extends Exception {
+class MessageTransmissionException extends Exception {
 }

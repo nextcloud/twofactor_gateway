@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -48,10 +48,10 @@ class SerwerSMS implements IProvider {
 			$responseData = json_decode($response->getBody(), true);
 
 			if ($responseData['success'] !== true) {
-				throw new SmsTransmissionException();
+				throw new MessageTransmissionException();
 			}
 		} catch (Exception $ex) {
-			throw new SmsTransmissionException();
+			throw new MessageTransmissionException();
 		}
 	}
 }

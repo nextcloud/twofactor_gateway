@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\Signal;
 
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCP\Http\Client\IClientService;
 use OCP\IUser;
@@ -44,7 +44,7 @@ class Gateway implements IGateway {
 			$json = json_decode($body, true);
 			if ($response->getStatusCode() !== 201 || is_null($json) || !is_array($json) || !isset($json['timestamp'])) {
 				$status = $response->getStatusCode();
-				throw new SmsTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
+				throw new MessageTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
 			}
 		} else {
 			// Try old deprecated gateway https://gitlab.com/morph027/signal-web-gateway
@@ -63,7 +63,7 @@ class Gateway implements IGateway {
 
 			if ($response->getStatusCode() !== 200 || is_null($json) || !is_array($json) || !isset($json['success']) || $json['success'] !== true) {
 				$status = $response->getStatusCode();
-				throw new SmsTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
+				throw new MessageTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
 			}
 		}
 	}

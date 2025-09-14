@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
@@ -82,7 +82,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 					$secret
 				])
 			);
-		} catch (SmsTransmissionException) {
+		} catch (MessageTransmissionException) {
 			return $this->templateManager->getTemplate('twofactor_gateway', 'error');
 		}
 

@@ -12,7 +12,7 @@ namespace OCA\TwoFactorGateway\Service;
 use Exception;
 use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
 use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Provider\Factory;
 use OCA\TwoFactorGateway\Provider\State;
@@ -65,7 +65,7 @@ class SetupService {
 				$this->l10n->t('%s is your verification code.', [$verificationNumber]),
 				['code' => $verificationNumber],
 			);
-		} catch (SmsTransmissionException $ex) {
+		} catch (MessageTransmissionException $ex) {
 			throw new VerificationException($ex->getMessage(), $ex->getCode(), $ex);
 		}
 

@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\XMPP;
 
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCP\IAppConfig;
 use OCP\IUser;
@@ -55,7 +55,7 @@ class Gateway implements IGateway {
 			curl_close($ch);
 			$this->logger->debug("XMPP message to $identifier sent");
 		} catch (\Exception) {
-			throw new SmsTransmissionException();
+			throw new MessageTransmissionException();
 		}
 	}
 }

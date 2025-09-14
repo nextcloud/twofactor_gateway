@@ -11,7 +11,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -105,7 +105,7 @@ class Ovh implements IProvider {
 		$resultPostJob = json_decode($response->getBody(), true);
 
 		if (count($resultPostJob['validReceivers']) === 0) {
-			throw new SmsTransmissionException("Bad receiver $identifier");
+			throw new MessageTransmissionException("Bad receiver $identifier");
 		}
 	}
 

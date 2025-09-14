@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -51,11 +51,11 @@ class HuaweiE3531 implements IProvider {
 			]);
 			$sendXml = simplexml_load_string($sendResponse->getBody());
 		} catch (Exception $ex) {
-			throw new SmsTransmissionException();
+			throw new MessageTransmissionException();
 		}
 
 		if ((string)$sendXml !== 'OK') {
-			throw new SmsTransmissionException();
+			throw new MessageTransmissionException();
 		}
 	}
 }

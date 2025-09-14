@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -54,7 +54,7 @@ class SMSApi implements IProvider {
 
 			$content = curl_exec($c);
 			if ($content === false) {
-				throw new SmsTransmissionException();
+				throw new MessageTransmissionException();
 			}
 			$http_status = curl_getinfo($c, CURLINFO_HTTP_CODE);
 
@@ -62,10 +62,10 @@ class SMSApi implements IProvider {
 			$responseData = json_decode($content, true);
 
 			if ($responseData['count'] !== 1) {
-				throw new SmsTransmissionException();
+				throw new MessageTransmissionException();
 			}
 		} catch (Exception $ex) {
-			throw new SmsTransmissionException();
+			throw new MessageTransmissionException();
 		}
 	}
 }
