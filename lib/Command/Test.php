@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Command;
 
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
@@ -79,11 +78,11 @@ class Test extends Command {
 
 		try {
 			$gateway = match (strtolower($gatewayName)) {
-				'signal'   => $this->signalGateway,
-				'sms'      => $this->smsGateway,
+				'signal' => $this->signalGateway,
+				'sms' => $this->smsGateway,
 				'telegram' => $this->telegramGateway,
-				'xmpp'     => $this->xmppGateway,
-				default    => throw new \InvalidArgumentException("Invalid gateway $gatewayName"),
+				'xmpp' => $this->xmppGateway,
+				default => throw new \InvalidArgumentException("Invalid gateway $gatewayName"),
 			};
 		} catch (\InvalidArgumentException $e) {
 			$output->writeln("<error>{$e->getMessage()}</error>");
