@@ -11,7 +11,7 @@ namespace OCA\TwoFactorGateway\Service;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
-use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
+use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Provider\Factory;
@@ -86,7 +86,7 @@ class SetupService {
 
 		try {
 			$provider = $this->providerFactory->getProvider($gatewayName);
-		} catch (InvalidSmsProviderException) {
+		} catch (InvalidProviderException) {
 			throw new VerificationException('Invalid provider');
 		}
 		$this->providerRegistry->enableProviderFor($provider, $user);
@@ -103,7 +103,7 @@ class SetupService {
 	public function disable(IUser $user, string $gatewayName): State {
 		try {
 			$provider = $this->providerFactory->getProvider($gatewayName);
-		} catch (InvalidSmsProviderException) {
+		} catch (InvalidProviderException) {
 			throw new VerificationException('Invalid provider');
 		}
 		$this->providerRegistry->enableProviderFor($provider, $user);

@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use Exception;
-use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
+use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
@@ -63,7 +63,7 @@ class Ovh implements IProvider {
 		$this->attrs['AS'] = $this->config->getApplicationSecret();
 		$this->attrs['CK'] = $this->config->getConsumerKey();
 		if (!isset($this->endpoints[$endpoint])) {
-			throw new InvalidSmsProviderException("Endpoint $endpoint not found");
+			throw new InvalidProviderException("Endpoint $endpoint not found");
 		}
 		$this->attrs['endpoint'] = $this->endpoints[$endpoint];
 
@@ -83,7 +83,7 @@ class Ovh implements IProvider {
 			}
 		}
 		if ($smsAccountFound === false) {
-			throw new InvalidSmsProviderException("SMS account $smsAccount not found");
+			throw new InvalidProviderException("SMS account $smsAccount not found");
 		}
 		$content = [
 			'charset' => 'UTF-8',
@@ -112,19 +112,19 @@ class Ovh implements IProvider {
 	/**
 	 * Compute time delta between this server and OVH endpoint
 	 *
-	 * @throws InvalidSmsProviderException
+	 * @throws InvalidProviderException
 	 */
 	private function getTimeDelta(): void {
 		if (!isset($this->attrs['timedelta'])) {
 			if (!isset($this->attrs['endpoint'])) {
-				throw new InvalidSmsProviderException('Need to set the endpoint');
+				throw new InvalidProviderException('Need to set the endpoint');
 			}
 			try {
 				$response = $this->client->get($this->attrs['endpoint'] . '/auth/time');
 				$serverTimestamp = (int)$response->getBody();
 				$this->attrs['timedelta'] = $serverTimestamp - time();
 			} catch (Exception $ex) {
-				throw new InvalidSmsProviderException('Unable to calculate time delta:' . $ex->getMessage());
+				throw new InvalidProviderException('Unable to calculate time delta:' . $ex->getMessage());
 			}
 		}
 	}

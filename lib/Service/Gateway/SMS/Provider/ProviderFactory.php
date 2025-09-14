@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
+use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use Psr\Container\ContainerInterface;
 
 class ProviderFactory {
@@ -39,7 +39,7 @@ class ProviderFactory {
 			ClickSend::PROVIDER_ID => $this->container->get(ClickSend::class),
 			SerwerSMS::PROVIDER_ID => $this->container->get(SerwerSMS::class),
 			SMSApi::PROVIDER_ID => $this->container->get(SMSApi::class),
-			default => throw new InvalidSmsProviderException("Provider <$id> does not exist"),
+			default => throw new InvalidProviderException("Provider <$id> does not exist"),
 		};
 	}
 }
