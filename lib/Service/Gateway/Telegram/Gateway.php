@@ -16,6 +16,10 @@ use OCP\IAppConfig;
 use OCP\IL10N;
 use OCP\IUser;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 use TelegramBot\Api\BotApi;
 use TelegramBot\Api\Exception as TelegramSDKException;
 
@@ -54,5 +58,17 @@ class Gateway implements IGateway {
 	#[\Override]
 	public function getConfig(): IGatewayConfig {
 		return $this->gatewayConfig;
+	}
+
+	#[\Override]
+	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
+		$helper = new QuestionHelper();
+		$tokenQuestion = new Question($this->gatewayConfig::SCHEMA['fields'][0]['prompt']);
+		$token = $helper->ask($input, $output, $tokenQuestion);
+		$this->gatewayConfig->setBotToken($token);
+		$output->writeln("Using $token.");
+
+		$this->gatewayConfig->setBotToken($token);
+		return 0;
 	}
 }

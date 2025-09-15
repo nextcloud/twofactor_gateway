@@ -15,6 +15,10 @@ use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClientService;
 use OCP\IUser;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 
 /**
  * An integration of https://gitlab.com/morph027/signal-web-gateway
@@ -75,5 +79,16 @@ class Gateway implements IGateway {
 	#[\Override]
 	public function getConfig(): IGatewayConfig {
 		return $this->gatewayConfig;
+	}
+
+	#[\Override]
+	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
+		$helper = new QuestionHelper();
+		$urlQuestion = new Question($this->gatewayConfig::SCHEMA['fields'][0]['prompt'], $this->gatewayConfig::SCHEMA['fields'][0]['default']);
+		$url = $helper->ask($input, $output, $urlQuestion);
+		$output->writeln("Using $url.");
+
+		$this->gatewayConfig->setUrl($url);
+		return 0;
 	}
 }
