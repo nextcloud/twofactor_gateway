@@ -84,7 +84,7 @@ class Configure extends Command {
 		$url = $helper->ask($input, $output, $urlQuestion);
 		$output->writeln("Using $url.");
 
-		$this->signalGateway->gatewayConfig->setUrl($url);
+		$this->signalGateway->getConfig()->setUrl($url);
 	}
 
 	private function configureSms(InputInterface $input, OutputInterface $output): int {
@@ -96,7 +96,7 @@ class Configure extends Command {
 		switch ($provider) {
 			case 'websms':
 				/** @var WebSmsConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$usernameQuestion = new Question('Please enter your websms.de username: ');
 				$username = $helper->ask($input, $output, $usernameQuestion);
@@ -109,7 +109,7 @@ class Configure extends Command {
 
 			case 'sipgate':
 				/** @var SipGateConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$tokenIdQuestion = new Question('Please enter your sipgate token-id: ');
 				$tokenId = $helper->ask($input, $output, $tokenIdQuestion);
@@ -125,7 +125,7 @@ class Configure extends Command {
 
 			case 'playsms':
 				/** @var PlaySMSConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$urlQuestion = new Question('Please enter your PlaySMS URL: ');
 				$url = $helper->ask($input, $output, $urlQuestion);
@@ -141,7 +141,7 @@ class Configure extends Command {
 
 			case 'clockworksms':
 				/** @var ClockworkSMSConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$apitokenQuestion = new Question('Please enter your clockworksms api token: ');
 				$apitoken = $helper->ask($input, $output, $apitokenQuestion);
@@ -152,7 +152,7 @@ class Configure extends Command {
 			case 'puzzelsms':
 
 				/** @var PuzzelSMSConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$urlQuestion = new Question('Please enter your PuzzelSMS URL: ');
 				$url = $helper->ask($input, $output, $urlQuestion);
@@ -174,7 +174,7 @@ class Configure extends Command {
 
 			case 'ecallsms':
 				/** @var EcallSMSConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$usernameQuestion = new Question('Please enter your eCall.ch username: ');
 				$username = $helper->ask($input, $output, $usernameQuestion);
@@ -191,7 +191,7 @@ class Configure extends Command {
 			case 'voipms':
 
 				/** @var VoipMsConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$usernameQuestion = new Question('Please enter your VoIP.ms API username: ');
 				$username = $helper->ask($input, $output, $usernameQuestion);
@@ -210,7 +210,7 @@ class Configure extends Command {
 			case 'voipbuster':
 
 				/** @var VoipbusterConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$usernameQuestion = new Question('Please enter your Voipbuster API username: ');
 				$username = $helper->ask($input, $output, $usernameQuestion);
@@ -228,7 +228,7 @@ class Configure extends Command {
 
 			case 'huawei_e3531':
 				/** @var HuaweiE3531Config $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$urlQuestion = new Question('Please enter the base URL of the Huawei E3531 stick: ', 'http://192.168.8.1/api');
 				$url = $helper->ask($input, $output, $urlQuestion);
@@ -238,7 +238,7 @@ class Configure extends Command {
 
 			case 'spryng':
 				/** @var SpryngSMSConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$apitokenQuestion = new Question('Please enter your Spryng api token: ');
 				$apitoken = $helper->ask($input, $output, $apitokenQuestion);
@@ -248,7 +248,7 @@ class Configure extends Command {
 
 			case 'sms77io':
 				/** @var Sms77IoConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$apiKeyQuestion = new Question('Please enter your sms77.io API key: ');
 				$apiKey = $helper->ask($input, $output, $apiKeyQuestion);
@@ -259,7 +259,7 @@ class Configure extends Command {
 			case 'ovh':
 
 				/** @var OvhConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$endpointQ = new Question('Please enter the endpoint to use (ovh-eu, ovh-us, ovh-ca, soyoustart-eu, soyoustart-ca, kimsufi-eu, kimsufi-ca, runabove-ca): ');
 				$endpoint = $helper->ask($input, $output, $endpointQ);
@@ -289,7 +289,7 @@ class Configure extends Command {
 
 			case 'clickatellcentral':
 				/** @var ClickatellCentralConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$apiQuestion = new Question('Please enter your central.clickatell.com API-ID: ');
 				$api = $helper->ask($input, $output, $apiQuestion);
@@ -305,7 +305,7 @@ class Configure extends Command {
 
 			case 'clickatellportal':
 				/** @var ClickatellPortalConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$apiQuestion = new Question('Please enter your portal.clickatell.com API-Key: ');
 				$apiKey = $helper->ask($input, $output, $apiQuestion);
@@ -323,7 +323,7 @@ class Configure extends Command {
 
 			case 'clicksend':
 				/** @var ClickSendConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$usernameQuestion = new Question('Please enter your clicksend.com username: ');
 				$username = $helper->ask($input, $output, $usernameQuestion);
@@ -336,7 +336,7 @@ class Configure extends Command {
 
 			case 'smsglobal':
 				/** @var SMSGlobalConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$urlproposal = 'https://api.smsglobal.com/http-api.php';
 				$urlQuestion = new Question('Please enter your SMSGlobal http-api:', $urlproposal);
@@ -353,7 +353,7 @@ class Configure extends Command {
 
 			case 'serwersms':
 				/** @var SerwerSMSConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$loginQuestion = new Question('Please enter your SerwerSMS.pl API login: ');
 				$login = $helper->ask($input, $output, $loginQuestion);
@@ -369,7 +369,7 @@ class Configure extends Command {
 
 			case 'smsapi.com':
 				/** @var SMSApiConfig $providerConfig */
-				$providerConfig = $this->smsGateway->config->getProvider($provider)->config;
+				$providerConfig = $this->smsGateway->getConfig()->getProvider($provider)->config;
 
 				$tokenQuestion = new Question('Please enter your SMSApi.com API token: ');
 				$token = $helper->ask($input, $output, $tokenQuestion);
@@ -393,7 +393,7 @@ class Configure extends Command {
 		$token = $helper->ask($input, $output, $tokenQuestion);
 		$output->writeln("Using $token.");
 
-		$this->telegramGateway->gatewayConfig->setBotToken($token);
+		$this->telegramGateway->getConfig()->setBotToken($token);
 	}
 
 	private function configureXMPP(InputInterface $input, OutputInterface $output): void {
@@ -444,10 +444,10 @@ class Configure extends Command {
 		}
 		$output->writeln('XMPP Admin Configuration finished.');
 
-		$this->xmppGateway->gatewayConfig->setSender($sender);
-		$this->xmppGateway->gatewayConfig->setPassword($password);
-		$this->xmppGateway->gatewayConfig->setServer($server);
-		$this->xmppGateway->gatewayConfig->setUsername($username);
-		$this->xmppGateway->gatewayConfig->setMethod($method);
+		$this->xmppGateway->getConfig()->setSender($sender);
+		$this->xmppGateway->getConfig()->setPassword($password);
+		$this->xmppGateway->getConfig()->setServer($server);
+		$this->xmppGateway->getConfig()->setUsername($username);
+		$this->xmppGateway->getConfig()->setMethod($method);
 	}
 }

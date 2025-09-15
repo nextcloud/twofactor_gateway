@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\Signal;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
+use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
 use OCP\Http\Client\IClientService;
 use OCP\IUser;
 use Psr\Log\LoggerInterface;
@@ -22,7 +23,7 @@ class Gateway implements IGateway {
 
 	public function __construct(
 		private IClientService $clientService,
-		public GatewayConfig $gatewayConfig,
+		private GatewayConfig $gatewayConfig,
 		private LoggerInterface $logger,
 	) {
 	}
@@ -66,5 +67,13 @@ class Gateway implements IGateway {
 				throw new MessageTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
 			}
 		}
+	}
+
+	/**
+	 * @return GatewayConfig
+	 */
+	#[\Override]
+	public function getConfig(): IGatewayConfig {
+		return $this->gatewayConfig;
 	}
 }

@@ -29,13 +29,13 @@ class Status extends Command {
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$signalConfigured = $this->signalGateway->gatewayConfig->isComplete();
+		$signalConfigured = $this->signalGateway->getConfig()->isComplete();
 		$output->writeln('Signal gateway: ' . ($signalConfigured ? 'configured' : 'not configured'));
-		$smsConfigured = $this->smsGateway->config->isComplete();
+		$smsConfigured = $this->smsGateway->getConfig()->isComplete();
 		$output->writeln('SMS gateway: ' . ($smsConfigured ? 'configured' : 'not configured'));
-		$telegramConfigured = $this->telegramGateway->gatewayConfig->isComplete();
+		$telegramConfigured = $this->telegramGateway->getConfig()->isComplete();
 		$output->writeln('Telegram gateway: ' . ($telegramConfigured ? 'configured' : 'not configured'));
-		$xmppConfigured = $this->xmppGateway->gatewayConfig->isComplete();
+		$xmppConfigured = $this->xmppGateway->getConfig()->isComplete();
 		$output->writeln('XMPP gateway: ' . ($xmppConfigured ? 'configured' : 'not configured'));
 		return 0;
 	}

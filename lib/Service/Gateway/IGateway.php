@@ -22,4 +22,6 @@ interface IGateway {
 	 * @throws MessageTransmissionException
 	 */
 	public function send(IUser $user, string $identifier, string $message, array $extra = []): void;
+
+	public function getConfig(): IGatewayConfig;
 }

@@ -16,7 +16,7 @@ use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\IProvider;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ProviderFactory;
 use OCP\IAppConfig;
 
-class GatewayConfig extends AGatewayConfig {
+class GatewayConfig extends AGatewayConfig implements IGatewayConfig {
 	public function __construct(
 		public IAppConfig $config,
 		private ProviderFactory $providerFactory,
