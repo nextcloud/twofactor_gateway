@@ -17,7 +17,7 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 final class SmsDoubleConfig extends AGatewayConfig {
-	protected const FIELDS = [
+	protected const SMS_SCHEMA = [
 		'user',
 		'password',
 		'api_key',
