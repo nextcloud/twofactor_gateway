@@ -16,7 +16,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setApitoken(string $apitoken)
  */
 class ClockworkSMSConfig extends AGatewayConfig {
-	protected const FIELDS = [
+	protected const SMS_SCHEMA = [
 		/**
 		 * preserved without snake case by backward compatibility
 		 */

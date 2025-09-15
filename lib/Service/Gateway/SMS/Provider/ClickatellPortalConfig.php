@@ -20,7 +20,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setFrom(string $from)
  */
 class ClickatellPortalConfig extends AGatewayConfig {
-	public const FIELDS = [
+	public const SMS_SCHEMA = [
 		'apikey',
 		'from',
 	];

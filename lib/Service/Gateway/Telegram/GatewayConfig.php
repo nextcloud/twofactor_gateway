@@ -15,7 +15,7 @@ use OCP\IAppConfig;
 use OCP\IConfig;
 
 class GatewayConfig extends AGatewayConfig {
-	protected const FIELDS = [
+	protected const SMS_SCHEMA = [
 		'bot_token',
 	];
 

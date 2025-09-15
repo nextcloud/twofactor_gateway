@@ -18,7 +18,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setSender(string $sender)
  */
 class SMSApiConfig extends AGatewayConfig {
-	protected const FIELDS = [
+	protected const SMS_SCHEMA = [
 		'token',
 		'sender',
 	];

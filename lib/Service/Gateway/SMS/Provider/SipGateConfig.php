@@ -20,7 +20,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setWebSmsExtension(string $webSmsExtension)
  */
 class SipGateConfig extends AGatewayConfig {
-	protected const FIELDS = [
+	protected const SMS_SCHEMA = [
 		'token_id',
 		'access_token',
 		'web_sms_extension',
