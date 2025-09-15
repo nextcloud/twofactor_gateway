@@ -43,6 +43,9 @@ abstract class AGatewayConfig implements IGatewayConfig {
 		}
 	}
 
+	/**
+	 * @return string|static
+	 */
 	public function __call(string $name, array $args) {
 		if (!preg_match('/^(get|set)([A-Z][A-Za-z0-9_]*)$/', $name, $matches)) {
 			throw new ConfigurationException();

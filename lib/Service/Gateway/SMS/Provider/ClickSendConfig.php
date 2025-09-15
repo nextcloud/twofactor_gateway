@@ -13,10 +13,10 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
  * @method string getUser()
- * @method $this setUser(string $user)
+ * @method static setUser(string $user)
  *
  * @method string getApikey()
- * @method $this setApikey(string $apikey)
+ * @method static setApikey(string $apikey)
  */
 class ClickSendConfig extends AGatewayConfig {
 	protected const FIELDS = [

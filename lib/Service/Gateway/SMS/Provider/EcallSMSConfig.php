@@ -13,11 +13,11 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
  * @method string getUsername()
- * @method $this setUsername(string $username)
+ * @method static setUsername(string $username)
  * @method string getPassword()
- * @method $this setPassword(string $password)
+ * @method static setPassword(string $password)
  * @method string getSenderid()
- * @method $this setSenderid(string $senderid)
+ * @method static setSenderid(string $senderid)
  */
 class EcallSMSConfig extends AGatewayConfig {
 	protected const FIELDS = [

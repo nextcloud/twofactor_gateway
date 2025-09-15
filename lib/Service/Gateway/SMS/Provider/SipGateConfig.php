@@ -13,11 +13,11 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
  * @method string getTokenId()
- * @method $this setTokenId(string $tokenId)
+ * @method static setTokenId(string $tokenId)
  * @method string getAccessToken()
- * @method $this setAccessToken(string $accessToken)
+ * @method static setAccessToken(string $accessToken)
  * @method string getWebSmsExtension()
- * @method $this setWebSmsExtension(string $webSmsExtension)
+ * @method static setWebSmsExtension(string $webSmsExtension)
  */
 class SipGateConfig extends AGatewayConfig {
 	protected const FIELDS = [

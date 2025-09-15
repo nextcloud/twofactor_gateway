@@ -13,9 +13,9 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
  * @method string getUser()
- * @method $this setUser(string $user)
+ * @method static setUser(string $user)
  * @method string getPassword()
- * @method $this setPassword(string $password)
+ * @method static setPassword(string $password)
  */
 class WebSmsConfig extends AGatewayConfig {
 	protected const FIELDS = [

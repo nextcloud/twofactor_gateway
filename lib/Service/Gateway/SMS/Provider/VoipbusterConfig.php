@@ -13,11 +13,11 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
  * @method string getApiUser()
- * @method $this setApiUser(string $apiUser)
+ * @method static setApiUser(string $apiUser)
  * @method string getApiPassword()
- * @method $this setApiPassword(string $apiPassword)
+ * @method static setApiPassword(string $apiPassword)
  * @method string getDid()
- * @method $this setDid(string $did)
+ * @method static setDid(string $did)
  */
 class VoipbusterConfig extends AGatewayConfig {
 	protected const FIELDS = [

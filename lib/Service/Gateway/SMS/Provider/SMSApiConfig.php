@@ -13,9 +13,9 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
  * @method string getToken()
- * @method $this setToken(string $token)
+ * @method static setToken(string $token)
  * @method string getSender()
- * @method $this setSender(string $sender)
+ * @method static setSender(string $sender)
  */
 class SMSApiConfig extends AGatewayConfig {
 	protected const FIELDS = [

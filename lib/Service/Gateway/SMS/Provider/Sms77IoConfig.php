@@ -13,7 +13,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
  * @method string getApiKey()
- * @method $this setApiKey(string $apiKey)
+ * @method static setApiKey(string $apiKey)
  */
 class Sms77IoConfig extends AGatewayConfig {
 	protected const FIELDS = [

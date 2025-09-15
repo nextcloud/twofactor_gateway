@@ -13,11 +13,11 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
  * @method string getLogin()
- * @method $this setLogin(string $login)
+ * @method static setLogin(string $login)
  * @method string getPassword()
- * @method $this setPassword(string $password)
+ * @method static setPassword(string $password)
  * @method string getSender()
- * @method $this setSender(string $sender)
+ * @method static setSender(string $sender)
  */
 class SerwerSMSConfig extends AGatewayConfig {
 	protected const FIELDS = [

@@ -13,11 +13,11 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
  * @method string getApi()
- * @method $this setApi(string $api)
+ * @method static setApi(string $api)
  * @method string getUser()
- * @method $this setUser(string $user)
+ * @method static setUser(string $user)
  * @method string getPassword()
- * @method $this setPassword(string $password)
+ * @method static setPassword(string $password)
  */
 class ClickatellCentralConfig extends AGatewayConfig {
 	protected const FIELDS = [

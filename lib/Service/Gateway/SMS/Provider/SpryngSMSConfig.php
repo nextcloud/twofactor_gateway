@@ -13,7 +13,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
  * @method string getApitoken()
- * @method $this setApitoken(string $apitoken)
+ * @method static setApitoken(string $apitoken)
  */
 class SpryngSMSConfig extends AGatewayConfig {
 	protected const FIELDS = [

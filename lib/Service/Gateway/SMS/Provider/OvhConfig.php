@@ -13,17 +13,17 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
  * @method string getApplicationKey()
- * @method $this setApplicationKey(string $applicationKey)
+ * @method static setApplicationKey(string $applicationKey)
  * @method string getApplicationSecret()
- * @method $this setApplicationSecret(string $applicationSecret)
+ * @method static setApplicationSecret(string $applicationSecret)
  * @method string getConsumerKey()
- * @method $this setConsumerKey(string $consumerKey)
+ * @method static setConsumerKey(string $consumerKey)
  * @method string getEndpoint()
- * @method $this setEndpoint(string $endpoint)
+ * @method static setEndpoint(string $endpoint)
  * @method string getAccount()
- * @method $this setAccount(string $account)
+ * @method static setAccount(string $account)
  * @method string getSender()
- * @method $this setSender(string $sender)
+ * @method static setSender(string $sender)
  */
 class OvhConfig extends AGatewayConfig {
 	protected const FIELDS = [
