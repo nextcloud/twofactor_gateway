@@ -22,7 +22,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method $this setServiceid(string $serviceid)
  */
 class PuzzelSMSConfig extends AGatewayConfig {
-	protected const expected = [
+	protected const FIELDS = [
 		'url',
 		'user',
 		'password',

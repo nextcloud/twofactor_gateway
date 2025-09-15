@@ -20,7 +20,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method $this setDid(string $did)
  */
 class VoipMsConfig extends AGatewayConfig {
-	protected const expected = [
+	protected const FIELDS = [
 		'api_username',
 		'api_password',
 		'did',

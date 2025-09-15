@@ -20,7 +20,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method $this setPassword(string $password)
  */
 class PlaySMSConfig extends AGatewayConfig {
-	protected const expected = [
+	protected const FIELDS = [
 		'url',
 		'user',
 		'password',

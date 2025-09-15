@@ -16,7 +16,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method $this setApi(string $api)
  */
 class HuaweiE3531Config extends AGatewayConfig {
-	protected const expected = [
+	protected const FIELDS = [
 		'api',
 	];
 

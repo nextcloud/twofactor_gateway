@@ -19,7 +19,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method $this setApikey(string $apikey)
  */
 class ClickSendConfig extends AGatewayConfig {
-	protected const expected = [
+	protected const FIELDS = [
 		'user',
 		'apikey',
 	];

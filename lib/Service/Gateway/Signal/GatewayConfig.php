@@ -12,7 +12,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\Signal;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 class GatewayConfig extends AGatewayConfig {
-	protected const expected = [
+	protected const FIELDS = [
 		'url',
 	];
 

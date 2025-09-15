@@ -14,13 +14,13 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
  * @method string getApikey()
- * @method $this setApikey(string $apikey)
+ * @method static setApikey(string $apikey)
  *
  * @method string getFrom()
- * @method $this setFrom(string $from)
+ * @method static setFrom(string $from)
  */
 class ClickatellPortalConfig extends AGatewayConfig {
-	public const expected = [
+	public const FIELDS = [
 		'apikey',
 		'from',
 	];

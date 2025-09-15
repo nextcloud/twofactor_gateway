@@ -26,7 +26,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method $this setSender(string $sender)
  */
 class OvhConfig extends AGatewayConfig {
-	protected const expected = [
+	protected const FIELDS = [
 		'application_key',
 		'application_secret',
 		'consumer_key',

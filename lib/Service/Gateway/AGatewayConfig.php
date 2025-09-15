@@ -14,7 +14,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IAppConfig;
 
 abstract class AGatewayConfig implements IGatewayConfig {
-	protected const expected = [];
+	protected const FIELDS = [];
 
 	public function __construct(
 		public IAppConfig $config,
@@ -33,12 +33,12 @@ abstract class AGatewayConfig implements IGatewayConfig {
 	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getKeys(Application::APP_ID);
-		return count(array_intersect($set, static::expected)) === count(static::expected);
+		return count(array_intersect($set, static::FIELDS)) === count(static::FIELDS);
 	}
 
 	#[\Override]
 	public function remove(): void {
-		foreach (static::expected as $key) {
+		foreach (static::FIELDS as $key) {
 			$this->config->deleteKey(Application::APP_ID, $key);
 		}
 	}
@@ -63,10 +63,11 @@ abstract class AGatewayConfig implements IGatewayConfig {
 				$this->config->setValueString(Application::APP_ID, $key, (string)($args[0] ?? ''));
 				return $this;
 		}
+		throw new ConfigurationException();
 	}
 
 	final protected function keyFromAlias(string $alias): string {
-		if (!in_array($alias, static::expected)) {
+		if (!in_array($alias, static::FIELDS, true)) {
 			throw new ConfigurationException();
 		}
 		return $this->providerId() . '_' . $alias;

@@ -20,7 +20,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method $this setSenderid(string $senderid)
  */
 class EcallSMSConfig extends AGatewayConfig {
-	protected const expected = [
+	protected const FIELDS = [
 		'username',
 		'password',
 		/**

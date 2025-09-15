@@ -13,7 +13,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\XMPP;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 class GatewayConfig extends AGatewayConfig {
-	protected const expected = [
+	protected const FIELDS = [
 		'sender',
 		'password',
 		'server',

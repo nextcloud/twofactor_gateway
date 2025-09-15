@@ -15,7 +15,7 @@ use OCP\IAppConfig;
 use OCP\IConfig;
 
 class GatewayConfig extends AGatewayConfig {
-	protected const expected = [
+	protected const FIELDS = [
 		'bot_token',
 	];
 

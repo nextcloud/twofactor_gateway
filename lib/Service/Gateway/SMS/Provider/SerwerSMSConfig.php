@@ -20,7 +20,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method $this setSender(string $sender)
  */
 class SerwerSMSConfig extends AGatewayConfig {
-	protected const expected = [
+	protected const FIELDS = [
 		'login',
 		'password',
 		'sender',
