@@ -62,8 +62,9 @@ class Configure extends Command {
 	}
 
 	private function configureSignal(InputInterface $input, OutputInterface $output): void {
+		$config = $this->signalGateway->getConfig();
 		$helper = new QuestionHelper();
-		$urlQuestion = new Question('Please enter the URL of the Signal gateway (leave blank to use default): ', 'http://localhost:5000');
+		$urlQuestion = new Question($config::SMS_SCHEMA['fields'][0]['prompt'], $config::SMS_SCHEMA['fields'][0]['default']);
 		$url = $helper->ask($input, $output, $urlQuestion);
 		$output->writeln("Using $url.");
 
@@ -108,7 +109,7 @@ class Configure extends Command {
 
 	private function configureTelegram(InputInterface $input, OutputInterface $output): void {
 		$helper = new QuestionHelper();
-		$tokenQuestion = new Question('Please enter your Telegram bot token: ');
+		$tokenQuestion = new Question($this->telegramGateway->getConfig()::SMS_SCHEMA['fields'][0]['prompt']);
 		$token = $helper->ask($input, $output, $tokenQuestion);
 		$output->writeln("Using $token.");
 
@@ -117,9 +118,11 @@ class Configure extends Command {
 
 	private function configureXMPP(InputInterface $input, OutputInterface $output): void {
 		$helper = new QuestionHelper();
+		$fields = $this->xmppGateway->getConfig()::SMS_SCHEMA['fields'];
+		$fields = array_combine(array_column($fields, 'field'), $fields);
 		$sender = '';
 		while (empty($sender) or substr_count($sender, '@') !== 1):
-			$senderQuestion = new Question('Please enter your sender XMPP-JID: ');
+			$senderQuestion = new Question($fields['sender']['prompt']);
 			$sender = $helper->ask($input, $output, $senderQuestion);
 			if (empty($sender)) {
 				$output->writeln('XMPP-JID must not be empty!');
@@ -132,7 +135,7 @@ class Configure extends Command {
 		$output->writeln("Using $sender as XMPP-JID.\nUsing $username as username.");
 		$password = '';
 		while (empty($password)):
-			$passwordQuestion = new Question('Please enter your sender XMPP password: ');
+			$passwordQuestion = new Question($fields['password']['prompt']);
 			$password = $helper->ask($input, $output, $passwordQuestion);
 			if (empty($password)) {
 				$output->writeln('Password must not be empty!');
@@ -141,7 +144,7 @@ class Configure extends Command {
 		$output->writeln('Password accepted.');
 		$server = '';
 		while (empty($server)):
-			$serverQuestion = new Question('Please enter full path to access REST/HTTP API: ');
+			$serverQuestion = new Question($fields['server']['prompt']);
 			$server = $helper->ask($input, $output, $serverQuestion);
 			if (empty($server)) {
 				$output->writeln('API path must not be empty!');
@@ -150,7 +153,7 @@ class Configure extends Command {
 		$output->writeln("Using $server as full URL to access REST/HTTP API.");
 		$method = 0;
 		while (intval($method) < 1 or intval($method) > 2):
-			echo "Please enter 1 or 2 for XMPP sending option:\n";
+			echo $fields['method']['promt'] . PHP_EOL;
 			echo "(1) prosody with mod_rest\n";
 			echo "(2) prosody with mod_post_msg\n";
 			$methodQuestion = new Question('Your choice: ');

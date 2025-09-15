@@ -11,22 +11,18 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\Telegram;
 
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
-use OCP\IAppConfig;
-use OCP\IConfig;
 
+/**
+ * @method string getBotToken()
+ * @method static setBotToken(string $botToken)
+ */
 class GatewayConfig extends AGatewayConfig {
 	public const SMS_SCHEMA = [
+		'id' => 'telegram',
+		'name' => 'Telegram',
+		'fields' => [
+			['field' => 'bot_token', 'prompt' => 'Please enter your Telegram bot token:'],
+		],
 		'bot_token',
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'telegram';
-	}
-
-	public function __construct(
-		public IAppConfig $config,
-		private IConfig $globalConfig,
-	) {
-	}
 }
