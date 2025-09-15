@@ -65,6 +65,10 @@ abstract class AGatewayConfig implements IGatewayConfig {
 			case 'set':
 				$this->config->setValueString(Application::APP_ID, $key, (string)($args[0] ?? ''));
 				return $this;
+
+			case 'delete':
+				$this->config->deleteKey(Application::APP_ID, $key);
+				return $this;
 		}
 		throw new ConfigurationException();
 	}
