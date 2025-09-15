@@ -28,6 +28,7 @@ class GatewayConfig extends AGatewayConfig implements IGatewayConfig {
 		return 'sms';
 	}
 
+	#[\Override]
 	public function getProvider(string $providerName = ''): IProvider {
 		if ($providerName) {
 			$this->setProvider($providerName);
