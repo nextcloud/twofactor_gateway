@@ -10,54 +10,19 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\XMPP;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 class GatewayConfig extends AGatewayConfig {
 	protected const expected = [
-		'xmpp_sender',
-		'xmpp_password',
-		'xmpp_server',
-		'xmpp_username',
-		'xmpp_method',
+		'sender',
+		'password',
+		'server',
+		'username',
+		'method',
 	];
 
-	public function getSender(): string {
-		return $this->getOrFail('xmpp_sender');
-	}
-
-	public function setSender(string $sender): void {
-		$this->config->setValueString(Application::APP_ID, 'xmpp_sender', $sender);
-	}
-
-	public function getPassword(): string {
-		return $this->getOrFail('xmpp_password');
-	}
-
-	public function setPassword(string $password): void {
-		$this->config->setValueString(Application::APP_ID, 'xmpp_password', $password);
-	}
-
-	public function getServer(): string {
-		return $this->getOrFail('xmpp_server');
-	}
-
-	public function setServer(string $server): void {
-		$this->config->setValueString(Application::APP_ID, 'xmpp_server', $server);
-	}
-
-	public function getUsername(): string {
-		return $this->getOrFail('xmpp_username');
-	}
-
-	public function setUsername(string $username): void {
-		$this->config->setValueString(Application::APP_ID, 'xmpp_username', $username);
-	}
-	public function getMethod(): string {
-		return $this->getOrFail('xmpp_method');
-	}
-
-	public function setMethod(string $method): void {
-		$this->config->setValueString(Application::APP_ID, 'xmpp_method', $method);
+	#[\Override]
+	public static function providerId(): string {
+		return 'xmpp';
 	}
 }

@@ -9,28 +9,23 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
+/**
+ * @method string getUser()
+ * @method $this setUser(string $user)
+ *
+ * @method string getApikey()
+ * @method $this setApikey(string $apikey)
+ */
 class ClickSendConfig extends AGatewayConfig {
 	protected const expected = [
-		'clicksend_user',
-		'clicksend_apikey',
+		'user',
+		'apikey',
 	];
 
-	public function getUser(): string {
-		return $this->getOrFail('clicksend_user');
-	}
-
-	public function setUser(string $user): void {
-		$this->config->setValueString(Application::APP_ID, 'clicksend_user', $user);
-	}
-
-	public function getApiKey(): string {
-		return $this->getOrFail('clicksend_apikey');
-	}
-
-	public function setApiKey(string $password): void {
-		$this->config->setValueString(Application::APP_ID, 'clicksend_apikey', $password);
+	#[\Override]
+	public static function providerId(): string {
+		return 'clicksend';
 	}
 }

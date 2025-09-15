@@ -15,8 +15,6 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class SpryngSMS implements IProvider {
-	public const PROVIDER_ID = 'spryng';
-
 	private IClient $client;
 
 	public function __construct(
@@ -34,7 +32,7 @@ class SpryngSMS implements IProvider {
 				[
 					'headers' => [
 						'Accept' => 'application/json',
-						'Authorization' => 'Bearer ' . $this->config->getApiToken(),
+						'Authorization' => 'Bearer ' . $this->config->getApitoken(),
 						'Content-Type' => 'application/json',
 					],
 					'json' => [

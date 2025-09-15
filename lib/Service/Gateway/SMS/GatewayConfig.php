@@ -23,7 +23,15 @@ class GatewayConfig extends AGatewayConfig {
 	) {
 	}
 
-	public function getProvider(): IProvider {
+	#[\Override]
+	public static function providerId(): string {
+		return 'sms';
+	}
+
+	public function getProvider(string $providerName = ''): IProvider {
+		if ($providerName) {
+			$this->setProvider($providerName);
+		}
 		$providerName = $this->config->getValueString(Application::APP_ID, 'sms_provider_name');
 		if ($providerName === '') {
 			throw new ConfigurationException();

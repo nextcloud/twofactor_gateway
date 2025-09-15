@@ -9,28 +9,22 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
+/**
+ * @method string getToken()
+ * @method $this setToken(string $token)
+ * @method string getSender()
+ * @method $this setSender(string $sender)
+ */
 class SMSApiConfig extends AGatewayConfig {
 	protected const expected = [
-		'smsapi_token',
-		'smsapi_sender',
+		'token',
+		'sender',
 	];
 
-	public function getToken(): string {
-		return $this->getOrFail('smsapi_token');
-	}
-
-	public function getSender(): string {
-		return $this->getOrFail('smsapi_sender');
-	}
-
-	public function setToken(string $token): void {
-		$this->config->setValueString(Application::APP_ID, 'smsapi_token', $token);
-	}
-
-	public function setSender(string $sender): void {
-		$this->config->setValueString(Application::APP_ID, 'smsapi_sender', $sender);
+	#[\Override]
+	public static function providerId(): string {
+		return 'smsapi';
 	}
 }

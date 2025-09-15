@@ -15,8 +15,6 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class Sms77Io implements IProvider {
-	public const PROVIDER_ID = 'sms77io';
-
 	private IClient $client;
 
 	public function __construct(

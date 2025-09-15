@@ -15,8 +15,6 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class SMSGlobal implements IProvider {
-	public const PROVIDER_ID = 'smsglobal';
-
 	private IClient $client;
 
 	public function __construct(

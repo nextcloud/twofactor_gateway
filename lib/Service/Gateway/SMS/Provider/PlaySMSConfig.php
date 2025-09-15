@@ -9,37 +9,25 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
+/**
+ * @method string getUrl()
+ * @method $this setUrl(string $url)
+ * @method string getUser()
+ * @method $this setUser(string $user)
+ * @method string getPassword()
+ * @method $this setPassword(string $password)
+ */
 class PlaySMSConfig extends AGatewayConfig {
 	protected const expected = [
-		'playsms_url',
-		'playsms_user',
-		'playsms_password',
+		'url',
+		'user',
+		'password',
 	];
 
-	public function getUrl(): string {
-		return $this->getOrFail('playsms_url');
-	}
-
-	public function setUrl(string $url): void {
-		$this->config->setValueString(Application::APP_ID, 'playsms_url', $url);
-	}
-
-	public function getUser(): string {
-		return $this->getOrFail('playsms_user');
-	}
-
-	public function setUser(string $user): void {
-		$this->config->setValueString(Application::APP_ID, 'playsms_user', $user);
-	}
-
-	public function getPassword(): string {
-		return $this->getOrFail('playsms_password');
-	}
-
-	public function setPassword(string $password): void {
-		$this->config->setValueString(Application::APP_ID, 'playsms_password', $password);
+	#[\Override]
+	public static function providerId(): string {
+		return 'playsms';
 	}
 }

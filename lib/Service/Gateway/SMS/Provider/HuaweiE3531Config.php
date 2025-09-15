@@ -9,19 +9,19 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
+/**
+ * @method string getApi()
+ * @method $this setApi(string $api)
+ */
 class HuaweiE3531Config extends AGatewayConfig {
 	protected const expected = [
-		'huawei_e3531_api',
+		'api',
 	];
 
-	public function getUrl(): string {
-		return $this->getOrFail('huawei_e3531_api');
-	}
-
-	public function setUrl(string $url): void {
-		$this->config->setValueString(Application::APP_ID, 'huawei_e3531_api', $url);
+	#[\Override]
+	public static function providerId(): string {
+		return 'huawei_e3531';
 	}
 }

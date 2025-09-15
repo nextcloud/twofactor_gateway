@@ -12,25 +12,22 @@ namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
+/**
+ * @method string getApikey()
+ * @method $this setApikey(string $apikey)
+ *
+ * @method string getFrom()
+ * @method $this setFrom(string $from)
+ */
 class ClickatellPortalConfig extends AGatewayConfig {
 	public const expected = [
-		'clickatell_portal_apikey',
+		'apikey',
+		'from',
 	];
 
-	public function getApiKey(): string {
-		return $this->getOrFail('clickatell_portal_apikey');
-	}
-
-	public function setApiKey(string $apiKey): void {
-		$this->config->setValueString(Application::APP_ID, 'clickatell_portal_apikey', $apiKey);
-	}
-
-	public function getFromNumber(): string {
-		return $this->config->getValueString(Application::APP_ID, 'clickatell_portal_from');
-	}
-
-	public function setFromNumber(string $fromNumber): void {
-		$this->config->setValueString(Application::APP_ID, 'clickatell_portal_from', $fromNumber);
+	#[\Override]
+	public static function providerId(): string {
+		return 'clickatell_portal';
 	}
 
 	public function deleteFromNumber(): void {

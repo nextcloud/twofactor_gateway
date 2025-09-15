@@ -15,8 +15,6 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class ClickSend implements IProvider {
-	public const PROVIDER_ID = 'clicksend';
-
 	private IClient $client;
 
 	public function __construct(

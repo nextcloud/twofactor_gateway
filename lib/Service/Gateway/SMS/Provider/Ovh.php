@@ -16,8 +16,6 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class Ovh implements IProvider {
-	public const PROVIDER_ID = 'ovh';
-
 	private IClient $client;
 
 	/**

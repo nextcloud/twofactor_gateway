@@ -9,25 +9,15 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\Signal;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
-use OCP\IAppConfig;
 
 class GatewayConfig extends AGatewayConfig {
 	protected const expected = [
-		'signal_url',
+		'url',
 	];
 
-	public function __construct(
-		public IAppConfig $config,
-	) {
-	}
-
-	public function getUrl(): string {
-		return $this->getOrFail('signal_url');
-	}
-
-	public function setUrl(string $url): void {
-		$this->config->setValueString(Application::APP_ID, 'signal_url', $url);
+	#[\Override]
+	public static function providerId(): string {
+		return 'signal';
 	}
 }

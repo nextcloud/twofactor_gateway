@@ -15,8 +15,6 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class SMSApi implements IProvider {
-	public const PROVIDER_ID = 'smsapi.com';
-
 	private IClient $client;
 
 	public function __construct(

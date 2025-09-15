@@ -15,8 +15,6 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class ClickatellPortal implements IProvider {
-	public const PROVIDER_ID = 'clickatellportal';
-
 	private IClient $client;
 
 	public function __construct(
@@ -29,7 +27,7 @@ class ClickatellPortal implements IProvider {
 	#[\Override]
 	public function send(string $identifier, string $message) {
 		try {
-			$from = $this->config->getFromNumber();
+			$from = $this->config->getFrom();
 			$from = !is_null($from) ? sprintf('&from=%s', urlencode($from)) : '';
 			$response = $this->client->get(vsprintf('https://platform.clickatell.com/messages/http/send?apiKey=%s&to=%s&content=%s%s', [
 				urlencode($this->config->getApiKey()),

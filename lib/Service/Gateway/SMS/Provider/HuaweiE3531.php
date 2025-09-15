@@ -15,8 +15,6 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class HuaweiE3531 implements IProvider {
-	public const PROVIDER_ID = 'huawei_e3531';
-
 	private IClient $client;
 
 	public function __construct(
@@ -28,7 +26,7 @@ class HuaweiE3531 implements IProvider {
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$url = $this->config->getUrl();
+		$url = $this->config->getApi();
 
 		try {
 			$sessionTokenResponse = $this->client->get("$url/webserver/SesTokInfo");

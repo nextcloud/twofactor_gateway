@@ -9,37 +9,25 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
+/**
+ * @method string getTokenId()
+ * @method $this setTokenId(string $tokenId)
+ * @method string getAccessToken()
+ * @method $this setAccessToken(string $accessToken)
+ * @method string getWebSmsExtension()
+ * @method $this setWebSmsExtension(string $webSmsExtension)
+ */
 class SipGateConfig extends AGatewayConfig {
 	protected const expected = [
-		'sipgate_token_id',
-		'sipgate_access_token',
-		'sipgate_web_sms_extension',
+		'token_id',
+		'access_token',
+		'web_sms_extension',
 	];
 
-	public function getTokenId(): string {
-		return $this->getOrFail('sipgate_token_id');
-	}
-
-	public function setTokenId(string $tokenId): void {
-		$this->config->setValueString(Application::APP_ID, 'sipgate_token_id', $tokenId);
-	}
-
-	public function getAccessToken(): string {
-		return $this->getOrFail('sipgate_access_token');
-	}
-
-	public function setAccessToken(string $accessToken): void {
-		$this->config->setValueString(Application::APP_ID, 'sipgate_access_token', $accessToken);
-	}
-
-	public function getWebSmsExtension(): string {
-		return $this->getOrFail('sipgate_web_sms_extension');
-	}
-
-	public function setWebSmsExtension(string $webSmsExtension): void {
-		$this->config->setValueString(Application::APP_ID, 'sipgate_web_sms_extension', $webSmsExtension);
+	#[\Override]
+	public static function providerId(): string {
+		return 'sipgate';
 	}
 }

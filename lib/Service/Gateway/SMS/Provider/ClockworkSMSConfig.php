@@ -9,19 +9,22 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
+/**
+ * @method string getApitoken()
+ * @method $this setApitoken(string $apitoken)
+ */
 class ClockworkSMSConfig extends AGatewayConfig {
 	protected const expected = [
-		'clockworksms_apitoken'
+		/**
+		 * preserved without snake case by backward compatibility
+		 */
+		'apitoken'
 	];
 
-	public function getApiToken(): string {
-		return $this->getOrFail('clockworksms_apitoken');
-	}
-
-	public function setApiToken(string $user): void {
-		$this->config->setValueString(Application::APP_ID, 'clockworksms_apitoken', $user);
+	#[\Override]
+	public static function providerId(): string {
+		return 'clockworksms';
 	}
 }

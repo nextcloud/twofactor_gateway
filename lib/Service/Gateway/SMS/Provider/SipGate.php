@@ -15,8 +15,6 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class SipGate implements IProvider {
-	public const PROVIDER_ID = 'sipgate';
-
 	private IClient $client;
 
 	public function __construct(

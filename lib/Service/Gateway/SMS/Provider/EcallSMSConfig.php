@@ -9,37 +9,28 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
+/**
+ * @method string getUsername()
+ * @method $this setUsername(string $username)
+ * @method string getPassword()
+ * @method $this setPassword(string $password)
+ * @method string getSenderid()
+ * @method $this setSenderid(string $senderid)
+ */
 class EcallSMSConfig extends AGatewayConfig {
 	protected const expected = [
-		'ecallsms_username',
-		'ecallsms_password',
-		'ecallsms_senderid',
+		'username',
+		'password',
+		/**
+		 * preserved without snake case by backward compatibility
+		 */
+		'senderid',
 	];
 
-	public function getUser(): string {
-		return $this->getOrFail('ecallsms_username');
-	}
-
-	public function setUser(string $user): void {
-		$this->config->setValueString(Application::APP_ID, 'ecallsms_username', $user);
-	}
-
-	public function getPassword(): string {
-		return $this->getOrFail('ecallsms_password');
-	}
-
-	public function setPassword(string $password): void {
-		$this->config->setValueString(Application::APP_ID, 'ecallsms_password', $password);
-	}
-
-	public function getSenderId(): string {
-		return $this->getOrFail('ecallsms_senderid');
-	}
-
-	public function setSenderId(string $senderid): void {
-		$this->config->setValueString(Application::APP_ID, 'ecallsms_senderid', $senderid);
+	#[\Override]
+	public static function providerId(): string {
+		return 'ecallsms';
 	}
 }

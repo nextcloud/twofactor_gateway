@@ -13,4 +13,5 @@ interface IGatewayConfig {
 	public function getOrFail(string $key): string;
 	public function isComplete(): bool;
 	public function remove(): void;
+	public static function providerId(): string;
 }

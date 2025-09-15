@@ -15,8 +15,6 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class VoipMs implements IProvider {
-	public const PROVIDER_ID = 'voipms';
-
 	private IClient $client;
 
 	public function __construct(
@@ -28,8 +26,8 @@ class VoipMs implements IProvider {
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$user = $this->config->getUser();
-		$password = $this->config->getPassword();
+		$user = $this->config->getApiUser();
+		$password = $this->config->getApiPassword();
 		$did = $this->config->getDid();
 		try {
 			$this->client->get('https://voip.ms/api/v1/rest.php', [

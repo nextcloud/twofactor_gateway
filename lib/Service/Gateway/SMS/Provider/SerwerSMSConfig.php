@@ -9,37 +9,25 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
+/**
+ * @method string getLogin()
+ * @method $this setLogin(string $login)
+ * @method string getPassword()
+ * @method $this setPassword(string $password)
+ * @method string getSender()
+ * @method $this setSender(string $sender)
+ */
 class SerwerSMSConfig extends AGatewayConfig {
 	protected const expected = [
-		'serwersms_login',
-		'serwersms_password',
-		'serwersms_sender',
+		'login',
+		'password',
+		'sender',
 	];
 
-	public function getLogin(): string {
-		return $this->getOrFail('serwersms_login');
-	}
-
-	public function getPassword(): string {
-		return $this->getOrFail('serwersms_password');
-	}
-
-	public function getSender(): string {
-		return $this->getOrFail('serwersms_sender');
-	}
-
-	public function setLogin(string $login): void {
-		$this->config->setValueString(Application::APP_ID, 'serwersms_login', $login);
-	}
-
-	public function setPassword(string $password): void {
-		$this->config->setValueString(Application::APP_ID, 'serwersms_password', $password);
-	}
-
-	public function setSender(string $sender): void {
-		$this->config->setValueString(Application::APP_ID, 'serwersms_sender', $sender);
+	#[\Override]
+	public static function providerId(): string {
+		return 'serwersms';
 	}
 }

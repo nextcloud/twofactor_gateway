@@ -15,8 +15,6 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
 class PuzzelSMS implements IProvider {
-	public const PROVIDER_ID = 'puzzelsms';
-
 	private IClient $client;
 
 	public function __construct(
@@ -37,7 +35,7 @@ class PuzzelSMS implements IProvider {
 						'password' => $this->config->getPassword(),
 						'message[0].recipient' => '+' . $identifier,
 						'message[0].content' => $message,
-						'serviceId' => $this->config->getServiceId(),
+						'serviceId' => $this->config->getServiceid(),
 					],
 				]
 			);
