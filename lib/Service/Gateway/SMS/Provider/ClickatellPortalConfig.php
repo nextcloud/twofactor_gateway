@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 /**
@@ -21,16 +20,11 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  */
 class ClickatellPortalConfig extends AGatewayConfig {
 	public const SMS_SCHEMA = [
-		'apikey',
-		'from',
+		'id' => 'clickatell_portal',
+		'name' => 'Clickatell Portal',
+		'fields' => [
+			['field' => 'apikey', 'prompt' => 'Please enter your portal.clickatell.com API-Key:'],
+			['field' => 'from',   'prompt' => 'Please enter your sender number for two-way messaging (empty = one-way): ', 'optional' => true],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'clickatell_portal';
-	}
-
-	public function deleteFromNumber(): void {
-		$this->config->deleteKey(Application::APP_ID, 'clickatell_portal_from');
-	}
 }

@@ -18,13 +18,12 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setSender(string $sender)
  */
 class SMSApiConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'token',
-		'sender',
+	public const SMS_SCHEMA = [
+		'id' => 'smsapi',
+		'name' => 'SMSAPI',
+		'fields' => [
+			['field' => 'token', 'prompt' => 'Please enter your SMSApi.com API token:'],
+			['field' => 'sender','prompt' => 'Please enter your SMSApi.com sender name:'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'smsapi';
-	}
 }

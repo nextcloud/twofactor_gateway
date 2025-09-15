@@ -19,13 +19,12 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setApikey(string $apikey)
  */
 class ClickSendConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'user',
-		'apikey',
+	public const SMS_SCHEMA = [
+		'id' => 'clicksend',
+		'name' => 'ClickSend',
+		'fields' => [
+			['field' => 'user', 'prompot' => 'Please enter your clicksend.com username:'],
+			['field' => 'apikey', 'prompot' => 'Please enter your clicksend.com api key (or subuser password):'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'clicksend';
-	}
 }

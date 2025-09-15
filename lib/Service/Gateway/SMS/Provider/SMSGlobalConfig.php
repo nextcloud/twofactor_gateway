@@ -20,14 +20,13 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setPassword(string $password)
  */
 class SMSGlobalConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'url',
-		'user',
-		'password',
+	public const SMS_SCHEMA = [
+		'id' => 'smsglobal',
+		'name' => 'SMSGlobal',
+		'fields' => [
+			['field' => 'url',      'prompt' => 'Please enter your SMSGlobal http-api:', 'default' => 'https://api.smsglobal.com/http-api.php'],
+			['field' => 'user',     'prompt' => 'Please enter your SMSGlobal username (for http-api):'],
+			['field' => 'password', 'prompt' => 'Please enter your SMSGlobal password (for http-api):'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'smsglobal';
-	}
 }

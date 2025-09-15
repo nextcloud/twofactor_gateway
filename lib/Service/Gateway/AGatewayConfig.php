@@ -14,7 +14,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IAppConfig;
 
 abstract class AGatewayConfig implements IGatewayConfig {
-	protected const SMS_SCHEMA = [];
+	public const SMS_SCHEMA = [];
 
 	public function __construct(
 		public IAppConfig $config,
@@ -33,12 +33,12 @@ abstract class AGatewayConfig implements IGatewayConfig {
 	#[\Override]
 	public function isComplete(): bool {
 		$set = $this->config->getKeys(Application::APP_ID);
-		return count(array_intersect($set, static::SMS_SCHEMA)) === count(static::SMS_SCHEMA);
+		return count(array_intersect($set, static::SMS_SCHEMA['fields'])) === count(static::SMS_SCHEMA['fields']);
 	}
 
 	#[\Override]
 	public function remove(): void {
-		foreach (static::SMS_SCHEMA as $key) {
+		foreach (static::SMS_SCHEMA['fields'] as $key) {
 			$this->config->deleteKey(Application::APP_ID, $key);
 		}
 	}
@@ -74,12 +74,18 @@ abstract class AGatewayConfig implements IGatewayConfig {
 	}
 
 	final protected function keyFromAlias(string $alias): string {
-		if (!in_array($alias, static::SMS_SCHEMA, true)) {
+		$fields = array_column(static::SMS_SCHEMA['fields'], 'field');
+		if (!in_array($alias, $fields, true)) {
 			throw new ConfigurationException();
 		}
 		return $this->providerId() . '_' . $alias;
 	}
 
 	#[\Override]
-	abstract public static function providerId(): string;
+	public static function providerId(): string {
+		if (is_array(static::SMS_SCHEMA) && isset(static::SMS_SCHEMA['id'])) {
+			return (string)static::SMS_SCHEMA['id'];
+		}
+		throw new ConfigurationException();
+	}
 }

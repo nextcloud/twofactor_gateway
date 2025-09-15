@@ -16,12 +16,11 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setApiKey(string $apiKey)
  */
 class Sms77IoConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'api_key',
+	public const SMS_SCHEMA = [
+		'id' => 'sms77io',
+		'name' => 'sms77.io',
+		'fields' => [
+			['field' => 'api_key', 'prompt' => 'Please enter your sms77.io API key:'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'sms77io';
-	}
 }

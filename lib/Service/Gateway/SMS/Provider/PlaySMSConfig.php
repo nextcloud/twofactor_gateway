@@ -20,14 +20,13 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setPassword(string $password)
  */
 class PlaySMSConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'url',
-		'user',
-		'password',
+	public const SMS_SCHEMA = [
+		'id' => 'playsms',
+		'name' => 'PlaySMS',
+		'fields' => [
+			['field' => 'url',      'prompt' => 'Please enter your PlaySMS URL:'],
+			['field' => 'user',     'prompt' => 'Please enter your PlaySMS username:'],
+			['field' => 'password', 'prompt' => 'Please enter your PlaySMS password:'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'playsms';
-	}
 }

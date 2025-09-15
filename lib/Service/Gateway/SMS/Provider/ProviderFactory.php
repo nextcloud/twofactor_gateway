@@ -20,26 +20,33 @@ class ProviderFactory {
 	}
 
 	public function getProvider(string $id): IProvider {
-		return match ($id) {
-			SipGateConfig::providerId() => $this->container->get(SipGate::class),
-			PuzzelSMSConfig::providerId() => $this->container->get(PuzzelSMS::class),
-			PlaySMSConfig::providerId() => $this->container->get(PlaySMS::class),
-			SMSGlobalConfig::providerId() => $this->container->get(SMSGlobal::class),
-			WebSmsConfig::providerId() => $this->container->get(WebSms::class),
-			ClockworkSMSConfig::providerId() => $this->container->get(ClockworkSMS::class),
-			EcallSMSConfig::providerId() => $this->container->get(EcallSMS::class),
-			VoipMsConfig::providerId() => $this->container->get(VoipMs::class),
-			VoipbusterConfig::providerId() => $this->container->get(Voipbuster::class),
-			HuaweiE3531Config::providerId() => $this->container->get(HuaweiE3531::class),
-			Sms77IoConfig::providerId() => $this->container->get(Sms77Io::class),
-			OvhConfig::providerId() => $this->container->get(Ovh::class),
-			SpryngSMSConfig::providerId() => $this->container->get(SpryngSMS::class),
-			ClickatellCentralConfig::providerId() => $this->container->get(ClickatellCentral::class),
-			ClickatellPortalConfig::providerId() => $this->container->get(ClickatellPortal::class),
-			ClickSendConfig::providerId() => $this->container->get(ClickSend::class),
-			SerwerSMSConfig::providerId() => $this->container->get(SerwerSMS::class),
-			SMSApiConfig::providerId() => $this->container->get(SMSApi::class),
-			default => throw new InvalidProviderException("Provider <$id> does not exist"),
-		};
+		foreach ($this->discoverProviders() as $provider) {
+			if ($provider::SMS_SCHEMA['id'] === $id) {
+				return $this->container->get(str_replace('Config', '', $provider));
+			}
+		}
+		throw new InvalidProviderException("Provider <$id> does not exist");
+	}
+
+	private function discoverProviders(): array {
+		$loader = require __DIR__ . '/../../../../../vendor/autoload.php';
+		$classMap = $loader->getClassMap();
+
+		return array_filter(
+			array_keys($classMap),
+			fn ($namespace): bool
+				=> str_starts_with($namespace, 'OCA\\TwoFactorGateway\\Service\\Gateway\\SMS\\Provider\\')
+				&& str_ends_with($namespace, 'Config')
+				&& is_array($namespace::SMS_SCHEMA)
+				&& isset($namespace::SMS_SCHEMA['id'])
+		);
+	}
+
+	public function getSchemas(): array {
+		$schemas = [];
+		foreach ($this->discoverProviders() as $providerClass) {
+			$schemas[] = $providerClass::SMS_SCHEMA;
+		}
+		return $schemas;
 	}
 }

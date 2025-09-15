@@ -20,14 +20,13 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setDid(string $did)
  */
 class VoipbusterConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'api_username',
-		'api_password',
-		'did',
+	public const SMS_SCHEMA = [
+		'id' => 'voipbuster',
+		'name' => 'Voipbuster',
+		'fields' => [
+			['field' => 'api_user',     'prompt' => 'Please enter your Voipbuster API username:'],
+			['field' => 'api_password', 'prompt' => 'Please enter your Voipbuster API password:'],
+			['field' => 'did',          'prompt' => 'Please enter your Voipbuster DID:'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'voipbuster';
-	}
 }

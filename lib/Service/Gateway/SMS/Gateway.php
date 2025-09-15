@@ -11,12 +11,14 @@ namespace OCA\TwoFactorGateway\Service\Gateway\SMS;
 
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ProviderFactory;
 use OCP\IUser;
 
 class Gateway implements IGateway {
 
 	public function __construct(
 		public GatewayConfig $gatewayConfig,
+		private ProviderFactory $providerFactory,
 	) {
 	}
 
@@ -31,5 +33,9 @@ class Gateway implements IGateway {
 	#[\Override]
 	public function getConfig(): IGatewayConfig {
 		return $this->gatewayConfig;
+	}
+
+	public function getProvidersSchemas(): array {
+		return $this->providerFactory->getSchemas();
 	}
 }

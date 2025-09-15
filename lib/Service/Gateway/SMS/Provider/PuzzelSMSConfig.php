@@ -22,18 +22,14 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setServiceid(string $serviceid)
  */
 class PuzzelSMSConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'url',
-		'user',
-		'password',
-		/**
-		 * preserved without snake case by backward compatibility
-		 */
-		'serviceid',
+	public const SMS_SCHEMA = [
+		'id' => 'puzzel',
+		'name' => 'Puzzel SMS',
+		'fields' => [
+			['field' => 'url',       'prompt' => 'Please enter your PuzzelSMS URL:'],
+			['field' => 'user',      'prompt' => 'Please enter your PuzzelSMS username:'],
+			['field' => 'password',  'prompt' => 'Please enter your PuzzelSMS password:'],
+			['field' => 'serviceid', 'prompt' => 'Please enter your PuzzelSMS service ID:'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'puzzel';
-	}
 }

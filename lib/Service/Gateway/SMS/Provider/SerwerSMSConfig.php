@@ -20,14 +20,13 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setSender(string $sender)
  */
 class SerwerSMSConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'login',
-		'password',
-		'sender',
+	public const SMS_SCHEMA = [
+		'id' => 'serwersms',
+		'name' => 'SerwerSMS',
+		'fields' => [
+			['field' => 'login',    'prompt' => 'Please enter your SerwerSMS.pl API login:'],
+			['field' => 'password', 'prompt' => 'Please enter your SerwerSMS.pl API password:'],
+			['field' => 'sender',   'prompt' => 'Please enter your SerwerSMS.pl sender name:'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'serwersms';
-	}
 }

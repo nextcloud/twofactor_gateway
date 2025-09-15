@@ -17,10 +17,14 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 final class SmsDoubleConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'user',
-		'password',
-		'api_key',
+	public const SMS_SCHEMA = [
+		'id' => 'smsglobal',
+		'name' => 'SMSGlobal',
+		'fields' => [
+			['field' => 'user',     'prompt' => 'Please enter your SMSDouble username:'],
+			['field' => 'password', 'prompt' => 'Please enter your SMSDouble password:'],
+			['field' => 'api_key',  'prompt' => 'Please enter your SMSDouble API key:'],
+		],
 	];
 
 	public static function providerId(): string {

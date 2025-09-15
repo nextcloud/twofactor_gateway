@@ -20,17 +20,13 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setSenderid(string $senderid)
  */
 class EcallSMSConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'username',
-		'password',
-		/**
-		 * preserved without snake case by backward compatibility
-		 */
-		'senderid',
+	public const SMS_SCHEMA = [
+		'id' => 'ecallsms',
+		'name' => 'EcallSMS',
+		'fields' => [
+			['field' => 'user',      'prompt' => 'Please enter your eCall.ch username:'],
+			['field' => 'password',  'prompt' => 'Please enter your eCall.ch password:'],
+			['field' => 'sender_id', 'prompt' => 'Please enter your eCall.ch sender ID:'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'ecallsms';
-	}
 }

@@ -18,95 +18,10 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
 class Configure extends Command {
-
-	private const SMS_SCHEMA = [
-		'websms' => [
-			['alias' => 'user',     'prompt' => 'Please enter your websms.de username: '],
-			['alias' => 'password', 'prompt' => 'Please enter your websms.de password: '],
-		],
-		'sipgate' => [
-			['alias' => 'token_id',        'prompt' => 'Please enter your sipgate token-id: '],
-			['alias' => 'access_token',    'prompt' => 'Please enter your sipgate access token: '],
-			['alias' => 'web_sms_extension','prompt' => 'Please enter your sipgate web-sms extension: '],
-		],
-		'playsms' => [
-			['alias' => 'url',      'prompt' => 'Please enter your PlaySMS URL: '],
-			['alias' => 'user',     'prompt' => 'Please enter your PlaySMS username: '],
-			['alias' => 'password', 'prompt' => 'Please enter your PlaySMS password: '],
-		],
-		'clockworksms' => [
-			['alias' => 'apitoken', 'prompt' => 'Please enter your clockworksms api token: '],
-		],
-		'puzzelsms' => [
-			['alias' => 'url',       'prompt' => 'Please enter your PuzzelSMS URL: '],
-			['alias' => 'user',      'prompt' => 'Please enter your PuzzelSMS username: '],
-			['alias' => 'password',  'prompt' => 'Please enter your PuzzelSMS password: '],
-			['alias' => 'serviceid', 'prompt' => 'Please enter your PuzzelSMS service ID: '],
-		],
-		'ecallsms' => [
-			['alias' => 'user',      'prompt' => 'Please enter your eCall.ch username: '],
-			['alias' => 'password',  'prompt' => 'Please enter your eCall.ch password: '],
-			['alias' => 'sender_id', 'prompt' => 'Please enter your eCall.ch sender ID: '],
-		],
-		'voipms' => [
-			['alias' => 'api_user',     'prompt' => 'Please enter your VoIP.ms API username: '],
-			['alias' => 'api_password', 'prompt' => 'Please enter your VoIP.ms API password: '],
-			['alias' => 'did',          'prompt' => 'Please enter your VoIP.ms DID: '],
-		],
-		'voipbuster' => [
-			['alias' => 'api_user',     'prompt' => 'Please enter your Voipbuster API username: '],
-			['alias' => 'api_password', 'prompt' => 'Please enter your Voipbuster API password: '],
-			['alias' => 'did',          'prompt' => 'Please enter your Voipbuster DID: '],
-		],
-		'huawei_e3531' => [
-			['alias' => 'api', 'prompt' => 'Please enter the base URL of the Huawei E3531 stick: ', 'default' => 'http://192.168.8.1/api'],
-		],
-		'spryng' => [
-			['alias' => 'apitoken', 'prompt' => 'Please enter your Spryng api token: '],
-		],
-		'sms77io' => [
-			['alias' => 'api_key', 'prompt' => 'Please enter your sms77.io API key: '],
-		],
-		'ovh' => [
-			['alias' => 'endpoint',        'prompt' => 'Please enter the endpoint (ovh-eu, ovh-us, ovh-ca, soyoustart-eu, soyoustart-ca, kimsufi-eu, kimsufi-ca, runabove-ca): '],
-			['alias' => 'application_key', 'prompt' => 'Please enter your application key: '],
-			['alias' => 'application_secret','prompt' => 'Please enter your application secret: '],
-			['alias' => 'consumer_key',    'prompt' => 'Please enter your consumer key: '],
-			['alias' => 'account',         'prompt' => 'Please enter your account (sms-*****): '],
-			['alias' => 'sender',          'prompt' => 'Please enter your sender: '],
-		],
-		'clickatellcentral' => [
-			['alias' => 'api',      'prompt' => 'Please enter your central.clickatell.com API-ID: '],
-			['alias' => 'user',     'prompt' => 'Please enter your central.clickatell.com username: '],
-			['alias' => 'password', 'prompt' => 'Please enter your central.clickatell.com password: '],
-		],
-		'clickatellportal' => [
-			['alias' => 'api_key', 'prompt' => 'Please enter your portal.clickatell.com API-Key: '],
-			['alias' => 'from',    'prompt' => 'Please enter your sender number for two-way messaging (empty = one-way): ', 'optional' => true],
-		],
-		'clicksend' => [
-			['alias' => 'user',    'prompt' => 'Please enter your clicksend.com username: '],
-			['alias' => 'api_key', 'prompt' => 'Please enter your clicksend.com API Key (or subuser password): '],
-		],
-		'serwersms' => [
-			['alias' => 'login',    'prompt' => 'Please enter your SerwerSMS.pl API login: '],
-			['alias' => 'password', 'prompt' => 'Please enter your SerwerSMS.pl API password: '],
-			['alias' => 'sender',   'prompt' => 'Please enter your SerwerSMS.pl sender name: '],
-		],
-		'smsglobal' => [
-			['alias' => 'url',      'prompt' => 'Please enter your SMSGlobal http-api:', 'default' => 'https://api.smsglobal.com/http-api.php'],
-			['alias' => 'user',     'prompt' => 'Please enter your SMSGlobal username (for http-api): '],
-			['alias' => 'password', 'prompt' => 'Please enter your SMSGlobal password (for http-api): '],
-		],
-		'smsapi.com' => [
-			['alias' => 'token', 'prompt' => 'Please enter your SMSApi.com API token: '],
-			['alias' => 'sender','prompt' => 'Please enter your SMSApi.com sender name: '],
-		],
-	];
-
 
 	public function __construct(
 		private SignalGateway $signalGateway,
@@ -156,41 +71,39 @@ class Configure extends Command {
 	}
 
 	private function configureSms(InputInterface $input, OutputInterface $output): int {
-		$providers = array_keys(self::SMS_SCHEMA);
-		$providerQuestion = new Question('Please choose a SMS provider (' . implode(', ', $providers) . '): ', 'websms');
+		$schemas = $this->smsGateway->getProvidersSchemas();
+		$names = array_column($schemas, 'name');
 
 		$helper = new QuestionHelper();
-		$provider = $helper->ask($input, $output, $providerQuestion);
+		$choiceQuestion = new ChoiceQuestion('Please choose a SMS provider:', $names);
+		$name = $helper->ask($input, $output, $choiceQuestion);
+		$selectedIndex = array_search($name, $names);
+		$schema = $schemas[$selectedIndex]['id'];
 
-		if (!isset(self::SMS_SCHEMA[$provider])) {
-			$output->writeln("<error>Invalid provider $provider</error>");
-			return Command::INVALID;
-		}
+		$config = $this->smsGateway->getConfig()->getProvider($schema['id'])->config;
 
-		$config = $this->smsGateway->getConfig()->getProvider($provider)->config;
-
-		foreach (self::SMS_SCHEMA[$provider] as $q) {
-			$alias = $q['alias'];
-			$prompt = $q['prompt'];
-			$defaultVal = $q['default'] ?? null;
-			$optional = (bool)($q['optional'] ?? false);
+		foreach ($schema['fields'] as $field) {
+			$id = $field['field'];
+			$prompt = $field['prompt'];
+			$defaultVal = $field['default'] ?? null;
+			$optional = (bool)($field['optional'] ?? false);
 
 			$answer = (string)$helper->ask($input, $output, new Question($prompt, $defaultVal));
 
 			if ($optional && $answer === '') {
-				$delete = 'delete' . $this->toCamel($alias);
-				$config->{$delete}();
+				$method = 'delete' . $this->toCamel($id);
+				$config->{$method}();
 				continue;
 			}
 
-			$method = 'set' . $this->toCamel($alias);
+			$method = 'set' . $this->toCamel($id);
 			$config->{$method}($answer);
 		}
 		return 0;
 	}
 
-	private function toCamel(string $alias): string {
-		return str_replace(' ', '', ucwords(str_replace('_', ' ', $alias)));
+	private function toCamel(string $field): string {
+		return str_replace(' ', '', ucwords(str_replace('_', ' ', $field)));
 	}
 
 	private function configureTelegram(InputInterface $input, OutputInterface $output): void {

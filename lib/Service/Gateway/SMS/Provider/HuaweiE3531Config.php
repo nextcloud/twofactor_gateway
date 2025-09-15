@@ -16,12 +16,11 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setApi(string $api)
  */
 class HuaweiE3531Config extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'api',
+	public const SMS_SCHEMA = [
+		'id' => 'huawei_e3531',
+		'name' => 'Huawei E3531',
+		'fields' => [
+			['field' => 'api', 'prompt' => 'Please enter the base URL of the Huawei E3531 stick: ', 'default' => 'http://192.168.8.1/api'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'huawei_e3531';
-	}
 }

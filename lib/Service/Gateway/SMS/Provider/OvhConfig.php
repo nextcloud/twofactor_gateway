@@ -26,17 +26,16 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setSender(string $sender)
  */
 class OvhConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'application_key',
-		'application_secret',
-		'consumer_key',
-		'endpoint',
-		'account',
-		'sender'
+	public const SMS_SCHEMA = [
+		'id' => 'ovh',
+		'name' => 'OVH',
+		'fields' => [
+			['field' => 'endpoint',        'prompt' => 'Please enter the endpoint (ovh-eu, ovh-us, ovh-ca, soyoustart-eu, soyoustart-ca, kimsufi-eu, kimsufi-ca, runabove-ca):'],
+			['field' => 'application_key', 'prompt' => 'Please enter your application key:'],
+			['field' => 'application_secret','prompt' => 'Please enter your application secret:'],
+			['field' => 'consumer_key',    'prompt' => 'Please enter your consumer key:'],
+			['field' => 'account',         'prompt' => 'Please enter your account (sms-*****):'],
+			['field' => 'sender',          'prompt' => 'Please enter your sender:'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'ovh';
-	}
 }

@@ -13,7 +13,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\XMPP;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 class GatewayConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
+	public const SMS_SCHEMA = [
 		'sender',
 		'password',
 		'server',

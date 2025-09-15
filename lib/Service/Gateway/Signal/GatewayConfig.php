@@ -12,7 +12,7 @@ namespace OCA\TwoFactorGateway\Service\Gateway\Signal;
 use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
 
 class GatewayConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
+	public const SMS_SCHEMA = [
 		'url',
 	];
 

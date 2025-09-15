@@ -16,15 +16,11 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setApitoken(string $apitoken)
  */
 class ClockworkSMSConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		/**
-		 * preserved without snake case by backward compatibility
-		 */
-		'apitoken'
+	public const SMS_SCHEMA = [
+		'id' => 'clockworksms',
+		'name' => 'ClockworkSMS',
+		'fields' => [
+			['field' => 'apitoken', 'prompot' => 'Please enter your clockworksms api token:'],
+		]
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'clockworksms';
-	}
 }

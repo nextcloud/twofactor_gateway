@@ -20,14 +20,13 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setPassword(string $password)
  */
 class ClickatellCentralConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'api',
-		'user',
-		'password',
+	public const SMS_SCHEMA = [
+		'id' => 'clickatell_central',
+		'name' => 'Clickatell Central',
+		'fields' => [
+			['field' => 'api',      'prompt' => 'Please enter your central.clickatell.com API-ID:'],
+			['field' => 'user',     'prompt' => 'Please enter your central.clickatell.com username:'],
+			['field' => 'password', 'prompt' => 'Please enter your central.clickatell.com password:'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'clickatell_central';
-	}
 }

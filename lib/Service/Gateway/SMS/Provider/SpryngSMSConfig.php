@@ -16,15 +16,11 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setApitoken(string $apitoken)
  */
 class SpryngSMSConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		/**
-		 * preserved without snake case by backward compatibility
-		 */
-		'apitoken'
+	public const SMS_SCHEMA = [
+		'id' => 'spryng',
+		'name' => 'Spryng',
+		'fields' => [
+			['field' => 'apitoken', 'prompt' => 'Please enter your Spryng api token:'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'spryng';
-	}
 }

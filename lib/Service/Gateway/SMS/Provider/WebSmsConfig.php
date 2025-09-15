@@ -18,13 +18,12 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setPassword(string $password)
  */
 class WebSmsConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'user',
-		'password',
+	public const SMS_SCHEMA = [
+		'id' => 'websms_de',
+		'name' => 'WebSMS.de',
+		'fields' => [
+			['field' => 'user',     'prompt' => 'Please enter your websms.de username:'],
+			['field' => 'password', 'prompt' => 'Please enter your websms.de password:'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'websms_de';
-	}
 }

@@ -20,14 +20,13 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setWebSmsExtension(string $webSmsExtension)
  */
 class SipGateConfig extends AGatewayConfig {
-	protected const SMS_SCHEMA = [
-		'token_id',
-		'access_token',
-		'web_sms_extension',
+	public const SMS_SCHEMA = [
+		'id' => 'sipgate',
+		'name' => 'SipGate',
+		'fields' => [
+			['field' => 'token_id',        'prompt' => 'Please enter your sipgate token-id:'],
+			['field' => 'access_token',    'prompt' => 'Please enter your sipgate access token:'],
+			['field' => 'web_sms_extension','prompt' => 'Please enter your sipgate web-sms extension:'],
+		],
 	];
-
-	#[\Override]
-	public static function providerId(): string {
-		return 'sipgate';
-	}
 }
