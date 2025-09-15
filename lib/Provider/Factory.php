@@ -21,6 +21,9 @@ class Factory {
 	) {
 	}
 
+	/**
+	 * @throws InvalidProviderException
+	 */
 	public function getProvider(string $name): AProvider {
 		return match (strtolower($name)) {
 			'signal' => $this->signalProvider,

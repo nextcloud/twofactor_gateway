@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Command;
 
+use OCA\TwoFactorGateway\Exception\InvalidProviderException;
+use OCA\TwoFactorGateway\Service\Gateway\Factory;
 use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
@@ -21,32 +23,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Test extends Command {
 
-	/** @var SignalGateway */
-	private $signalGateway;
-
-	/** @var SMSGateway */
-	private $smsGateway;
-
-	/** @var TelegramGateway */
-	private $telegramGateway;
-
-	/** @var XMPPGateway */
-	private $xmppGateway;
-
-	/** @var IUserManager */
-	private $userManager;
-
-	public function __construct(SignalGateway $signalGateway,
-		SMSGateway $smsGateway,
-		TelegramGateway $telegramGateway,
-		XMPPGateway $xmppGateway,
-		IUserManager $userManager) {
+	public function __construct(
+		private SignalGateway $signalGateway,
+		private SMSGateway $smsGateway,
+		private TelegramGateway $telegramGateway,
+		private XMPPGateway $xmppGateway,
+		private IUserManager $userManager,
+		private Factory $gatewayFactory,
+	) {
 		parent::__construct('twofactorauth:gateway:test');
-		$this->signalGateway = $signalGateway;
-		$this->smsGateway = $smsGateway;
-		$this->telegramGateway = $telegramGateway;
-		$this->xmppGateway = $xmppGateway;
-		$this->userManager = $userManager;
 
 		$this->addArgument(
 			'uid',
@@ -77,14 +62,8 @@ class Test extends Command {
 		$identifier = $input->getArgument('identifier');
 
 		try {
-			$gateway = match (strtolower($gatewayName)) {
-				'signal' => $this->signalGateway,
-				'sms' => $this->smsGateway,
-				'telegram' => $this->telegramGateway,
-				'xmpp' => $this->xmppGateway,
-				default => throw new \InvalidArgumentException("Invalid gateway $gatewayName"),
-			};
-		} catch (\InvalidArgumentException $e) {
+			$gateway = $this->gatewayFactory->getGateway($gatewayName);
+		} catch (InvalidProviderException $e) {
 			$output->writeln("<error>{$e->getMessage()}</error>");
 			return 1;
 		}
