@@ -19,7 +19,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setFrom(string $from)
  */
 class ClickatellPortalConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'clickatell_portal',
 		'name' => 'Clickatell Portal',
 		'fields' => [

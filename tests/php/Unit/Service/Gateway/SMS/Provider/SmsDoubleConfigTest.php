@@ -17,7 +17,7 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 final class SmsDoubleConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'smsglobal',
 		'name' => 'SMSGlobal',
 		'fields' => [

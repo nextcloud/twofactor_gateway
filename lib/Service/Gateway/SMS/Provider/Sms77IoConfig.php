@@ -16,7 +16,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setApiKey(string $apiKey)
  */
 class Sms77IoConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'sms77io',
 		'name' => 'sms77.io',
 		'fields' => [

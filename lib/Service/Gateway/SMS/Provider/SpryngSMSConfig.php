@@ -16,7 +16,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setApitoken(string $apitoken)
  */
 class SpryngSMSConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'spryng',
 		'name' => 'Spryng',
 		'fields' => [

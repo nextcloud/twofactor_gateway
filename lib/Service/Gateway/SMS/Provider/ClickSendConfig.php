@@ -19,7 +19,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setApikey(string $apikey)
  */
 class ClickSendConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'clicksend',
 		'name' => 'ClickSend',
 		'fields' => [

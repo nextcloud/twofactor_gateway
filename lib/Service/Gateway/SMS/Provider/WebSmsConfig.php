@@ -18,7 +18,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setPassword(string $password)
  */
 class WebSmsConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'websms_de',
 		'name' => 'WebSMS.de',
 		'fields' => [

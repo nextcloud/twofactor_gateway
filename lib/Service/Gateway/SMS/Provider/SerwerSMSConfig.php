@@ -20,7 +20,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setSender(string $sender)
  */
 class SerwerSMSConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'serwersms',
 		'name' => 'SerwerSMS',
 		'fields' => [

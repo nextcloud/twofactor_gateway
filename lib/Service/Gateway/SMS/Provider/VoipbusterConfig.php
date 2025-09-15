@@ -20,7 +20,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setDid(string $did)
  */
 class VoipbusterConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'voipbuster',
 		'name' => 'Voipbuster',
 		'fields' => [

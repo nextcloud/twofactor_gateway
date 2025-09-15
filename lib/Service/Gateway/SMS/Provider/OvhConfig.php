@@ -26,7 +26,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setSender(string $sender)
  */
 class OvhConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'ovh',
 		'name' => 'OVH',
 		'fields' => [

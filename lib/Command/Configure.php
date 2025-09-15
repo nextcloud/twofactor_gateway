@@ -64,7 +64,7 @@ class Configure extends Command {
 	private function configureSignal(InputInterface $input, OutputInterface $output): void {
 		$config = $this->signalGateway->getConfig();
 		$helper = new QuestionHelper();
-		$urlQuestion = new Question($config::SMS_SCHEMA['fields'][0]['prompt'], $config::SMS_SCHEMA['fields'][0]['default']);
+		$urlQuestion = new Question($config::SCHEMA['fields'][0]['prompt'], $config::SCHEMA['fields'][0]['default']);
 		$url = $helper->ask($input, $output, $urlQuestion);
 		$output->writeln("Using $url.");
 
@@ -109,7 +109,7 @@ class Configure extends Command {
 
 	private function configureTelegram(InputInterface $input, OutputInterface $output): void {
 		$helper = new QuestionHelper();
-		$tokenQuestion = new Question($this->telegramGateway->getConfig()::SMS_SCHEMA['fields'][0]['prompt']);
+		$tokenQuestion = new Question($this->telegramGateway->getConfig()::SCHEMA['fields'][0]['prompt']);
 		$token = $helper->ask($input, $output, $tokenQuestion);
 		$output->writeln("Using $token.");
 
@@ -118,7 +118,7 @@ class Configure extends Command {
 
 	private function configureXMPP(InputInterface $input, OutputInterface $output): void {
 		$helper = new QuestionHelper();
-		$fields = $this->xmppGateway->getConfig()::SMS_SCHEMA['fields'];
+		$fields = $this->xmppGateway->getConfig()::SCHEMA['fields'];
 		$fields = array_combine(array_column($fields, 'field'), $fields);
 		$sender = '';
 		while (empty($sender) or substr_count($sender, '@') !== 1):

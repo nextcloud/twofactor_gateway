@@ -17,7 +17,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setBotToken(string $botToken)
  */
 class GatewayConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'telegram',
 		'name' => 'Telegram',
 		'fields' => [

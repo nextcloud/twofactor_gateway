@@ -16,7 +16,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setApi(string $api)
  */
 class HuaweiE3531Config extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'huawei_e3531',
 		'name' => 'Huawei E3531',
 		'fields' => [

@@ -21,7 +21,7 @@ class ProviderFactory {
 
 	public function getProvider(string $id): IProvider {
 		foreach ($this->discoverProviders() as $provider) {
-			if ($provider::SMS_SCHEMA['id'] === $id) {
+			if ($provider::SCHEMA['id'] === $id) {
 				return $this->container->get(str_replace('Config', '', $provider));
 			}
 		}
@@ -37,15 +37,15 @@ class ProviderFactory {
 			fn ($namespace): bool
 				=> str_starts_with($namespace, 'OCA\\TwoFactorGateway\\Service\\Gateway\\SMS\\Provider\\')
 				&& str_ends_with($namespace, 'Config')
-				&& is_array($namespace::SMS_SCHEMA)
-				&& isset($namespace::SMS_SCHEMA['id'])
+				&& is_array($namespace::SCHEMA)
+				&& isset($namespace::SCHEMA['id'])
 		);
 	}
 
 	public function getSchemas(): array {
 		$schemas = [];
 		foreach ($this->discoverProviders() as $providerClass) {
-			$schemas[] = $providerClass::SMS_SCHEMA;
+			$schemas[] = $providerClass::SCHEMA;
 		}
 		return $schemas;
 	}

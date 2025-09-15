@@ -20,7 +20,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setWebSmsExtension(string $webSmsExtension)
  */
 class SipGateConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'sipgate',
 		'name' => 'SipGate',
 		'fields' => [

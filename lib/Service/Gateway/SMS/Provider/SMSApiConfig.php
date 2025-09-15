@@ -18,7 +18,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setSender(string $sender)
  */
 class SMSApiConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'smsapi',
 		'name' => 'SMSAPI',
 		'fields' => [

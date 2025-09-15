@@ -22,7 +22,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setServiceid(string $serviceid)
  */
 class PuzzelSMSConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'puzzel',
 		'name' => 'Puzzel SMS',
 		'fields' => [

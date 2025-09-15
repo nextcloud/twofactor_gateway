@@ -24,7 +24,7 @@ use OCA\TwoFactorGateway\Service\Gateway\AGatewayConfig;
  * @method static setMethod(string $method)
  */
 class GatewayConfig extends AGatewayConfig {
-	public const SMS_SCHEMA = [
+	public const SCHEMA = [
 		'id' => 'xmpp',
 		'name' => 'XMPP',
 		'fields' => [
