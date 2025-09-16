@@ -9,10 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Command;
 
-use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
-use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
-use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
+use OCA\TwoFactorGateway\Exception\InvalidProviderException;
+use OCA\TwoFactorGateway\Service\Gateway\Factory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,10 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Configure extends Command {
 
 	public function __construct(
-		private SignalGateway $signalGateway,
-		private SMSGateway $smsGateway,
-		private TelegramGateway $telegramGateway,
-		private XMPPGateway $xmppGateway,
+		private Factory $gatewayFactory,
 	) {
 		parent::__construct('twofactorauth:gateway:configure');
 
@@ -39,18 +34,11 @@ class Configure extends Command {
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$gatewayName = strtolower((string)$input->getArgument('gateway'));
 
-		switch ($gatewayName) {
-			case 'signal':
-				return $this->signalGateway->cliConfigure($input, $output);
-			case 'sms':
-				return $this->smsGateway->cliConfigure($input, $output);
-			case 'telegram':
-				return $this->telegramGateway->cliConfigure($input, $output);
-			case 'xmpp':
-				return $this->xmppGateway->cliConfigure($input, $output);
-			default:
-				$output->writeln("<error>Invalid gateway $gatewayName</error>");
-				return 1;
+		try {
+			return $this->gatewayFactory->getGateway($gatewayName)->cliConfigure($input, $output);
+		} catch (InvalidProviderException $e) {
+			$output->writeln("<error>Invalid gateway $gatewayName</error>");
+			return 1;
 		}
 	}
 }

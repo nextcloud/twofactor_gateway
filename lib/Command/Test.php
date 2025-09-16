@@ -11,10 +11,6 @@ namespace OCA\TwoFactorGateway\Command;
 
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use OCA\TwoFactorGateway\Service\Gateway\Factory;
-use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
-use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
-use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
 use OCP\IUserManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -24,10 +20,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Test extends Command {
 
 	public function __construct(
-		private SignalGateway $signalGateway,
-		private SMSGateway $smsGateway,
-		private TelegramGateway $telegramGateway,
-		private XMPPGateway $xmppGateway,
 		private IUserManager $userManager,
 		private Factory $gatewayFactory,
 	) {
