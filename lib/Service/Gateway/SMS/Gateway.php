@@ -9,9 +9,12 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS;
 
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
+use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Exception\ConfigurationException;
+use OCA\TwoFactorGateway\Service\Gateway\AGateway;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\IProvider;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ProviderFactory;
+use OCP\IAppConfig;
 use OCP\IUser;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,34 +22,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
-class Gateway implements IGateway {
+class Gateway extends AGateway {
 
 	public function __construct(
-		public GatewayConfig $gatewayConfig,
+		public IAppConfig $appConfig,
 		private ProviderFactory $providerFactory,
 	) {
+		parent::__construct($appConfig);
 	}
 
 	#[\Override]
 	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
-		$this->gatewayConfig->getProvider()->send($identifier, $message);
-	}
-
-	/**
-	 * @return GatewayConfig
-	 */
-	#[\Override]
-	public function getConfig(): IGatewayConfig {
-		return $this->gatewayConfig;
-	}
-
-	public function getProvidersSchemas(): array {
-		return $this->providerFactory->getSchemas();
+		$this->getProvider()->send($identifier, $message);
 	}
 
 	#[\Override]
-	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
-		$schemas = $this->getProvidersSchemas();
+	final public function cliConfigure(InputInterface $input, OutputInterface $output): int {
+		$schemas = $this->providerFactory->getSchemas();
 		$names = array_column($schemas, 'name');
 
 		$helper = new QuestionHelper();
@@ -55,7 +47,7 @@ class Gateway implements IGateway {
 		$selectedIndex = array_search($name, $names);
 		$schema = $schemas[$selectedIndex]['id'];
 
-		$config = $this->gatewayConfig->getProvider($schema['id'])->config;
+		$provider = $this->getProvider($schema['id']);
 
 		foreach ($schema['fields'] as $field) {
 			$id = $field['field'];
@@ -67,17 +59,50 @@ class Gateway implements IGateway {
 
 			if ($optional && $answer === '') {
 				$method = 'delete' . $this->toCamel($id);
-				$config->{$method}();
+				$provider->{$method}();
 				continue;
 			}
 
 			$method = 'set' . $this->toCamel($id);
-			$config->{$method}($answer);
+			$provider->{$method}($answer);
 		}
 		return 0;
 	}
 
-	private function toCamel(string $field): string {
-		return str_replace(' ', '', ucwords(str_replace('_', ' ', $field)));
+	#[\Override]
+	public function isComplete(array $schema = []): bool {
+		if (empty($schema)) {
+			try {
+				$provider = $this->getProvider();
+			} catch (ConfigurationException) {
+				return false;
+			}
+			$schema = $provider::SCHEMA;
+		}
+		return parent::isComplete($schema);
+	}
+
+	#[\Override]
+	public function remove(array $schema = []): void {
+		if (empty($schema)) {
+			$schema = static::SCHEMA;
+		}
+		parent::remove($schema);
+	}
+
+	public function getProvider(string $providerName = ''): IProvider {
+		if ($providerName) {
+			$this->setProvider($providerName);
+		}
+		$providerName = $this->appConfig->getValueString(Application::APP_ID, 'sms_provider_name');
+		if ($providerName === '') {
+			throw new ConfigurationException();
+		}
+
+		return $this->providerFactory->getProvider($providerName);
+	}
+
+	public function setProvider(string $provider): void {
+		$this->appConfig->setValueString(Application::APP_ID, 'sms_provider_name', $provider);
 	}
 }

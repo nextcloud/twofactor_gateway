@@ -10,8 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\Telegram;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
+use OCA\TwoFactorGateway\Service\Gateway\AGateway;
 use OCP\IAppConfig;
 use OCP\IL10N;
 use OCP\IUser;
@@ -23,20 +22,32 @@ use Symfony\Component\Console\Question\Question;
 use TelegramBot\Api\BotApi;
 use TelegramBot\Api\Exception as TelegramSDKException;
 
-class Gateway implements IGateway {
+/**
+ * @method string getBotToken()
+ * @method static setBotToken(string $botToken)
+ */
+class Gateway extends AGateway {
+	public const SCHEMA = [
+		'id' => 'telegram',
+		'name' => 'Telegram',
+		'fields' => [
+			['field' => 'bot_token', 'prompt' => 'Please enter your Telegram bot token:'],
+		],
+		'bot_token',
+	];
 	public function __construct(
-		private GatewayConfig $gatewayConfig,
-		public IAppConfig $config,
+		public IAppConfig $appConfig,
 		private LoggerInterface $logger,
 		private IL10N $l10n,
 	) {
+		parent::__construct($appConfig);
 	}
 
 	#[\Override]
 	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
 		$message = $this->l10n->t('`%s` is your Nextcloud verification code.', [$extra['code']]);
 		$this->logger->debug("sending telegram message to $identifier, message: $message");
-		$botToken = $this->gatewayConfig->getBotToken();
+		$botToken = $this->getBotToken();
 		$this->logger->debug("telegram bot token: $botToken");
 
 		$api = new BotApi($botToken);
@@ -52,23 +63,15 @@ class Gateway implements IGateway {
 		$this->logger->debug("telegram message to chat $identifier sent");
 	}
 
-	/**
-	 * @return GatewayConfig
-	 */
-	#[\Override]
-	public function getConfig(): IGatewayConfig {
-		return $this->gatewayConfig;
-	}
-
 	#[\Override]
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
 		$helper = new QuestionHelper();
-		$tokenQuestion = new Question($this->gatewayConfig::SCHEMA['fields'][0]['prompt']);
+		$tokenQuestion = new Question(self::SCHEMA['fields'][0]['prompt']);
 		$token = $helper->ask($input, $output, $tokenQuestion);
-		$this->gatewayConfig->setBotToken($token);
+		$this->setBotToken($token);
 		$output->writeln("Using $token.");
 
-		$this->gatewayConfig->setBotToken($token);
+		$this->setBotToken($token);
 		return 0;
 	}
 }

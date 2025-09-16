@@ -14,21 +14,37 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class VoipMs implements IProvider {
+/**
+ * @method string getApiUser()
+ * @method static setApiUser(string $apiUser)
+ * @method string getApiPassword()
+ * @method static setApiPassword(string $apiPassword)
+ * @method string getDid()
+ * @method static setDid(string $did)
+ */
+class VoipMs extends AProvider {
+	public const SCHEMA = [
+		'id' => 'voipms',
+		'name' => 'VoIP.ms',
+		'fields' => [
+			['field' => 'api_user',     'prompt' => 'Please enter your VoIP.ms API username:'],
+			['field' => 'api_password', 'prompt' => 'Please enter your VoIP.ms API password:'],
+			['field' => 'did',          'prompt' => 'Please enter your VoIP.ms DID:'],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public VoipMsConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$user = $this->config->getApiUser();
-		$password = $this->config->getApiPassword();
-		$did = $this->config->getDid();
+		$user = $this->getApiUser();
+		$password = $this->getApiPassword();
+		$did = $this->getDid();
 		try {
 			$this->client->get('https://voip.ms/api/v1/rest.php', [
 				'query' => [

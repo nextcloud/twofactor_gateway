@@ -14,21 +14,33 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class SMSApi implements IProvider {
+/**
+ * @method string getToken()
+ * @method static setToken(string $token)
+ * @method string getSender()
+ * @method static setSender(string $sender)
+ */
+class SMSApi extends AProvider {
+	public const SCHEMA = [
+		'id' => 'smsapi',
+		'name' => 'SMSAPI',
+		'fields' => [
+			['field' => 'token', 'prompt' => 'Please enter your SMSApi.com API token:'],
+			['field' => 'sender','prompt' => 'Please enter your SMSApi.com sender name:'],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public SMSApiConfig $config,
 	) {
 		$this->client = $clientService->newClient();
-		$this->config = $config;
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$sender = $this->config->getSender();
-		$token = $this->config->getToken();
+		$sender = $this->getSender();
+		$token = $this->getToken();
 		$url = 'https://api.smsapi.com/sms.do';
 
 		$params = [

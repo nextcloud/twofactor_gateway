@@ -10,15 +10,16 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Service\Gateway\TConfigurable;
+use OCP\IAppConfig;
 
-interface IProvider {
-	public const SCHEMA = [];
+abstract class AProvider implements IProvider {
+	use TConfigurable;
+	protected IAppConfig $appConfig;
 
 	/**
-	 * @param string $identifier
-	 * @param string $message
-	 *
 	 * @throws MessageTransmissionException
 	 */
-	public function send(string $identifier, string $message);
+	#[\Override]
+	abstract public function send(string $identifier, string $message);
 }

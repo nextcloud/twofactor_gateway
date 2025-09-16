@@ -14,20 +14,33 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class WebSms implements IProvider {
+/**
+ * @method string getUser()
+ * @method static setUser(string $user)
+ * @method string getPassword()
+ * @method static setPassword(string $password)
+ */
+class WebSms extends AProvider {
+	public const SCHEMA = [
+		'id' => 'websms_de',
+		'name' => 'WebSMS.de',
+		'fields' => [
+			['field' => 'user',     'prompt' => 'Please enter your websms.de username:'],
+			['field' => 'password', 'prompt' => 'Please enter your websms.de password:'],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public WebSmsConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$user = $this->config->getUser();
-		$password = $this->config->getPassword();
+		$user = $this->getUser();
+		$password = $this->getPassword();
 		try {
 			$this->client->post('https://api.websms.com/rest/smsmessaging/text', [
 				'headers' => [

@@ -14,12 +14,29 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class ClickatellCentral implements IProvider {
+/**
+ * @method string getApi()
+ * @method static setApi(string $api)
+ * @method string getUser()
+ * @method static setUser(string $user)
+ * @method string getPassword()
+ * @method static setPassword(string $password)
+ */
+class ClickatellCentral extends AProvider {
+	public const SCHEMA = [
+		'id' => 'clickatell_central',
+		'name' => 'Clickatell Central',
+		'fields' => [
+			['field' => 'api',      'prompt' => 'Please enter your central.clickatell.com API-ID:'],
+			['field' => 'user',     'prompt' => 'Please enter your central.clickatell.com username:'],
+			['field' => 'password', 'prompt' => 'Please enter your central.clickatell.com password:'],
+		],
+	];
+
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public ClickatellCentralConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
@@ -28,9 +45,9 @@ class ClickatellCentral implements IProvider {
 	public function send(string $identifier, string $message) {
 		try {
 			$response = $this->client->get(vsprintf('https://api.clickatell.com/http/sendmsg?user=%s&password=%s&api_id=%u&to=%s&text=%s', [
-				urlencode($this->config->getUser()),
-				urlencode($this->config->getPassword()),
-				$this->config->getApi(),
+				urlencode($this->getUser()),
+				urlencode($this->getPassword()),
+				$this->getApi(),
 				urlencode($identifier),
 				urlencode($message),
 			]));

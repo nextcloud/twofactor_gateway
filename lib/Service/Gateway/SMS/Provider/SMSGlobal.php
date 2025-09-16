@@ -14,12 +14,28 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class SMSGlobal implements IProvider {
+/**
+ * @method string getUrl()
+ * @method static setUrl(string $url)
+ * @method string getUser()
+ * @method static setUser(string $user)
+ * @method string getPassword()
+ * @method static setPassword(string $password)
+ */
+class SMSGlobal extends AProvider {
+	public const SCHEMA = [
+		'id' => 'smsglobal',
+		'name' => 'SMSGlobal',
+		'fields' => [
+			['field' => 'url',      'prompt' => 'Please enter your SMSGlobal http-api:', 'default' => 'https://api.smsglobal.com/http-api.php'],
+			['field' => 'user',     'prompt' => 'Please enter your SMSGlobal username (for http-api):'],
+			['field' => 'password', 'prompt' => 'Please enter your SMSGlobal password (for http-api):'],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public SMSGlobalConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
@@ -30,12 +46,12 @@ class SMSGlobal implements IProvider {
 
 		try {
 			$this->client->get(
-				$this->config->getUrl(),
+				$this->getUrl(),
 				[
 					'query' => [
 						'action' => 'sendsms',
-						'user' => $this->config->getUser(),
-						'password' => $this->config->getPassword(),
+						'user' => $this->getUser(),
+						'password' => $this->getPassword(),
 						'origin' => 'nextcloud',
 						'from' => 'nextcloud',
 						'to' => $to,

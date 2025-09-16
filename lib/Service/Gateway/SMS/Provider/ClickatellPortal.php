@@ -14,12 +14,26 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class ClickatellPortal implements IProvider {
+/**
+ * @method string getApikey()
+ * @method static setApikey(string $apikey)
+ *
+ * @method string getFrom()
+ * @method static setFrom(string $from)
+ */
+class ClickatellPortal extends AProvider {
+	public const SCHEMA = [
+		'id' => 'clickatell_portal',
+		'name' => 'Clickatell Portal',
+		'fields' => [
+			['field' => 'apikey', 'prompt' => 'Please enter your portal.clickatell.com API-Key:'],
+			['field' => 'from',   'prompt' => 'Please enter your sender number for two-way messaging (empty = one-way): ', 'optional' => true],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public ClickatellPortalConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
@@ -27,10 +41,10 @@ class ClickatellPortal implements IProvider {
 	#[\Override]
 	public function send(string $identifier, string $message) {
 		try {
-			$from = $this->config->getFrom();
+			$from = $this->getFrom();
 			$from = !is_null($from) ? sprintf('&from=%s', urlencode($from)) : '';
 			$response = $this->client->get(vsprintf('https://platform.clickatell.com/messages/http/send?apiKey=%s&to=%s&content=%s%s', [
-				urlencode($this->config->getApikey()),
+				urlencode($this->getApikey()),
 				urlencode($identifier),
 				urlencode($message),
 				$from,

@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellCentral;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ClickatellCentralConfig;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\ProviderFactory;
 use OCP\Server;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -27,7 +26,7 @@ class ProviderFactoryTest extends TestCase {
 
 	public static function providerGetProvider(): array {
 		return [
-			[ClickatellCentralConfig::providerId(), ClickatellCentral::class],
+			[ClickatellCentral::SCHEMA['id'], ClickatellCentral::class],
 		];
 	}
 }

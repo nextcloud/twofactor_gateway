@@ -14,19 +14,29 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class Sms77Io implements IProvider {
+/**
+ * @method string getApiKey()
+ * @method static setApiKey(string $apiKey)
+ */
+class Sms77Io extends AProvider {
+	public const SCHEMA = [
+		'id' => 'sms77io',
+		'name' => 'sms77.io',
+		'fields' => [
+			['field' => 'api_key', 'prompt' => 'Please enter your sms77.io API key:'],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public Sms77IoConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$apiKey = $this->config->getApiKey();
+		$apiKey = $this->getApiKey();
 		try {
 			$this->client->get('https://gateway.sms77.io/api/sms', [
 				'query' => [

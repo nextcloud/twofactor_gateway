@@ -112,7 +112,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 	public function getPersonalSettings(IUser $user): IPersonalProviderSettings {
 		return new PersonalSettings(
 			$this->gatewayName,
-			$this->gateway->getConfig()->isComplete(),
+			$this->gateway->isComplete(),
 		);
 	}
 

@@ -10,19 +10,13 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
-use Psr\Container\ContainerInterface;
+use OCP\Server;
 
 class ProviderFactory {
-
-	public function __construct(
-		private ContainerInterface $container,
-	) {
-	}
-
 	public function getProvider(string $id): IProvider {
 		foreach ($this->discoverProviders() as $provider) {
 			if ($provider::SCHEMA['id'] === $id) {
-				return $this->container->get(str_replace('Config', '', $provider));
+				return Server::get($provider);
 			}
 		}
 		throw new InvalidProviderException("Provider <$id> does not exist");
@@ -36,7 +30,7 @@ class ProviderFactory {
 			array_keys($classMap),
 			fn ($namespace): bool
 				=> str_starts_with($namespace, 'OCA\\TwoFactorGateway\\Service\\Gateway\\SMS\\Provider\\')
-				&& str_ends_with($namespace, 'Config')
+				&& defined("$namespace::SCHEMA")
 				&& is_array($namespace::SCHEMA)
 				&& isset($namespace::SCHEMA['id'])
 		);

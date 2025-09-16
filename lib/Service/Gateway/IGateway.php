@@ -25,7 +25,8 @@ interface IGateway {
 	 */
 	public function send(IUser $user, string $identifier, string $message, array $extra = []): void;
 
-	public function getConfig(): IGatewayConfig;
+	public function isComplete(array $schema = []): bool;
 
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int;
+	public function remove(array $schema = []): void;
 }

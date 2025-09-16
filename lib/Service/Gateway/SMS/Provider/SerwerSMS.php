@@ -14,21 +14,37 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class SerwerSMS implements IProvider {
+/**
+ * @method string getLogin()
+ * @method static setLogin(string $login)
+ * @method string getPassword()
+ * @method static setPassword(string $password)
+ * @method string getSender()
+ * @method static setSender(string $sender)
+ */
+class SerwerSMS extends AProvider {
+	public const SCHEMA = [
+		'id' => 'serwersms',
+		'name' => 'SerwerSMS',
+		'fields' => [
+			['field' => 'login',    'prompt' => 'Please enter your SerwerSMS.pl API login:'],
+			['field' => 'password', 'prompt' => 'Please enter your SerwerSMS.pl API password:'],
+			['field' => 'sender',   'prompt' => 'Please enter your SerwerSMS.pl sender name:'],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public SerwerSMSConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$login = $this->config->getLogin();
-		$password = $this->config->getPassword();
-		$sender = $this->config->getSender();
+		$login = $this->getLogin();
+		$password = $this->getPassword();
+		$sender = $this->getSender();
 		try {
 			$response = $this->client->post('https://api2.serwersms.pl/messages/send_sms', [
 				'headers' => [

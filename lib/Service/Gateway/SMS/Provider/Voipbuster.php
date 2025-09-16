@@ -14,21 +14,37 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class Voipbuster implements IProvider {
+/**
+ * @method string getApiUser()
+ * @method static setApiUser(string $apiUser)
+ * @method string getApiPassword()
+ * @method static setApiPassword(string $apiPassword)
+ * @method string getDid()
+ * @method static setDid(string $did)
+ */
+class Voipbuster extends AProvider {
+	public const SCHEMA = [
+		'id' => 'voipbuster',
+		'name' => 'Voipbuster',
+		'fields' => [
+			['field' => 'api_user',     'prompt' => 'Please enter your Voipbuster API username:'],
+			['field' => 'api_password', 'prompt' => 'Please enter your Voipbuster API password:'],
+			['field' => 'did',          'prompt' => 'Please enter your Voipbuster DID:'],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public VoipbusterConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$user = $this->config->getApiUser();
-		$password = $this->config->getApiPassword();
-		$did = $this->config->getDid();
+		$user = $this->getApiUser();
+		$password = $this->getApiPassword();
+		$did = $this->getDid();
 		try {
 			$this->client->get('https://www.voipbuster.com/myaccount/sendsms.php', [
 				'query' => [

@@ -14,12 +14,22 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class ClockworkSMS implements IProvider {
+/**
+ * @method string getApitoken()
+ * @method static setApitoken(string $apitoken)
+ */
+class ClockworkSMS extends AProvider {
+	public const SCHEMA = [
+		'id' => 'clockworksms',
+		'name' => 'ClockworkSMS',
+		'fields' => [
+			['field' => 'apitoken', 'prompot' => 'Please enter your clockworksms api token:'],
+		]
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public ClockworkSMSConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
@@ -31,7 +41,7 @@ class ClockworkSMS implements IProvider {
 				'https://api.clockworksms.com/http/send.aspx',
 				[
 					'query' => [
-						'key' => $this->config->getApiToken(),
+						'key' => $this->getApiToken(),
 						'to' => $identifier,
 						'content' => $message,
 					],

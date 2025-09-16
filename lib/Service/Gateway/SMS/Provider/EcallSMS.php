@@ -14,21 +14,37 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class EcallSMS implements IProvider {
+/**
+ * @method string getUsername()
+ * @method static setUsername(string $username)
+ * @method string getPassword()
+ * @method static setPassword(string $password)
+ * @method string getSenderid()
+ * @method static setSenderid(string $senderid)
+ */
+class EcallSMS extends AProvider {
+	public const SCHEMA = [
+		'id' => 'ecallsms',
+		'name' => 'EcallSMS',
+		'fields' => [
+			['field' => 'user',      'prompt' => 'Please enter your eCall.ch username:'],
+			['field' => 'password',  'prompt' => 'Please enter your eCall.ch password:'],
+			['field' => 'sender_id', 'prompt' => 'Please enter your eCall.ch sender ID:'],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public EcallSMSConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$user = $this->config->getUser();
-		$password = $this->config->getPassword();
-		$senderId = $this->config->getSenderId();
+		$user = $this->getUsername();
+		$password = $this->getPassword();
+		$senderId = $this->getSenderId();
 		try {
 			$this->client->get('https://url.ecall.ch/api/sms', [
 				'query' => [

@@ -10,8 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\XMPP;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
-use OCA\TwoFactorGateway\Service\Gateway\IGatewayConfig;
+use OCA\TwoFactorGateway\Service\Gateway\AGateway;
 use OCP\IAppConfig;
 use OCP\IUser;
 use Psr\Log\LoggerInterface;
@@ -20,24 +19,47 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
-class Gateway implements IGateway {
+/**
+ * @method string getSender()
+ * @method static setSender(string $sender)
+ * @method string getPassword()
+ * @method static setPassword(string $password)
+ * @method string getServer()
+ * @method static setServer(string $server)
+ * @method string getUsername()
+ * @method static setUsername(string $username)
+ * @method string getMethod()
+ * @method static setMethod(string $method)
+ */
+class Gateway extends AGateway {
+	public const SCHEMA = [
+		'id' => 'xmpp',
+		'name' => 'XMPP',
+		'fields' => [
+			['field' => 'sender',   'prompt' => 'Please enter your sender XMPP-JID:'],
+			['field' => 'password', 'prompt' => 'Please enter your sender XMPP password:'],
+			['field' => 'server',   'prompt' => 'Please enter full path to access REST/HTTP API:'],
+			['field' => 'username'],
+			['field' => 'method',   'prompt' => 'Please enter 1 or 2 for XMPP sending option:'],
+		],
+	];
 
 	public function __construct(
-		private GatewayConfig $gatewayConfig,
-		public IAppConfig $config,
+		public IAppConfig $appConfig,
 		private LoggerInterface $logger,
 	) {
+		parent::__construct($appConfig);
 	}
 
 	#[\Override]
 	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
 		$this->logger->debug("sending xmpp message to $identifier, message: $message");
 
-		$sender = $this->gatewayConfig->getSender();
-		$password = $this->gatewayConfig->getPassword();
-		$server = $this->gatewayConfig->getServer();
-		$method = $this->gatewayConfig->getMethod();
-		$user = $this->gatewayConfig->getUsername();
+		$sender = $this->getSender();
+		$password = $this->getPassword();
+		$server = $this->getServer();
+		$method = $this->getMethod();
+		$user = $this->getUsername();
 		$url = $server . $identifier;
 
 		if ($method === '1') {
@@ -64,18 +86,10 @@ class Gateway implements IGateway {
 		}
 	}
 
-	/**
-	 * @return GatewayConfig
-	 */
-	#[\Override]
-	public function getConfig(): IGatewayConfig {
-		return $this->gatewayConfig;
-	}
-
 	#[\Override]
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
 		$helper = new QuestionHelper();
-		$fields = $this->gatewayConfig::SCHEMA['fields'];
+		$fields = self::SCHEMA['fields'];
 		$fields = array_combine(array_column($fields, 'field'), $fields);
 		$sender = '';
 		while (empty($sender) or substr_count($sender, '@') !== 1) {
@@ -110,7 +124,7 @@ class Gateway implements IGateway {
 		$output->writeln("Using $server as full URL to access REST/HTTP API.");
 		$method = 0;
 		while (intval($method) < 1 or intval($method) > 2) {
-			echo $fields['method']['promt'] . PHP_EOL;
+			echo $fields['method']['prompt'] . PHP_EOL;
 			echo "(1) prosody with mod_rest\n";
 			echo "(2) prosody with mod_post_msg\n";
 			$methodQuestion = new Question('Your choice: ');
@@ -123,11 +137,11 @@ class Gateway implements IGateway {
 		}
 		$output->writeln('XMPP Admin Configuration finished.');
 
-		$this->gatewayConfig->setSender($sender);
-		$this->gatewayConfig->setPassword($password);
-		$this->gatewayConfig->setServer($server);
-		$this->gatewayConfig->setUsername($username);
-		$this->gatewayConfig->setMethod($method);
+		$this->setSender($sender);
+		$this->setPassword($password);
+		$this->setServer($server);
+		$this->setUsername($username);
+		$this->setMethod($method);
 		return 0;
 	}
 }

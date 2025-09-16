@@ -14,12 +14,22 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class SpryngSMS implements IProvider {
+/**
+ * @method string getApitoken()
+ * @method static setApitoken(string $apitoken)
+ */
+class SpryngSMS extends AProvider {
+	public const SCHEMA = [
+		'id' => 'spryng',
+		'name' => 'Spryng',
+		'fields' => [
+			['field' => 'apitoken', 'prompt' => 'Please enter your Spryng api token:'],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public SpryngSMSConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
@@ -32,7 +42,7 @@ class SpryngSMS implements IProvider {
 				[
 					'headers' => [
 						'Accept' => 'application/json',
-						'Authorization' => 'Bearer ' . $this->config->getApitoken(),
+						'Authorization' => 'Bearer ' . $this->getApitoken(),
 						'Content-Type' => 'application/json',
 					],
 					'json' => [

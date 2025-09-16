@@ -14,12 +14,28 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class PlaySMS implements IProvider {
+/**
+ * @method string getUrl()
+ * @method static setUrl(string $url)
+ * @method string getUser()
+ * @method static setUser(string $user)
+ * @method string getPassword()
+ * @method static setPassword(string $password)
+ */
+class PlaySMS extends AProvider {
+	public const SCHEMA = [
+		'id' => 'playsms',
+		'name' => 'PlaySMS',
+		'fields' => [
+			['field' => 'url',      'prompt' => 'Please enter your PlaySMS URL:'],
+			['field' => 'user',     'prompt' => 'Please enter your PlaySMS username:'],
+			['field' => 'password', 'prompt' => 'Please enter your PlaySMS password:'],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public PlaySMSConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
@@ -28,12 +44,12 @@ class PlaySMS implements IProvider {
 	public function send(string $identifier, string $message) {
 		try {
 			$this->client->get(
-				$this->config->getUrl(),
+				$this->getUrl(),
 				[
 					'query' => [
 						'app' => 'ws',
-						'u' => $this->config->getUser(),
-						'h' => $this->config->getPassword(),
+						'u' => $this->getUser(),
+						'h' => $this->getPassword(),
 						'op' => 'pv',
 						'to' => $identifier,
 						'msg' => $message,

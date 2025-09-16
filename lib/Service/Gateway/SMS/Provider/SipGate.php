@@ -14,21 +14,37 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class SipGate implements IProvider {
+/**
+ * @method string getTokenId()
+ * @method static setTokenId(string $tokenId)
+ * @method string getAccessToken()
+ * @method static setAccessToken(string $accessToken)
+ * @method string getWebSmsExtension()
+ * @method static setWebSmsExtension(string $webSmsExtension)
+ */
+class SipGate extends AProvider {
+	public const SCHEMA = [
+		'id' => 'sipgate',
+		'name' => 'SipGate',
+		'fields' => [
+			['field' => 'token_id',        'prompt' => 'Please enter your sipgate token-id:'],
+			['field' => 'access_token',    'prompt' => 'Please enter your sipgate access token:'],
+			['field' => 'web_sms_extension','prompt' => 'Please enter your sipgate web-sms extension:'],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public SipGateConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$tokenId = $this->config->getTokenId();
-		$accessToken = $this->config->getAccessToken();
-		$webSmsExtension = $this->config->getWebSmsExtension();
+		$tokenId = $this->getTokenId();
+		$accessToken = $this->getAccessToken();
+		$webSmsExtension = $this->getWebSmsExtension();
 
 		try {
 			$this->client->post('https://api.sipgate.com/v2/sessions/sms', [

@@ -14,19 +14,29 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class HuaweiE3531 implements IProvider {
+/**
+ * @method string getApi()
+ * @method static setApi(string $api)
+ */
+class HuaweiE3531 extends AProvider {
+	public const SCHEMA = [
+		'id' => 'huawei_e3531',
+		'name' => 'Huawei E3531',
+		'fields' => [
+			['field' => 'api', 'prompt' => 'Please enter the base URL of the Huawei E3531 stick: ', 'default' => 'http://192.168.8.1/api'],
+		],
+	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
-		public HuaweiE3531Config $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$url = $this->config->getApi();
+		$url = $this->getApi();
 
 		try {
 			$sessionTokenResponse = $this->client->get("$url/webserver/SesTokInfo");

@@ -15,7 +15,33 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
-class Ovh implements IProvider {
+/**
+ * @method string getApplicationKey()
+ * @method static setApplicationKey(string $applicationKey)
+ * @method string getApplicationSecret()
+ * @method static setApplicationSecret(string $applicationSecret)
+ * @method string getConsumerKey()
+ * @method static setConsumerKey(string $consumerKey)
+ * @method string getEndpoint()
+ * @method static setEndpoint(string $endpoint)
+ * @method string getAccount()
+ * @method static setAccount(string $account)
+ * @method string getSender()
+ * @method static setSender(string $sender)
+ */
+class Ovh extends AProvider {
+	public const SCHEMA = [
+		'id' => 'ovh',
+		'name' => 'OVH',
+		'fields' => [
+			['field' => 'endpoint',        'prompt' => 'Please enter the endpoint (ovh-eu, ovh-us, ovh-ca, soyoustart-eu, soyoustart-ca, kimsufi-eu, kimsufi-ca, runabove-ca):'],
+			['field' => 'application_key', 'prompt' => 'Please enter your application key:'],
+			['field' => 'application_secret','prompt' => 'Please enter your application secret:'],
+			['field' => 'consumer_key',    'prompt' => 'Please enter your consumer key:'],
+			['field' => 'account',         'prompt' => 'Please enter your account (sms-*****):'],
+			['field' => 'sender',          'prompt' => 'Please enter your sender:'],
+		],
+	];
 	private IClient $client;
 
 	/**
@@ -46,20 +72,19 @@ class Ovh implements IProvider {
 
 	public function __construct(
 		IClientService $clientService,
-		public OvhConfig $config,
 	) {
 		$this->client = $clientService->newClient();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$endpoint = $this->config->getEndpoint();
-		$sender = $this->config->getSender();
-		$smsAccount = $this->config->getAccount();
+		$endpoint = $this->getEndpoint();
+		$sender = $this->getSender();
+		$smsAccount = $this->getAccount();
 
-		$this->attrs['AK'] = $this->config->getApplicationKey();
-		$this->attrs['AS'] = $this->config->getApplicationSecret();
-		$this->attrs['CK'] = $this->config->getConsumerKey();
+		$this->attrs['AK'] = $this->getApplicationKey();
+		$this->attrs['AS'] = $this->getApplicationSecret();
+		$this->attrs['CK'] = $this->getConsumerKey();
 		if (!isset($this->endpoints[$endpoint])) {
 			throw new InvalidProviderException("Endpoint $endpoint not found");
 		}
