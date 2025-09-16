@@ -12,11 +12,19 @@ namespace OCA\TwoFactorGateway\Command;
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use OCA\TwoFactorGateway\Service\Gateway\Factory;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class Configure extends Command {
+	private const SUPPORTED_GATEWAYS = [
+		'sms',
+		'signal',
+		'telegram',
+		'xmpp',
+	];
 
 	public function __construct(
 		private Factory $gatewayFactory,
@@ -25,14 +33,19 @@ class Configure extends Command {
 
 		$this->addArgument(
 			'gateway',
-			InputArgument::REQUIRED,
-			'The name of the gateway, e.g. sms, signal, telegram, xmpp, etc.'
+			InputArgument::OPTIONAL,
+			'The name of the gateway: ' . implode(', ', self::SUPPORTED_GATEWAYS)
 		);
 	}
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$gatewayName = strtolower((string)$input->getArgument('gateway'));
+		if (!in_array($gatewayName, self::SUPPORTED_GATEWAYS, true)) {
+			$helper = new QuestionHelper();
+			$choiceQuestion = new ChoiceQuestion('Please choose a SMS provider:', self::SUPPORTED_GATEWAYS);
+			$gatewayName = $helper->ask($input, $output, $choiceQuestion);
+		}
 
 		try {
 			return $this->gatewayFactory->getGateway($gatewayName)->cliConfigure($input, $output);
