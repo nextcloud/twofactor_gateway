@@ -45,7 +45,7 @@ class Gateway extends AGateway {
 		$choiceQuestion = new ChoiceQuestion('Please choose a SMS provider:', $names);
 		$name = $helper->ask($input, $output, $choiceQuestion);
 		$selectedIndex = array_search($name, $names);
-		$schema = $schemas[$selectedIndex]['id'];
+		$schema = $schemas[$selectedIndex];
 
 		$provider = $this->getProvider($schema['id']);
 
