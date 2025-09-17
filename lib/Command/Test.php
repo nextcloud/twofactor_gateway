@@ -60,7 +60,7 @@ class Test extends Command {
 			return 1;
 		}
 
-		$gateway->send($user, $identifier, 'Test');
+		$gateway->send($user, $identifier, 'Test', ['code' => '123456']);
 		return 0;
 	}
 }
