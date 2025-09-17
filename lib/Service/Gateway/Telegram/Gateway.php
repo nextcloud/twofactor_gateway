@@ -33,7 +33,6 @@ class Gateway extends AGateway {
 		'fields' => [
 			['field' => 'bot_token', 'prompt' => 'Please enter your Telegram bot token:'],
 		],
-		'bot_token',
 	];
 	public function __construct(
 		public IAppConfig $appConfig,
