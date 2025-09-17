@@ -15,11 +15,15 @@ use OCP\IAppConfig;
 
 abstract class AProvider implements IProvider {
 	use TConfigurable;
-	protected IAppConfig $appConfig;
+	public IAppConfig $appConfig;
 
 	/**
 	 * @throws MessageTransmissionException
 	 */
 	#[\Override]
 	abstract public function send(string $identifier, string $message);
+
+	public function setAppConfig(IAppConfig $appConfig): void {
+		$this->appConfig = $appConfig;
+	}
 }

@@ -10,13 +10,16 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
+use OCP\IAppConfig;
 use OCP\Server;
 
 class ProviderFactory {
 	public function getProvider(string $id): IProvider {
 		foreach ($this->discoverProviders() as $provider) {
 			if ($provider::SCHEMA['id'] === $id) {
-				return Server::get($provider);
+				$instance = Server::get($provider);
+				$instance->setAppConfig(Server::get(IAppConfig::class));
+				return $instance;
 			}
 		}
 		throw new InvalidProviderException("Provider <$id> does not exist");
