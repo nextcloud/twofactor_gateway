@@ -14,22 +14,40 @@ use OCP\Server;
 
 class Factory {
 	private const PREFIX = 'OCA\\TwoFactorGateway\\Service\\Gateway\\';
+	/** @var array<string> */
+	private array $fqcn = [];
 
 	public function getGateway(string $name): IGateway {
 		$needle = strtolower($name);
 
-		foreach ($this->getClassMap() as $fqcn => $_) {
+		foreach ($this->getFqcnList() as $fqcn) {
 			$type = $this->typeFrom($fqcn);
-			if ($type === null || $type !== $needle) {
-				continue;
-			}
-			if (!is_subclass_of($fqcn, AGateway::class, true)) {
+			if ($type !== $needle) {
 				continue;
 			}
 			/** @var IGateway */
 			return Server::get($fqcn);
 		}
 		throw new InvalidArgumentException("Invalid gateway $name");
+	}
+
+	public function getFqcnList(): array {
+		if (!empty($this->fqcn)) {
+			return $this->fqcn;
+		}
+
+		foreach ($this->getClassMap() as $fqcn => $_) {
+			$type = $this->typeFrom($fqcn);
+			if ($type === null) {
+				continue;
+			}
+			if (!is_subclass_of($fqcn, AGateway::class, true)) {
+				continue;
+			}
+			$this->fqcn[] = $fqcn;
+		}
+
+		return $this->fqcn;
 	}
 
 	private function getClassMap(): array {

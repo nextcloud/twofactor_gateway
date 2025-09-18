@@ -19,31 +19,31 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class Configure extends Command {
-	private const SUPPORTED_GATEWAYS = [
-		'sms',
-		'signal',
-		'telegram',
-		'xmpp',
-	];
+	private array $ids = [];
 
 	public function __construct(
 		private Factory $gatewayFactory,
 	) {
 		parent::__construct('twofactorauth:gateway:configure');
 
+		$fqcn = $this->gatewayFactory->getFqcnList();
+		foreach ($fqcn as $fqcn) {
+			$this->ids[] = $fqcn::getProviderId();
+		}
+
 		$this->addArgument(
 			'gateway',
 			InputArgument::OPTIONAL,
-			'The name of the gateway: ' . implode(', ', self::SUPPORTED_GATEWAYS)
+			'The name of the gateway: ' . implode(', ', $this->ids)
 		);
 	}
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$gatewayName = strtolower((string)$input->getArgument('gateway'));
-		if (!in_array($gatewayName, self::SUPPORTED_GATEWAYS, true)) {
+		if (!in_array($gatewayName, $this->ids, true)) {
 			$helper = new QuestionHelper();
-			$choiceQuestion = new ChoiceQuestion('Please choose a SMS provider:', self::SUPPORTED_GATEWAYS);
+			$choiceQuestion = new ChoiceQuestion('Please choose a SMS provider:', $this->ids);
 			$gatewayName = $helper->ask($input, $output, $choiceQuestion);
 		}
 

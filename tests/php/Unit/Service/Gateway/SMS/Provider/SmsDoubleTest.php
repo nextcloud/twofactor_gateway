@@ -7,19 +7,9 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\TwoFactorGateway\Tests\Unit\Service\Gateway\SMS\Provider;
+namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCA\TwoFactorGateway\Service\Gateway\AGateway;
-use OCP\IAppConfig;
-use OCP\IUser;
-use PHPUnit\Framework\MockObject\Stub;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-
-final class SmsDouble extends AGateway {
+final class SmsDouble extends AProvider {
 	public const SCHEMA = [
 		'id' => 'sms_double',
 		'name' => 'sms_double',
@@ -30,12 +20,18 @@ final class SmsDouble extends AGateway {
 		],
 	];
 
-	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
-	}
-	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
-		return 0;
+	public function send(string $identifier, string $message, array $extra = []): void {
 	}
 }
+
+namespace OCA\TwoFactorGateway\Tests\Unit\Service\Gateway\SMS\Provider;
+
+use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Exception\ConfigurationException;
+use OCA\TwoFactorGateway\Service\Gateway\SMS\Provider\SmsDouble;
+use OCP\IAppConfig;
+use PHPUnit\Framework\MockObject\Stub;
+use PHPUnit\Framework\TestCase;
 
 final class SmsDoubleTest extends TestCase {
 	private function makeInMemoryAppConfig(array &$store): IAppConfig|Stub {
@@ -66,7 +62,8 @@ final class SmsDoubleTest extends TestCase {
 
 	public function testSetThenGetAndChaining(): void {
 		$store = [];
-		$cfg = new SmsDouble($this->makeInMemoryAppConfig($store));
+		$cfg = new SmsDouble();
+		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
 
 		$this->assertSame($cfg, $cfg->setUser('alice')->setPassword('secret'));
 
@@ -80,7 +77,8 @@ final class SmsDoubleTest extends TestCase {
 	public function testDeleteKey(): void {
 		$this->expectException(ConfigurationException::class);
 		$store = [];
-		$cfg = new SmsDouble($this->makeInMemoryAppConfig($store));
+		$cfg = new SmsDouble();
+		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
 		$this->assertSame($cfg, $cfg->setUser('alice'));
 		$this->assertSame('alice', $cfg->getUser());
 		$this->assertSame($cfg, $cfg->deleteUser());
@@ -89,7 +87,8 @@ final class SmsDoubleTest extends TestCase {
 
 	public function testCamelCaseAliasConversion(): void {
 		$store = [];
-		$cfg = new SmsDouble($this->makeInMemoryAppConfig($store));
+		$cfg = new SmsDouble();
+		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
 
 		$cfg->setApiKey('K-123');
 		$this->assertSame('K-123', $store['sms_double_api_key'] ?? null);
@@ -100,7 +99,8 @@ final class SmsDoubleTest extends TestCase {
 		$this->expectException(ConfigurationException::class);
 
 		$store = [];
-		$cfg = new SmsDouble($this->makeInMemoryAppConfig($store));
+		$cfg = new SmsDouble();
+		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
 		$cfg->getPassword();
 	}
 
@@ -108,7 +108,8 @@ final class SmsDoubleTest extends TestCase {
 		$this->expectException(ConfigurationException::class);
 
 		$store = [];
-		$cfg = new SmsDouble($this->makeInMemoryAppConfig($store));
+		$cfg = new SmsDouble();
+		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
 		$cfg->setToken('x');
 	}
 
@@ -116,7 +117,8 @@ final class SmsDoubleTest extends TestCase {
 		$this->expectException(ConfigurationException::class);
 
 		$store = [];
-		$cfg = new SmsDouble($this->makeInMemoryAppConfig($store));
+		$cfg = new SmsDouble();
+		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
 		$cfg->token('x');
 	}
 }

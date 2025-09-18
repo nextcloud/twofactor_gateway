@@ -16,13 +16,14 @@ use OCP\Server;
 class ProviderFactory {
 	/** @var array<string,IProvider> */
 	private array $instances = [];
-	private array $fqdn = [];
+	/** @var array<string> */
+	private array $fqcn = [];
 
 	public function getProvider(string $id): IProvider {
 		if (isset($this->instances[$id])) {
 			return $this->instances[$id];
 		}
-		foreach ($this->getFqdnList() as $provider) {
+		foreach ($this->getFqcnList() as $provider) {
 			if ($provider::getProviderId() === $id) {
 				$this->instances[$id] = Server::get($provider);
 				$this->instances[$id]->setAppConfig(Server::get(IAppConfig::class));
@@ -35,9 +36,9 @@ class ProviderFactory {
 	/**
 	 * @return array<string> List of provider class names
 	 */
-	public function getFqdnList(): array {
-		if (!empty($this->fqdn)) {
-			return $this->fqdn;
+	public function getFqcnList(): array {
+		if (!empty($this->fqcn)) {
+			return $this->fqcn;
 		}
 
 		$loader = require __DIR__ . '/../../../../../vendor/autoload.php';
@@ -67,9 +68,9 @@ class ProviderFactory {
 				continue;
 			}
 
-			$this->fqdn[] = $fqcn;
+			$this->fqcn[] = $fqcn;
 		}
 
-		return $this->fqdn;
+		return $this->fqcn;
 	}
 }
