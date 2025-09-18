@@ -20,7 +20,6 @@ use OCP\Http\Client\IClientService;
  */
 class SpryngSMS extends AProvider {
 	public const SCHEMA = [
-		'id' => 'spryng',
 		'name' => 'Spryng',
 		'fields' => [
 			['field' => 'apitoken', 'prompt' => 'Please enter your Spryng api token:'],

@@ -14,36 +14,62 @@ use OCP\IAppConfig;
 use OCP\Server;
 
 class ProviderFactory {
+	/** @var array<string,IProvider> */
+	private array $instances = [];
+	private array $fqdn = [];
+
 	public function getProvider(string $id): IProvider {
-		foreach ($this->discoverProviders() as $provider) {
-			if ($provider::SCHEMA['id'] === $id) {
-				$instance = Server::get($provider);
-				$instance->setAppConfig(Server::get(IAppConfig::class));
-				return $instance;
+		if (isset($this->instances[$id])) {
+			return $this->instances[$id];
+		}
+		foreach ($this->getFqdnList() as $provider) {
+			if ($provider::getProviderId() === $id) {
+				$this->instances[$id] = Server::get($provider);
+				$this->instances[$id]->setAppConfig(Server::get(IAppConfig::class));
+				return $this->instances[$id];
 			}
 		}
 		throw new InvalidProviderException("Provider <$id> does not exist");
 	}
 
-	private function discoverProviders(): array {
+	/**
+	 * @return array<string> List of provider class names
+	 */
+	public function getFqdnList(): array {
+		if (!empty($this->fqdn)) {
+			return $this->fqdn;
+		}
+
 		$loader = require __DIR__ . '/../../../../../vendor/autoload.php';
 		$classMap = $loader->getClassMap();
 
-		return array_filter(
-			array_keys($classMap),
-			fn ($namespace): bool
-				=> str_starts_with($namespace, 'OCA\\TwoFactorGateway\\Service\\Gateway\\SMS\\Provider\\')
-				&& defined("$namespace::SCHEMA")
-				&& is_array($namespace::SCHEMA)
-				&& isset($namespace::SCHEMA['id'])
-		);
-	}
+		$prefix = 'OCA\\TwoFactorGateway\\Service\\Gateway\\SMS\\Provider\\';
 
-	public function getSchemas(): array {
-		$schemas = [];
-		foreach ($this->discoverProviders() as $providerClass) {
-			$schemas[] = $providerClass::SCHEMA;
+		foreach (array_keys($classMap) as $fqcn) {
+			if (strncmp($fqcn, $prefix, strlen($prefix)) !== 0) {
+				continue;
+			}
+
+			if (!class_exists($fqcn)) {
+				continue;
+			}
+
+			if (!is_subclass_of($fqcn, IProvider::class)) {
+				continue;
+			}
+
+			$rc = new \ReflectionClass($fqcn);
+			if ($rc->isAbstract() || $rc->isInterface() || $rc->isTrait()) {
+				continue;
+			}
+
+			if (!defined("$fqcn::SCHEMA") || !is_array($fqcn::SCHEMA)) {
+				continue;
+			}
+
+			$this->fqdn[] = $fqcn;
 		}
-		return $schemas;
+
+		return $this->fqdn;
 	}
 }

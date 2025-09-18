@@ -38,7 +38,10 @@ class Gateway extends AGateway {
 
 	#[\Override]
 	final public function cliConfigure(InputInterface $input, OutputInterface $output): int {
-		$schemas = $this->providerFactory->getSchemas();
+		$namespaces = $this->providerFactory->getFqdnList();
+		foreach ($namespaces as $ns) {
+			$schemas[] = $ns::SCHEMA;
+		}
 		$names = array_column($schemas, 'name');
 
 		$helper = new QuestionHelper();
@@ -47,7 +50,7 @@ class Gateway extends AGateway {
 		$selectedIndex = array_search($name, $names);
 		$schema = $schemas[$selectedIndex];
 
-		$provider = $this->getProvider($schema['id']);
+		$provider = $this->getProvider($namespaces[$selectedIndex]::getProviderId());
 
 		foreach ($schema['fields'] as $field) {
 			$id = $field['field'];

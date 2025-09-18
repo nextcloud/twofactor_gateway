@@ -24,7 +24,6 @@ use OCP\Http\Client\IClientService;
  */
 class Voipbuster extends AProvider {
 	public const SCHEMA = [
-		'id' => 'voipbuster',
 		'name' => 'Voipbuster',
 		'fields' => [
 			['field' => 'api_user',     'prompt' => 'Please enter your Voipbuster API username:'],

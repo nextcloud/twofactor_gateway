@@ -22,7 +22,6 @@ use OCP\Http\Client\IClientService;
  */
 class SMSApi extends AProvider {
 	public const SCHEMA = [
-		'id' => 'smsapi',
 		'name' => 'SMSAPI',
 		'fields' => [
 			['field' => 'token', 'prompt' => 'Please enter your SMSApi.com API token:'],

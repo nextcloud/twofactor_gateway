@@ -24,7 +24,6 @@ use OCP\Http\Client\IClientService;
  */
 class PlaySMS extends AProvider {
 	public const SCHEMA = [
-		'id' => 'playsms',
 		'name' => 'PlaySMS',
 		'fields' => [
 			['field' => 'url',      'prompt' => 'Please enter your PlaySMS URL:'],

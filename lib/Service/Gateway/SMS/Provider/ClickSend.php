@@ -23,7 +23,6 @@ use OCP\Http\Client\IClientService;
  */
 class ClickSend extends AProvider {
 	public const SCHEMA = [
-		'id' => 'clicksend',
 		'name' => 'ClickSend',
 		'fields' => [
 			['field' => 'user', 'prompot' => 'Please enter your clicksend.com username:'],

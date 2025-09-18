@@ -24,7 +24,6 @@ use OCP\Http\Client\IClientService;
  */
 class SMSGlobal extends AProvider {
 	public const SCHEMA = [
-		'id' => 'smsglobal',
 		'name' => 'SMSGlobal',
 		'fields' => [
 			['field' => 'url',      'prompt' => 'Please enter your SMSGlobal http-api:', 'default' => 'https://api.smsglobal.com/http-api.php'],

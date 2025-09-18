@@ -24,7 +24,6 @@ use OCP\Http\Client\IClientService;
  */
 class SipGate extends AProvider {
 	public const SCHEMA = [
-		'id' => 'sipgate',
 		'name' => 'SipGate',
 		'fields' => [
 			['field' => 'token_id',        'prompt' => 'Please enter your sipgate token-id:'],

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service\Gateway\SMS\Provider;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCP\IAppConfig;
 
 interface IProvider {
 	public const SCHEMA = [];
@@ -21,4 +22,10 @@ interface IProvider {
 	 * @throws MessageTransmissionException
 	 */
 	public function send(string $identifier, string $message);
+
+	public static function idOverride(): ?string;
+
+	public static function getProviderId(): string;
+
+	public function setAppConfig(IAppConfig $appConfig): void;
 }

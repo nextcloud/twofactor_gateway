@@ -28,5 +28,8 @@ interface IGateway {
 	public function isComplete(array $schema = []): bool;
 
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int;
+
 	public function remove(array $schema = []): void;
+
+	public static function getProviderId(): string;
 }

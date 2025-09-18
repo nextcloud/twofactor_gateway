@@ -31,7 +31,6 @@ use OCP\Http\Client\IClientService;
  */
 class Ovh extends AProvider {
 	public const SCHEMA = [
-		'id' => 'ovh',
 		'name' => 'OVH',
 		'fields' => [
 			['field' => 'endpoint',        'prompt' => 'Please enter the endpoint (ovh-eu, ovh-us, ovh-ca, soyoustart-eu, soyoustart-ca, kimsufi-eu, kimsufi-ca, runabove-ca):'],

@@ -24,7 +24,6 @@ use OCP\Http\Client\IClientService;
  */
 class VoipMs extends AProvider {
 	public const SCHEMA = [
-		'id' => 'voipms',
 		'name' => 'VoIP.ms',
 		'fields' => [
 			['field' => 'api_user',     'prompt' => 'Please enter your VoIP.ms API username:'],

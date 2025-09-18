@@ -53,7 +53,7 @@ trait TConfigurable {
 		if (!in_array($alias, $fields, true)) {
 			throw new ConfigurationException();
 		}
-		return $this->getSchemaId() . '_' . $alias;
+		return $this->getProviderId() . '_' . $alias;
 	}
 
 	/**
@@ -72,14 +72,6 @@ trait TConfigurable {
 	 */
 	protected function getSchemaFields(): array {
 		return static::getSchema()['fields'];
-	}
-
-	/**
-	 * @return string
-	 * @throws ConfigurationException
-	 */
-	protected function getSchemaId(): string {
-		return static::getSchema()['id'];
 	}
 
 	/**

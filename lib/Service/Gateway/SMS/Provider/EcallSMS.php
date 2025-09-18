@@ -24,7 +24,6 @@ use OCP\Http\Client\IClientService;
  */
 class EcallSMS extends AProvider {
 	public const SCHEMA = [
-		'id' => 'ecallsms',
 		'name' => 'EcallSMS',
 		'fields' => [
 			['field' => 'user',      'prompt' => 'Please enter your eCall.ch username:'],

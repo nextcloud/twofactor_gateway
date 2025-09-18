@@ -20,7 +20,6 @@ use OCP\Http\Client\IClientService;
  */
 class ClockworkSMS extends AProvider {
 	public const SCHEMA = [
-		'id' => 'clockworksms',
 		'name' => 'ClockworkSMS',
 		'fields' => [
 			['field' => 'apitoken', 'prompot' => 'Please enter your clockworksms api token:'],

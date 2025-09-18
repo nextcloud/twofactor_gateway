@@ -20,7 +20,6 @@ use OCP\Http\Client\IClientService;
  */
 class Sms77Io extends AProvider {
 	public const SCHEMA = [
-		'id' => 'sms77io',
 		'name' => 'sms77.io',
 		'fields' => [
 			['field' => 'api_key', 'prompt' => 'Please enter your sms77.io API key:'],

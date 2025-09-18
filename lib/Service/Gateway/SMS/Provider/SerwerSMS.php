@@ -24,7 +24,6 @@ use OCP\Http\Client\IClientService;
  */
 class SerwerSMS extends AProvider {
 	public const SCHEMA = [
-		'id' => 'serwersms',
 		'name' => 'SerwerSMS',
 		'fields' => [
 			['field' => 'login',    'prompt' => 'Please enter your SerwerSMS.pl API login:'],

@@ -38,7 +38,7 @@ abstract class AGateway implements IGateway {
 		}
 		$set = $this->appConfig->getKeys(Application::APP_ID);
 		$fields = array_column($schema['fields'], 'field');
-		$fields = array_map(fn ($f) => $schema['id'] . '_' . $f, $fields);
+		$fields = array_map(fn ($f) => $this->getProviderId() . '_' . $f, $fields);
 		return count(array_intersect($set, $fields)) === count($fields);
 	}
 
@@ -58,5 +58,28 @@ abstract class AGateway implements IGateway {
 
 	protected function toCamel(string $field): string {
 		return str_replace(' ', '', ucwords(str_replace('_', ' ', $field)));
+	}
+
+	#[\Override]
+	public static function getProviderId(): string {
+		$id = self::deriveIdFromFqcn(static::class);
+		if ($id === null) {
+			throw new \LogicException('Cannot derive gateway id from FQCN: ' . static::class);
+		}
+		return $id;
+	}
+
+	private static function deriveIdFromFqcn(string $fqcn): ?string {
+		$prefix = 'OCA\\TwoFactorGateway\\Service\\Gateway\\';
+		if (strncmp($fqcn, $prefix, strlen($prefix)) !== 0) {
+			return null;
+		}
+		$rest = substr($fqcn, strlen($prefix));
+		$sep = strpos($rest, '\\');
+		if ($sep === false || substr($rest, $sep + 1) !== 'Gateway') {
+			return null;
+		}
+		$type = substr($rest, 0, $sep);
+		return $type !== '' ? strtolower($type) : null;
 	}
 }
