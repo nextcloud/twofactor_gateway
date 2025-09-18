@@ -14,11 +14,16 @@ use OCP\Server;
 
 class Factory {
 	private const PREFIX = 'OCA\\TwoFactorGateway\\Service\\Gateway\\';
+	/** @var array<string,IGateway> */
+	private array $instances = [];
 	/** @var array<string> */
 	private array $fqcn = [];
 
 	public function getGateway(string $name): IGateway {
 		$needle = strtolower($name);
+		if (isset($this->instances[$needle])) {
+			return $this->instances[$needle];
+		}
 
 		foreach ($this->getFqcnList() as $fqcn) {
 			$type = $this->typeFrom($fqcn);
@@ -26,7 +31,9 @@ class Factory {
 				continue;
 			}
 			/** @var IGateway */
-			return Server::get($fqcn);
+			$instance = Server::get($fqcn);
+			$this->instances[$needle] = $instance;
+			return $instance;
 		}
 		throw new InvalidArgumentException("Invalid gateway $name");
 	}
@@ -56,12 +63,12 @@ class Factory {
 	}
 
 	private function typeFrom(string $fqcn): ?string {
-		$p = self::PREFIX;
-		if (strncmp($fqcn, $p, strlen($p)) !== 0) {
+		$prefix = self::PREFIX;
+		if (strncmp($fqcn, $prefix, strlen($prefix)) !== 0) {
 			return null;
 		}
 
-		$rest = substr($fqcn, strlen($p));
+		$rest = substr($fqcn, strlen($prefix));
 		$sep = strpos($rest, '\\');
 		if ($sep === false || substr($rest, $sep + 1) !== 'Gateway') {
 			return null;
