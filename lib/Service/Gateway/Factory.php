@@ -9,28 +9,47 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service\Gateway;
 
-use Exception;
-use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
-use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
-use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
+use InvalidArgumentException;
+use OCP\Server;
 
 class Factory {
-	public function __construct(
-		private SignalGateway $signalGateway,
-		private SMSGateway $smsGateway,
-		private TelegramGateway $telegramGateway,
-		private XMPPGateway $xmppGateway,
-	) {
-	}
+	private const PREFIX = 'OCA\\TwoFactorGateway\\Service\\Gateway\\';
 
 	public function getGateway(string $name): IGateway {
-		return match ($name) {
-			'signal' => $this->signalGateway,
-			'sms' => $this->smsGateway,
-			'telegram' => $this->telegramGateway,
-			'xmpp' => $this->xmppGateway,
-			default => throw new Exception("Invalid gateway $name"),
-		};
+		$needle = strtolower($name);
+
+		foreach ($this->getClassMap() as $fqcn => $_) {
+			$type = $this->typeFrom($fqcn);
+			if ($type === null || $type !== $needle) {
+				continue;
+			}
+			if (!is_subclass_of($fqcn, AGateway::class, true)) {
+				continue;
+			}
+			/** @var IGateway */
+			return Server::get($fqcn);
+		}
+		throw new InvalidArgumentException("Invalid gateway $name");
+	}
+
+	private function getClassMap(): array {
+		$loader = require __DIR__ . '/../../../vendor/autoload.php';
+		return $loader->getClassMap();
+	}
+
+	private function typeFrom(string $fqcn): ?string {
+		$p = self::PREFIX;
+		if (strncmp($fqcn, $p, strlen($p)) !== 0) {
+			return null;
+		}
+
+		$rest = substr($fqcn, strlen($p));
+		$sep = strpos($rest, '\\');
+		if ($sep === false || substr($rest, $sep + 1) !== 'Gateway') {
+			return null;
+		}
+
+		$type = substr($rest, 0, $sep);
+		return $type !== '' ? strtolower($type) : null;
 	}
 }

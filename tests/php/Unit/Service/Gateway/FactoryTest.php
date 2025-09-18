@@ -6,66 +6,41 @@ declare(strict_types=1);
  * SPDX-FileCopyrightText: 2024 Christoph Wurst <christoph@winzerhof-wurst.at>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-
 namespace OCA\TwoFactorGateway\Tests\Unit\Service\Gateway;
 
 use OCA\TwoFactorGateway\Service\Gateway\Factory;
-use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
-use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
-use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
-use PHPUnit\Framework\MockObject\MockObject;
+use OCA\TwoFactorGateway\Service\Gateway\IGateway;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class FactoryTest extends TestCase {
-	private SignalGateway&MockObject $signalGateway;
-	private SMSGateway&MockObject $smsGateway;
-	private TelegramGateway&MockObject $telegramGateway;
-	private XMPPGateway&MockObject $xmppGateway;
-	private Factory $factory;
+final class FactoryTest extends TestCase {
+	#[DataProvider('providerGetGateway')]
+	public function testGetGateway(string $name, ?string $expectedFqcn): void {
+		$factory = new Factory();
 
-	protected function setUp(): void {
-		parent::setUp();
+		if ($expectedFqcn === null) {
+			$this->expectException(\Exception::class);
+			$factory->getGateway($name);
+			return;
+		}
 
-		$this->signalGateway = $this->createMock(SignalGateway::class);
-		$this->smsGateway = $this->createMock(SMSGateway::class);
-		$this->telegramGateway = $this->createMock(TelegramGateway::class);
-		$this->xmppGateway = $this->createMock(XMPPGateway::class);
-
-		$this->factory = new Factory(
-			$this->signalGateway,
-			$this->smsGateway,
-			$this->telegramGateway,
-			$this->xmppGateway
-		);
+		$obj = $factory->getGateway($name);
+		$this->assertInstanceOf($expectedFqcn, $obj);
+		$this->assertInstanceOf(IGateway::class, $obj);
 	}
 
-	public function testGetSignalGateway() {
-		$gateway = $this->factory->getGateway('signal');
+	public static function providerGetGateway(): array {
+		$factoryFile = (new \ReflectionClass(Factory::class))->getFileName();
+		$baseDir = dirname($factoryFile);
 
-		$this->assertSame($this->signalGateway, $gateway);
-	}
+		$cases = [];
+		foreach (glob($baseDir . '/*/Gateway.php') ?: [] as $file) {
+			$type = basename(dirname($file));
+			$fqcn = "OCA\\TwoFactorGateway\\Service\\Gateway\\{$type}\\Gateway";
+			$cases["ok-{$type}"] = [strtolower($type), $fqcn];
+		}
 
-	public function testGetSMSGateway() {
-		$gateway = $this->factory->getGateway('sms');
-
-		$this->assertSame($this->smsGateway, $gateway);
-	}
-
-	public function testGetTelegamGateway() {
-		$gateway = $this->factory->getGateway('telegram');
-
-		$this->assertSame($this->telegramGateway, $gateway);
-	}
-
-	public function testGetXMPPGateway() {
-		$gateway = $this->factory->getGateway('xmpp');
-
-		$this->assertSame($this->xmppGateway, $gateway);
-	}
-
-	public function testGetInvalidGateway() {
-		$this->expectException(\Exception::class);
-		$this->factory->getGateway('wrong');
+		$cases['invalid-wrong'] = ['wrong', null];
+		return $cases;
 	}
 }
