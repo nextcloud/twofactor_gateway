@@ -28,7 +28,6 @@ use Symfony\Component\Console\Question\Question;
  */
 class Gateway extends AGateway {
 	public const SCHEMA = [
-		'id' => 'signal',
 		'name' => 'Signal',
 		'fields' => [
 			['field' => 'url', 'prompt' => 'Please enter the URL of the Signal gateway (leave blank to use default):', 'default' => 'http://localhost:5000'],

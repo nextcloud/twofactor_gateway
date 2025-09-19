@@ -28,7 +28,6 @@ use TelegramBot\Api\Exception as TelegramSDKException;
  */
 class Gateway extends AGateway {
 	public const SCHEMA = [
-		'id' => 'telegram',
 		'name' => 'Telegram',
 		'fields' => [
 			['field' => 'bot_token', 'prompt' => 'Please enter your Telegram bot token:'],

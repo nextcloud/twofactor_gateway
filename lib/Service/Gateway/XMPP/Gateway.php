@@ -33,7 +33,6 @@ use Symfony\Component\Console\Question\Question;
  */
 class Gateway extends AGateway {
 	public const SCHEMA = [
-		'id' => 'xmpp',
 		'name' => 'XMPP',
 		'fields' => [
 			['field' => 'sender',   'prompt' => 'Please enter your sender XMPP-JID:'],
