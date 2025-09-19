@@ -19,18 +19,17 @@ trait TConfigurable {
 	 * @throws ConfigurationException
 	 */
 	public function __call(string $name, array $args) {
-		if (!preg_match('/^(get|set|delete)([A-Z][A-Za-z0-9_]*)$/', $name, $matches)) {
-			throw new ConfigurationException();
+		if (!preg_match('/^(?<operation>get|set|delete)(?<field>[A-Z][A-Za-z0-9_]*)$/', $name, $matches)) {
+			throw new ConfigurationException('Invalid method ' . $name);
 		}
-		$op = $matches[1];
-		$alias = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $matches[2]));
-		$key = $this->keyFromAlias($alias);
+		$field = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $matches['field']));
+		$key = $this->keyFromField($field);
 
-		switch ($op) {
+		switch ($matches['operation']) {
 			case 'get':
 				$val = (string)$this->getAppConfig()->getValueString(Application::APP_ID, $key, '');
 				if ($val === '') {
-					throw new ConfigurationException();
+					throw new ConfigurationException('No value set for ' . $field);
 				}
 				return $val;
 
@@ -42,18 +41,18 @@ trait TConfigurable {
 				$this->getAppConfig()->deleteKey(Application::APP_ID, $key);
 				return $this;
 		}
-		throw new ConfigurationException();
+		throw new ConfigurationException('Invalid operation ' . $matches['operation']);
 	}
 
 	/**
 	 * @throws ConfigurationException
 	 */
-	private function keyFromAlias(string $alias): string {
+	private function keyFromField(string $field): string {
 		$fields = array_column($this->getSchemaFields(), 'field');
-		if (!in_array($alias, $fields, true)) {
-			throw new ConfigurationException();
+		if (!in_array($field, $fields, true)) {
+			throw new ConfigurationException('Invalid configuration field: ' . $field . ', check SCHEMA at ' . static::class);
 		}
-		return $this->getProviderId() . '_' . $alias;
+		return $this->getProviderId() . '_' . $field;
 	}
 
 	/**
@@ -61,7 +60,7 @@ trait TConfigurable {
 	 */
 	private function getAppConfig(): IAppConfig {
 		if (!isset($this->appConfig)) {
-			throw new ConfigurationException();
+			throw new ConfigurationException('No app config set');
 		}
 		return $this->appConfig;
 	}
@@ -80,7 +79,7 @@ trait TConfigurable {
 	 */
 	public static function getSchema(): array {
 		if (!defined(static::class . '::SCHEMA')) {
-			throw new ConfigurationException();
+			throw new ConfigurationException('No SCHEMA defined');
 		}
 		return static::SCHEMA;
 	}
