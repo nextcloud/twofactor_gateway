@@ -104,9 +104,9 @@ export default {
 	mounted() {
 		axios.get(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
 			.then(({ data }) => {
-				console.debug('loaded state for gateway ' + this.gatewayName, data.ocs.data)
-				this.state = data.ocs.data.state
-				this.phoneNumber = data.ocs.data.phoneNumber
+				console.debug('loaded state for gateway ' + this.gatewayName, data)
+				this.state = data.state
+				this.phoneNumber = data.phoneNumber
 			})
 			.catch(err => console.info(this.gatewayName + ' gateway is not available', err))
 			.finally(() => { this.loading = false })
@@ -125,7 +125,7 @@ export default {
 			})
 				.then(({ data }) => {
 					this.state = 2
-					this.phoneNumber = data.ocs.data.phoneNumber
+					this.phoneNumber = data.phoneNumber
 				})
 				.catch(({ response }) => {
 					console.debug(response.data)
@@ -153,8 +153,8 @@ export default {
 			this.loading = true
 			axios.delete(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
 				.then(data => {
-					this.state = data.ocs.data.state
-					this.phoneNumber = data.ocs.data.phoneNumber
+					this.state = data.state
+					this.phoneNumber = data.phoneNumber
 				})
 				.catch(console.error.bind(this))
 				.finally(() => { this.loading = false })
