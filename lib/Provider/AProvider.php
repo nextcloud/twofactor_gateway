@@ -15,6 +15,7 @@ use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCA\TwoFactorGateway\Settings\PersonalSettings;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\Authentication\TwoFactorAuth\IDeactivatableByAdmin;
 use OCP\Authentication\TwoFactorAuth\IPersonalProviderSettings;
 use OCP\Authentication\TwoFactorAuth\IProvider;
@@ -49,6 +50,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		protected ISecureRandom $secureRandom,
 		protected IL10N $l10n,
 		protected ITemplateManager $templateManager,
+		protected IInitialState $initialState,
 	) {
 		$this->gatewayName = $gatewayId;
 	}
@@ -110,6 +112,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 
 	#[\Override]
 	public function getPersonalSettings(IUser $user): IPersonalProviderSettings {
+		$this->initialState->provideInitialState('settings-' . $this->gateway->getProviderId(), $this->gateway->getSettings());
 		return new PersonalSettings(
 			$this->gatewayName,
 			$this->gateway->isComplete(),

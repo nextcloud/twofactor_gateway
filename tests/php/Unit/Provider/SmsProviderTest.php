@@ -14,6 +14,7 @@ use OCA\TwoFactorGateway\Provider\State;
 use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\IUser;
@@ -28,6 +29,7 @@ class SmsProviderTest extends TestCase {
 	private ISession&MockObject $session;
 	private ISecureRandom&MockObject $random;
 	private IL10n&MockObject $l10n;
+	private IInitialState&MockObject $initialState;
 	private ITemplateManager&MockObject $templateManager;
 	private SmsProvider $provider;
 
@@ -40,6 +42,7 @@ class SmsProviderTest extends TestCase {
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->templateManager = $this->createMock(ITemplateManager::class);
+		$this->initialState = $this->createMock(IInitialState::class);
 
 		$this->provider = new SmsProvider(
 			$this->smsGateway,
@@ -48,6 +51,7 @@ class SmsProviderTest extends TestCase {
 			$this->random,
 			$this->l10n,
 			$this->templateManager,
+			$this->initialState,
 		);
 	}
 

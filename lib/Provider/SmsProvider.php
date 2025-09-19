@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Provider;
 
 use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\Security\ISecureRandom;
@@ -24,6 +25,7 @@ class SmsProvider extends AProvider {
 		ISecureRandom $secureRandom,
 		IL10N $l10n,
 		ITemplateManager $templateManager,
+		IInitialState $initialState,
 	) {
 		parent::__construct(
 			'sms',
@@ -33,6 +35,7 @@ class SmsProvider extends AProvider {
 			$secureRandom,
 			$l10n,
 			$templateManager,
+			$initialState,
 		);
 	}
 

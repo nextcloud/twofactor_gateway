@@ -43,6 +43,16 @@ abstract class AGateway implements IGateway {
 	}
 
 	#[\Override]
+	public function getSettings(): array {
+		$settings = [];
+		if (isset(static::SCHEMA['instructions'])) {
+			$settings['instructions'] = static::SCHEMA['instructions'];
+		}
+		$settings['name'] = static::SCHEMA['name'];
+		return $settings;
+	}
+
+	#[\Override]
 	abstract public function cliConfigure(InputInterface $input, OutputInterface $output): int;
 
 	#[\Override]

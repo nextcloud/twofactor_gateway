@@ -7,14 +7,16 @@
 		<NcLoadingIcon v-if="loading" :size="20" />
 		<div v-else>
 			<p v-if="state === 0">
-				<slot name="instructions" />
+				<!-- eslint-disable-next-line vue/no-v-html -->
+				<span v-html="instructionsHTML" />
 				{{ t('twofactor_gateway', 'You are not using {displayName} for two-factor authentication at the moment.', {displayName: displayName}) }}
 				<NcButton @click="enable">
 					{{ t('twofactor_gateway', 'Enable') }}
 				</NcButton>
 			</p>
 			<p v-if="state === 1">
-				<slot name="instructions" />
+				<!-- eslint-disable-next-line vue/no-v-html -->
+				<span v-html="instructionsHTML" />
 				<strong v-if="verificationError.length">
 					{{ t('twofactor_gateway', 'Could not verify your code. Please try again.') }}
 				</strong>
@@ -54,6 +56,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
+import domPurify from 'dompurify'
 
 export default {
 	name: 'GatewaySettings',
@@ -68,6 +71,10 @@ export default {
 			required: true,
 		},
 		displayName: {
+			type: String,
+			required: true,
+		},
+		instructions: {
 			type: String,
 			required: true,
 		},
@@ -88,6 +95,11 @@ export default {
 			identifier: '',
 			verificationError: '',
 		}
+	},
+	computed: {
+		instructionsHTML() {
+			return domPurify.sanitize(this.instructions, { ADD_ATTR: ['target'] })
+		},
 	},
 	mounted() {
 		axios.get(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
@@ -152,10 +164,7 @@ export default {
 </script>
 
 <style lang="scss">
-li:has(#twofactor-gateway-telegram-is-complete[value="0"]),
-li:has(#twofactor-gateway-sms-is-complete[value="0"]),
-li:has(#twofactor-gateway-xmpp-is-complete[value="0"]),
-li:has(#twofactor-gateway-signal-is-complete[value="0"]) {
+li:has([id^="twofactor-gateway-"][id$="-is-complete"][value="0"]) {
 	display: none;
 }
 </style>

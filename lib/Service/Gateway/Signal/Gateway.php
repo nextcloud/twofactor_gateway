@@ -29,6 +29,7 @@ use Symfony\Component\Console\Question\Question;
 class Gateway extends AGateway {
 	public const SCHEMA = [
 		'name' => 'Signal',
+		'instructions' => 'The gateway can send authentication to your Signal mobile and deskop app.',
 		'fields' => [
 			['field' => 'url', 'prompt' => 'Please enter the URL of the Signal gateway (leave blank to use default):', 'default' => 'http://localhost:5000'],
 		],

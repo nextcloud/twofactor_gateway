@@ -4,13 +4,22 @@
  */
 
 import { createApp } from 'vue'
+import { loadState } from '@nextcloud/initial-state'
+import GatewaySettings from './views/GatewaySettings.vue'
 
-import SignalSettings from './views/SignalSettings.vue'
-import SMSSettings from './views/SMSSettings.vue'
-import TelegramSettings from './views/TelegramSettings.vue'
-import XMPPSettings from './views/XMPPSettings.vue'
+const MOUNT_PREFIX = 'twofactor-gateway-'
 
-createApp(SignalSettings).mount('#twofactor-gateway-signal')
-createApp(SMSSettings).mount('#twofactor-gateway-sms')
-createApp(TelegramSettings).mount('#twofactor-gateway-telegram')
-createApp(XMPPSettings).mount('#twofactor-gateway-xmpp')
+document.querySelectorAll<HTMLElement>(`[id^="${MOUNT_PREFIX}"]`).forEach((el) => {
+	const provider = el.id.slice(MOUNT_PREFIX.length)
+
+	const state = loadState('twofactor_gateway', `settings-${provider}`, {
+		name: '',
+		instructions: '',
+	})
+
+	createApp(GatewaySettings, {
+		gatewayName: provider,
+		displayName: state.name,
+		instructions: state.instructions || '',
+	}).mount(el)
+})

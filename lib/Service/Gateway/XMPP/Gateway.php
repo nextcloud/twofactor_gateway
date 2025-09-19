@@ -34,6 +34,10 @@ use Symfony\Component\Console\Question\Question;
 class Gateway extends AGateway {
 	public const SCHEMA = [
 		'name' => 'XMPP',
+		'instructions' => <<<HTML
+			<p>In order to receive authentication codes via XMPP, your XMPP Server must support http requests (ask your admin).</p>
+			<p>Enter your JID (XMPP address) to receive your verification code below.</p>
+			HTML,
 		'fields' => [
 			['field' => 'sender',   'prompt' => 'Please enter your sender XMPP-JID:'],
 			['field' => 'password', 'prompt' => 'Please enter your sender XMPP password:'],

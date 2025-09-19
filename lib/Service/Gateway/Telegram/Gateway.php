@@ -29,6 +29,15 @@ use TelegramBot\Api\Exception as TelegramSDKException;
 class Gateway extends AGateway {
 	public const SCHEMA = [
 		'name' => 'Telegram',
+		'instructions' => <<<HTML
+			<p>In order to receive authentication codes via Telegram, you first
+			have to start a new chat with the bot set up by your admin.</p>
+
+			<p>Secondly, you have to obtain your Telegram ID via the
+			<a href="https://telegram.me/getmyid_bot" target="_blank" rel="noreferrer noopener">ID Bot</a>.</p>
+
+			<p>Enter this ID to receive your verification code below.</p>
+			HTML,
 		'fields' => [
 			['field' => 'bot_token', 'prompt' => 'Please enter your Telegram bot token:'],
 		],

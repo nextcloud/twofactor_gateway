@@ -12,6 +12,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
 use OCA\TwoFactorGateway\Provider\XMPPProvider;
 use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\Security\ISecureRandom;
@@ -25,6 +26,7 @@ class XMPPProviderTest extends TestCase {
 	private ISession&MockObject $session;
 	private ISecureRandom&MockObject $random;
 	private IL10N&MockObject $l10n;
+	private IInitialState&MockObject $initialState;
 	private ITemplateManager&MockObject $templateManager;
 	private XMPPProvider $provider;
 
@@ -37,6 +39,7 @@ class XMPPProviderTest extends TestCase {
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->templateManager = $this->createMock(ITemplateManager::class);
+		$this->initialState = $this->createMock(IInitialState::class);
 
 		$this->provider = new XMPPProvider(
 			$this->gateway,
@@ -45,6 +48,7 @@ class XMPPProviderTest extends TestCase {
 			$this->random,
 			$this->l10n,
 			$this->templateManager,
+			$this->initialState,
 		);
 	}
 
