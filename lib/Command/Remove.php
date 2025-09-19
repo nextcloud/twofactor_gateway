@@ -41,7 +41,7 @@ class Remove extends Command {
 			return 1;
 		}
 
-		$gateway->gatewayConfig->remove();
+		$gateway->remove();
 		$output->writeln("Removed configuration for gateway $gatewayName");
 		return 0;
 	}
