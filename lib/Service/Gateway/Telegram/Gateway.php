@@ -65,7 +65,7 @@ class Gateway extends AGateway {
 	#[\Override]
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
 		$helper = new QuestionHelper();
-		$tokenQuestion = new Question(self::SCHEMA['fields'][0]['prompt']);
+		$tokenQuestion = new Question(self::SCHEMA['fields'][0]['prompt'] . ' ');
 		$token = $helper->ask($input, $output, $tokenQuestion);
 		$this->setBotToken($token);
 		$output->writeln("Using $token.");

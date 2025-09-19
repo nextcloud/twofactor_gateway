@@ -54,7 +54,7 @@ class Gateway extends AGateway {
 
 		foreach ($schema['fields'] as $field) {
 			$id = $field['field'];
-			$prompt = $field['prompt'];
+			$prompt = $field['prompt'] . ' ';
 			$defaultVal = $field['default'] ?? null;
 			$optional = (bool)($field['optional'] ?? false);
 

@@ -93,7 +93,7 @@ class Gateway extends AGateway {
 		$fields = array_combine(array_column($fields, 'field'), $fields);
 		$sender = '';
 		while (empty($sender) or substr_count($sender, '@') !== 1) {
-			$senderQuestion = new Question($fields['sender']['prompt']);
+			$senderQuestion = new Question($fields['sender']['prompt'] . ' ');
 			$sender = $helper->ask($input, $output, $senderQuestion);
 			if (empty($sender)) {
 				$output->writeln('XMPP-JID must not be empty!');
@@ -106,7 +106,7 @@ class Gateway extends AGateway {
 		$output->writeln("Using $sender as XMPP-JID.\nUsing $username as username.");
 		$password = '';
 		while (empty($password)) {
-			$passwordQuestion = new Question($fields['password']['prompt']);
+			$passwordQuestion = new Question($fields['password']['prompt'] . ' ');
 			$password = $helper->ask($input, $output, $passwordQuestion);
 			if (empty($password)) {
 				$output->writeln('Password must not be empty!');
@@ -115,7 +115,7 @@ class Gateway extends AGateway {
 		$output->writeln('Password accepted.');
 		$server = '';
 		while (empty($server)) {
-			$serverQuestion = new Question($fields['server']['prompt']);
+			$serverQuestion = new Question($fields['server']['prompt'] . ' ');
 			$server = $helper->ask($input, $output, $serverQuestion);
 			if (empty($server)) {
 				$output->writeln('API path must not be empty!');
