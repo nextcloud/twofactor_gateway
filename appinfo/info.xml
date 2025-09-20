@@ -25,13 +25,6 @@
 	<dependencies>
 		<nextcloud min-version="33" max-version="33"/>
 	</dependencies>
-
-	<two-factor-providers>
-		<provider>OCA\TwoFactorGateway\Provider\Channel\Signal\Provider</provider>
-		<provider>OCA\TwoFactorGateway\Provider\Channel\SMS\Provider</provider>
-		<provider>OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider</provider>
-		<provider>OCA\TwoFactorGateway\Provider\Channel\XMPP\Provider</provider>
-	</two-factor-providers>
 	<commands>
 		<command>OCA\TwoFactorGateway\Command\Configure</command>
 		<command>OCA\TwoFactorGateway\Command\Status</command>

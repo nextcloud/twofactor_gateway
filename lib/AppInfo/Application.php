@@ -9,10 +9,12 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\AppInfo;
 
+use OCA\TwoFactorGateway\Provider\Factory;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\Server;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'twofactor_gateway';
@@ -23,6 +25,11 @@ class Application extends App implements IBootstrap {
 
 	#[\Override]
 	public function register(IRegistrationContext $context): void {
+		$providerFactory = Server::get(Factory::class);
+		$fqcn = $providerFactory->getFqcnList();
+		foreach ($fqcn as $class) {
+			$context->registerTwoFactorProvider($class);
+		}
 	}
 
 	#[\Override]

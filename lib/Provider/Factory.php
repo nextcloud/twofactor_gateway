@@ -40,7 +40,7 @@ class Factory {
 		throw new InvalidProviderException();
 	}
 
-	private function getFqcnList(): array {
+	public function getFqcnList(): array {
 		if (!empty($this->fqcn)) {
 			return $this->fqcn;
 		}
