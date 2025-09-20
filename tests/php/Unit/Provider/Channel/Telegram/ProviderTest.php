@@ -9,8 +9,9 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\Telegram;
 
-use OCA\TwoFactorGateway\Provider\Channel\Telegram\Gateway;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider;
+use OCA\TwoFactorGateway\Provider\Gateway\Factory;
+use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IL10N;
@@ -21,7 +22,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ProviderTest extends TestCase {
-	private Gateway&MockObject $gateway;
+	private Factory&MockObject $gatewayFactory;
 	private StateStorage&MockObject $stateStorage;
 	private ISession&MockObject $session;
 	private ISecureRandom&MockObject $random;
@@ -33,7 +34,8 @@ class ProviderTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->gateway = $this->createMock(Gateway::class);
+		$this->gatewayFactory = $this->createMock(Factory::class);
+		$this->gatewayFactory->method('get')->willReturn($this->createMock(IGateway::class));
 		$this->stateStorage = $this->createMock(StateStorage::class);
 		$this->session = $this->createMock(ISession::class);
 		$this->random = $this->createMock(ISecureRandom::class);
@@ -42,7 +44,7 @@ class ProviderTest extends TestCase {
 		$this->initialState = $this->createMock(IInitialState::class);
 
 		$this->provider = new Provider(
-			$this->gateway,
+			$this->gatewayFactory,
 			$this->stateStorage,
 			$this->session,
 			$this->random,

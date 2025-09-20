@@ -12,6 +12,7 @@ namespace OCA\TwoFactorGateway\Provider;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
+use OCA\TwoFactorGateway\Provider\Gateway\Factory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCA\TwoFactorGateway\Settings\PersonalSettings;
@@ -32,15 +33,15 @@ use OCP\Template\ITemplateManager;
 
 abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByAdmin, IProvidesPersonalSettings {
 
-	protected string $gatewayName;
+	protected string $gatewayName = '';
+	protected IGateway $gateway;
 
 	private function getSessionKey(): string {
-		return 'twofactor_gateway_' . $this->gatewayName . '_secret';
+		return 'twofactor_gateway_' . $this->getGatewayName() . '_secret';
 	}
 
 	public function __construct(
-		string $gatewayId,
-		protected IGateway $gateway,
+		protected Factory $gatewayFactory,
 		protected StateStorage $stateStorage,
 		protected ISession $session,
 		protected ISecureRandom $secureRandom,
@@ -48,12 +49,23 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		protected ITemplateManager $templateManager,
 		protected IInitialState $initialState,
 	) {
-		$this->gatewayName = $gatewayId;
+		$this->gateway = $this->gatewayFactory->get($this->getGatewayName());
+	}
+
+	private function getGatewayName(): string {
+		if ($this->gatewayName) {
+			return $this->gatewayName;
+		}
+		$fqcn = static::class;
+		$parts = explode('\\', $fqcn);
+		[$name] = array_slice($parts, -2, 1);
+		$this->gatewayName = strtolower($name);
+		return $this->gatewayName;
 	}
 
 	#[\Override]
 	public function getId(): string {
-		return "gateway_$this->gatewayName";
+		return 'gateway_' . $this->getGatewayName();
 	}
 
 	private function getSecret(): string {
@@ -72,7 +84,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		$secret = $this->getSecret();
 
 		try {
-			$identifier = $this->stateStorage->get($user, $this->gatewayName)->getIdentifier();
+			$identifier = $this->stateStorage->get($user, $this->getGatewayName())->getIdentifier();
 			$this->gateway->send(
 				$user,
 				$identifier,
@@ -104,14 +116,14 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 
 	#[\Override]
 	public function isTwoFactorAuthEnabledForUser(IUser $user): bool {
-		return $this->stateStorage->get($user, $this->gatewayName)->getState() === StateStorage::STATE_ENABLED;
+		return $this->stateStorage->get($user, $this->getGatewayName())->getState() === StateStorage::STATE_ENABLED;
 	}
 
 	#[\Override]
 	public function getPersonalSettings(IUser $user): IPersonalProviderSettings {
 		$this->initialState->provideInitialState('settings-' . $this->gateway->getProviderId(), $this->gateway->getSettings());
 		return new PersonalSettings(
-			$this->gatewayName,
+			$this->getGatewayName(),
 			$this->gateway->isComplete(),
 		);
 	}
@@ -128,9 +140,9 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 
 	#[\Override]
 	public function disableFor(IUser $user) {
-		$state = $this->stateStorage->get($user, $this->gatewayName);
+		$state = $this->stateStorage->get($user, $this->getGatewayName());
 		if ($state->getState() === StateStorage::STATE_ENABLED) {
-			$this->stateStorage->persist($state->disabled($user, $this->gatewayName));
+			$this->stateStorage->persist($state->disabled($user, $this->getGatewayName()));
 		}
 	}
 }
