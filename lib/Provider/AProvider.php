@@ -3,32 +3,20 @@
 declare(strict_types=1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * Nextcloud - Two-factor Gateway
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2024 Christoph Wurst <christoph@winzerhof-wurst.at>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\TwoFactorGateway\Provider;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\Factory;
+use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCA\TwoFactorGateway\Settings\PersonalSettings;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\Authentication\TwoFactorAuth\IDeactivatableByAdmin;
 use OCP\Authentication\TwoFactorAuth\IPersonalProviderSettings;
 use OCP\Authentication\TwoFactorAuth\IProvider;
@@ -36,57 +24,48 @@ use OCP\Authentication\TwoFactorAuth\IProvidesIcons;
 use OCP\Authentication\TwoFactorAuth\IProvidesPersonalSettings;
 use OCP\IL10N;
 use OCP\ISession;
+use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
-use OCP\Template;
+use OCP\Server;
+use OCP\Template\ITemplate;
+use OCP\Template\ITemplateManager;
 
 abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByAdmin, IProvidesPersonalSettings {
-	public const STATE_DISABLED = 0;
-	public const STATE_START_VERIFICATION = 1;
-	public const STATE_VERIFYING = 2;
-	public const STATE_ENABLED = 3;
 
-	/** @var string */
-	protected $gatewayName;
+	protected string $gatewayName = '';
+	protected IGateway $gateway;
 
-	/** @var IGateway */
-	protected $gateway;
-
-	/** @var StateStorage */
-	protected $stateStorage;
-
-	/** @var ISession */
-	protected $session;
-
-	/** @var ISecureRandom */
-	protected $secureRandom;
-
-	/** @var IL10N */
-	protected $l10n;
-
-	private function getSessionKey() {
-		return "twofactor_gateway_" . $this->gatewayName . "_secret";
+	private function getSessionKey(): string {
+		return 'twofactor_gateway_' . $this->getGatewayName() . '_secret';
 	}
 
-	public function __construct(string $gatewayId,
-		IGateway $gateway,
-		StateStorage $stateStorage,
-		ISession $session,
-		ISecureRandom $secureRandom,
-		IL10N $l10n) {
-		$this->gateway = $gateway;
-		$this->gatewayName = $gatewayId;
-		$this->stateStorage = $stateStorage;
-		$this->session = $session;
-		$this->secureRandom = $secureRandom;
-		$this->l10n = $l10n;
+	public function __construct(
+		protected Factory $gatewayFactory,
+		protected StateStorage $stateStorage,
+		protected ISession $session,
+		protected ISecureRandom $secureRandom,
+		protected IL10N $l10n,
+		protected ITemplateManager $templateManager,
+		protected IInitialState $initialState,
+	) {
+		$this->gateway = $this->gatewayFactory->get($this->getGatewayName());
 	}
 
-	/**
-	 * Get unique identifier of this 2FA provider
-	 */
+	private function getGatewayName(): string {
+		if ($this->gatewayName) {
+			return $this->gatewayName;
+		}
+		$fqcn = static::class;
+		$parts = explode('\\', $fqcn);
+		[$name] = array_slice($parts, -2, 1);
+		$this->gatewayName = strtolower($name);
+		return $this->gatewayName;
+	}
+
+	#[\Override]
 	public function getId(): string {
-		return "gateway_$this->gatewayName";
+		return 'gateway_' . $this->getGatewayName();
 	}
 
 	private function getSecret(): string {
@@ -100,33 +79,30 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		return $secret;
 	}
 
-	/**
-	 * Get the template for rending the 2FA provider view
-	 */
-	public function getTemplate(IUser $user): Template {
+	#[\Override]
+	public function getTemplate(IUser $user): ITemplate {
 		$secret = $this->getSecret();
 
 		try {
-			$identifier = $this->stateStorage->get($user, $this->gatewayName)->getIdentifier();
+			$identifier = $this->stateStorage->get($user, $this->getGatewayName())->getIdentifier();
 			$this->gateway->send(
 				$user,
 				$identifier,
 				$this->l10n->t('%s is your Nextcloud authentication code', [
 					$secret
-				])
+				]),
+				['code' => $secret],
 			);
-		} catch (SmsTransmissionException $ex) {
-			return new Template('twofactor_gateway', 'error');
+		} catch (MessageTransmissionException) {
+			return $this->templateManager->getTemplate('twofactor_gateway', 'error');
 		}
 
-		$tmpl = new Template('twofactor_gateway', 'challenge');
+		$tmpl = $this->templateManager->getTemplate('twofactor_gateway', 'challenge');
 		$tmpl->assign('phone', PhoneNumberMask::maskNumber($identifier));
 		return $tmpl;
 	}
 
-	/**
-	 * Verify the given challenge
-	 */
+	#[\Override]
 	public function verifyChallenge(IUser $user, string $challenge): bool {
 		$valid = $this->session->exists($this->getSessionKey())
 			&& $this->session->get($this->getSessionKey()) === $challenge;
@@ -138,29 +114,35 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		return $valid;
 	}
 
-	/**
-	 * Decides whether 2FA is enabled for the given user
-	 */
+	#[\Override]
 	public function isTwoFactorAuthEnabledForUser(IUser $user): bool {
-		return $this->stateStorage->get($user, $this->gatewayName)->getState() === self::STATE_ENABLED;
+		return $this->stateStorage->get($user, $this->getGatewayName())->getState() === StateStorage::STATE_ENABLED;
 	}
 
+	#[\Override]
 	public function getPersonalSettings(IUser $user): IPersonalProviderSettings {
-		return new PersonalSettings($this->gatewayName);
+		$this->initialState->provideInitialState('settings-' . $this->gateway->getProviderId(), $this->gateway->getSettings());
+		return new PersonalSettings(
+			$this->getGatewayName(),
+			$this->gateway->isComplete(),
+		);
 	}
 
+	#[\Override]
 	public function getLightIcon(): String {
-		return image_path(Application::APP_ID, 'app.svg');
+		return Server::get(IURLGenerator::class)->imagePath(Application::APP_ID, 'app.svg');
 	}
 
+	#[\Override]
 	public function getDarkIcon(): String {
-		return image_path(Application::APP_ID, 'app-dark.svg');
+		return Server::get(IURLGenerator::class)->imagePath(Application::APP_ID, 'app-dark.svg');
 	}
 
+	#[\Override]
 	public function disableFor(IUser $user) {
-		$state = $this->stateStorage->get($user, $this->gatewayName);
-		if ($state->getState() === self::STATE_ENABLED) {
-			$this->stateStorage->persist($state->disabled($user, $this->gatewayName));
+		$state = $this->stateStorage->get($user, $this->getGatewayName());
+		if ($state->getState() === StateStorage::STATE_ENABLED) {
+			$this->stateStorage->persist($state->disabled($user, $this->getGatewayName()));
 		}
 	}
 }

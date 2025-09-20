@@ -1,14 +1,17 @@
+# SPDX-FileCopyrightText: 2025 LibreCode coop and contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
 composer.phar
 
 /js
+/css
 
 /node_modules
 vendor/
 
 /nbproject/
 /.idea/
+.vscode
 
-/tests/clover.*
-/tests/.phpunit.result.cache
+/build/
 
 .php-cs-fixer.cache

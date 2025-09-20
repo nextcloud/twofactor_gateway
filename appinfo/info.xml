@@ -1,11 +1,15 @@
 <?xml version="1.0"?>
+<!--
+  - SPDX-FileCopyrightText: 2025 LibreCode coop and contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>twofactor_gateway</id>
 	<name>Two-Factor Gateway</name>
-	<summary>Two-factor gateway providers (SMS, Telegram, Signal)</summary>
-	<description>A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS and Telegram.</description>
-	<version>0.20.0</version>
+	<summary>Two-factor gateway providers (Signal, SMS, Telegram, XMPP)</summary>
+	<description>A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram and XMPP.</description>
+	<version>3.0.0-dev.0</version>
 	<licence>agpl</licence>
 	<author>Christoph Wurst</author>
 	<author>Vitor Mattos</author>
@@ -19,15 +23,8 @@
 	<screenshot>https://raw.githubusercontent.com/nextcloud/twofactor_gateway/3f895bc997c1a3a38c9bae16ccae8bd499af864e/screenshots/settings.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/twofactor_gateway/3f895bc997c1a3a38c9bae16ccae8bd499af864e/screenshots/challenge.png</screenshot>
 	<dependencies>
-		<nextcloud min-version="25" max-version="28"/>
+		<nextcloud min-version="33" max-version="33"/>
 	</dependencies>
-
-	<two-factor-providers>
-		<provider>OCA\TwoFactorGateway\Provider\SignalProvider</provider>
-		<provider>OCA\TwoFactorGateway\Provider\SmsProvider</provider>
-		<provider>OCA\TwoFactorGateway\Provider\TelegramProvider</provider>
-		<provider>OCA\TwoFactorGateway\Provider\XMPPProvider</provider>
-	</two-factor-providers>
 	<commands>
 		<command>OCA\TwoFactorGateway\Command\Configure</command>
 		<command>OCA\TwoFactorGateway\Command\Status</command>

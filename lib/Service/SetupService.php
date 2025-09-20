@@ -3,66 +3,34 @@
 declare(strict_types=1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2024 Christoph Wurst <christoph@winzerhof-wurst.at>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\TwoFactorGateway\Service;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
-use OCA\TwoFactorGateway\Exception\SmsTransmissionException;
+use OCA\TwoFactorGateway\Exception\InvalidProviderException;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
-use OCA\TwoFactorGateway\Exception\VerificationTransmissionException;
-use OCA\TwoFactorGateway\Provider\Factory;
+use OCA\TwoFactorGateway\Provider\Factory as ProviderFactory;
+use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\State;
-use OCA\TwoFactorGateway\Service\Gateway\Factory as GatewayFactory;
 use OCP\Authentication\TwoFactorAuth\IRegistry;
+use OCP\IL10N;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
 
 class SetupService {
-
-	/** @var StateStorage */
-	private $stateStorage;
-
-	/** @var GatewayFactory */
-	private $gatewayFactory;
-
-	/** @var Factory */
-	private $providerFactory;
-
-	/** @var ISecureRandom */
-	private $random;
-
-	/** @var IRegistry */
-	private $providerRegistry;
-
-	public function __construct(StateStorage $stateStorage,
-		GatewayFactory $gatewayFactory,
-		Factory $providerFactory,
-		ISecureRandom $random,
-		IRegistry $providerRegistry) {
-		$this->stateStorage = $stateStorage;
-		$this->gatewayFactory = $gatewayFactory;
-		$this->providerFactory = $providerFactory;
-		$this->random = $random;
-		$this->providerRegistry = $providerRegistry;
+	public function __construct(
+		private StateStorage $stateStorage,
+		private GatewayFactory $gatewayFactory,
+		private ProviderFactory $providerFactory,
+		private ISecureRandom $random,
+		private IRegistry $providerRegistry,
+		private IL10N $l10n,
+	) {
 	}
 
 	public function getState(IUser $user, string $gatewayName): State {
@@ -84,14 +52,21 @@ class SetupService {
 
 	/**
 	 * Send out confirmation message and save current identifier in user settings
+	 *
+	 * @throws VerificationException
 	 */
 	public function startSetup(IUser $user, string $gatewayName, string $identifier): State {
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
-		$gateway = $this->gatewayFactory->getGateway($gatewayName);
+		$gateway = $this->gatewayFactory->get($gatewayName);
 		try {
-			$gateway->send($user, $identifier, "$verificationNumber is your Nextcloud verification code.");
-		} catch (SmsTransmissionException $ex) {
-			throw new VerificationTransmissionException('could not send verification code', $ex->getCode(), $ex);
+			$gateway->send(
+				$user,
+				$identifier,
+				$this->l10n->t('%s is your verification code.', [$verificationNumber]),
+				['code' => $verificationNumber],
+			);
+		} catch (MessageTransmissionException $ex) {
+			throw new VerificationException($ex->getMessage(), $ex->getCode(), $ex);
 		}
 
 		return $this->stateStorage->persist(
@@ -102,29 +77,44 @@ class SetupService {
 	public function finishSetup(IUser $user, string $gatewayName, string $token): State {
 		$state = $this->stateStorage->get($user, $gatewayName);
 		if (is_null($state->getVerificationCode())) {
-			throw new Exception('no verification code set');
+			throw new VerificationException($this->l10n->t('no verification code set'));
 		}
 
 		if ($state->getVerificationCode() !== $token) {
-			throw new VerificationException('verification token mismatch');
+			throw new VerificationException($this->l10n->t('verification token mismatch'));
 		}
 
-		$provider = $this->providerFactory->getProvider($gatewayName);
+		try {
+			$provider = $this->providerFactory->get($gatewayName);
+		} catch (InvalidProviderException) {
+			throw new VerificationException('Invalid provider');
+		}
 		$this->providerRegistry->enableProviderFor($provider, $user);
 
-		return $this->stateStorage->persist(
-			$state->verify()
-		);
+		try {
+			return $this->stateStorage->persist(
+				$state->verify()
+			);
+		} catch (Exception $e) {
+			throw new VerificationException($e->getMessage());
+		}
 	}
 
 	public function disable(IUser $user, string $gatewayName): State {
-		$provider = $this->providerFactory->getProvider($gatewayName);
+		try {
+			$provider = $this->providerFactory->get($gatewayName);
+		} catch (InvalidProviderException) {
+			throw new VerificationException('Invalid provider');
+		}
 		$this->providerRegistry->enableProviderFor($provider, $user);
 		$this->providerRegistry->disableProviderFor($provider, $user);
 
-
-		return $this->stateStorage->persist(
-			State::disabled($user, $gatewayName)
-		);
+		try {
+			return $this->stateStorage->persist(
+				State::disabled($user, $gatewayName)
+			);
+		} catch (Exception $e) {
+			throw new VerificationException($e->getMessage());
+		}
 	}
 }

@@ -3,58 +3,44 @@
 declare(strict_types=1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2024 Christoph Wurst <christoph@winzerhof-wurst.at>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\TwoFactorGateway\Service;
 
 use Exception;
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Provider\SmsProvider;
 use OCA\TwoFactorGateway\Provider\State;
 use OCP\IConfig;
 use OCP\IUser;
 
 class StateStorage {
+	public const STATE_DISABLED = 0;
+	public const STATE_START_VERIFICATION = 1;
+	public const STATE_VERIFYING = 2;
+	public const STATE_ENABLED = 3;
 
-	/** @var IConfig */
-	private $config;
-
-	public function __construct(IConfig $config) {
-		$this->config = $config;
+	public function __construct(
+		private IConfig $config,
+	) {
 	}
 
-	private function buildConfigKey(string $gatewayName, string $key) {
-		return "$gatewayName" . "_$key";
+	private function buildConfigKey(string $gatewayName, string $key): string {
+		return $gatewayName . "_$key";
 	}
 
-	private function getUserValue(IUser $user, string $gatewayName, string $key, $default = '') {
+	private function getUserValue(IUser $user, string $gatewayName, string $key, string $default = ''): string {
 		$gatewayKey = $this->buildConfigKey($gatewayName, $key);
 		return $this->config->getUserValue($user->getUID(), Application::APP_ID, $gatewayKey, $default);
 	}
 
-	private function setUserValue(IUser $user, string $gatewayName, string $key, $value) {
+	private function setUserValue(IUser $user, string $gatewayName, string $key, ?string $value): void {
 		$gatewayKey = $this->buildConfigKey($gatewayName, $key);
 		$this->config->setUserValue($user->getUID(), Application::APP_ID, $gatewayKey, $value);
 	}
 
-	private function deleteUserValue(IUser $user, string $gatewayName, string $key) {
+	private function deleteUserValue(IUser $user, string $gatewayName, string $key): void {
 		$gatewayKey = $this->buildConfigKey($gatewayName, $key);
 		$this->config->deleteUserValue($user->getUID(), Application::APP_ID, $gatewayKey);
 	}
@@ -65,11 +51,11 @@ class StateStorage {
 		$verificationCode = $this->getUserValue($user, $gatewayName, 'verification_code');
 
 		if ($isVerified) {
-			$state = SmsProvider::STATE_ENABLED;
+			$state = StateStorage::STATE_ENABLED;
 		} elseif ($identifier !== '' && $verificationCode !== '') {
-			$state = SmsProvider::STATE_VERIFYING;
+			$state = StateStorage::STATE_VERIFYING;
 		} else {
-			$state = SmsProvider::STATE_DISABLED;
+			$state = StateStorage::STATE_DISABLED;
 		}
 
 		return new State(
@@ -83,7 +69,7 @@ class StateStorage {
 
 	public function persist(State $state): State {
 		switch ($state->getState()) {
-			case SmsProvider::STATE_DISABLED:
+			case StateStorage::STATE_DISABLED:
 				$this->deleteUserValue(
 					$state->getUser(),
 					$state->getGatewayName(),
@@ -96,7 +82,7 @@ class StateStorage {
 				);
 
 				break;
-			case SmsProvider::STATE_VERIFYING:
+			case StateStorage::STATE_VERIFYING:
 				$this->setUserValue(
 					$state->getUser(),
 					$state->getGatewayName(),
@@ -117,7 +103,7 @@ class StateStorage {
 				);
 
 				break;
-			case SmsProvider::STATE_ENABLED:
+			case StateStorage::STATE_ENABLED:
 				$this->setUserValue(
 					$state->getUser(),
 					$state->getGatewayName(),

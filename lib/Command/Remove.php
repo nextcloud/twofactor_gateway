@@ -3,91 +3,60 @@
 declare(strict_types=1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- * @author Simon Spannagel <simonspa@kth.se>
- *
- * Nextcloud - Two-factor Gateway
- *
- * This code is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License, version 3,
- * as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License, version 3,
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
+ * SPDX-FileCopyrightText: 2024 Christoph Wurst <christoph@winzerhof-wurst.at>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\TwoFactorGateway\Command;
 
-use OCA\TwoFactorGateway\Service\Gateway\Signal\Gateway as SignalGateway;
-use OCA\TwoFactorGateway\Service\Gateway\SMS\Gateway as SMSGateway;
-use OCA\TwoFactorGateway\Service\Gateway\Telegram\Gateway as TelegramGateway;
-use OCA\TwoFactorGateway\Service\Gateway\XMPP\Gateway as XMPPGateway;
+use Exception;
+use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\Factory;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class Remove extends Command {
+	private array $ids = [];
 
-	/** @var SignalGateway */
-	private $signalGateway;
-
-	/** @var SMSGateway */
-	private $smsGateway;
-
-	/** @var TelegramGateway */
-	private $telegramGateway;
-
-	/** @var XMPPGateway */
-	private $xmppGateway;
-
-	public function __construct(SignalGateway $signalGateway,
-		SMSGateway $smsGateway,
-		TelegramGateway $telegramGateway,
-		XMPPGateway $xmppGateway) {
+	public function __construct(
+		private Factory $gatewayFactory,
+	) {
 		parent::__construct('twofactorauth:gateway:remove');
-		$this->signalGateway = $signalGateway;
-		$this->smsGateway = $smsGateway;
-		$this->telegramGateway = $telegramGateway;
-		$this->xmppGateway = $xmppGateway;
+
+		$fqcn = $this->gatewayFactory->getFqcnList();
+		foreach ($fqcn as $fqcn) {
+			$this->ids[] = $fqcn::getProviderId();
+		}
 
 		$this->addArgument(
 			'gateway',
-			InputArgument::REQUIRED,
-			'The name of the gateway, e.g. sms, signal, telegram, xmpp, etc.'
+			InputArgument::OPTIONAL,
+			'The name of the gateway: ' . implode(', ', $this->ids)
 		);
 	}
 
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$gatewayName = $input->getArgument('gateway');
-
-		/** @var IGateway $gateway */
-		$gateway = null;
-		switch ($gatewayName) {
-			case 'signal':
-				$gateway = $this->signalGateway;
-				break;
-			case 'sms':
-				$gateway = $this->smsGateway;
-				break;
-			case 'telegram':
-				$gateway = $this->telegramGateway;
-				break;
-			case 'xmpp':
-				$gateway = $this->xmppGateway;
-				break;
-			default:
-				$output->writeln("<error>Invalid gateway $gatewayName</error>");
-				return 1;
+		$gatewayName = strtolower((string)$input->getArgument('gateway'));
+		if (!in_array($gatewayName, $this->ids, true)) {
+			$helper = new QuestionHelper();
+			$choiceQuestion = new ChoiceQuestion('Please choose a provider:', $this->ids);
+			$gatewayName = $helper->ask($input, $output, $choiceQuestion);
 		}
 
-		$gateway->getConfig()->remove();
+		try {
+			/** @var AGateway */
+			$gateway = $this->gatewayFactory->get($gatewayName);
+		} catch (Exception $e) {
+			$output->writeln('<error>' . $e->getMessage() . '</error>');
+			return 1;
+		}
+
+		$gateway->remove();
 		$output->writeln("Removed configuration for gateway $gatewayName");
 		return 0;
 	}

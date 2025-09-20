@@ -3,66 +3,25 @@
 declare(strict_types=1);
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
- *
- * @license GNU AGPL version 3 or any later version
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * SPDX-FileCopyrightText: 2024 Christoph Wurst <christoph@winzerhof-wurst.at>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 namespace OCA\TwoFactorGateway\Provider;
 
-use OCA\TwoFactorGateway\Exception\InvalidSmsProviderException;
-
-class Factory {
-
-	/** @var SignalProvider */
-	private $signalProvider;
-
-	/** @var SmsProvider */
-	private $smsProvider;
-
-	/** @var TelegramProvider */
-	private $telegramProvider;
-
-	/** @var XMPPProvider */
-	private $xmppProvider;
-
-	public function __construct(SignalProvider $signalProvider,
-		SmsProvider $smsProvider,
-		TelegramProvider $telegramProvider,
-		XMPPProvider $xmppProvider) {
-		$this->signalProvider = $signalProvider;
-		$this->smsProvider = $smsProvider;
-		$this->telegramProvider = $telegramProvider;
-		$this->xmppProvider = $xmppProvider;
+class Factory extends AFactory {
+	#[\Override]
+	protected function getPrefix(): string {
+		return 'OCA\\TwoFactorGateway\\Provider\\Channel\\';
 	}
 
+	#[\Override]
+	protected function getSuffix(): string {
+		return 'Provider';
+	}
 
-	public function getProvider(string $name): AProvider {
-		switch ($name) {
-			case 'signal':
-				return $this->signalProvider;
-			case 'sms':
-				return $this->smsProvider;
-			case 'telegram':
-				return $this->telegramProvider;
-			case 'xmpp':
-				return $this->xmppProvider;
-			default:
-				throw new InvalidSmsProviderException();
-		}
+	#[\Override]
+	protected function getBaseClass(): string {
+		return AProvider::class;
 	}
 }
