@@ -3,14 +3,15 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2021 Pascal Clémot <pascal.clemot@free.fr>
+ * SPDX-FileCopyrightText: 2024 Kim Syversen <kim.syversen@gmail.com>
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider;
+namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -21,14 +22,18 @@ use OCP\Http\Client\IClientService;
  * @method static setUser(string $user)
  * @method string getPassword()
  * @method static setPassword(string $password)
+ * @method string getServiceid()
+ * @method static setServiceid(string $serviceid)
  */
-class SMSGlobal extends AProvider {
+class PuzzelSMS extends AProvider {
 	public const SCHEMA = [
-		'name' => 'SMSGlobal',
+		'id' => 'puzzel',
+		'name' => 'Puzzel SMS',
 		'fields' => [
-			['field' => 'url',      'prompt' => 'Please enter your SMSGlobal http-api:', 'default' => 'https://api.smsglobal.com/http-api.php'],
-			['field' => 'user',     'prompt' => 'Please enter your SMSGlobal username (for http-api):'],
-			['field' => 'password', 'prompt' => 'Please enter your SMSGlobal password (for http-api):'],
+			['field' => 'url',       'prompt' => 'Please enter your PuzzelSMS URL:'],
+			['field' => 'user',      'prompt' => 'Please enter your PuzzelSMS username:'],
+			['field' => 'password',  'prompt' => 'Please enter your PuzzelSMS password:'],
+			['field' => 'serviceid', 'prompt' => 'Please enter your PuzzelSMS service ID:'],
 		],
 	];
 	private IClient $client;
@@ -41,22 +46,16 @@ class SMSGlobal extends AProvider {
 
 	#[\Override]
 	public function send(string $identifier, string $message) {
-		$to = str_replace('+', '', $identifier);
-
 		try {
 			$this->client->get(
 				$this->getUrl(),
 				[
 					'query' => [
-						'action' => 'sendsms',
-						'user' => $this->getUser(),
+						'username' => $this->getUser(),
 						'password' => $this->getPassword(),
-						'origin' => 'nextcloud',
-						'from' => 'nextcloud',
-						'to' => $to,
-						'text' => $message,
-						'clientcharset' => 'UTF-8',
-						'detectcharset' => 1
+						'message[0].recipient' => '+' . $identifier,
+						'message[0].content' => $message,
+						'serviceId' => $this->getServiceid(),
 					],
 				]
 			);

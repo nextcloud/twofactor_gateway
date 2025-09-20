@@ -54,7 +54,7 @@ class Test extends Command {
 		$identifier = $input->getArgument('identifier');
 
 		try {
-			$gateway = $this->gatewayFactory->getGateway($gatewayName);
+			$gateway = $this->gatewayFactory->get($gatewayName);
 		} catch (InvalidProviderException $e) {
 			$output->writeln("<error>{$e->getMessage()}</error>");
 			return 1;

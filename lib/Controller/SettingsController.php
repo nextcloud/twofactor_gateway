@@ -52,7 +52,7 @@ class SettingsController extends OCSController {
 			return new JSONResponse(['message' => 'User not found'], Http::STATUS_BAD_REQUEST);
 		}
 
-		if (!$this->gatewayFactory->getGateway($gateway)->isComplete()) {
+		if (!$this->gatewayFactory->get($gateway)->isComplete()) {
 			return new JSONResponse([], Http::STATUS_SERVICE_UNAVAILABLE);
 		}
 

@@ -101,7 +101,7 @@ class Gateway extends AGateway {
 			throw new ConfigurationException();
 		}
 
-		return $this->providerFactory->getProvider($providerName);
+		return $this->providerFactory->get($providerName);
 	}
 
 	public function setProvider(string $provider): void {

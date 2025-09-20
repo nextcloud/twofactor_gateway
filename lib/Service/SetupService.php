@@ -57,7 +57,7 @@ class SetupService {
 	 */
 	public function startSetup(IUser $user, string $gatewayName, string $identifier): State {
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
-		$gateway = $this->gatewayFactory->getGateway($gatewayName);
+		$gateway = $this->gatewayFactory->get($gatewayName);
 		try {
 			$gateway->send(
 				$user,
@@ -85,7 +85,7 @@ class SetupService {
 		}
 
 		try {
-			$provider = $this->providerFactory->getProvider($gatewayName);
+			$provider = $this->providerFactory->get($gatewayName);
 		} catch (InvalidProviderException) {
 			throw new VerificationException('Invalid provider');
 		}
@@ -102,7 +102,7 @@ class SetupService {
 
 	public function disable(IUser $user, string $gatewayName): State {
 		try {
-			$provider = $this->providerFactory->getProvider($gatewayName);
+			$provider = $this->providerFactory->get($gatewayName);
 		} catch (InvalidProviderException) {
 			throw new VerificationException('Invalid provider');
 		}

@@ -7,10 +7,11 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider;
+namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -22,13 +23,13 @@ use OCP\Http\Client\IClientService;
  * @method string getDid()
  * @method static setDid(string $did)
  */
-class VoipMs extends AProvider {
+class Voipbuster extends AProvider {
 	public const SCHEMA = [
-		'name' => 'VoIP.ms',
+		'name' => 'Voipbuster',
 		'fields' => [
-			['field' => 'api_user',     'prompt' => 'Please enter your VoIP.ms API username:'],
-			['field' => 'api_password', 'prompt' => 'Please enter your VoIP.ms API password:'],
-			['field' => 'did',          'prompt' => 'Please enter your VoIP.ms DID:'],
+			['field' => 'api_user',     'prompt' => 'Please enter your Voipbuster API username:'],
+			['field' => 'api_password', 'prompt' => 'Please enter your Voipbuster API password:'],
+			['field' => 'did',          'prompt' => 'Please enter your Voipbuster DID:'],
 		],
 	];
 	private IClient $client;
@@ -45,14 +46,13 @@ class VoipMs extends AProvider {
 		$password = $this->getApiPassword();
 		$did = $this->getDid();
 		try {
-			$this->client->get('https://voip.ms/api/v1/rest.php', [
+			$this->client->get('https://www.voipbuster.com/myaccount/sendsms.php', [
 				'query' => [
-					'api_username' => $user,
-					'api_password' => $password,
-					'method' => 'sendSMS',
-					'did' => $did,
-					'dst' => $identifier,
-					'message' => $message,
+					'username' => $user,
+					'password' => $password,
+					'from' => $did,
+					'to' => $identifier,
+					'text' => $message,
 				],
 			]);
 		} catch (Exception $ex) {

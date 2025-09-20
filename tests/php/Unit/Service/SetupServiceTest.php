@@ -61,7 +61,7 @@ class SetupServiceTest extends TestCase {
 		$user = $this->createMock(IUser::class);
 		$gateway = $this->createMock(IGateway::class);
 		$this->gatewayFactory->expects($this->once())
-			->method('getGateway')
+			->method('get')
 			->with('sms')
 			->willReturn($gateway);
 		$gateway->expects($this->once())
@@ -77,7 +77,7 @@ class SetupServiceTest extends TestCase {
 		$gatewayName = 'signal';
 		$gateway = $this->createMock(IGateway::class);
 		$this->gatewayFactory->expects($this->once())
-			->method('getGateway')
+			->method('get')
 			->with($gatewayName)
 			->willReturn($gateway);
 		$user = $this->createMock(IUser::class);
@@ -137,7 +137,7 @@ class SetupServiceTest extends TestCase {
 			->willReturn($state);
 		$provider = $this->createMock(AProvider::class);
 		$this->providerFactory->expects($this->once())
-			->method('getProvider')
+			->method('get')
 			->with('signal')
 			->willReturn($provider);
 		$this->registry->expects($this->once())

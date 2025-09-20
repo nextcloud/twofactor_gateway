@@ -7,11 +7,12 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider;
+namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 
 use Exception;
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 

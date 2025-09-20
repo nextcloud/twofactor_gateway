@@ -35,7 +35,7 @@ class Remove extends Command {
 		$gatewayName = strtolower((string)$input->getArgument('gateway'));
 
 		try {
-			$gateway = $this->gatewayFactory->getGateway($gatewayName);
+			$gateway = $this->gatewayFactory->get($gatewayName);
 		} catch (Exception $e) {
 			$output->writeln('<error>' . $e->getMessage() . '</error>');
 			return 1;

@@ -46,7 +46,7 @@ abstract class AProvider implements IProvider {
 	}
 
 	private static function getIdFromProviderFqcn(string $fqcn): ?string {
-		$prefix = 'OCA\\TwoFactorGateway\\Provider\\Channel\\SMS\\Provider\\';
+		$prefix = 'OCA\\TwoFactorGateway\\Provider\\Channel\\SMS\\Provider\\Drivers\\';
 		if (strncmp($fqcn, $prefix, strlen($prefix)) !== 0) {
 			return null;
 		}

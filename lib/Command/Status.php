@@ -23,16 +23,16 @@ class Status extends Command {
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$signalConfigured = $this->gatewayFactory->getGateway('signal')->isComplete();
+		$signalConfigured = $this->gatewayFactory->get('signal')->isComplete();
 		$output->writeln('Signal gateway: ' . ($signalConfigured ? 'configured' : 'not configured'));
 
-		$smsConfigured = $this->gatewayFactory->getGateway('sms')->isComplete();
+		$smsConfigured = $this->gatewayFactory->get('sms')->isComplete();
 		$output->writeln('SMS gateway: ' . ($smsConfigured ? 'configured' : 'not configured'));
 
-		$telegramConfigured = $this->gatewayFactory->getGateway('telegram')->isComplete();
+		$telegramConfigured = $this->gatewayFactory->get('telegram')->isComplete();
 		$output->writeln('Telegram gateway: ' . ($telegramConfigured ? 'configured' : 'not configured'));
 
-		$xmppConfigured = $this->gatewayFactory->getGateway('xmpp')->isComplete();
+		$xmppConfigured = $this->gatewayFactory->get('xmpp')->isComplete();
 		$output->writeln('XMPP gateway: ' . ($xmppConfigured ? 'configured' : 'not configured'));
 		return 0;
 	}

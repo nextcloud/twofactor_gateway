@@ -48,7 +48,7 @@ class Configure extends Command {
 		}
 
 		try {
-			return $this->gatewayFactory->getGateway($gatewayName)->cliConfigure($input, $output);
+			return $this->gatewayFactory->get($gatewayName)->cliConfigure($input, $output);
 		} catch (InvalidProviderException $e) {
 			$output->writeln("<error>Invalid gateway $gatewayName</error>");
 			return 1;
