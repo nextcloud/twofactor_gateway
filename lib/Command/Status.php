@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Command;
 
+use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,17 +24,14 @@ class Status extends Command {
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$signalConfigured = $this->gatewayFactory->get('signal')->isComplete();
-		$output->writeln('Signal gateway: ' . ($signalConfigured ? 'configured' : 'not configured'));
-
-		$smsConfigured = $this->gatewayFactory->get('sms')->isComplete();
-		$output->writeln('SMS gateway: ' . ($smsConfigured ? 'configured' : 'not configured'));
-
-		$telegramConfigured = $this->gatewayFactory->get('telegram')->isComplete();
-		$output->writeln('Telegram gateway: ' . ($telegramConfigured ? 'configured' : 'not configured'));
-
-		$xmppConfigured = $this->gatewayFactory->get('xmpp')->isComplete();
-		$output->writeln('XMPP gateway: ' . ($xmppConfigured ? 'configured' : 'not configured'));
+		$fqcn = $this->gatewayFactory->getFqcnList();
+		foreach ($fqcn as $fqcn) {
+			/** @var AGateway */
+			$gateway = $this->gatewayFactory->get($fqcn::getProviderId());
+			$isConfigured = $gateway->isComplete();
+			$settings = $gateway->getSettings();
+			$output->writeln($settings['name'] . ': ' . ($isConfigured ? 'configured' : 'not configured'));
+		}
 		return 0;
 	}
 }

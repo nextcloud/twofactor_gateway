@@ -22,7 +22,6 @@ abstract class AFactory {
 		return true;
 	}
 
-	/** @return object */
 	public function get(string $name): object {
 		$needle = strtolower($name);
 		if (isset($this->instances[$needle])) {

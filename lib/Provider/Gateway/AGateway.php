@@ -18,7 +18,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AGateway implements IGateway {
 	use TConfigurable;
-	public const SCHEMA = [];
+	public const SCHEMA = [
+		'name' => 'SMS',
+	];
 
 	public function __construct(
 		public IAppConfig $appConfig,
