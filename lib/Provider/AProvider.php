@@ -82,7 +82,8 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 				$identifier,
 				$this->l10n->t('%s is your Nextcloud authentication code', [
 					$secret
-				])
+				]),
+				['code' => $secret],
 			);
 		} catch (MessageTransmissionException) {
 			return $this->templateManager->getTemplate('twofactor_gateway', 'error');
