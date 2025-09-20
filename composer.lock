@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e231b2abd6d4dc8e68ddf8fc2d80bfcf",
+    "content-hash": "44477673fea9197027d54bda5816dce2",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -232,16 +232,16 @@
     "packages-dev": [
         {
             "name": "nextcloud/ocp",
-            "version": "dev-master",
+            "version": "dev-stable31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "d927392a2a368c372ef80096171139d4287b2339"
+                "reference": "71cd0e748626ebf63e5f4614bc8745a3e69e615b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/d927392a2a368c372ef80096171139d4287b2339",
-                "reference": "d927392a2a368c372ef80096171139d4287b2339",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/71cd0e748626ebf63e5f4614bc8745a3e69e615b",
+                "reference": "71cd0e748626ebf63e5f4614bc8745a3e69e615b",
                 "shasum": ""
             },
             "require": {
@@ -251,11 +251,10 @@
                 "psr/event-dispatcher": "^1.0",
                 "psr/log": "^3.0.2"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "33.0.0-dev"
+                    "dev-stable31": "31.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -275,7 +274,7 @@
             "description": "Composer package containing Nextcloud's public OCP API and the unstable NCU API",
             "support": {
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/master"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/stable31"
             },
             "time": "2025-09-16T00:45:42+00:00"
         },
