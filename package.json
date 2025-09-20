@@ -20,7 +20,7 @@
   "author": "Christoph Wurst <christoph@winzerhof-wurst.at>",
   "license": "AGPL-3.0",
   "dependencies": {
-    "@nextcloud/axios": "^2.5.1",
+    "@nextcloud/axios": "^2.5.2",
     "@nextcloud/initial-state": "^3.0.0",
     "@nextcloud/l10n": "^3.4.0",
     "@nextcloud/router": "^3.0.1",
