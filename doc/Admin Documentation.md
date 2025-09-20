@@ -47,6 +47,20 @@ Once you've set up the gateway, you can configure this app interactively:
 occ twofactorauth:gateway:configure signal
 ```
 
+### WhatsApp
+URL: whatsapp.com
+Stability: Experimental
+
+This gateway sends messages via WhatsApp Web through the internal service [wwebjs-api](https://github.com/avoylenko/wwebjs-api).
+
+⚠️ Important: run the service only on your **internal network**. Do not expose it to the public Internet.
+
+Interactive admin configuration:
+
+```bash
+occ twofactorauth:gateway:configure whatsapp
+```
+
 ### Telegram
 URL: https://www.telegram.org/
 Stability: Unstable
