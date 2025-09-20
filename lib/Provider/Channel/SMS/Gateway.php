@@ -22,6 +22,9 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
 class Gateway extends AGateway {
+	public const SCHEMA = [
+		'name' => 'SMS',
+	];
 
 	public function __construct(
 		public IAppConfig $appConfig,
