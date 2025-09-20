@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Command;
 
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
+use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -48,7 +49,9 @@ class Configure extends Command {
 		}
 
 		try {
-			return $this->gatewayFactory->get($gatewayName)->cliConfigure($input, $output);
+			/** @var AGateway */
+			$gateway = $this->gatewayFactory->get($gatewayName);
+			return $gateway->cliConfigure($input, $output);
 		} catch (InvalidProviderException $e) {
 			$output->writeln("<error>Invalid gateway $gatewayName</error>");
 			return 1;
