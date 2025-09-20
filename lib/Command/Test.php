@@ -25,6 +25,11 @@ class Test extends Command {
 	) {
 		parent::__construct('twofactorauth:gateway:test');
 
+		$fqcn = $this->gatewayFactory->getFqcnList();
+		foreach ($fqcn as $fqcn) {
+			$ids[] = $fqcn::getProviderId();
+		}
+
 		$this->addArgument(
 			'uid',
 			InputArgument::REQUIRED,
@@ -33,7 +38,7 @@ class Test extends Command {
 		$this->addArgument(
 			'gateway',
 			InputArgument::REQUIRED,
-			'The name of the gateway, e.g. sms, signal, telegram, xmpp, etc.'
+			'The name of the gateway: ' . implode(', ', $ids)
 		);
 		$this->addArgument(
 			'identifier',

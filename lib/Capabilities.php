@@ -17,10 +17,6 @@ use Override;
  */
 final class Capabilities implements IPublicCapability {
 	public const FEATURES = [
-		'sms',
-		'telegram',
-		'signal',
-		'xmpp',
 	];
 
 	public function __construct(
