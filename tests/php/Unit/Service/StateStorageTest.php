@@ -9,9 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
 
-use OCA\TwoFactorGateway\Provider\SmsProvider;
+use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\State;
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IConfig;
 use OCP\IUser;
@@ -45,7 +44,7 @@ class StateStorageTest extends TestCase {
 
 		$state = $this->storage->get($user, 'sms');
 
-		$this->assertSame(SmsProvider::STATE_DISABLED, $state->getState());
+		$this->assertSame(StateStorage::STATE_DISABLED, $state->getState());
 	}
 
 	public function testGetVerifyingState() {
@@ -61,7 +60,7 @@ class StateStorageTest extends TestCase {
 
 		$state = $this->storage->get($user, 'signal');
 
-		$this->assertSame(SmsProvider::STATE_VERIFYING, $state->getState());
+		$this->assertSame(StateStorage::STATE_VERIFYING, $state->getState());
 		$this->assertSame('0123456789', $state->getIdentifier());
 		$this->assertSame('123456', $state->getVerificationCode());
 		$this->assertSame('signal', $state->getGatewayName());
@@ -80,7 +79,7 @@ class StateStorageTest extends TestCase {
 
 		$state = $this->storage->get($user, 'telegram');
 
-		$this->assertSame(SmsProvider::STATE_ENABLED, $state->getState());
+		$this->assertSame(StateStorage::STATE_ENABLED, $state->getState());
 		$this->assertSame('0123456789', $state->getIdentifier());
 		$this->assertSame('telegram', $state->getGatewayName());
 	}
@@ -98,7 +97,7 @@ class StateStorageTest extends TestCase {
 
 		$state = $this->storage->get($user, 'sms');
 
-		$this->assertSame(SmsProvider::STATE_DISABLED, $state->getState());
+		$this->assertSame(StateStorage::STATE_DISABLED, $state->getState());
 		$this->assertSame('0123456789', $state->getIdentifier());
 		$this->assertSame('sms', $state->getGatewayName());
 	}
@@ -154,7 +153,7 @@ class StateStorageTest extends TestCase {
 		$user->method('getUID')->willReturn($uid);
 		$state = new State(
 			$user,
-			SmsProvider::STATE_ENABLED,
+			StateStorage::STATE_ENABLED,
 			'telegram',
 			'0123456789',
 			'1234'

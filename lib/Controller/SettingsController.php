@@ -8,8 +8,8 @@
 namespace OCA\TwoFactorGateway\Controller;
 
 use OCA\TwoFactorGateway\Exception\VerificationException;
+use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\ResponseDefinitions;
-use OCA\TwoFactorGateway\Service\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Service\SetupService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;

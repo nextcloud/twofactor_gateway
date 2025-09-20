@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Command;
 
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
-use OCA\TwoFactorGateway\Service\Gateway\Factory;
+use OCA\TwoFactorGateway\Provider\Gateway\Factory;
 use OCP\IUserManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

@@ -14,9 +14,9 @@ use OCA\TwoFactorGateway\Exception\IdentifierMissingException;
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
-use OCA\TwoFactorGateway\Provider\Factory;
+use OCA\TwoFactorGateway\Provider\Factory as ProviderFactory;
+use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\State;
-use OCA\TwoFactorGateway\Service\Gateway\Factory as GatewayFactory;
 use OCP\Authentication\TwoFactorAuth\IRegistry;
 use OCP\IL10N;
 use OCP\IUser;
@@ -26,7 +26,7 @@ class SetupService {
 	public function __construct(
 		private StateStorage $stateStorage,
 		private GatewayFactory $gatewayFactory,
-		private Factory $providerFactory,
+		private ProviderFactory $providerFactory,
 		private ISecureRandom $random,
 		private IRegistry $providerRegistry,
 		private IL10N $l10n,

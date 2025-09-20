@@ -152,7 +152,7 @@ export default {
 		disable() {
 			this.loading = true
 			axios.delete(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
-				.then(data => {
+				.then(({ data }) => {
 					this.state = data.state
 					this.phoneNumber = data.phoneNumber
 				})

@@ -12,7 +12,7 @@ namespace OCA\TwoFactorGateway\Provider;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
-use OCA\TwoFactorGateway\Service\Gateway\IGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCA\TwoFactorGateway\Settings\PersonalSettings;
 use OCP\AppFramework\Services\IInitialState;
@@ -31,10 +31,6 @@ use OCP\Template\ITemplate;
 use OCP\Template\ITemplateManager;
 
 abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByAdmin, IProvidesPersonalSettings {
-	public const STATE_DISABLED = 0;
-	public const STATE_START_VERIFICATION = 1;
-	public const STATE_VERIFYING = 2;
-	public const STATE_ENABLED = 3;
 
 	protected string $gatewayName;
 
@@ -108,7 +104,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 
 	#[\Override]
 	public function isTwoFactorAuthEnabledForUser(IUser $user): bool {
-		return $this->stateStorage->get($user, $this->gatewayName)->getState() === self::STATE_ENABLED;
+		return $this->stateStorage->get($user, $this->gatewayName)->getState() === StateStorage::STATE_ENABLED;
 	}
 
 	#[\Override]
@@ -133,7 +129,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 	#[\Override]
 	public function disableFor(IUser $user) {
 		$state = $this->stateStorage->get($user, $this->gatewayName);
-		if ($state->getState() === self::STATE_ENABLED) {
+		if ($state->getState() === StateStorage::STATE_ENABLED) {
 			$this->stateStorage->persist($state->disabled($user, $this->gatewayName));
 		}
 	}

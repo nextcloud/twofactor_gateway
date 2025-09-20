@@ -8,6 +8,7 @@
 namespace OCA\TwoFactorGateway\Provider;
 
 use JsonSerializable;
+use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IUser;
 
 /**
@@ -36,7 +37,7 @@ class State implements JsonSerializable {
 		string $verificationCode): State {
 		return new State(
 			$user,
-			SmsProvider::STATE_VERIFYING,
+			StateStorage::STATE_VERIFYING,
 			$gatewayName,
 			$identifier,
 			$verificationCode
@@ -46,7 +47,7 @@ class State implements JsonSerializable {
 	public static function disabled(IUser $user, string $gatewayName): State {
 		return new State(
 			$user,
-			SmsProvider::STATE_DISABLED,
+			StateStorage::STATE_DISABLED,
 			$gatewayName
 		);
 	}
@@ -54,7 +55,7 @@ class State implements JsonSerializable {
 	public function verify(): State {
 		return new State(
 			$this->user,
-			SmsProvider::STATE_ENABLED,
+			StateStorage::STATE_ENABLED,
 			$this->gatewayName,
 			$this->identifier,
 			$this->verificationCode

@@ -7,21 +7,18 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\TwoFactorGateway\Provider;
+namespace OCA\TwoFactorGateway\Provider\Gateway;
 
-use OCA\TwoFactorGateway\Exception\InvalidProviderException;
+use InvalidArgumentException;
 use OCP\Server;
 
 class Factory {
-	/** @var array<string,AProvider> */
+	/** @var array<string,IGateway> */
 	private array $instances = [];
 	/** @var array<string> */
 	private array $fqcn = [];
 
-	/**
-	 * @throws InvalidProviderException
-	 */
-	public function getProvider(string $name): AProvider {
+	public function getGateway(string $name): IGateway {
 		$needle = strtolower($name);
 		if (isset($this->instances[$needle])) {
 			return $this->instances[$needle];
@@ -32,15 +29,15 @@ class Factory {
 			if ($type !== $needle) {
 				continue;
 			}
-			/** @var AProvider */
+			/** @var IGateway */
 			$instance = Server::get($fqcn);
 			$this->instances[$needle] = $instance;
 			return $instance;
 		}
-		throw new InvalidProviderException();
+		throw new InvalidArgumentException("Invalid gateway $name");
 	}
 
-	private function getFqcnList(): array {
+	public function getFqcnList(): array {
 		if (!empty($this->fqcn)) {
 			return $this->fqcn;
 		}
@@ -50,7 +47,7 @@ class Factory {
 			if ($type === null) {
 				continue;
 			}
-			if (!is_subclass_of($fqcn, AProvider::class, true)) {
+			if (!is_subclass_of($fqcn, AGateway::class, true)) {
 				continue;
 			}
 			$this->fqcn[] = $fqcn;
@@ -60,7 +57,7 @@ class Factory {
 	}
 
 	private function getClassMap(): array {
-		$loader = require __DIR__ . '/../../vendor/autoload.php';
+		$loader = require __DIR__ . '/../../../vendor/autoload.php';
 		return $loader->getClassMap();
 	}
 
@@ -70,12 +67,12 @@ class Factory {
 			return null;
 		}
 
-		if (!str_ends_with($fqcn, 'Provider')) {
+		if (!str_ends_with($fqcn, 'Gateway')) {
 			return null;
 		}
 
 		$type = substr($fqcn, strlen($prefix));
-		$type = substr($type, 0, -strlen('\Provider'));
+		$type = substr($type, 0, -strlen('\Gateway'));
 
 		if (strpos($type, '\\') !== false) {
 			return null;

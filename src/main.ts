@@ -9,7 +9,7 @@ import GatewaySettings from './views/GatewaySettings.vue'
 
 const MOUNT_PREFIX = 'twofactor-gateway-'
 
-document.querySelectorAll<HTMLElement>(`[id^="${MOUNT_PREFIX}"]`).forEach((el) => {
+document.querySelectorAll<HTMLElement>(`div[id^="${MOUNT_PREFIX}"]`).forEach((el) => {
 	const provider = el.id.slice(MOUNT_PREFIX.length)
 
 	const state = loadState('twofactor_gateway', `settings-${provider}`, {

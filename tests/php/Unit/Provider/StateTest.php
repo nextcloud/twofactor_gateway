@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
 
-use OCA\TwoFactorGateway\Provider\SmsProvider;
 use OCA\TwoFactorGateway\Provider\State;
+use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\IUser;
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +25,7 @@ class StateTest extends TestCase {
 		);
 		$expected = new State(
 			$user,
-			SmsProvider::STATE_ENABLED,
+			StateStorage::STATE_ENABLED,
 			'signal',
 			'0123456789',
 			'123456'

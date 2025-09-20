@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Command;
 
-use OCA\TwoFactorGateway\Service\Gateway\Factory;
+use OCA\TwoFactorGateway\Provider\Gateway\Factory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

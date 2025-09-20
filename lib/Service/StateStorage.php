@@ -11,12 +11,16 @@ namespace OCA\TwoFactorGateway\Service;
 
 use Exception;
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Provider\SmsProvider;
 use OCA\TwoFactorGateway\Provider\State;
 use OCP\IConfig;
 use OCP\IUser;
 
 class StateStorage {
+	public const STATE_DISABLED = 0;
+	public const STATE_START_VERIFICATION = 1;
+	public const STATE_VERIFYING = 2;
+	public const STATE_ENABLED = 3;
+
 	public function __construct(
 		private IConfig $config,
 	) {
@@ -47,11 +51,11 @@ class StateStorage {
 		$verificationCode = $this->getUserValue($user, $gatewayName, 'verification_code');
 
 		if ($isVerified) {
-			$state = SmsProvider::STATE_ENABLED;
+			$state = StateStorage::STATE_ENABLED;
 		} elseif ($identifier !== '' && $verificationCode !== '') {
-			$state = SmsProvider::STATE_VERIFYING;
+			$state = StateStorage::STATE_VERIFYING;
 		} else {
-			$state = SmsProvider::STATE_DISABLED;
+			$state = StateStorage::STATE_DISABLED;
 		}
 
 		return new State(
@@ -65,7 +69,7 @@ class StateStorage {
 
 	public function persist(State $state): State {
 		switch ($state->getState()) {
-			case SmsProvider::STATE_DISABLED:
+			case StateStorage::STATE_DISABLED:
 				$this->deleteUserValue(
 					$state->getUser(),
 					$state->getGatewayName(),
@@ -78,7 +82,7 @@ class StateStorage {
 				);
 
 				break;
-			case SmsProvider::STATE_VERIFYING:
+			case StateStorage::STATE_VERIFYING:
 				$this->setUserValue(
 					$state->getUser(),
 					$state->getGatewayName(),
@@ -99,7 +103,7 @@ class StateStorage {
 				);
 
 				break;
-			case SmsProvider::STATE_ENABLED:
+			case StateStorage::STATE_ENABLED:
 				$this->setUserValue(
 					$state->getUser(),
 					$state->getGatewayName(),
