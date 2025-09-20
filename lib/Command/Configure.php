@@ -43,7 +43,7 @@ class Configure extends Command {
 		$gatewayName = strtolower((string)$input->getArgument('gateway'));
 		if (!in_array($gatewayName, $this->ids, true)) {
 			$helper = new QuestionHelper();
-			$choiceQuestion = new ChoiceQuestion('Please choose a SMS provider:', $this->ids);
+			$choiceQuestion = new ChoiceQuestion('Please choose a provider:', $this->ids);
 			$gatewayName = $helper->ask($input, $output, $choiceQuestion);
 		}
 
