@@ -4,7 +4,7 @@
 		"telegram-bot/api": "^2.5"
 	},
 	"require-dev": {
-		"nextcloud/ocp": "dev-master",
+		"nextcloud/ocp": "dev-stable32",
 		"roave/security-advisories": "dev-master"
 	},
 	"config": {
