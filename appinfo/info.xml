@@ -9,7 +9,7 @@
 	<name>Two-Factor Gateway</name>
 	<summary>Two-factor gateway providers (Signal, SMS, Telegram, XMPP)</summary>
 	<description>A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram and XMPP.</description>
-	<version>3.0.0-dev.0</version>
+	<version>1.0.0</version>
 	<licence>agpl</licence>
 	<author>Christoph Wurst</author>
 	<author>Vitor Mattos</author>
@@ -23,7 +23,7 @@
 	<screenshot>https://raw.githubusercontent.com/nextcloud/twofactor_gateway/3f895bc997c1a3a38c9bae16ccae8bd499af864e/screenshots/settings.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/twofactor_gateway/3f895bc997c1a3a38c9bae16ccae8bd499af864e/screenshots/challenge.png</screenshot>
 	<dependencies>
-		<nextcloud min-version="33" max-version="33"/>
+		<nextcloud min-version="31" max-version="31"/>
 	</dependencies>
 	<commands>
 		<command>OCA\TwoFactorGateway\Command\Configure</command>
