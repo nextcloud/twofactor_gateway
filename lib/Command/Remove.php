@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Command;
 
 use Exception;
+use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -48,6 +49,7 @@ class Remove extends Command {
 		}
 
 		try {
+			/** @var AGateway */
 			$gateway = $this->gatewayFactory->get($gatewayName);
 		} catch (Exception $e) {
 			$output->writeln('<error>' . $e->getMessage() . '</error>');
