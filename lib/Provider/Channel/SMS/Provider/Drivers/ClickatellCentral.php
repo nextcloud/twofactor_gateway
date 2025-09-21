@@ -56,8 +56,9 @@ class ClickatellCentral extends AProvider {
 			throw new MessageTransmissionException();
 		}
 
-		if ($response->getStatusCode() !== 200 || substr($response->getBody(), 0, 4) !== 'ID: ') {
-			throw new MessageTransmissionException($response->getBody());
+		$body = (string)$response->getBody();
+		if ($response->getStatusCode() !== 200 || substr($body, 0, 4) !== 'ID: ') {
+			throw new MessageTransmissionException($body);
 		}
 	}
 }

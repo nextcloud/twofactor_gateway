@@ -96,7 +96,8 @@ class Ovh extends AProvider {
 		$response = $this->client->get($this->attrs['endpoint'] . '/sms', [
 			'headers' => $header,
 		]);
-		$smsServices = json_decode($response->getBody(), true);
+		$body = (string)$response->getBody();
+		$smsServices = json_decode($body, true);
 
 		$smsAccountFound = false;
 		foreach ($smsServices as $smsService) {
@@ -125,7 +126,8 @@ class Ovh extends AProvider {
 			'headers' => $header,
 			'json' => $content,
 		]);
-		$resultPostJob = json_decode($response->getBody(), true);
+		$body = (string)$response->getBody();
+		$resultPostJob = json_decode($body, true);
 
 		if (count($resultPostJob['validReceivers']) === 0) {
 			throw new MessageTransmissionException("Bad receiver $identifier");
