@@ -28,8 +28,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
 use OCP\Server;
-use OCP\Template\ITemplate;
-use OCP\Template\ITemplateManager;
+use OCP\Template;
 
 abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByAdmin, IProvidesPersonalSettings {
 
@@ -46,7 +45,6 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		protected ISession $session,
 		protected ISecureRandom $secureRandom,
 		protected IL10N $l10n,
-		protected ITemplateManager $templateManager,
 		protected IInitialState $initialState,
 	) {
 		$this->gateway = $this->gatewayFactory->get($this->getGatewayName());
@@ -80,7 +78,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 	}
 
 	#[\Override]
-	public function getTemplate(IUser $user): ITemplate {
+	public function getTemplate(IUser $user): Template {
 		$secret = $this->getSecret();
 
 		try {
@@ -94,10 +92,10 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 				['code' => $secret],
 			);
 		} catch (MessageTransmissionException) {
-			return $this->templateManager->getTemplate('twofactor_gateway', 'error');
+			return new Template('twofactor_gateway', 'error');
 		}
 
-		$tmpl = $this->templateManager->getTemplate('twofactor_gateway', 'challenge');
+		$tmpl = new Template('twofactor_gateway', 'challenge');
 		$tmpl->assign('phone', PhoneNumberMask::maskNumber($identifier));
 		return $tmpl;
 	}
