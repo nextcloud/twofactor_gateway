@@ -1,0 +1,47 @@
+# SPDX-FileCopyrightText: 2015 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+build:
+  image: default-jammy # New NodeJS versions require newer versions of glibc (noble was not available on 12/09/2025)
+  environment:
+    php:
+      version: 8.1
+    node:
+      version: 20
+
+  nodes:
+    analysis:
+      tests:
+        override:
+          - php-scrutinizer-run --enable-security-analysis
+
+filter:
+  excluded_paths:
+    - 'appinfo/info.xml'
+    - 'build/*'
+    - 'composer/*'
+    - 'css/*'
+    - 'doc/*'
+    - 'img/*'
+    - 'l10n/*'
+    - 'templates/*'
+    - 'tests/'
+    - 'vendor-bin/*'
+    - 'vendor/*'
+    - '.php-cs-fixer.dist.php'
+
+checks:
+  php: true
+
+coding_style:
+  php:
+    indentation:
+      general:
+        use_tabs: true
+        size: 4
+    spaces:
+      other:
+        after_type_cast: false
+    braces:
+      classes_functions:
+        class: end-of-line
