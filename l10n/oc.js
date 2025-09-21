@@ -1,9 +1,9 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Authenticate via SMS" : "Autentificacion via SMS",
     "Signal verification" : "Verificacion via Signal",
     "Authenticate via Signal" : "Autentificacion via Signal",
-    "Authenticate via SMS" : "Autentificacion via SMS",
     "Telegram verification" : "Verificacion via Telegram",
     "Authenticate via Telegram" : "Autentificacion via Telegram",
     "Verify" : "Verificar",
