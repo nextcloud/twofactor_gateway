@@ -3,7 +3,7 @@
     "info": {
         "title": "twofactor_gateway",
         "version": "0.0.1",
-        "description": "Two-factor gateway providers (Signal, SMS, Telegram, XMPP)",
+        "description": "Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)",
         "license": {
             "name": "agpl"
         }
