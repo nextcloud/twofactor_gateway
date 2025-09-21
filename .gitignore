@@ -6,7 +6,9 @@ composer.phar
 /css
 
 /node_modules
-vendor/
+/vendor/
+/vendor-bin/**/vendor/
+/lib/Vendor/
 
 /nbproject/
 /.idea/

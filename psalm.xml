@@ -18,6 +18,7 @@
 		<directory name="lib" />
 		<ignoreFiles>
 			<directory name="vendor" />
+			<directory name="lib/Vendor" />
 		</ignoreFiles>
 	</projectFiles>
 	<issueHandlers>
