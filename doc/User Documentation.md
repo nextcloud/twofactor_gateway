@@ -20,6 +20,12 @@ Stability: Experimental
 
 Use the Webservices provided by SMSGlobal for sending SMS.
 
+### WhatsApp 
+URL: https://www.whatsapp.com
+Stability: Experimental
+
+This gateways allows you to send messages via WhatsApp.
+
 ### Signal
 URL: https://www.signal.org/
 Stability: Experimental

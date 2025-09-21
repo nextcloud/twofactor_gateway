@@ -7,6 +7,16 @@
       <code><![CDATA[Template]]></code>
     </MissingDependency>
   </file>
+  <file src="lib/Provider/Channel/WhatsApp/Gateway.php">
+    <UndefinedClass>
+      <code><![CDATA[$e]]></code>
+      <code><![CDATA[ClientException]]></code>
+      <code><![CDATA[ClientException]]></code>
+      <code><![CDATA[RequestException]]></code>
+      <code><![CDATA[RequestException]]></code>
+      <code><![CDATA[ServerException]]></code>
+    </UndefinedClass>
+  </file>
   <file src="lib/Settings/PersonalSettings.php">
     <MissingDependency>
       <code><![CDATA[Template]]></code>
