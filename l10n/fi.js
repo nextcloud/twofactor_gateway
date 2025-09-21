@@ -2,9 +2,9 @@ OC.L10N.register(
     "twofactor_gateway",
     {
     "%s is your Nextcloud authentication code" : "Nextcloud-vahvistuskoodisi on %s",
+    "Authenticate via SMS" : "Tekstiviestivahvistus",
     "Signal verification" : "Signal-vahvistus",
     "Authenticate via Signal" : "Tunnistaudu Signalin välityksellä",
-    "Authenticate via SMS" : "Tekstiviestivahvistus",
     "Telegram verification" : "Telegram-vahvistus",
     "Authenticate via Telegram" : "Tunnistaudu Telegramin välityksellä",
     "Enable" : "Käytä",

@@ -1,10 +1,9 @@
 { "translations": {
-    "Signal verification" : "Verificación per Signal",
     "Message gateway verification" : "Verificación per SMS",
+    "Signal verification" : "Verificación per Signal",
     "Telegram verification" : "Verificación per Telegram",
     "XMPP verification" : "Verificación per XMPP",
     "Two-Factor Gateway" : "Pasera de l'autenticación en dos pasos",
-    "The {displayName} gateway is not configured." : "La pasera «{displayName}» nun ta configurada.",
     "You are not using {displayName} for two-factor authentication at the moment." : "Nesti momentu, nun tas usando l'autenticación en dos pasos {displayName}",
     "Enable" : "Activar",
     "Could not verify your code. Please try again." : "Nun se pudo verificar el códigu. Volvi tentalo.",
