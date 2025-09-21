@@ -54,8 +54,9 @@ class ClickatellPortal extends AProvider {
 			throw new MessageTransmissionException();
 		}
 
+		$body = (string)$response->getBody();
 		if ($response->getStatusCode() !== 202) {
-			throw new MessageTransmissionException($response->getBody());
+			throw new MessageTransmissionException($body);
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace OCA\TwoFactorGateway\Provider;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
-use OCA\TwoFactorGateway\Provider\Gateway\Factory;
+use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCA\TwoFactorGateway\Settings\PersonalSettings;
@@ -41,7 +41,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 	}
 
 	public function __construct(
-		protected Factory $gatewayFactory,
+		protected GatewayFactory $gatewayFactory,
 		protected StateStorage $stateStorage,
 		protected ISession $session,
 		protected ISecureRandom $secureRandom,
@@ -84,7 +84,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		$secret = $this->getSecret();
 
 		try {
-			$identifier = $this->stateStorage->get($user, $this->getGatewayName())->getIdentifier();
+			$identifier = $this->stateStorage->get($user, $this->getGatewayName())->getIdentifier() ?? '';
 			$this->gateway->send(
 				$user,
 				$identifier,

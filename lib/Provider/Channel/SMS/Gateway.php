@@ -41,6 +41,7 @@ class Gateway extends AGateway {
 	#[\Override]
 	final public function cliConfigure(InputInterface $input, OutputInterface $output): int {
 		$namespaces = $this->providerFactory->getFqcnList();
+		$schemas = [];
 		foreach ($namespaces as $ns) {
 			$schemas[] = $ns::SCHEMA;
 		}
