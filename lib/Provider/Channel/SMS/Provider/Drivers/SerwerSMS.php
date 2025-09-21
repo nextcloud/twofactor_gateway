@@ -59,7 +59,7 @@ class SerwerSMS extends AProvider {
 				],
 			]);
 
-			$responseData = json_decode($response->getBody(), true);
+			$responseData = json_decode((string)$response->getBody(), true);
 
 			if ($responseData['success'] !== true) {
 				throw new MessageTransmissionException();

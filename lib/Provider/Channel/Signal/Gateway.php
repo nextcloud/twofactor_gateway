@@ -56,7 +56,7 @@ class Gateway extends AGateway {
 					'json' => [ 'message' => $message ],
 				]
 			);
-			$body = $response->getBody();
+			$body = (string)$response->getBody();
 			$json = json_decode($body, true);
 			if ($response->getStatusCode() !== 201 || is_null($json) || !is_array($json) || !isset($json['timestamp'])) {
 				$status = $response->getStatusCode();
@@ -74,7 +74,7 @@ class Gateway extends AGateway {
 					'json' => [ 'message' => $message ],
 				]
 			);
-			$body = $response->getBody();
+			$body = (string)$response->getBody();
 			$json = json_decode($body, true);
 
 			if ($response->getStatusCode() !== 200 || is_null($json) || !is_array($json) || !isset($json['success']) || $json['success'] !== true) {
