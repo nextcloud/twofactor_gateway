@@ -25,6 +25,7 @@ class Test extends Command {
 	) {
 		parent::__construct('twofactorauth:gateway:test');
 
+		$ids = [];
 		$fqcn = $this->gatewayFactory->getFqcnList();
 		foreach ($fqcn as $fqcn) {
 			$ids[] = $fqcn::getProviderId();

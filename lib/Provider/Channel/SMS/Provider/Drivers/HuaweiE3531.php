@@ -41,7 +41,7 @@ class HuaweiE3531 extends AProvider {
 
 		try {
 			$sessionTokenResponse = $this->client->get("$url/webserver/SesTokInfo");
-			$sessionTokenXml = simplexml_load_string($sessionTokenResponse->getBody());
+			$sessionTokenXml = simplexml_load_string((string)$sessionTokenResponse->getBody());
 			if ($sessionTokenXml === false) {
 				throw new Exception();
 			}
@@ -58,7 +58,8 @@ class HuaweiE3531 extends AProvider {
 					'Content-Type' => 'text/xml',
 				],
 			]);
-			$sendXml = simplexml_load_string($sendResponse->getBody());
+			$body = (string)$sendResponse->getBody();
+			$sendXml = simplexml_load_string($body);
 		} catch (Exception $ex) {
 			throw new MessageTransmissionException();
 		}
