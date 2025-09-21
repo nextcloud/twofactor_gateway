@@ -45,3 +45,6 @@ coding_style:
     braces:
       classes_functions:
         class: end-of-line
+
+tools:
+    external_code_coverage: true
