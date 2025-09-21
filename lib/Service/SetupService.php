@@ -60,7 +60,6 @@ class SetupService {
 		$gateway = $this->gatewayFactory->get($gatewayName);
 		try {
 			$gateway->send(
-				$user,
 				$identifier,
 				$this->l10n->t('%s is your verification code.', [$verificationNumber]),
 				['code' => $verificationNumber],
