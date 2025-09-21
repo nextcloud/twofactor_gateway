@@ -11,6 +11,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\Telegram;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+use OCA\TwoFactorGateway\Vendor\TelegramBot\Api\BotApi;
+use OCA\TwoFactorGateway\Vendor\TelegramBot\Api\Exception as TelegramSDKException;
 use OCP\IAppConfig;
 use OCP\IL10N;
 use OCP\IUser;
@@ -19,8 +21,6 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use TelegramBot\Api\BotApi;
-use TelegramBot\Api\Exception as TelegramSDKException;
 
 /**
  * @method string getBotToken()
