@@ -9,14 +9,14 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp;
 
-use BaconQrCode\Renderer\PlainTextRenderer;
-use BaconQrCode\Writer;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+use OCA\TwoFactorGateway\Vendor\BaconQrCode\Renderer\PlainTextRenderer;
+use OCA\TwoFactorGateway\Vendor\BaconQrCode\Writer;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;

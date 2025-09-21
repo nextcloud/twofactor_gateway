@@ -28,10 +28,12 @@
 		"psalm": "psalm --no-cache --threads=$(nproc)",
 		"post-install-cmd": [
 			"@composer bin all install --ansi",
+			"php -d error_reporting=E_ALL\\&~E_DEPRECATED\\&~E_USER_DEPRECATED vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper add-prefix --force",
 			"composer dump-autoload"
 		],
 		"post-update-cmd": [
 			"@composer bin all update --ansi",
+			"php -d error_reporting=E_ALL\\&~E_DEPRECATED\\&~E_USER_DEPRECATED vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper add-prefix --force",
 			"composer dump-autoload"
 		],
 		"test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit -c tests/php/phpunit.xml",
@@ -45,7 +47,9 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"OCA\\TwoFactorGateway\\": "lib/"
+			"OCA\\TwoFactorGateway\\": "lib/",
+			"OCA\\TwoFactorGateway\\Vendor\\BaconQrCode\\": "lib/Vendor/bacon/bacon-qr-code/src/",
+			"OCA\\TwoFactorGateway\\Vendor\\TelegramBot\\Api\\": "lib/Vendor/telegram-bot/api/src/"
 		}
 	}
 }
