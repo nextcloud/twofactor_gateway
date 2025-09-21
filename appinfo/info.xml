@@ -7,7 +7,7 @@
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>twofactor_gateway</id>
 	<name>Two-Factor Gateway</name>
-	<summary>Two-factor gateway providers (Signal, SMS, Telegram, XMPP)</summary>
+	<summary>Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)</summary>
 	<description>A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP.</description>
 	<version>2.0.0</version>
 	<licence>agpl</licence>
