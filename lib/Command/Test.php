@@ -32,11 +32,6 @@ class Test extends Command {
 		}
 
 		$this->addArgument(
-			'uid',
-			InputArgument::REQUIRED,
-			'The user id'
-		);
-		$this->addArgument(
 			'gateway',
 			InputArgument::REQUIRED,
 			'The name of the gateway: ' . implode(', ', $ids)
@@ -50,12 +45,6 @@ class Test extends Command {
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$uid = $input->getArgument('uid');
-		$user = $this->userManager->get($uid);
-		if (is_null($user)) {
-			$output->writeln('<error>Invalid UID</error>');
-			return 1;
-		}
 		$gatewayName = $input->getArgument('gateway');
 		$identifier = $input->getArgument('identifier');
 
@@ -66,7 +55,7 @@ class Test extends Command {
 			return 1;
 		}
 
-		$gateway->send($user, $identifier, 'Test', ['code' => '123456']);
+		$gateway->send($identifier, 'Test', ['code' => '123456']);
 		return 0;
 	}
 }
