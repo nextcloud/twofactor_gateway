@@ -8,8 +8,11 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider;
 
+use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\IProvider as ISMSProvider;
+use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+
 abstract class AFactory {
-	/** @var array<string,object> */
+	/** @var array<string,AGateway|AProvider|ISMSProvider> */
 	protected array $instances = [];
 	/** @var array<string> */
 	protected array $fqcn = [];
@@ -22,6 +25,7 @@ abstract class AFactory {
 		return true;
 	}
 
+	/** @return AGateway|AProvider|ISMSProvider */
 	public function get(string $name): object {
 		$needle = strtolower($name);
 		if (isset($this->instances[$needle])) {

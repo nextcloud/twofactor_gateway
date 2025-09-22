@@ -24,6 +24,6 @@ class Factory extends AFactory {
 
 	#[\Override]
 	protected function getBaseClass(): string {
-		return AGateway::class;
+		return IGateway::class;
 	}
 }
