@@ -14,7 +14,6 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\IProvider;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCP\IAppConfig;
-use OCP\IUser;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,7 +33,7 @@ class Gateway extends AGateway {
 	}
 
 	#[\Override]
-	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
+	public function send(string $identifier, string $message, array $extra = []): void {
 		$this->getProvider()->send($identifier, $message);
 	}
 
