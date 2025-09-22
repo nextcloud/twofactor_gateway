@@ -17,7 +17,6 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\IL10N;
 use OCP\ISession;
 use OCP\Security\ISecureRandom;
-use OCP\Template\ITemplateManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -28,7 +27,6 @@ class ProviderTest extends TestCase {
 	private ISecureRandom&MockObject $random;
 	private IL10N&MockObject $l10n;
 	private IInitialState&MockObject $initialState;
-	private ITemplateManager&MockObject $templateManager;
 	private Provider $provider;
 
 	protected function setUp(): void {
@@ -40,7 +38,6 @@ class ProviderTest extends TestCase {
 		$this->session = $this->createMock(ISession::class);
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->l10n = $this->createMock(IL10N::class);
-		$this->templateManager = $this->createMock(ITemplateManager::class);
 		$this->initialState = $this->createMock(IInitialState::class);
 
 		$this->provider = new Provider(
@@ -49,7 +46,6 @@ class ProviderTest extends TestCase {
 			$this->session,
 			$this->random,
 			$this->l10n,
-			$this->templateManager,
 			$this->initialState,
 		);
 	}
