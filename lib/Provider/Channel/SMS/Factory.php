@@ -14,6 +14,8 @@ use OCA\TwoFactorGateway\Provider\AFactory;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\IProvider;
 
 class Factory extends AFactory {
+	/** @var array<string,IProvider> */
+	protected array $instances = [];
 	#[\Override]
 	protected function getPrefix(): string {
 		return 'OCA\\TwoFactorGateway\\Provider\\Channel\\SMS\\Provider\\Drivers\\';
@@ -38,7 +40,6 @@ class Factory extends AFactory {
 	#[\Override]
 	public function get(string $name): IProvider {
 		if (isset($this->instances[$name])) {
-			/** @var IProvider */
 			return $this->instances[$name];
 		}
 		foreach ($this->getFqcnList() as $fqcn) {

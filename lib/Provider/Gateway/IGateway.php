@@ -23,7 +23,7 @@ interface IGateway {
 	 *
 	 * @throws MessageTransmissionException
 	 */
-	public function send(IUser $user, string $identifier, string $message, array $extra = []): void;
+	public function send(string $identifier, string $message, array $extra = []): void;
 
 	public function isComplete(array $schema = []): bool;
 

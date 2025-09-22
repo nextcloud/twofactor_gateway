@@ -13,7 +13,6 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
-use OCP\IUser;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -44,7 +43,7 @@ class Gateway extends AGateway {
 	}
 
 	#[\Override]
-	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
+	public function send(string $identifier, string $message, array $extra = []): void {
 		$client = $this->clientService->newClient();
 		// determine type of gateway
 		$response = $client->get($this->getUrl() . '/v1/about');

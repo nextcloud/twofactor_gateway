@@ -84,7 +84,6 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		try {
 			$identifier = $this->stateStorage->get($user, $this->getGatewayName())->getIdentifier() ?? '';
 			$this->gateway->send(
-				$user,
 				$identifier,
 				$this->l10n->t('%s is your Nextcloud authentication code', [
 					$secret

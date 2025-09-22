@@ -22,7 +22,6 @@ use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
 use OCP\IConfig;
 use OCP\IL10N;
-use OCP\IUser;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Cursor;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -57,7 +56,7 @@ class Gateway extends AGateway {
 	}
 
 	#[\Override]
-	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
+	public function send(string $identifier, string $message, array $extra = []): void {
 		$message = $this->l10n->t('`%s` is your Nextcloud verification code.', [$extra['code']]);
 		$this->logger->debug("sending whatsapp message to $identifier, message: $message");
 
