@@ -57,7 +57,9 @@ class Gateway extends AGateway {
 
 	#[\Override]
 	public function send(string $identifier, string $message, array $extra = []): void {
-		$message = $this->l10n->t('`%s` is your Nextcloud verification code.', [$extra['code']]);
+		if (empty($message)) {
+			$message = $this->l10n->t('`%s` is your Nextcloud verification code.', [$extra['code']]);
+		}
 		$this->logger->debug("sending whatsapp message to $identifier, message: $message");
 
 		$response = $this->getSessionStatus();
