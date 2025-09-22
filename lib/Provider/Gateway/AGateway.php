@@ -12,7 +12,6 @@ namespace OCA\TwoFactorGateway\Provider\Gateway;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCP\IAppConfig;
-use OCP\IUser;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -29,7 +28,7 @@ abstract class AGateway implements IGateway {
 	 * @throws MessageTransmissionException
 	 */
 	#[\Override]
-	abstract public function send(IUser $user, string $identifier, string $message, array $extra = []): void;
+	abstract public function send(string $identifier, string $message, array $extra = []): void;
 
 	#[\Override]
 	public function isComplete(array $schema = []): bool {

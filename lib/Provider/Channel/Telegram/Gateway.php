@@ -15,7 +15,6 @@ use OCA\TwoFactorGateway\Vendor\TelegramBot\Api\BotApi;
 use OCA\TwoFactorGateway\Vendor\TelegramBot\Api\Exception as TelegramSDKException;
 use OCP\IAppConfig;
 use OCP\IL10N;
-use OCP\IUser;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -51,7 +50,7 @@ class Gateway extends AGateway {
 	}
 
 	#[\Override]
-	public function send(IUser $user, string $identifier, string $message, array $extra = []): void {
+	public function send(string $identifier, string $message, array $extra = []): void {
 		$message = $this->l10n->t('`%s` is your Nextcloud verification code.', [$extra['code']]);
 		$this->logger->debug("sending telegram message to $identifier, message: $message");
 		$botToken = $this->getBotToken();
