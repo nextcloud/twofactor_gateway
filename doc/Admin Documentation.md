@@ -34,9 +34,18 @@ occ twofactorauth:gateway:configure sms
 URL: https://www.signal.org/
 Stability: Experimental
 
-This gateways allows you to send messages via the Signal protocol. The Signal gateway can be
-run as a Docker container. The image for the gateway including setup instructions can be found on
-[GitLab](https://gitlab.com/morph027/signal-web-gateway).
+This gateways allows you to send messages via the Signal protocol. By
+default it tries to use the native HTTP endpoint of
+[signal-cli](https://github.com/AsamK/signal-cli) which is available
+since [signal-cli 0.11.5](https://github.com/AsamK/signal-cli/blob/master/CHANGELOG.md#0115---2022-11-07).
+There maybe packages for your Linux distribution or Docker images, please refer to the installation
+instructions provided by the [signal-cli](https://github.com/AsamK/signal-cli) project.
+
+If the native HTTP endpoint of signal-cli is not available then it
+tries to use the REST service provided by either
+[stand-alone Python signal-cli REST API](https://morph027.gitlab.io/python-signal-cli-rest-api)
+or
+[Docker signal-cli REST API](https://github.com/bbernhard/signal-cli-rest-api)
 
 *Note: Signal users are bound to phone numbers. If you already use Signal on your phone, you
 need a separate number for the gateway's registration.*
@@ -46,6 +55,9 @@ Once you've set up the gateway, you can configure this app interactively:
 ```bash
 occ twofactorauth:gateway:configure signal
 ```
+
+You need to speficy the URL where the API provider is listening and
+the Signal-account of the sending Signal user.
 
 ### WhatsApp
 URL: whatsapp.com
