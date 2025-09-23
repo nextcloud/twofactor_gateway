@@ -1,0 +1,5 @@
+{
+    "require": {
+        "danog/madelineproto": "^8.5"
+    }
+}
