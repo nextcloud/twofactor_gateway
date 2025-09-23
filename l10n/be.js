@@ -1,6 +1,9 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "WhatsApp verification" : "Спраўджанне WhatsApp",
+    "Authenticate via WhatsApp" : "Аўтэнтыфікацыя праз WhatsApp",
+    "verification token mismatch" : "несупадзенне токена спраўджвання",
     "Enable" : "Уключыць",
     "Verify" : "Спраўдзіць",
     "Confirm" : "Пацвердзіць",
