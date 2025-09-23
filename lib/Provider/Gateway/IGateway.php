@@ -29,6 +29,8 @@ interface IGateway {
 
 	public function getSettings(): array;
 
+	public function getConfiguration(): array;
+
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int;
 
 	public function remove(array $schema = []): void;
