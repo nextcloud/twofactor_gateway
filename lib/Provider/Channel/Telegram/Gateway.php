@@ -58,6 +58,16 @@ class Gateway extends AGateway {
 	}
 
 	#[\Override]
+	public function getSettings(): array {
+		try {
+			$provider = $this->getProvider();
+		} catch (ConfigurationException) {
+			return static::SCHEMA;
+		}
+		return $provider::SCHEMA;
+	}
+
+	#[\Override]
 	public function isComplete(array $schema = []): bool {
 		if (empty($schema)) {
 			try {

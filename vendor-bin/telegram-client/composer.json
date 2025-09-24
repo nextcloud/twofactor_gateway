@@ -1,5 +1,11 @@
 {
-    "require": {
-        "danog/madelineproto": "^8.5"
-    }
+	"require": {
+		"danog/madelineproto": "^8.5",
+		"symfony/console": "^7.3"
+	},
+	"config": {
+		"platform": {
+			"php": "8.2.4"
+		}
+	}
 }
