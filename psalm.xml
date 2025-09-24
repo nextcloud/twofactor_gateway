@@ -26,6 +26,11 @@
 		<LessSpecificReturnType errorLevel="error"/>
 		<LessSpecificImplementedReturnType errorLevel="error"/>
 		<MoreSpecificReturnType errorLevel="error"/>
+		<UndefinedClass>
+			<errorLevel type="suppress">
+				<referencedClass name="OC" />
+			</errorLevel>
+		</UndefinedClass>
 	</issueHandlers>
 	<extraFiles>
 		<directory name="vendor/nextcloud/ocp" />
