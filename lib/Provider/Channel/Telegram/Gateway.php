@@ -53,7 +53,7 @@ class Gateway extends AGateway {
 
 		$provider = $this->getProvider($namespaces[$selectedIndex]::getProviderId());
 
-		$provider->cliConfigure($input, $output, $provider, $schema);
+		$provider->cliConfigure($input, $output);
 		return 0;
 	}
 
