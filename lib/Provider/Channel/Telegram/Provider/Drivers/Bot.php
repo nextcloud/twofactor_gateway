@@ -77,8 +77,6 @@ class Bot extends AProvider {
 		$token = $helper->ask($input, $output, $tokenQuestion);
 		$this->setBotToken($token);
 		$output->writeln("Using $token.");
-
-		$this->setBotToken($token);
 		return 0;
 	}
 }
