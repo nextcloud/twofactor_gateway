@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
@@ -66,7 +67,12 @@ class Client extends AProvider {
 			. ' --to ' . escapeshellarg($identifier)
 			. ' --message ' . escapeshellarg($message);
 
-		$output = shell_exec($cmd);
+		exec($cmd, $output, $returnVar);
+
+		if ($returnVar !== 0) {
+			$this->logger->error('Error sending Telegram message', ['output' => $output, 'returnVar' => $returnVar]);
+			throw new MessageTransmissionException();
+		}
 
 		$this->logger->debug("telegram message to chat $identifier sent");
 	}
