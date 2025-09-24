@@ -36,6 +36,7 @@ use Symfony\Component\Console\Question\Question;
 class Gateway extends AGateway {
 	public const SCHEMA = [
 		'name' => 'WhatsApp',
+		'allow_markdown' => true,
 		'fields' => [
 			['field' => 'base_url', 'prompt' => 'Base URL to your WhatsApp API endpoint:'],
 		],
@@ -57,9 +58,6 @@ class Gateway extends AGateway {
 
 	#[\Override]
 	public function send(string $identifier, string $message, array $extra = []): void {
-		if (empty($message)) {
-			$message = $this->l10n->t('`%s` is your Nextcloud verification code.', [$extra['code']]);
-		}
 		$this->logger->debug("sending whatsapp message to $identifier, message: $message");
 
 		$response = $this->getSessionStatus();
