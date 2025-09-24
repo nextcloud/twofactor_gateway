@@ -95,7 +95,9 @@ class Client extends AProvider {
 		$path = realpath(__DIR__ . '/ClientCli/Cli.php');
 		$cmd = 'php ' . escapeshellarg($path) . ' telegram:login --session-directory ' . escapeshellarg($sessionFile);
 
-		$response = shell_exec($cmd);
+		// This is only to create the client session files.
+		// The login will be made afterwards.
+		shell_exec($cmd);
 
 		$user = posix_getpwuid(posix_getuid());
 
