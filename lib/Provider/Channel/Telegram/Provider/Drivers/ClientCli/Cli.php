@@ -8,6 +8,7 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+/** @todo see the README.md in this directory */
 require __DIR__ . '/../../../../../../../vendor-bin/telegram-client/vendor/autoload.php';
 require __DIR__ . '/Login.php';
 require __DIR__ . '/SendMessage.php';
