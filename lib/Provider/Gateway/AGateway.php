@@ -37,7 +37,8 @@ abstract class AGateway implements IGateway {
 		}
 		$set = $this->appConfig->getKeys(Application::APP_ID);
 		$fields = array_column($schema['fields'], 'field');
-		$fields = array_map(fn ($f) => $this->getProviderId() . '_' . $f, $fields);
+		$providerId = $schema['id'] ?? $this->getProviderId();
+		$fields = array_map(fn ($f) => $providerId . '_' . $f, $fields);
 		$intersect = array_intersect($fields, $set);
 		return count($intersect) === count($fields);
 	}
