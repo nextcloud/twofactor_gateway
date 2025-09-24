@@ -26,7 +26,9 @@ use Symfony\Component\Console\Question\Question;
  */
 class Bot extends AProvider {
 	public const SCHEMA = [
+		'id' => 'telegram_bot',
 		'name' => 'Telegram Bot',
+		'allow_markdown' => true,
 		'instructions' => <<<HTML
 			<p>In order to receive authentication codes via Telegram, you first
 			have to start a new chat with the bot set up by your admin.</p>
