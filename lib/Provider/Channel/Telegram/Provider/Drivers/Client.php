@@ -92,8 +92,6 @@ class Client extends AProvider {
 
 		$sessionFile = $this->getSessionDirectory();
 
-		$sessionFile = $this->getSessionDirectory();
-
 		$path = realpath(__DIR__ . '/ClientCli/Cli.php');
 		$cmd = 'php ' . escapeshellarg($path) . ' telegram:login --session-directory ' . escapeshellarg($sessionFile);
 
