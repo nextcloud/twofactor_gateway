@@ -59,9 +59,13 @@ class SetupService {
 		$verificationNumber = $this->random->generate(6, ISecureRandom::CHAR_DIGITS);
 		$gateway = $this->gatewayFactory->get($gatewayName);
 		try {
+			$message = match ($gateway->getSettings()['allow_markdown'] ?? false) {
+				true => $this->l10n->t('`%s` is your verification code.', [$verificationNumber]),
+				default => $this->l10n->t('%s is your verification code.', [$verificationNumber]),
+			};
 			$gateway->send(
 				$identifier,
-				$this->l10n->t('%s is your verification code.', [$verificationNumber]),
+				$message,
 				['code' => $verificationNumber],
 			);
 		} catch (MessageTransmissionException $ex) {
