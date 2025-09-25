@@ -7,6 +7,34 @@
       <code><![CDATA[Template]]></code>
     </MissingDependency>
   </file>
+  <file src="lib/Provider/Channel/Telegram/Provider/Drivers/ClientCli/Login.php">
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function configure(): void {]]></code>
+      <code><![CDATA[protected function execute(InputInterface $input, OutputInterface $output): int {]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedClass>
+      <code><![CDATA[API]]></code>
+      <code><![CDATA[AppInfo]]></code>
+      <code><![CDATA[Logger]]></code>
+      <code><![CDATA[Settings]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Provider/Channel/Telegram/Provider/Drivers/ClientCli/SendMessage.php">
+    <InvalidThrow>
+      <code><![CDATA[throw $e]]></code>
+    </InvalidThrow>
+    <MissingOverrideAttribute>
+      <code><![CDATA[protected function configure(): void {]]></code>
+      <code><![CDATA[protected function execute(InputInterface $input, OutputInterface $output): int {]]></code>
+    </MissingOverrideAttribute>
+    <UndefinedClass>
+      <code><![CDATA[$e]]></code>
+      <code><![CDATA[API]]></code>
+      <code><![CDATA[Logger]]></code>
+      <code><![CDATA[RPCErrorException]]></code>
+      <code><![CDATA[Settings]]></code>
+    </UndefinedClass>
+  </file>
   <file src="lib/Provider/Channel/WhatsApp/Gateway.php">
     <UndefinedClass>
       <code><![CDATA[$e]]></code>
