@@ -36,7 +36,7 @@ class Client extends AProvider {
 		'name' => 'Telegram Client API',
 		'allow_markdown' => true,
 		'instructions' => <<<HTML
-			<p>Enter your Telegram number or username to receive your verification code below.</p>
+			<p>Enter your full phone number including country code (e.g. +491751234567) as identifier or your Telegram user name preceded by an `@` (e.g. `@myusername`).</p>
 			HTML,
 		'fields' => [
 			['field' => 'api_id', 'prompt' => 'Please enter your Telegram api_id:'],
