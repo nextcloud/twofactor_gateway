@@ -9,77 +9,98 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider\Channel\Telegram;
 
-use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Exception\ConfigurationException;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\IProvider;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
-use OCA\TwoFactorGateway\Vendor\TelegramBot\Api\BotApi;
-use OCA\TwoFactorGateway\Vendor\TelegramBot\Api\Exception as TelegramSDKException;
 use OCP\IAppConfig;
-use OCP\IL10N;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 
-/**
- * @method string getBotToken()
- * @method static setBotToken(string $botToken)
- */
 class Gateway extends AGateway {
 	public const SCHEMA = [
 		'name' => 'Telegram',
-		'instructions' => <<<HTML
-			<p>In order to receive authentication codes via Telegram, you first
-			have to start a new chat with the bot set up by your admin.</p>
-
-			<p>Secondly, you have to obtain your Telegram ID via the
-			<a href="https://telegram.me/getmyid_bot" target="_blank" rel="noreferrer noopener">ID Bot</a>.</p>
-
-			<p>Enter this ID to receive your verification code below.</p>
-			HTML,
-		'fields' => [
-			['field' => 'bot_token', 'prompt' => 'Please enter your Telegram bot token:'],
-		],
 	];
+
 	public function __construct(
 		public IAppConfig $appConfig,
-		private LoggerInterface $logger,
-		private IL10N $l10n,
+		private Factory $providerFactory,
 	) {
 		parent::__construct($appConfig);
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message, array $extra = []): void {
-		if (empty($message)) {
-			$message = $this->l10n->t('`%s` is your Nextcloud verification code.', [$extra['code']]);
-		}
-		$this->logger->debug("sending telegram message to $identifier, message: $message");
-		$botToken = $this->getBotToken();
-		$this->logger->debug("telegram bot token: $botToken");
-
-		$api = new BotApi($botToken);
-
-		$this->logger->debug("sending telegram message to $identifier");
-		try {
-			$api->sendMessage($identifier, $message, parseMode: 'markdown');
-		} catch (TelegramSDKException $e) {
-			$this->logger->error($e);
-
-			throw new MessageTransmissionException($e->getMessage());
-		}
-		$this->logger->debug("telegram message to chat $identifier sent");
+		$this->getProvider()->send($identifier, $message);
 	}
 
 	#[\Override]
-	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
-		$helper = new QuestionHelper();
-		$tokenQuestion = new Question(self::SCHEMA['fields'][0]['prompt'] . ' ');
-		$token = $helper->ask($input, $output, $tokenQuestion);
-		$this->setBotToken($token);
-		$output->writeln("Using $token.");
+	final public function cliConfigure(InputInterface $input, OutputInterface $output): int {
+		$namespaces = $this->providerFactory->getFqcnList();
+		$schemas = [];
+		foreach ($namespaces as $ns) {
+			$schemas[] = $ns::SCHEMA;
+		}
+		$names = array_column($schemas, 'name');
 
-		$this->setBotToken($token);
+		$helper = new QuestionHelper();
+		$choiceQuestion = new ChoiceQuestion('Please choose a Telegram provider:', $names);
+		$name = $helper->ask($input, $output, $choiceQuestion);
+		$selectedIndex = array_search($name, $names);
+		$schema = $schemas[$selectedIndex];
+
+		$provider = $this->getProvider($namespaces[$selectedIndex]::getProviderId());
+
+		$provider->cliConfigure($input, $output);
 		return 0;
+	}
+
+	#[\Override]
+	public function getSettings(): array {
+		try {
+			$provider = $this->getProvider();
+		} catch (ConfigurationException) {
+			return static::SCHEMA;
+		}
+		return $provider::SCHEMA;
+	}
+
+	#[\Override]
+	public function isComplete(array $schema = []): bool {
+		if (empty($schema)) {
+			try {
+				$provider = $this->getProvider();
+			} catch (ConfigurationException) {
+				return false;
+			}
+			$schema = $provider::SCHEMA;
+		}
+		return parent::isComplete($schema);
+	}
+
+	#[\Override]
+	public function remove(array $schema = []): void {
+		if (empty($schema)) {
+			$schema = static::SCHEMA;
+		}
+		parent::remove($schema);
+	}
+
+	public function getProvider(string $providerName = ''): IProvider {
+		if ($providerName) {
+			$this->setProvider($providerName);
+		}
+		$providerName = $this->appConfig->getValueString(Application::APP_ID, 'telegram_provider_name');
+		if ($providerName === '') {
+			throw new ConfigurationException();
+		}
+
+		return $this->providerFactory->get($providerName);
+	}
+
+	public function setProvider(string $provider): void {
+		$this->appConfig->setValueString(Application::APP_ID, 'telegram_provider_name', $provider);
 	}
 }
