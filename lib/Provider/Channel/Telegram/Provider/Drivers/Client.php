@@ -103,7 +103,7 @@ class Client extends AProvider {
 
 		// This is only to create the client session files.
 		// The login will be made afterwards.
-		shell_exec($cmd);
+		exec($cmd);
 
 		$user = posix_getpwuid(posix_getuid());
 
