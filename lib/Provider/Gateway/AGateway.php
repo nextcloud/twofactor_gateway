@@ -44,6 +44,23 @@ abstract class AGateway implements IGateway {
 	}
 
 	#[\Override]
+	public function getConfiguration(array $schema = []): array {
+		if (empty($schema)) {
+			$schema = static::SCHEMA;
+		}
+		$providerId = $this->getProviderId();
+		$config = [];
+		foreach ($schema['fields'] as $f) {
+			$config[$f['field']] = $this->appConfig->getValueString(
+				Application::APP_ID,
+				$providerId . '_' . $f['field'],
+				$f['default'] ?? '',
+			);
+		}
+		return $config;
+	}
+
+	#[\Override]
 	public function getSettings(): array {
 		$settings = [];
 		if (isset(static::SCHEMA['instructions'])) {
