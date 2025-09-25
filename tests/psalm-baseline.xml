@@ -38,12 +38,4 @@
       <code><![CDATA[ServerException]]></code>
     </UndefinedClass>
   </file>
-  <file src="vendor-bin/telegram-client/vendor/composer/autoload_static.php">
-    <InaccessibleProperty>
-      <code><![CDATA[$loader->classMap]]></code>
-      <code><![CDATA[$loader->prefixDirsPsr4]]></code>
-      <code><![CDATA[$loader->prefixLengthsPsr4]]></code>
-      <code><![CDATA[$loader->prefixesPsr0]]></code>
-    </InaccessibleProperty>
-  </file>
 </files>
