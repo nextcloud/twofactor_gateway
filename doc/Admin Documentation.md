@@ -74,6 +74,8 @@ occ twofactorauth:gateway:configure whatsapp
 ```
 
 ### Telegram
+
+#### Telegram bot API
 URL: https://www.telegram.org/
 Stability: Unstable
 
@@ -103,6 +105,36 @@ Follow these steps to activate the Telegram authentication gateway:
    Using 123456789:AAbbCCddEEffGGhhIIjjKKllMMnnOOppQQ.
    ```
 
+   The Telegram authentication gateway has now successfully been set-up. Follow the instructions
+   in the [User Documentation] to activate the Gateway for a specific user.
+
+#### Telegram client API
+
+URL: https://www.telegram.org/
+Stability: Experimental
+
+This gateways allows you to send messages using the Telegram client API. In order to send
+messages, you have to create a Telegram application and use a Telegram account to
+authenticate. After this, the sysadmin will need to authenticate with a Telegram account
+to link the account to the Nextcloud Twofactor Gateway. The Telegram account will be used to send
+authentication codes to users.
+
+Follow these steps to activate the Telegram authentication gateway:
+
+1. Create a Telegram application.
+
+   * Open your web browser and navigate to https://my.telegram.org.
+   * Login with your Telegram account.
+   * Click on `API development tools` and fill out the form.
+   * You will get an `api_id` and `api_hash` required to configure the gateway.
+2. Activate the Nextcloud Twofactor Gateway for Telegram
+   Open a command shell on your Nextcloud server, navigate to the Nextcloud directory and run
+   the following command:
+   ```bash
+   occ twofactorauth:gateway:configure telegram
+   Please enter your Telegram api_id: 123456
+   Please enter your Telegram api_hash: a1b2c3d4e5f67890abcdef12345678
+   ```
    The Telegram authentication gateway has now successfully been set-up. Follow the instructions
    in the [User Documentation] to activate the Gateway for a specific user.
 
