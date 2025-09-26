@@ -10,17 +10,30 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 
 final class SmsDouble extends AProvider {
-	public const SCHEMA = [
-		'id' => 'sms_double',
-		'name' => 'sms_double',
-		'fields' => [
-			['field' => 'user',     'prompt' => 'Please enter your SMSDouble username:'],
-			['field' => 'password', 'prompt' => 'Please enter your SMSDouble password:'],
-			['field' => 'api_key',  'prompt' => 'Please enter your SMSDouble API key:'],
-		],
-	];
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'sms_double',
+			name: 'SMS Double',
+			fields: [
+				new FieldDefinition(
+					field: 'user',
+					prompt: 'Please enter your SMSDouble username:',
+				),
+				new FieldDefinition(
+					field: 'password',
+					prompt: 'Please enter your SMSDouble password:',
+				),
+				new FieldDefinition(
+					field: 'api_key',
+					prompt: 'Please enter your SMSDouble API key:',
+				),
+			]
+		);
+	}
 
 	public function send(string $identifier, string $message, array $extra = []): void {
 	}
