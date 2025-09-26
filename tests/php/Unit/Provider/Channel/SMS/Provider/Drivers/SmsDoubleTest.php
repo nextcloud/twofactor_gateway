@@ -7,7 +7,11 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider;
+namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
+
+use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 
 final class SmsDouble extends AProvider {
 	public const SCHEMA = [
@@ -24,42 +28,13 @@ final class SmsDouble extends AProvider {
 	}
 }
 
-namespace OCA\TwoFactorGateway\Tests\Unit\Service\Provider\Channel\SMS\Provider;
+namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\SMS\Provider\Drivers;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\SmsDouble;
-use OCP\IAppConfig;
-use PHPUnit\Framework\MockObject\Stub;
-use PHPUnit\Framework\TestCase;
+use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers\SmsDouble;
+use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 
-final class SmsDoubleTest extends TestCase {
-	private function makeInMemoryAppConfig(array &$store): IAppConfig|Stub {
-		$appConfig = $this->createStub(IAppConfig::class);
-
-		$appConfig->method('getValueString')
-			->willReturnCallback(function (string $appId, string $key, string $default) use (&$store) {
-				$this->assertSame(Application::APP_ID, $appId);
-				return array_key_exists($key, $store) ? (string)$store[$key] : $default;
-			});
-
-		$appConfig->method('setValueString')
-			->willReturnCallback(function (string $appId, string $key, string $value) use (&$store) {
-				$this->assertSame(Application::APP_ID, $appId);
-				$store[$key] = $value;
-				return true;
-			});
-
-		$appConfig->method('deleteKey')
-			->willReturnCallback(function (string $appId, string $key) use (&$store) {
-				$this->assertSame(Application::APP_ID, $appId);
-				unset($store[$key]);
-				return true;
-			});
-
-		return $appConfig;
-	}
-
+final class SmsDoubleTest extends AppTestCase {
 	public function testSetThenGetAndChaining(): void {
 		$store = [];
 		$cfg = new SmsDouble();
@@ -67,8 +42,8 @@ final class SmsDoubleTest extends TestCase {
 
 		$this->assertSame($cfg, $cfg->setUser('alice')->setPassword('secret'));
 
-		$this->assertSame('alice', $store['sms_double_user'] ?? null);
-		$this->assertSame('secret', $store['sms_double_password'] ?? null);
+		$this->assertSame('alice', $store['twofactor_gateway']['sms_double_user'] ?? null);
+		$this->assertSame('secret', $store['twofactor_gateway']['sms_double_password'] ?? null);
 
 		$this->assertSame('alice', $cfg->getUser());
 		$this->assertSame('secret', $cfg->getPassword());
@@ -91,7 +66,7 @@ final class SmsDoubleTest extends TestCase {
 		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
 
 		$cfg->setApiKey('K-123');
-		$this->assertSame('K-123', $store['sms_double_api_key'] ?? null);
+		$this->assertSame('K-123', $store['twofactor_gateway']['sms_double_api_key'] ?? null);
 		$this->assertSame('K-123', $cfg->getApiKey());
 	}
 
