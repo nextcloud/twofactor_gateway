@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -22,20 +24,29 @@ use OCP\Http\Client\IClientService;
  * @method static setPassword(string $password)
  */
 class WebSms extends AProvider {
-	public const SCHEMA = [
-		'id' => 'websms_de',
-		'name' => 'WebSMS.de',
-		'fields' => [
-			['field' => 'user',     'prompt' => 'Please enter your websms.de username:'],
-			['field' => 'password', 'prompt' => 'Please enter your websms.de password:'],
-		],
-	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'websms_de',
+			name: 'WebSMS.de',
+			fields: [
+				new FieldDefinition(
+					field: 'user',
+					prompt: 'Please enter your websms.de username:',
+				),
+				new FieldDefinition(
+					field: 'password',
+					prompt: 'Please enter your websms.de password:',
+				),
+			]
+		);
 	}
 
 	#[\Override]

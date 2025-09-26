@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Provider\Gateway;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IAppConfig;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,6 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 abstract class AGateway implements IGateway {
 	use TConfigurable;
 	public const SCHEMA = [];
+	protected ?Settings $settings = null;
 
 	public function __construct(
 		public IAppConfig $appConfig,
@@ -31,38 +33,38 @@ abstract class AGateway implements IGateway {
 	abstract public function send(string $identifier, string $message, array $extra = []): void;
 
 	#[\Override]
-	public function isComplete(array $schema = []): bool {
-		if (empty($schema)) {
-			$schema = static::SCHEMA;
+	public function isComplete(?Settings $settings = null): bool {
+		if (!is_object($settings)) {
+			$settings = $this->getSettings();
 		}
-		$set = $this->appConfig->getKeys(Application::APP_ID);
-		$fields = array_column($schema['fields'], 'field');
-		$providerId = $schema['id'] ?? $this->getProviderId();
-		$fields = array_map(fn ($f) => $providerId . '_' . $f, $fields);
-		$intersect = array_intersect($fields, $set);
+		$savedKeys = $this->appConfig->getKeys(Application::APP_ID);
+		$providerId = $settings->id ?? $this->getProviderId();
+		$fields = [];
+		foreach ($settings->fields as $field) {
+			$fields[] = $providerId . '_' . $field->field;
+		}
+		$intersect = array_intersect($fields, $savedKeys);
 		return count($intersect) === count($fields);
 	}
 
 	#[\Override]
-	public function getSettings(): array {
-		$settings = [];
-		if (isset(static::SCHEMA['instructions'])) {
-			$settings['instructions'] = static::SCHEMA['instructions'];
+	public function getSettings(): Settings {
+		if ($this->settings !== null) {
+			return $this->settings;
 		}
-		$settings['name'] = static::SCHEMA['name'];
-		return $settings;
+		return $this->settings = $this->createSettings();
 	}
 
 	#[\Override]
 	abstract public function cliConfigure(InputInterface $input, OutputInterface $output): int;
 
 	#[\Override]
-	public function remove(array $schema = []): void {
-		if (empty($schema)) {
-			$schema = static::SCHEMA;
+	public function remove(?Settings $settings = null): void {
+		if (!is_object($settings)) {
+			$settings = $this->getSettings();
 		}
-		foreach ($schema['fields'] as $field) {
-			$method = 'delete' . $this->toCamel($field['field']);
+		foreach ($settings->fields as $field) {
+			$method = 'delete' . $this->toCamel($field->field);
 			$this->{$method}();
 		}
 	}
