@@ -52,7 +52,9 @@ abstract class AGateway implements IGateway {
 		if ($this->settings !== null) {
 			return $this->settings;
 		}
-		return $this->settings = $this->createSettings();
+		$this->settings = $this->createSettings();
+		$this->settings->id = $this->settings->id ?? $this->getProviderId();
+		return $this->settings;
 	}
 
 	#[\Override]
