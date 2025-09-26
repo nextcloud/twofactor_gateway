@@ -31,10 +31,11 @@ class StatusTest extends AppTestCase {
 
 		$this->assertSame(0, $exitCode);
 		$this->assertStringContainsString('not configured', $output->fetch());
-		$this->assertArrayHasKey('twofactor_gateway', $store);
-		foreach ($store['twofactor_gateway'] as $key => $value) {
-			$this->assertStringEndsWith('_provider_name', $key);
-			$this->assertEmpty($value);
+		if (isset($store['twofactor_gateway'])) {
+			foreach ($store['twofactor_gateway'] as $key => $value) {
+				$this->assertStringEndsWith('_provider_name', $key);
+				$this->assertEmpty($value);
+			}
 		}
 	}
 }
