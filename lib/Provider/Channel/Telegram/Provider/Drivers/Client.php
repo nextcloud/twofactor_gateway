@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\IConfig;
@@ -31,24 +33,33 @@ use Symfony\Component\Console\Question\Question;
  * @method static setApiHash(string $apiHash)
  */
 class Client extends AProvider {
-	public const SCHEMA = [
-		'id' => 'telegram_client',
-		'name' => 'Telegram Client API',
-		'allow_markdown' => true,
-		'instructions' => <<<HTML
-			<p>Enter your full phone number including country code (e.g. +491751234567) as identifier or your Telegram user name preceded by an `@` (e.g. `@myusername`).</p>
-			HTML,
-		'fields' => [
-			['field' => 'api_id', 'prompt' => 'Please enter your Telegram api_id:'],
-			['field' => 'api_hash', 'prompt' => 'Please enter your Telegram api_hash:'],
-		],
-	];
 	public function __construct(
 		private LoggerInterface $logger,
 		private IL10N $l10n,
 		private IAppData $appData,
 		private IConfig $config,
 	) {
+	}
+
+	public function createSettings() {
+		return new Settings(
+			id: 'telegram_client',
+			name: 'Telegram Client API',
+			allowMarkdown: true,
+			instructions: <<<HTML
+				<p>Enter your full phone number including country code (e.g. +491751234567) as identifier or your Telegram user name preceded by an `@` (e.g. `@myusername`).</p>
+				HTML,
+			fields: [
+				new FieldDefinition(
+					field: 'api_id',
+					prompt: 'Please enter your Telegram api_id (get one at https://my.telegram.org/apps):',
+				),
+				new FieldDefinition(
+					field: 'api_hash',
+					prompt: 'Please enter your Telegram api_hash (get one at https://my.telegram.org/apps):',
+				),
+			]
+		);
 	}
 
 	#[\Override]

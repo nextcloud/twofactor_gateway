@@ -13,6 +13,7 @@ use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\IProvider;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IAppConfig;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,13 +22,9 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
 class Gateway extends AGateway {
-	public const SCHEMA = [
-		'name' => 'SMS',
-	];
-
 	public function __construct(
 		public IAppConfig $appConfig,
-		private Factory $providerFactory,
+		private Factory $smsProviderFactory,
 	) {
 		parent::__construct($appConfig);
 	}
@@ -39,26 +36,26 @@ class Gateway extends AGateway {
 
 	#[\Override]
 	final public function cliConfigure(InputInterface $input, OutputInterface $output): int {
-		$namespaces = $this->providerFactory->getFqcnList();
-		$schemas = [];
+		$namespaces = $this->smsProviderFactory->getFqcnList();
+		$names = [];
 		foreach ($namespaces as $ns) {
-			$schemas[] = $ns::SCHEMA;
+			$provider = $this->smsProviderFactory->get($ns);
+			$names[] = $provider->getSettings()->name;
 		}
-		$names = array_column($schemas, 'name');
 
 		$helper = new QuestionHelper();
 		$choiceQuestion = new ChoiceQuestion('Please choose a SMS provider:', $names);
 		$name = $helper->ask($input, $output, $choiceQuestion);
 		$selectedIndex = array_search($name, $names);
-		$schema = $schemas[$selectedIndex];
+		$schema = $names[$selectedIndex];
 
 		$provider = $this->getProvider($namespaces[$selectedIndex]::getProviderId());
 
-		foreach ($schema['fields'] as $field) {
-			$id = $field['field'];
-			$prompt = $field['prompt'] . ' ';
-			$defaultVal = $field['default'] ?? null;
-			$optional = (bool)($field['optional'] ?? false);
+		foreach ($provider->fields as $field) {
+			$id = $field->field;
+			$prompt = $field->prompt . ' ';
+			$defaultVal = $field->default ?? null;
+			$optional = (bool)($field->optional ?? false);
 
 			$answer = (string)$helper->ask($input, $output, new Question($prompt, $defaultVal));
 
@@ -75,34 +72,36 @@ class Gateway extends AGateway {
 	}
 
 	#[\Override]
-	public function getSettings(): array {
+	public function createSettings(): Settings {
 		try {
-			$provider = $this->getProvider();
+			$settings = $this->getProvider()->getSettings();
 		} catch (ConfigurationException) {
-			return static::SCHEMA;
+			$settings = new Settings(
+				name: 'SMS',
+			);
 		}
-		return $provider::SCHEMA;
+		return $settings;
 	}
 
 	#[\Override]
-	public function isComplete(array $schema = []): bool {
-		if (empty($schema)) {
+	public function isComplete(?Settings $settings = null): bool {
+		if ($settings === null) {
 			try {
 				$provider = $this->getProvider();
 			} catch (ConfigurationException) {
 				return false;
 			}
-			$schema = $provider::SCHEMA;
+			$settings = $provider->getSettings();
 		}
-		return parent::isComplete($schema);
+		return parent::isComplete($settings);
 	}
 
 	#[\Override]
-	public function remove(array $schema = []): void {
-		if (empty($schema)) {
-			$schema = static::SCHEMA;
+	public function remove(?Settings $settings = null): void {
+		if (!is_object($settings)) {
+			$settings = $this->getSettings();
 		}
-		parent::remove($schema);
+		parent::remove($settings);
 	}
 
 	public function getProvider(string $providerName = ''): IProvider {
@@ -114,7 +113,7 @@ class Gateway extends AGateway {
 			throw new ConfigurationException();
 		}
 
-		return $this->providerFactory->get($providerName);
+		return $this->smsProviderFactory->get($providerName);
 	}
 
 	public function setProvider(string $provider): void {

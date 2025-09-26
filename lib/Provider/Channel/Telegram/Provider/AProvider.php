@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Gateway\TConfigurable;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IAppConfig;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,6 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 abstract class AProvider implements IProvider {
 	use TConfigurable;
 	public IAppConfig $appConfig;
+	protected ?Settings $settings = null;
 
 	/**
 	 * @throws MessageTransmissionException
@@ -31,14 +33,22 @@ abstract class AProvider implements IProvider {
 	}
 
 	#[\Override]
+	public function getSettings(): Settings {
+		if ($this->settings !== null) {
+			return $this->settings;
+		}
+		return $this->settings = $this->createSettings();
+	}
+
+	#[\Override]
 	public static function idOverride(): ?string {
 		return null;
 	}
 
 	#[\Override]
-	public static function getProviderId(): string {
-		if (static::SCHEMA['id'] ?? null) {
-			return static::SCHEMA['id'];
+	public function getProviderId(): string {
+		if (!empty($this->settings->id)) {
+			return $this->settings->id;
 		}
 		$id = self::getIdFromProviderFqcn(static::class);
 		if ($id === null) {

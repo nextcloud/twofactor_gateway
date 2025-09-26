@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -24,20 +26,33 @@ use OCP\Http\Client\IClientService;
  * @method static setDid(string $did)
  */
 class VoipMs extends AProvider {
-	public const SCHEMA = [
-		'name' => 'VoIP.ms',
-		'fields' => [
-			['field' => 'api_user',     'prompt' => 'Please enter your VoIP.ms API username:'],
-			['field' => 'api_password', 'prompt' => 'Please enter your VoIP.ms API password:'],
-			['field' => 'did',          'prompt' => 'Please enter your VoIP.ms DID:'],
-		],
-	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'voipms',
+			name: 'VoIP.ms',
+			fields: [
+				new FieldDefinition(
+					field: 'api_user',
+					prompt: 'Please enter your VoIP.ms API username:',
+				),
+				new FieldDefinition(
+					field: 'api_password',
+					prompt: 'Please enter your VoIP.ms API password:',
+				),
+				new FieldDefinition(
+					field: 'did',
+					prompt: 'Please enter your VoIP.ms DID:',
+				),
+			]
+		);
 	}
 
 	#[\Override]
