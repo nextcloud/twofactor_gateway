@@ -51,7 +51,7 @@ class Gateway extends AGateway {
 
 		$provider = $this->getProvider($namespaces[$selectedIndex]::getProviderId());
 
-		foreach ($provider->fields as $field) {
+		foreach ($provider->getSettings()->fields as $field) {
 			$id = $field->field;
 			$prompt = $field->prompt . ' ';
 			$defaultVal = $field->default ?? null;
