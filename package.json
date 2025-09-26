@@ -24,7 +24,7 @@
     "@nextcloud/initial-state": "^3.0.0",
     "@nextcloud/l10n": "^3.4.0",
     "@nextcloud/router": "^3.0.1",
-    "@nextcloud/vue": "^9.0.0-rc.8",
+    "@nextcloud/vue": "^9.0.0",
     "dompurify": "^3.2.7",
     "markdown-it": "^14.1.0",
     "vue": "^3.5.22"
