@@ -3,6 +3,7 @@
     "Verify" : "Потврди",
     "Confirm" : "Потврди",
     "Disable" : "Оневозможи",
-    "Authentication code" : "Код за автентификација"
+    "Authentication code" : "Код за автентификација",
+    "Submit" : "Испрати"
 },"pluralForm" :"nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;"
 }

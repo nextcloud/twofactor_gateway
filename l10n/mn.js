@@ -5,6 +5,7 @@ OC.L10N.register(
     "Verify" : "Шалнгах",
     "Confirm" : "Батлах",
     "Authentication code" : "танилтын код",
+    "Submit" : "мэдэгдэх",
     "An access code has been sent to %s" : "ашиглах кодыг%sруу илгээсэн байна",
     "Error while sending the Message. Please try again later or contact the administrator." : "Зурвас илгээх явцад алдаа гарлаа. Дараа дахин оролдоно уу эсвэл админтай холбоо барина уу."
 },

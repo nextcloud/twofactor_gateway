@@ -5,6 +5,7 @@ OC.L10N.register(
     "Verify" : "Xác minh",
     "Confirm" : "Xác nhận",
     "Disable" : "Tắt",
-    "Authentication code" : "Mã xác thực"
+    "Authentication code" : "Mã xác thực",
+    "Submit" : "Gửi"
 },
 "nplurals=1; plural=0;");

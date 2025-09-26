@@ -17,6 +17,7 @@ OC.L10N.register(
     "Your account was successfully configured to receive messages via {displayName}." : "Ваша учетная запись успешно настроена для получения сообщений через {displayName}.",
     "Disable" : "Отключить",
     "Authentication code" : "Код подтверждения",
+    "Submit" : "Отправить ответ",
     "An access code has been sent to %s" : "Код доступа был отправлен %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Ошибка при отправке сообщения. Пожалуйста попробуйте позже или свяжитесь с администратором.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Ваш номер телефона был изменён и по нему не производилась повторная проверка. Используйте другой механизм двух-факторной проверки или обратитесь к вашему администратору."

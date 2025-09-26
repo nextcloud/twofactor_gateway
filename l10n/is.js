@@ -13,6 +13,7 @@ OC.L10N.register(
     "Confirm" : "Staðfesta",
     "Disable" : "Gera óvirkt",
     "Authentication code" : "Auðkenningarkóði",
+    "Submit" : "Senda inn",
     "An access code has been sent to %s" : "Búið er að senda aðgangskóða á %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Villa við að senda skilaboðin. Reyndu aftur seinna eða hafðu samband við kerfisstjóra.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Símanúmerið þitt breyttist og er ekki búið að sannreyna það aftur. Notaðu aðra tveggja-þrepa auðkenningaraðferð eða hafðu samband við kerfisstjórann þinn."

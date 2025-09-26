@@ -1,6 +1,7 @@
 { "translations": {
     "Verify" : "ยืนยัน",
     "Confirm" : "ยืนยัน",
-    "Disable" : "ปิดใช้งาน"
+    "Disable" : "ปิดใช้งาน",
+    "Submit" : "ส่ง"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

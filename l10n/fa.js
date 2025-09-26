@@ -21,6 +21,7 @@ OC.L10N.register(
     "Your account was successfully configured to receive messages via {displayName}." : "Your account was successfully configured to receive messages via {displayName}.",
     "Disable" : "غیرفعال کردن",
     "Authentication code" : "کد هویت",
+    "Submit" : "ارسال",
     "An access code has been sent to %s" : "An access code has been sent to %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Error while sending the Message. Please try again later or contact the administrator.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin."

@@ -14,6 +14,7 @@ OC.L10N.register(
     "Confirm" : "Bevestigen",
     "Disable" : "Uitschakelen",
     "Authentication code" : "Authenticatie code",
+    "Submit" : "Indienen",
     "An access code has been sent to %s" : "Er is een toegangscode verzonden aan %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Fout bij versturen bericht. Probeer het later opnieuw of neem contact op met je beheerder.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Je telefoonnummer is gewijzigd en is nog niet geverifieerd. Gebruik een ander two-factor mechanisme of neem contact op met je beheerder."

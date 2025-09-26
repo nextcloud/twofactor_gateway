@@ -27,6 +27,7 @@
     "Your account was successfully configured to receive messages via {displayName}." : "Sua conta foi configurada com sucesso para receber mensagens via {displayName}.",
     "Disable" : "Desativar",
     "Authentication code" : "Código de autenticação",
+    "Submit" : "Enviar",
     "An access code has been sent to %s" : "Um código de acesso foi enviado para %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Erro ao enviar a mensagem. Tente novamente mais tarde ou entre em contato com o administrador.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Seu número de telefone foi alterado e não foi reverificado. Use um mecanismo de dois fatores diferente ou entre em contato com o administrador."

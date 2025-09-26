@@ -13,6 +13,7 @@ OC.L10N.register(
     "Confirm" : "אימות",
     "Disable" : "השבתה",
     "Authentication code" : "קוד אימות",
+    "Submit" : "שליחה",
     "An access code has been sent to %s" : "קוד גישה נשלח אל %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "אירעה שגיאה בעת שליחת ההודעה. נא לנסות שוב מאוחר יותר או ליצור קשר עם ההנהלה.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "מספר הטלפון שלך השתנה ולא אומת מחדש. יש להשתמש במנגנון דו־שלבי או ליצור קשר עם המנהל שלך."

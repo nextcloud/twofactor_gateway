@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "`%s` is your Nextcloud authentication code" : "`%s` је ваш Nextcloud кôд за проверу идентитета",
     "%s is your Nextcloud authentication code" : "%s je kod za proveru identiteta",
     "Message gateway verification" : "Мрежни пролаз порука за верификацију",
     "Authenticate via SMS" : "Провери идентитет преко SMS-а",
@@ -13,6 +14,7 @@ OC.L10N.register(
     "Authenticate via WhatsApp" : "Провери идентитет преко WhatsApp",
     "XMPP verification" : "XMPP потврђивање",
     "Authenticate via XMPP" : "Провери идентитет преко XMPP",
+    "`%s` is your verification code." : "`%s` је ваш кôд за потврђивање.",
     "%s is your verification code." : "%s је ваш кôд за потврђивање.",
     "no verification code set" : "није постављен кôд за потврђивање",
     "verification token mismatch" : "жетон потврђивања се не подудара",
@@ -29,6 +31,7 @@ OC.L10N.register(
     "Your account was successfully configured to receive messages via {displayName}." : "Ваш налог је успешно подешен тако да примате поруке преко {displayName}.",
     "Disable" : "Искључи",
     "Authentication code" : "Код за проверу идентитета",
+    "Submit" : "Пошаљи",
     "An access code has been sent to %s" : "Приступни код је послат на %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Грешка приликом слања поруке. Покушајте касније или контактирајте администратора.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Ваш телефонски број се изменио и није још верификован. Користите неки други механизам за двофакторску ауторизацију или контактирајте администратора."

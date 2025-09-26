@@ -21,6 +21,7 @@ OC.L10N.register(
     "Your account was successfully configured to receive messages via {displayName}." : "Hesabınız, {displayName} ile ileti alacak şekilde yapılandırıldı.",
     "Disable" : "Kullanımdan kaldır",
     "Authentication code" : "Doğrulama kodu",
+    "Submit" : "Gönder",
     "An access code has been sent to %s" : "%s için erişim kodu gönderildi",
     "Error while sending the Message. Please try again later or contact the administrator." : "İleti gönderilirken bir sorun çıktı. Lütfen bir süre sonra yeniden deneyin ya da BT yöneticiniz ile görüşün.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Telefon numaranız değişmiş ve yeniden doğrulanmamış. Farklı bir iki adımlı doğrulama yöntemi kullanın ya da yöneticiniz ile görüşün."
