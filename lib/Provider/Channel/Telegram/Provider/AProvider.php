@@ -47,8 +47,9 @@ abstract class AProvider implements IProvider {
 
 	#[\Override]
 	public function getProviderId(): string {
-		if (!empty($this->settings->id)) {
-			return $this->settings->id;
+		$settings = $this->getSettings();
+		if (!empty($settings->id)) {
+			return $settings->id;
 		}
 		$id = self::getIdFromProviderFqcn(static::class);
 		if ($id === null) {
