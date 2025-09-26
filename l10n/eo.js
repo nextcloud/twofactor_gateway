@@ -4,6 +4,7 @@ OC.L10N.register(
     "Enable" : "Ŝalti",
     "Verify" : "Kontroli",
     "Confirm" : "Konfirmi",
-    "Disable" : "Malŝalti"
+    "Disable" : "Malŝalti",
+    "Submit" : "Sendi"
 },
 "nplurals=2; plural=(n != 1);");

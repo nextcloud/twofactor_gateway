@@ -27,6 +27,7 @@
     "Your account was successfully configured to receive messages via {displayName}." : "Ditt konto har konfigurerats för att ta emot meddelanden via {displayName}.",
     "Disable" : "Inaktivera",
     "Authentication code" : "Autentiseringskod",
+    "Submit" : "Skicka",
     "An access code has been sent to %s" : "En autentiseringskod har skickats till %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Det gick inte att skicka meddelandet. Vänligen försök igen senare eller kontakta administratören.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Ditt telefonnummer har ändrats och hade inte verifierats igen. Använd en annan tvåfaktorsmekanism eller kontakta din administratör."

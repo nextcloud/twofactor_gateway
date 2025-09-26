@@ -14,6 +14,7 @@ OC.L10N.register(
     "Confirm" : "Επιβεβαίωση",
     "Disable" : "Απενεργοποίηση",
     "Authentication code" : "Κωδικός πιστοποίησης",
+    "Submit" : "Υποβολή",
     "An access code has been sent to %s" : "Ο κωδικός πρόσβασης έχει αποσταλεί  %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Σφάλμα κατά την αποστολή του μηνύματος. Παρακαλώ δοκιμάστε ξανά αργότερα ή επικοινωνήστε με τον διαχειριστή.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Ο αριθμός τηλεφώνου σας άλλαξε και δεν πιστοποιήθηκε ξανά. Χρησιμοποιήστε διαφορετικό μηχανισμό δύο-παραγόντων ή επικοινωνήστε με τον διαχειριστή."

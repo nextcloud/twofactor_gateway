@@ -14,6 +14,7 @@
     "Confirm" : "Berretsi",
     "Disable" : "Desaktibatu",
     "Authentication code" : "Autentifikazio kodea",
+    "Submit" : "Bidali",
     "An access code has been sent to %s" : "Sarbide kodea %s-ra bidali da.",
     "Error while sending the Message. Please try again later or contact the administrator." : "Mezua bidaltzean errorea egon da. Saia zaitez berriz mesedez, edo administratzailearekin kontaktuan jar zaitez",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Zure telefono zenbakia aldatu egin da eta ez dugu berriz egiaztatu. Erabili bi faktoreko beste aukera bat edo jarri kontaktuan zure sistemaren kudeatzailearekin."

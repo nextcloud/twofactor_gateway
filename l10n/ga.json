@@ -19,6 +19,7 @@
     "Your account was successfully configured to receive messages via {displayName}." : "D'éirigh le do chuntas a chumrú chun teachtaireachtaí a fháil ó {displayName}.",
     "Disable" : "Díchumasaigh",
     "Authentication code" : "Cód fíordheimhnithe",
+    "Submit" : "Cuir isteach",
     "An access code has been sent to %s" : "Tá cód rochtana seolta chuig%s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Earráid agus an Teachtaireacht á seoladh. Bain triail eile as ar ball le do thoil nó déan teagmháil leis an riarthóir.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Athraíodh d'uimhir theileafóin agus níor athfhíoraíodh í. Bain úsáid as meicníocht dhifriúil dhá fhachtóir nó déan teagmháil le do riarthóir."

@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "`%s` is your Nextcloud authentication code" : "`%s` ist Ihr Nextcloud-Authentifizierungscode",
     "%s is your Nextcloud authentication code" : "%s ist Ihr Nextcloud-Authentifizierungscode",
     "Message gateway verification" : "Überprüfung des Nachrichten-Gateways",
     "Authenticate via SMS" : "Authentifizierung über SMS",
@@ -13,6 +14,7 @@ OC.L10N.register(
     "Authenticate via WhatsApp" : "Authentifizierung über WhatsApp",
     "XMPP verification" : "XMPP-Überprüfung",
     "Authenticate via XMPP" : "Authentifizierung über XMPP",
+    "`%s` is your verification code." : "`%s` ist Ihr Bestätigungscode.",
     "%s is your verification code." : "%s ist Ihr Überprüfungscode.",
     "no verification code set" : "Kein Überprüfungscode festgelegt",
     "verification token mismatch" : "Nichtübereinstimmung des Überprüfungstokens",
@@ -29,6 +31,7 @@ OC.L10N.register(
     "Your account was successfully configured to receive messages via {displayName}." : "Ihr Konto wurde für den Empfang von Nachrichten über {displayName} eingerichtet.",
     "Disable" : "Deaktivieren",
     "Authentication code" : "Authentifizierungscode",
+    "Submit" : "Übermitteln",
     "An access code has been sent to %s" : "Ein Zugriffscode wurde an %s versendet",
     "Error while sending the Message. Please try again later or contact the administrator." : "Fehler beim Versenden der Nachricht. Bitte erneut versuchen oder kontaktieren Sie Ihre Administration.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Ihre Telefonnumer hat sich geändert und wurde nicht erneut verifiziert. Nutzen Sie einen anderen Zwei-Faktor-Mechanismus oder wenden Sie sich an Ihre Administration."

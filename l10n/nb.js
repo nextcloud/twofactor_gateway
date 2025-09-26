@@ -21,6 +21,7 @@ OC.L10N.register(
     "Your account was successfully configured to receive messages via {displayName}." : "Kontoen din ble konfigurert til å motta meldinger via {displayName}.",
     "Disable" : "Deaktiver",
     "Authentication code" : "Autentiseringskode",
+    "Submit" : "Send inn",
     "An access code has been sent to %s" : "En tilgangskode er sendt til %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Feil ved forsendelse av melding. Prøv igjen senere eller ta kontakt med en administrator.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Telefonnummeret ditt har endret seg og ble ikke bekreftet på nytt. Bruk en annen tofaktormekanisme eller kontakt administratoren din."

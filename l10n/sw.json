@@ -27,6 +27,7 @@
     "Your account was successfully configured to receive messages via {displayName}." : "Akaunti yako ilisanidiwa kupokea ujumbe kupitia {displayName}.",
     "Disable" : "Zima",
     "Authentication code" : "Msimbo wa uthibitishaji",
+    "Submit" : "Wasilisha",
     "An access code has been sent to %s" : "Msimbo wa ufikiaji umetumwa kwa %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Hitilafu wakati wa kutuma Ujumbe. Tafadhali jaribu tena baadaye au wasiliana na msimamizi.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Nambari yako ya simu imebadilika na haikuwa imethibitishwa tena. Tumia utaratibu wa vipengele viwili tofauti au uwasiliane na msimamizi wako."

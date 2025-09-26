@@ -13,6 +13,7 @@
     "Your account was successfully configured to receive messages via {displayName}." : "Twoje konto zostało pomyślnie skonfigurowane do odbierania wiadomości za pośrednictwem {displayName}.",
     "Disable" : "Wyłącz",
     "Authentication code" : "Kod uwierzytelnienia",
+    "Submit" : "Wyślij",
     "An access code has been sent to %s" : "Kod uwierzytelnienia został wysłany do %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie lub skontaktuj się z administratorem.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Twój numer telefonu się zmienił i nie został ponownie zweryfikowany. Użyj innego mechanizmu dwuskładnikowego lub skontaktuj się z administratorem."

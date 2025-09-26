@@ -19,6 +19,7 @@
     "Your account was successfully configured to receive messages via {displayName}." : "ھېساباتىڭىز {displayName} via ئارقىلىق ئۇچۇر تاپشۇرۇۋېلىش ئۈچۈن مۇۋەپپەقىيەتلىك تەڭشەلدى.",
     "Disable" : "چەكلە",
     "Authentication code" : "دەلىللەش كودى",
+    "Submit" : "يوللاڭ",
     "An access code has been sent to %s" : "زىيارەت كودى% s غا ئەۋەتىلدى",
     "Error while sending the Message. Please try again later or contact the administrator." : "ئۇچۇر يوللىغاندا خاتالىق. كېيىن قايتا سىناڭ ياكى باشقۇرغۇچى بىلەن ئالاقىلىشىڭ.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "تېلېفون نومۇرىڭىز ئۆزگەردى ، قايتا تەكشۈرۈلمىدى. ئوخشىمىغان ئىككى ئامىللىق مېخانىزم ئىشلىتىڭ ياكى باشقۇرغۇچىڭىز بىلەن ئالاقىلىشىڭ."
