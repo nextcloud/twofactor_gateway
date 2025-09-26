@@ -12,7 +12,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Command;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
- * Coopyed from BufferedOutput because Nextcloud expects ConsoleOutputInterface
+ * Coopied from BufferedOutput because Nextcloud expects ConsoleOutputInterface
  * but we need to be able to fetch the output.
  */
 class ConsoleOutputSpy extends ConsoleOutput {
