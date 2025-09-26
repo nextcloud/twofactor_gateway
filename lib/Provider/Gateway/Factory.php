@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Provider\Gateway;
 
 use OCA\TwoFactorGateway\Provider\AFactory;
 
+/** @extends AFactory<AGateway> */
 class Factory extends AFactory {
 	#[\Override]
 	protected function getPrefix(): string {
@@ -24,6 +25,6 @@ class Factory extends AFactory {
 
 	#[\Override]
 	protected function getBaseClass(): string {
-		return IGateway::class;
+		return AGateway::class;
 	}
 }
