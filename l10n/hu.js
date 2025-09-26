@@ -21,6 +21,7 @@ OC.L10N.register(
     "Your account was successfully configured to receive messages via {displayName}." : "A fiókjában sikeresen beállította, hogy a következőn keresztül fogadja az üzeneteket: {displayName}.",
     "Disable" : "Letiltás",
     "Authentication code" : "Hitelesítőkód",
+    "Submit" : "Beküldés",
     "An access code has been sent to %s" : "Egy hozzáférési kód el lett küldve ide: %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Hiba az üzenet küldése során. Próbálja újra később vagy lépjen kapcsolatba a rendszergazdával.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "A telefonszáma megváltozott és nem lett újrahitelesítve. Használjon másik kétlépcsős azonosítási módot, vagy lépjen kapcsolatba a rendszergazdával."

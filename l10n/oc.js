@@ -9,6 +9,7 @@ OC.L10N.register(
     "Verify" : "Verificar",
     "Confirm" : "Confirmar",
     "Disable" : "Desactivar",
-    "Authentication code" : "Còdi d’autentificacion"
+    "Authentication code" : "Còdi d’autentificacion",
+    "Submit" : "Transmetre"
 },
 "nplurals=2; plural=(n > 1);");

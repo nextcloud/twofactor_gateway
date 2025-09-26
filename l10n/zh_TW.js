@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "`%s` is your Nextcloud authentication code" : "`%s` 是您的 Nextcloud 驗證碼",
     "%s is your Nextcloud authentication code" : "%s 是你的 Nextcloud 驗證碼",
     "Message gateway verification" : "訊息閘道驗證",
     "Authenticate via SMS" : "由簡訊驗證",
@@ -13,6 +14,7 @@ OC.L10N.register(
     "Authenticate via WhatsApp" : "透過 WhatsApp 驗證",
     "XMPP verification" : "XMPP 驗證",
     "Authenticate via XMPP" : "透過 XMPP 驗證",
+    "`%s` is your verification code." : "`%s` 是您的驗證碼。",
     "%s is your verification code." : "%s 是您的驗證碼。",
     "no verification code set" : "未設定驗證碼",
     "verification token mismatch" : "驗證權杖不符合",
@@ -29,6 +31,7 @@ OC.L10N.register(
     "Your account was successfully configured to receive messages via {displayName}." : "您的帳號已成功設定為透過 {displayName} 接收訊息。",
     "Disable" : "停用",
     "Authentication code" : "驗證碼",
+    "Submit" : "提交",
     "An access code has been sent to %s" : "一個驗証碼已經發送到 %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "發送簡訊出錯。請重試或聯絡系統管理員。",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "你的電話號碼已經更改，但尚未重新驗證，請使用不同的兩步驟驗證機制或者聯絡你的管理者。"

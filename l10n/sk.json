@@ -19,6 +19,7 @@
     "Your account was successfully configured to receive messages via {displayName}." : "Váš účet bol úspešne nakonfigurovaný na prijímanie správ cez {displayName}.",
     "Disable" : "Zakázať",
     "Authentication code" : "Overovací kód",
+    "Submit" : "Odoslať",
     "An access code has been sent to %s" : "Prístupový kód bol odoslaný na %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Chyba počas odosielania správy. Skúste to znovu alebo kontaktujte správcu.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Prešli ste na iné telefónne číslo a znovu ho neoverili. Použite prosím iný mechanizmus dvojfaktorového overovania alebo sa obráťte na správcu systému."

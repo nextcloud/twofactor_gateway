@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "`%s` is your Nextcloud authentication code" : "„%s“ on sinu Nextcloudi autentimiskood",
     "%s is your Nextcloud authentication code" : "%son sinu Nextcloudi autentimiskood",
     "Message gateway verification" : "Verifitseerimine kasutades sõnumilüüsi",
     "Authenticate via SMS" : "Autendi SMS-i abil",
@@ -13,6 +14,7 @@ OC.L10N.register(
     "Authenticate via WhatsApp" : "Autendi WhatsApp'i abil",
     "XMPP verification" : "Verifitseerimine XMPP-ga",
     "Authenticate via XMPP" : "Autendi XMPP abil",
+    "`%s` is your verification code." : "„%s“ on sinu verifitseerimiskood.",
     "%s is your verification code." : "„%s“ on sinu verifitseerimiskood.",
     "no verification code set" : "Verifitseerimiskood on määramata",
     "verification token mismatch" : "Verifitseerimiskoodi tunnusload ei klapi",
@@ -29,6 +31,7 @@ OC.L10N.register(
     "Your account was successfully configured to receive messages via {displayName}." : "Sinu kasutajakonto on nüüd seadistatud saama sõnumeid „{displayName}“ teenuse vahendusel.",
     "Disable" : "Lülita välja",
     "Authentication code" : "Autentimiskood",
+    "Submit" : "Saada",
     "An access code has been sent to %s" : "Autentimiskood saadeti %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Viga sõnumi saatmisel. Palun proovige hiljem uuesti või võtke ühendust administraatoriga.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Sinu telefoninumber on muutunud ja pole uuesti verifitseeritud. Kasuta mõnda muud kaheastmelise autentimise meetodit või võta ühendust oma peakasutajaga."

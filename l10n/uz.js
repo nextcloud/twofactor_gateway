@@ -4,6 +4,7 @@ OC.L10N.register(
     "Enable" : "Enable",
     "Verify" : "Verify",
     "Confirm" : "Confirm",
-    "Disable" : "Oʻchirish"
+    "Disable" : "Oʻchirish",
+    "Submit" : "Yuborish"
 },
 "nplurals=1; plural=0;");

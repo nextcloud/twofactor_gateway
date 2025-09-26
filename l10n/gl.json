@@ -1,4 +1,5 @@
 { "translations": {
+    "`%s` is your Nextcloud authentication code" : "«%s» é o seu código de autenticación de Nextcloud",
     "%s is your Nextcloud authentication code" : "%s é o seu código de autenticación de Nextcloud",
     "Message gateway verification" : "Pasarela para a verificación por mensaxe ",
     "Authenticate via SMS" : "Autenticar a través de SMS",
@@ -11,6 +12,7 @@
     "Authenticate via WhatsApp" : "Autenticación a través de WhatsApp",
     "XMPP verification" : "Verificación de XMPP",
     "Authenticate via XMPP" : "Autenticar a través de XMPP",
+    "`%s` is your verification code." : "«%s» é o seu código de verificación.",
     "%s is your verification code." : "%s é o seu código de verificación.",
     "no verification code set" : "non hai ningún código de verificación definido",
     "verification token mismatch" : "o testemuño de verificación non coincide",
@@ -27,6 +29,7 @@
     "Your account was successfully configured to receive messages via {displayName}." : "A súa conta foi configurada correctamente para recibir mensaxes a través de {displayName}.",
     "Disable" : "Desactivar",
     "Authentication code" : "Código de autenticación",
+    "Submit" : "Enviar",
     "An access code has been sent to %s" : "Envióuselle un código de acceso a %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Produciuse un erro ao enviar a mensaxe. Ténteo de novo máis adiante ou póñase en contacto coa administración desta instancia.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "O seu número de teléfono cambiou e non foi verificado de novo. Empregue un mecanismo de autenticación de dous factores diferente ou contacte co seu administrador. "

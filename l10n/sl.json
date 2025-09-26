@@ -14,6 +14,7 @@
     "Confirm" : "Potrdi",
     "Disable" : "Onemogoči",
     "Authentication code" : "Overitvena koda",
+    "Submit" : "Pošlji",
     "An access code has been sent to %s" : "Overitvena koda je bila poslana na %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Prišlo je do napake med pošiljanjem sporočila. Poskusite znova kasneje, ali pa stopite v stik s skrbnikom sistema.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Vpisana osebna telefonska številka je bila spremenjena, ne pa tudi ponovno overjena. Uporabite drug dvostopenjski način overitve ali pa stopite v stik s skrbnikom sistema."

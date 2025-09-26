@@ -14,6 +14,7 @@ OC.L10N.register(
     "Confirm" : "Potvrdi",
     "Disable" : "Onemogući",
     "Authentication code" : "Šifra za autentifikaciju",
+    "Submit" : "Šalji",
     "An access code has been sent to %s" : "Pristupna šifra poslana je %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Pogreška tijekom slanja poruke. Pokušajte ponovo kasnije ili se obratite administratoru.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Vaš se telefonski broj promijenio i nije ponovno potvrđen. Upotrijebite drugi dvofaktorski mehanizam ili se obratite svom administratoru."

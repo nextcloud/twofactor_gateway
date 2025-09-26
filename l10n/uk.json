@@ -19,6 +19,7 @@
     "Your account was successfully configured to receive messages via {displayName}." : "Ваш обліковий запис успішно налаштовано для отримання сповіщень від {displayName}.",
     "Disable" : "Вимкнути",
     "Authentication code" : "Код авторизації",
+    "Submit" : "Відправити",
     "An access code has been sent to %s" : "Зазначте одноразовий код доступу, який було надіслано на номер %s.",
     "Error while sending the Message. Please try again later or contact the administrator." : "Помилка надсилання сповіщення. Будь ласка, спробуйте пізніше або зверніться до адміністратора.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Ваш номер телефон було змінено, проте новий номер ще не пройшов перевірку. Скористайтеся інший типом двофакторної авторизації або зверніться до адміністратора."

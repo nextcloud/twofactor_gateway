@@ -7,6 +7,7 @@ OC.L10N.register(
     "Confirm" : "Confirmar",
     "Disable" : "Desativar",
     "Authentication code" : "Código de autenticação",
+    "Submit" : "Submeter",
     "An access code has been sent to %s" : "Um código de acesso foi enviado para %s"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
