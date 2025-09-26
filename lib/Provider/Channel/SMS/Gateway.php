@@ -38,8 +38,10 @@ class Gateway extends AGateway {
 	final public function cliConfigure(InputInterface $input, OutputInterface $output): int {
 		$namespaces = $this->smsProviderFactory->getFqcnList();
 		$names = [];
+		$providers = [];
 		foreach ($namespaces as $ns) {
 			$provider = $this->smsProviderFactory->get($ns);
+			$providers[] = $this->smsProviderFactory->get($ns);
 			$names[] = $provider->getSettings()->name;
 		}
 
@@ -47,9 +49,8 @@ class Gateway extends AGateway {
 		$choiceQuestion = new ChoiceQuestion('Please choose a SMS provider:', $names);
 		$name = $helper->ask($input, $output, $choiceQuestion);
 		$selectedIndex = array_search($name, $names);
-		$schema = $names[$selectedIndex];
 
-		$provider = $this->getProvider($namespaces[$selectedIndex]::getProviderId());
+		$provider = $providers[$selectedIndex];
 
 		foreach ($provider->getSettings()->fields as $field) {
 			$id = $field->field;
