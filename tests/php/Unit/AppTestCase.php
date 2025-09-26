@@ -30,10 +30,10 @@ class AppTestCase extends TestCase {
 				if (!array_key_exists($appId, $store)) {
 					$store[$appId] = [];
 				}
-				return match (array_key_exists($key, $store[$appId])) {
-					true => (string)$store[$appId][$key],
-					false => $store[$appId][$key] = $default,
-				};
+				if (array_key_exists($key, $store[$appId])) {
+					return (string)$store[$appId][$key];
+				}
+				return $default;
 			});
 
 		$appConfig->method('setValueString')
@@ -49,5 +49,21 @@ class AppTestCase extends TestCase {
 			});
 
 		return $appConfig;
+	}
+
+	public static function createStream(array $inputs) {
+		$stream = fopen('php://memory', 'r+', false);
+
+		foreach ($inputs as $input) {
+			fwrite($stream, $input . \PHP_EOL);
+
+			if (str_contains($input, \PHP_EOL)) {
+				fwrite($stream, "\x4");
+			}
+		}
+
+		rewind($stream);
+
+		return $stream;
 	}
 }

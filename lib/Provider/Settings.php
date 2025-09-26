@@ -14,7 +14,7 @@ use JsonSerializable;
 class Settings implements JsonSerializable {
 	public function __construct(
 		public string $name,
-		public string $id = '',
+		public ?string $id = null,
 		public bool $allowMarkdown = false,
 		public string $instructions = '',
 		/**
