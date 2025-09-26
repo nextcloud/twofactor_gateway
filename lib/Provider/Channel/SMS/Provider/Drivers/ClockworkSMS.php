@@ -50,7 +50,7 @@ class ClockworkSMS extends AProvider {
 				'https://api.clockworksms.com/http/send.aspx',
 				[
 					'query' => [
-						'key' => $this->getApiToken(),
+						'key' => $this->getApitoken(),
 						'to' => $identifier,
 						'content' => $message,
 					],
