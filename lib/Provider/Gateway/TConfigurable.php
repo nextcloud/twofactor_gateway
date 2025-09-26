@@ -55,7 +55,7 @@ trait TConfigurable {
 				return $this->getProviderId() . '_' . $fieldName;
 			}
 		}
-		throw new ConfigurationException('Invalid configuration field: ' . $field->field . ', check SCHEMA at ' . static::class);
+		throw new ConfigurationException('Invalid configuration field: ' . $fieldName . ', check SCHEMA at ' . static::class);
 	}
 
 	/**
