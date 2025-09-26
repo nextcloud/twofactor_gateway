@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -24,15 +26,6 @@ use OCP\Http\Client\IClientService;
  * @method static setPassword(string $password)
  */
 class ClickatellCentral extends AProvider {
-	public const SCHEMA = [
-		'id' => 'clickatell_central',
-		'name' => 'Clickatell Central',
-		'fields' => [
-			['field' => 'api',      'prompt' => 'Please enter your central.clickatell.com API-ID:'],
-			['field' => 'user',     'prompt' => 'Please enter your central.clickatell.com username:'],
-			['field' => 'password', 'prompt' => 'Please enter your central.clickatell.com password:'],
-		],
-	];
 
 	private IClient $client;
 
@@ -40,6 +33,27 @@ class ClickatellCentral extends AProvider {
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'clickatell_central',
+			name: 'Clickatell Central',
+			fields: [
+				new FieldDefinition(
+					field: 'api',
+					prompt: 'Please enter your central.clickatell.com API-ID:',
+				),
+				new FieldDefinition(
+					field: 'user',
+					prompt: 'Please enter your central.clickatell.com username:',
+				),
+				new FieldDefinition(
+					field: 'password',
+					prompt: 'Please enter your central.clickatell.com password:',
+				),
+			]
+		);
 	}
 
 	#[\Override]

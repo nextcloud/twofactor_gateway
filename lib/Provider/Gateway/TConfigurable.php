@@ -47,12 +47,15 @@ trait TConfigurable {
 	/**
 	 * @throws ConfigurationException
 	 */
-	private function keyFromField(string $field): string {
-		$fields = array_column($this->getSchemaFields(), 'field');
-		if (!in_array($field, $fields, true)) {
-			throw new ConfigurationException('Invalid configuration field: ' . $field . ', check SCHEMA at ' . static::class);
+	private function keyFromField(string $fieldName): string {
+		$settings = $this->getSettings();
+		$fields = $settings->fields;
+		foreach ($fields as $field) {
+			if ($field->field === $fieldName) {
+				return $this->getProviderId() . '_' . $fieldName;
+			}
 		}
-		return $this->getProviderId() . '_' . $field;
+		throw new ConfigurationException('Invalid configuration field: ' . $field->field . ', check SCHEMA at ' . static::class);
 	}
 
 	/**
@@ -63,24 +66,5 @@ trait TConfigurable {
 			throw new ConfigurationException('No app config set');
 		}
 		return $this->appConfig;
-	}
-
-	/**
-	 * @return array
-	 * @throws ConfigurationException
-	 */
-	protected function getSchemaFields(): array {
-		return static::getSchema()['fields'];
-	}
-
-	/**
-	 * @return array
-	 * @throws ConfigurationException
-	 */
-	public static function getSchema(): array {
-		if (!defined(static::class . '::SCHEMA')) {
-			throw new ConfigurationException('No SCHEMA defined');
-		}
-		return static::SCHEMA;
 	}
 }
