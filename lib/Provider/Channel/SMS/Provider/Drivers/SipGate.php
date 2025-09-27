@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -24,20 +26,33 @@ use OCP\Http\Client\IClientService;
  * @method static setWebSmsExtension(string $webSmsExtension)
  */
 class SipGate extends AProvider {
-	public const SCHEMA = [
-		'name' => 'SipGate',
-		'fields' => [
-			['field' => 'token_id',        'prompt' => 'Please enter your sipgate token-id:'],
-			['field' => 'access_token',    'prompt' => 'Please enter your sipgate access token:'],
-			['field' => 'web_sms_extension','prompt' => 'Please enter your sipgate web-sms extension:'],
-		],
-	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'sipgate',
+			name: 'SipGate',
+			fields: [
+				new FieldDefinition(
+					field: 'token_id',
+					prompt: 'Please enter your sipgate token-id:',
+				),
+				new FieldDefinition(
+					field: 'access_token',
+					prompt: 'Please enter your sipgate access token:',
+				),
+				new FieldDefinition(
+					field: 'web_sms_extension',
+					prompt: 'Please enter your sipgate web-sms extension:',
+				),
+			],
+		);
 	}
 
 	#[\Override]

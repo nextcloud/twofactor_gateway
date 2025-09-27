@@ -11,6 +11,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCA\TwoFactorGateway\Vendor\TelegramBot\Api\BotApi;
 use OCA\TwoFactorGateway\Vendor\TelegramBot\Api\Exception as TelegramSDKException;
 use OCP\IL10N;
@@ -25,27 +27,31 @@ use Symfony\Component\Console\Question\Question;
  * @method static setBotToken(string $botToken)
  */
 class Bot extends AProvider {
-	public const SCHEMA = [
-		'id' => 'telegram_bot',
-		'name' => 'Telegram Bot',
-		'allow_markdown' => true,
-		'instructions' => <<<HTML
-			<p>In order to receive authentication codes via Telegram, you first
-			have to start a new chat with the bot set up by your admin.</p>
-
-			<p>Secondly, you have to obtain your Telegram ID via the
-			<a href="https://telegram.me/getmyid_bot" target="_blank" rel="noreferrer noopener">ID Bot</a>.</p>
-
-			<p>Enter this ID to receive your verification code below.</p>
-			HTML,
-		'fields' => [
-			['field' => 'bot_token', 'prompt' => 'Please enter your Telegram bot token:'],
-		],
-	];
 	public function __construct(
 		private LoggerInterface $logger,
 		private IL10N $l10n,
 	) {
+	}
+
+	public function createSettings() {
+		return new Settings(
+			id: 'telegram_bot',
+			name: 'Telegram Bot',
+			allowMarkdown: true,
+			instructions: <<<HTML
+				<p>In order to receive authentication codes via Telegram, you first
+				have to start a new chat with the bot set up by your admin.</p>
+				<p>Secondly, you have to obtain your Telegram ID via the
+				<a href="https://telegram.me/getmyid_bot" target="_blank" rel="noreferrer noopener">ID Bot</a>.</p>
+				<p>Enter this ID to receive your verification code below.</p>
+				HTML,
+			fields: [
+				new FieldDefinition(
+					field: 'bot_token',
+					prompt: 'Please enter your Telegram bot token:',
+				),
+			]
+		);
 	}
 
 	#[\Override]
@@ -73,7 +79,8 @@ class Bot extends AProvider {
 	#[\Override]
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
 		$helper = new QuestionHelper();
-		$tokenQuestion = new Question(self::SCHEMA['fields'][0]['prompt'] . ' ');
+		$settings = $this->getSettings();
+		$tokenQuestion = new Question($settings->fields[0]->prompt . ' ');
 		$token = $helper->ask($input, $output, $tokenQuestion);
 		$this->setBotToken($token);
 		$output->writeln("Using $token.");

@@ -13,6 +13,8 @@ require __DIR__ . '/../../../../../../../vendor-bin/telegram-client/vendor/autol
 require __DIR__ . '/Login.php';
 require __DIR__ . '/SendMessage.php';
 
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\ClientCli\Login;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\ClientCli\SendMessage;
 use Symfony\Component\Console\Application;
 
 $application = new Application('Telegram CLI');

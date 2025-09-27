@@ -10,7 +10,9 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\Signal;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
@@ -29,14 +31,6 @@ use Symfony\Component\Console\Question\Question;
  * @method AGateway setAccount(string $account)
  */
 class Gateway extends AGateway {
-	public const SCHEMA = [
-		'name' => 'Signal',
-		'instructions' => 'The gateway can send authentication to your Signal mobile and deskop app.',
-		'fields' => [
-			['field' => 'url', 'prompt' => 'Please enter the URL of the Signal gateway (leave blank to use default):', 'default' => 'http://localhost:5000'],
-			['field' => 'account', 'prompt' => 'Please enter the account (phone-number) of the sending signal account (leave blank if a phone-number is not required):', 'default' => ''],
-		],
-	];
 	public const ACCOUNT_UNNECESSARY = 'unneccessary';
 
 	public function __construct(
@@ -46,6 +40,25 @@ class Gateway extends AGateway {
 		private LoggerInterface $logger,
 	) {
 		parent::__construct($appConfig);
+	}
+
+	#[\Override]
+	public function createSettings(): Settings {
+		return new Settings(
+			name: 'Signal',
+			instructions: 'The gateway can send authentication to your Signal mobile and deskop app.',
+			fields: [
+				new FieldDefinition(
+					field: 'url',
+					prompt: 'Please enter the URL of the Signal gateway (leave blank to use default):',
+					default: 'http://localhost:5000',
+				),
+				new FieldDefinition(
+					field: 'account',
+					prompt: 'Please enter the account (phone-number) of the sending signal account (leave blank if a phone-number is not required):',
+				),
+			]
+		);
 	}
 
 	#[\Override]
@@ -158,14 +171,15 @@ class Gateway extends AGateway {
 
 	#[\Override]
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
+		$settings = $this->getSettings();
 		$helper = new QuestionHelper();
-		$urlQuestion = new Question(self::SCHEMA['fields'][0]['prompt'], self::SCHEMA['fields'][0]['default']);
+		$urlQuestion = new Question($settings->fields[0]->prompt, $settings->fields[0]->default);
 		$url = $helper->ask($input, $output, $urlQuestion);
 		$output->writeln("Using $url.");
 
 		$this->setUrl($url);
 
-		$accountQuestion = new Question(self::SCHEMA['fields'][1]['prompt'], self::SCHEMA['fields'][1]['default']);
+		$accountQuestion = new Question($settings->fields[1]->prompt, $settings->fields[1]->default);
 		$account = $helper->ask($input, $output, $accountQuestion);
 		if ($account == '') {
 			$account = self::ACCOUNT_UNNECESSARY;

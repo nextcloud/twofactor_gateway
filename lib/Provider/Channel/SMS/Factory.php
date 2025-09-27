@@ -11,11 +11,10 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS;
 
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use OCA\TwoFactorGateway\Provider\AFactory;
-use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\IProvider;
+use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
 
+/** @extends AFactory<AProvider> */
 class Factory extends AFactory {
-	/** @var array<string,IProvider> */
-	protected array $instances = [];
 	#[\Override]
 	protected function getPrefix(): string {
 		return 'OCA\\TwoFactorGateway\\Provider\\Channel\\SMS\\Provider\\Drivers\\';
@@ -28,23 +27,17 @@ class Factory extends AFactory {
 
 	#[\Override]
 	protected function getBaseClass(): string {
-		return IProvider::class;
+		return AProvider::class;
 	}
 
 	#[\Override]
-	public function isValid(string $fqcn): bool {
-		return defined("$fqcn::SCHEMA")
-			&& is_array($fqcn::SCHEMA);
-	}
-
-	#[\Override]
-	public function get(string $name): IProvider {
+	public function get(string $name): object {
 		if (isset($this->instances[$name])) {
 			return $this->instances[$name];
 		}
 		foreach ($this->getFqcnList() as $fqcn) {
-			if ($fqcn::getProviderId() === $name) {
-				$instance = \OCP\Server::get($fqcn);
+			$instance = \OCP\Server::get($fqcn);
+			if ($instance->getSettings()->id === $name) {
 				$instance->setAppConfig(\OCP\Server::get(\OCP\IAppConfig::class));
 				$this->instances[$name] = $instance;
 				return $instance;

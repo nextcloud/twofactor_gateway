@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider;
 
+/** @extends AFactory<AProvider> */
 class Factory extends AFactory {
 	#[\Override]
 	protected function getPrefix(): string {

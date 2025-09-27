@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IAppConfig;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,7 +28,9 @@ interface IProvider {
 
 	public static function idOverride(): ?string;
 
-	public static function getProviderId(): string;
+	public function getProviderId(): string;
+
+	public function getSettings(): Settings;
 
 	public function setAppConfig(IAppConfig $appConfig): void;
 

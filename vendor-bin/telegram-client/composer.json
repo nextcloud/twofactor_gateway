@@ -3,6 +3,11 @@
 		"danog/madelineproto": "^8.5",
 		"symfony/console": "^7.3"
 	},
+	"autoload": {
+		"psr-4": {
+			"OCA\\TwoFactorGateway\\": "lib/"
+		}
+	},
 	"config": {
 		"platform": {
 			"php": "8.2.4"

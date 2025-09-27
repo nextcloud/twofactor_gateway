@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -24,20 +26,33 @@ use OCP\Http\Client\IClientService;
  * @method static setDid(string $did)
  */
 class Voipbuster extends AProvider {
-	public const SCHEMA = [
-		'name' => 'Voipbuster',
-		'fields' => [
-			['field' => 'api_user',     'prompt' => 'Please enter your Voipbuster API username:'],
-			['field' => 'api_password', 'prompt' => 'Please enter your Voipbuster API password:'],
-			['field' => 'did',          'prompt' => 'Please enter your Voipbuster DID:'],
-		],
-	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'voipbuster',
+			name: 'Voipbuster',
+			fields: [
+				new FieldDefinition(
+					field: 'api_user',
+					prompt: 'Please enter your Voipbuster API username:',
+				),
+				new FieldDefinition(
+					field: 'api_password',
+					prompt: 'Please enter your Voipbuster API password:',
+				),
+				new FieldDefinition(
+					field: 'did',
+					prompt: 'Please enter your Voipbuster DID:',
+				),
+			]
+		);
 	}
 
 	#[\Override]

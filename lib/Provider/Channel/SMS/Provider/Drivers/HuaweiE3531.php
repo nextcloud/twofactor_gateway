@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -20,19 +22,26 @@ use OCP\Http\Client\IClientService;
  * @method static setApi(string $api)
  */
 class HuaweiE3531 extends AProvider {
-	public const SCHEMA = [
-		'id' => 'huawei_e3531',
-		'name' => 'Huawei E3531',
-		'fields' => [
-			['field' => 'api', 'prompt' => 'Please enter the base URL of the Huawei E3531 stick: ', 'default' => 'http://192.168.8.1/api'],
-		],
-	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'huawei_e3531',
+			name: 'Huawei E3531',
+			fields: [
+				new FieldDefinition(
+					field: 'api',
+					prompt: 'Please enter the base URL of the Huawei E3531 stick: ',
+					default: 'http://192.168.8.1/api',
+				),
+			]
+		);
 	}
 
 	#[\Override]

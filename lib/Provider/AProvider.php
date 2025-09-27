@@ -86,7 +86,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		try {
 			$identifier = $this->stateStorage->get($user, $this->getGatewayName())->getIdentifier() ?? '';
 
-			$message = $this->gateway->getSettings()['allow_markdown'] ?? false
+			$message = $this->gateway->getSettings()->allow_markdown ?? false
 				? $this->l10n->t('`%s` is your Nextcloud authentication code', [$secret])
 				: $this->l10n->t('%s is your Nextcloud authentication code', [$secret]);
 

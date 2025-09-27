@@ -26,7 +26,7 @@ class FactoryTest extends TestCase {
 
 	public static function providerGet(): array {
 		return [
-			[ClickatellCentral::SCHEMA['id'], ClickatellCentral::class],
+			['clickatell_central', ClickatellCentral::class],
 		];
 	}
 }

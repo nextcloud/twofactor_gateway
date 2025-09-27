@@ -10,7 +10,9 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\XMPP;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IAppConfig;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -31,26 +33,44 @@ use Symfony\Component\Console\Question\Question;
  * @method static setMethod(string $method)
  */
 class Gateway extends AGateway {
-	public const SCHEMA = [
-		'name' => 'XMPP',
-		'instructions' => <<<HTML
-			<p>In order to receive authentication codes via XMPP, your XMPP Server must support http requests (ask your admin).</p>
-			<p>Enter your JID (XMPP address) to receive your verification code below.</p>
-			HTML,
-		'fields' => [
-			['field' => 'sender',   'prompt' => 'Please enter your sender XMPP-JID:'],
-			['field' => 'password', 'prompt' => 'Please enter your sender XMPP password:'],
-			['field' => 'server',   'prompt' => 'Please enter full path to access REST/HTTP API:'],
-			['field' => 'username'],
-			['field' => 'method',   'prompt' => 'Please enter 1 or 2 for XMPP sending option:'],
-		],
-	];
-
 	public function __construct(
 		public IAppConfig $appConfig,
 		private LoggerInterface $logger,
 	) {
 		parent::__construct($appConfig);
+	}
+
+	#[\Override]
+	public function createSettings(): Settings {
+		return new Settings(
+			name: 'XMPP',
+			instructions: <<<HTML
+				<p>In order to receive authentication codes via XMPP, your XMPP Server must support http requests (ask your admin).</p>
+				<p>Enter your JID (XMPP address) to receive your verification code below.</p>
+				HTML,
+			fields: [
+				new FieldDefinition(
+					field: 'sender',
+					prompt: 'Please enter your sender XMPP-JID:',
+				),
+				new FieldDefinition(
+					field: 'password',
+					prompt: 'Please enter your sender XMPP password:',
+				),
+				new FieldDefinition(
+					field: 'server',
+					prompt: 'Please enter full path to access REST/HTTP API:',
+				),
+				new FieldDefinition(
+					field: 'username',
+					prompt: '',
+				),
+				new FieldDefinition(
+					field: 'method',
+					prompt: 'Please enter 1 or 2 for XMPP sending option:',
+				),
+			],
+		);
 	}
 
 	#[\Override]
@@ -91,11 +111,14 @@ class Gateway extends AGateway {
 	#[\Override]
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
 		$helper = new QuestionHelper();
-		$fields = self::SCHEMA['fields'];
-		$fields = array_combine(array_column($fields, 'field'), $fields);
+		$settings = $this->getSettings();
+		$fields = [];
+		foreach ($settings->fields as $field) {
+			$fields[$field->field] = $field;
+		}
 		$sender = '';
 		while (empty($sender) or substr_count($sender, '@') !== 1) {
-			$senderQuestion = new Question($fields['sender']['prompt'] . ' ');
+			$senderQuestion = new Question($fields['sender']->prompt . ' ');
 			$sender = $helper->ask($input, $output, $senderQuestion);
 			if (empty($sender)) {
 				$output->writeln('XMPP-JID must not be empty!');
@@ -108,7 +131,7 @@ class Gateway extends AGateway {
 		$output->writeln("Using $sender as XMPP-JID.\nUsing $username as username.");
 		$password = '';
 		while (empty($password)) {
-			$passwordQuestion = new Question($fields['password']['prompt'] . ' ');
+			$passwordQuestion = new Question($fields['password']->prompt . ' ');
 			$password = $helper->ask($input, $output, $passwordQuestion);
 			if (empty($password)) {
 				$output->writeln('Password must not be empty!');
@@ -117,7 +140,7 @@ class Gateway extends AGateway {
 		$output->writeln('Password accepted.');
 		$server = '';
 		while (empty($server)) {
-			$serverQuestion = new Question($fields['server']['prompt'] . ' ');
+			$serverQuestion = new Question($fields['server']->prompt . ' ');
 			$server = $helper->ask($input, $output, $serverQuestion);
 			if (empty($server)) {
 				$output->writeln('API path must not be empty!');
@@ -126,7 +149,7 @@ class Gateway extends AGateway {
 		$output->writeln("Using $server as full URL to access REST/HTTP API.");
 		$method = 0;
 		while (intval($method) < 1 or intval($method) > 2) {
-			echo $fields['method']['prompt'] . PHP_EOL;
+			echo $fields['method']->prompt . PHP_EOL;
 			echo "(1) prosody with mod_rest\n";
 			echo "(2) prosody with mod_post_msg\n";
 			$methodQuestion = new Question('Your choice: ');

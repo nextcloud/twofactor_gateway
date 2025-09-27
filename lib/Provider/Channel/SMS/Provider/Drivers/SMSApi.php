@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -22,19 +24,29 @@ use OCP\Http\Client\IClientService;
  * @method static setSender(string $sender)
  */
 class SMSApi extends AProvider {
-	public const SCHEMA = [
-		'name' => 'SMSAPI',
-		'fields' => [
-			['field' => 'token', 'prompt' => 'Please enter your SMSApi.com API token:'],
-			['field' => 'sender','prompt' => 'Please enter your SMSApi.com sender name:'],
-		],
-	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'smsapi',
+			name: 'SMSAPI',
+			fields: [
+				new FieldDefinition(
+					field: 'token',
+					prompt: 'Please enter your SMSApi.com API token:',
+				),
+				new FieldDefinition(
+					field: 'sender',
+					prompt: 'Please enter your SMSApi.com sender name:',
+				),
+			]
+		);
 	}
 
 	#[\Override]

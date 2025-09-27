@@ -48,6 +48,7 @@
 	"autoload": {
 		"psr-4": {
 			"OCA\\TwoFactorGateway\\": "lib/",
+			"OCA\\TwoFactorGateway\\Tests\\Unit\\": "tests/php/Unit/",
 			"OCA\\TwoFactorGateway\\Vendor\\BaconQrCode\\": "lib/Vendor/bacon/bacon-qr-code/src/",
 			"OCA\\TwoFactorGateway\\Vendor\\TelegramBot\\Api\\": "lib/Vendor/telegram-bot/api/src/"
 		}

@@ -7,7 +7,7 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
+namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\State;

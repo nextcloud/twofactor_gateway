@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -20,18 +22,25 @@ use OCP\Http\Client\IClientService;
  * @method static setApiKey(string $apiKey)
  */
 class Sms77Io extends AProvider {
-	public const SCHEMA = [
-		'name' => 'sms77.io',
-		'fields' => [
-			['field' => 'api_key', 'prompt' => 'Please enter your sms77.io API key:'],
-		],
-	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'sms77io',
+			name: 'sms77.io',
+			fields: [
+				new FieldDefinition(
+					field: 'api_key',
+					prompt: 'Please enter your sms77.io API key:',
+				),
+			]
+		);
 	}
 
 	#[\Override]
