@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "`%s` is your Nextcloud authentication code" : "`%s` je váš ověřovací kód pro Nextcloud",
     "%s is your Nextcloud authentication code" : "%s je váš ověřovací kód pro Nextcloud",
     "Message gateway verification" : "Ověřování brány zpráv",
     "Authenticate via SMS" : "Ověřit prostřednictvím SMS",
@@ -13,6 +14,7 @@ OC.L10N.register(
     "Authenticate via WhatsApp" : "Ověřit přes WhatsApp",
     "XMPP verification" : "XMPP ověření",
     "Authenticate via XMPP" : "Ověřit prostřednictvím XMPP",
+    "`%s` is your verification code." : "`%s` je váš ověřovací kód.",
     "%s is your verification code." : "%s je váš ověřovací kód",
     "no verification code set" : "nenastaven žádný kód pro ověření",
     "verification token mismatch" : "neshoda v ověřovacím token",
