@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "`%s` is your Nextcloud authentication code" : "`%s` é o seu código de autenticação do Nextcloud",
     "%s is your Nextcloud authentication code" : "%s é seu código de autenticação do Nextcloud",
     "Message gateway verification" : "Verificação do gateway de mensagens",
     "Authenticate via SMS" : "Authenticar via SMS",
@@ -13,6 +14,7 @@ OC.L10N.register(
     "Authenticate via WhatsApp" : "Autenticar via WhatsApp",
     "XMPP verification" : "Verificação XMPP",
     "Authenticate via XMPP" : "Autenticação via XMPP",
+    "`%s` is your verification code." : "`%s` é o seu código de verificação.",
     "%s is your verification code." : "%s é seu código de verificação.",
     "no verification code set" : "nenhum código de verificação definido",
     "verification token mismatch" : "incompatibilidade do token de verificação",
