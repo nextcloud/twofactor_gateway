@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -24,20 +26,33 @@ use OCP\Http\Client\IClientService;
  * @method static setPassword(string $password)
  */
 class PlaySMS extends AProvider {
-	public const SCHEMA = [
-		'name' => 'PlaySMS',
-		'fields' => [
-			['field' => 'url',      'prompt' => 'Please enter your PlaySMS URL:'],
-			['field' => 'user',     'prompt' => 'Please enter your PlaySMS username:'],
-			['field' => 'password', 'prompt' => 'Please enter your PlaySMS password:'],
-		],
-	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'playsms',
+			name: 'PlaySMS',
+			fields: [
+				new FieldDefinition(
+					field: 'url',
+					prompt: 'Please enter your PlaySMS URL:',
+				),
+				new FieldDefinition(
+					field: 'user',
+					prompt: 'Please enter your PlaySMS username:',
+				),
+				new FieldDefinition(
+					field: 'password',
+					prompt: 'Please enter your PlaySMS password:',
+				),
+			]
+		);
 	}
 
 	#[\Override]

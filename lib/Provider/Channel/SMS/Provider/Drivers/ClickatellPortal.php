@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -23,20 +25,30 @@ use OCP\Http\Client\IClientService;
  * @method static setFrom(string $from)
  */
 class ClickatellPortal extends AProvider {
-	public const SCHEMA = [
-		'id' => 'clickatell_portal',
-		'name' => 'Clickatell Portal',
-		'fields' => [
-			['field' => 'apikey', 'prompt' => 'Please enter your portal.clickatell.com API-Key:'],
-			['field' => 'from',   'prompt' => 'Please enter your sender number for two-way messaging (empty = one-way): ', 'optional' => true],
-		],
-	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'clickatell_portal',
+			name: 'Clickatell Portal',
+			fields: [
+				new FieldDefinition(
+					field: 'apikey',
+					prompt: 'Please enter your portal.clickatell.com API-Key:',
+				),
+				new FieldDefinition(
+					field: 'from',
+					prompt: 'Please enter your sender number for two-way messaging (empty = one-way): ',
+					optional: true,
+				),
+			],
+		);
 	}
 
 	#[\Override]

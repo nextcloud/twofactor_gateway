@@ -8,27 +8,31 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider;
 
-use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\IProvider as ISMSProvider;
-use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\IProvider as ITelegramProvider;
-use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
-
+/**
+ * @template T of object
+ */
 abstract class AFactory {
-	/** @var array<string,AGateway|AProvider|ISMSProvider|ITelegramProvider> */
+	/** @var array<string, T> */
 	protected array $instances = [];
 	/** @var array<string> */
 	protected array $fqcn = [];
 
 	abstract protected function getPrefix(): string;
+
 	abstract protected function getSuffix(): string;
+
+	/** @return class-string<T> */
 	abstract protected function getBaseClass(): string;
 
-	public function isValid(string $fqcn): bool {
-		return true;
-	}
-
-	/** @return AGateway|AProvider|ISMSProvider|ITelegramProvider */
+	/**
+	 * @param class-string<T> $name
+	 * @return T
+	 */
 	public function get(string $name): object {
-		$needle = strtolower($name);
+		$needle = match(str_contains($name, '\\')) {
+			true => $this->typeFrom($name),
+			false => strtolower($name),
+		};
 		if (isset($this->instances[$needle])) {
 			return $this->instances[$needle];
 		}
@@ -39,7 +43,7 @@ abstract class AFactory {
 				continue;
 			}
 			$instance = \OCP\Server::get($fqcn);
-			$this->instances[$needle] = $instance;
+			$this->instances[$type] = $instance;
 			return $instance;
 		}
 
@@ -59,9 +63,6 @@ abstract class AFactory {
 				continue;
 			}
 			if (!is_subclass_of($fqcn, $this->getBaseClass(), true)) {
-				continue;
-			}
-			if (!$this->isValid($fqcn)) {
 				continue;
 			}
 			$this->fqcn[] = $fqcn;

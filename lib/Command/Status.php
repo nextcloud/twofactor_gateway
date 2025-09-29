@@ -27,10 +27,10 @@ class Status extends Command {
 		$fqcn = $this->gatewayFactory->getFqcnList();
 		foreach ($fqcn as $fqcn) {
 			/** @var AGateway */
-			$gateway = $this->gatewayFactory->get($fqcn::getProviderId());
+			$gateway = $this->gatewayFactory->get($fqcn);
 			$isConfigured = $gateway->isComplete();
 			$settings = $gateway->getSettings();
-			$output->writeln($settings['name'] . ': ' . ($isConfigured ? 'configured' : 'not configured'));
+			$output->writeln($settings->name . ': ' . ($isConfigured ? 'configured' : 'not configured'));
 		}
 		return 0;
 	}

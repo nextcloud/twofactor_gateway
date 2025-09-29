@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -20,18 +22,25 @@ use OCP\Http\Client\IClientService;
  * @method static setApitoken(string $apitoken)
  */
 class ClockworkSMS extends AProvider {
-	public const SCHEMA = [
-		'name' => 'ClockworkSMS',
-		'fields' => [
-			['field' => 'apitoken', 'prompot' => 'Please enter your clockworksms api token:'],
-		]
-	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'clockworksms',
+			name: 'ClockworkSMS',
+			fields: [
+				new FieldDefinition(
+					field: 'apitoken',
+					prompt: 'Please enter your clockworksms api token:',
+				),
+			]
+		);
 	}
 
 	#[\Override]
@@ -41,7 +50,7 @@ class ClockworkSMS extends AProvider {
 				'https://api.clockworksms.com/http/send.aspx',
 				[
 					'query' => [
-						'key' => $this->getApiToken(),
+						'key' => $this->getApitoken(),
 						'to' => $identifier,
 						'content' => $message,
 					],

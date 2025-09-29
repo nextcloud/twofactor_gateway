@@ -11,11 +11,11 @@ namespace OCA\TwoFactorGateway\Provider\Channel\Telegram;
 
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use OCA\TwoFactorGateway\Provider\AFactory;
-use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\IProvider;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 
+/** @extends AFactory<AProvider> */
 class Factory extends AFactory {
-	/** @var array<string,IProvider> */
-	protected array $instances = [];
+	private array $instancesByFqcn = [];
 	#[\Override]
 	protected function getPrefix(): string {
 		return 'OCA\\TwoFactorGateway\\Provider\\Channel\\Telegram\\Provider\\Drivers\\';
@@ -28,25 +28,24 @@ class Factory extends AFactory {
 
 	#[\Override]
 	protected function getBaseClass(): string {
-		return IProvider::class;
+		return AProvider::class;
 	}
 
 	#[\Override]
-	public function isValid(string $fqcn): bool {
-		return defined("$fqcn::SCHEMA")
-			&& is_array($fqcn::SCHEMA);
-	}
-
-	#[\Override]
-	public function get(string $name): IProvider {
+	public function get(string $name): object {
+		if (isset($this->instancesByFqcn[$name])) {
+			return $this->instancesByFqcn[$name];
+		}
 		if (isset($this->instances[$name])) {
 			return $this->instances[$name];
 		}
 		foreach ($this->getFqcnList() as $fqcn) {
-			if ($fqcn::getProviderId() === $name) {
-				$instance = \OCP\Server::get($fqcn);
+			$instance = \OCP\Server::get($fqcn);
+			$settings = $instance->getSettings();
+			if ($fqcn === $name || $settings->id === $name) {
 				$instance->setAppConfig(\OCP\Server::get(\OCP\IAppConfig::class));
 				$this->instances[$name] = $instance;
+				$this->instancesByFqcn[$fqcn] = $instance;
 				return $instance;
 			}
 		}
