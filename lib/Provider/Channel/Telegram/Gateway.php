@@ -11,8 +11,9 @@ namespace OCA\TwoFactorGateway\Provider\Channel\Telegram;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
-use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\IProvider;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IAppConfig;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,13 +21,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class Gateway extends AGateway {
-	public const SCHEMA = [
-		'name' => 'Telegram',
-	];
 
 	public function __construct(
 		public IAppConfig $appConfig,
-		private Factory $providerFactory,
+		private Factory $telegramProviderFactory,
 	) {
 		parent::__construct($appConfig);
 	}
@@ -38,57 +36,60 @@ class Gateway extends AGateway {
 
 	#[\Override]
 	final public function cliConfigure(InputInterface $input, OutputInterface $output): int {
-		$namespaces = $this->providerFactory->getFqcnList();
-		$schemas = [];
+		$namespaces = $this->telegramProviderFactory->getFqcnList();
+		$names = [];
+		$providers = [];
 		foreach ($namespaces as $ns) {
-			$schemas[] = $ns::SCHEMA;
+			$provider = $this->telegramProviderFactory->get($ns);
+			$providers[] = $provider;
+			$names[] = $provider->getSettings()->name;
 		}
-		$names = array_column($schemas, 'name');
 
 		$helper = new QuestionHelper();
 		$choiceQuestion = new ChoiceQuestion('Please choose a Telegram provider:', $names);
 		$name = $helper->ask($input, $output, $choiceQuestion);
 		$selectedIndex = array_search($name, $names);
-		$schema = $schemas[$selectedIndex];
 
-		$provider = $this->getProvider($namespaces[$selectedIndex]::getProviderId());
-
-		$provider->cliConfigure($input, $output);
+		$providers[$selectedIndex]->cliConfigure($input, $output);
 		return 0;
 	}
 
 	#[\Override]
-	public function getSettings(): array {
+	public function createSettings(): Settings {
 		try {
-			$provider = $this->getProvider();
+			$settings = $this->getProvider()->getSettings();
 		} catch (ConfigurationException) {
-			return static::SCHEMA;
+			$settings = new Settings(
+				name: 'Telegram',
+			);
 		}
-		return $provider::SCHEMA;
+		return $settings;
 	}
 
 	#[\Override]
-	public function isComplete(array $schema = []): bool {
-		if (empty($schema)) {
+	public function isComplete(?Settings $settings = null): bool {
+		if ($settings === null) {
 			try {
 				$provider = $this->getProvider();
 			} catch (ConfigurationException) {
 				return false;
 			}
-			$schema = $provider::SCHEMA;
+			$settings = $provider->getSettings();
 		}
-		return parent::isComplete($schema);
+		return parent::isComplete($settings);
 	}
 
 	#[\Override]
-	public function remove(array $schema = []): void {
-		if (empty($schema)) {
-			$schema = static::SCHEMA;
+	public function remove(?Settings $settings = null): void {
+		foreach ($this->telegramProviderFactory->getFqcnList() as $fqcn) {
+			$provider = $this->telegramProviderFactory->get($fqcn);
+			$provider->setAppConfig($this->appConfig);
+			$settings = $provider->getSettings();
+			parent::remove($settings);
 		}
-		parent::remove($schema);
 	}
 
-	public function getProvider(string $providerName = ''): IProvider {
+	public function getProvider(string $providerName = ''): AProvider {
 		if ($providerName) {
 			$this->setProvider($providerName);
 		}
@@ -97,7 +98,7 @@ class Gateway extends AGateway {
 			throw new ConfigurationException();
 		}
 
-		return $this->providerFactory->get($providerName);
+		return $this->telegramProviderFactory->get($providerName);
 	}
 
 	public function setProvider(string $provider): void {

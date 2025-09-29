@@ -12,6 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\Drivers;
 use Exception;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -24,20 +26,33 @@ use OCP\Http\Client\IClientService;
  * @method static setSenderid(string $senderid)
  */
 class EcallSMS extends AProvider {
-	public const SCHEMA = [
-		'name' => 'EcallSMS',
-		'fields' => [
-			['field' => 'user',      'prompt' => 'Please enter your eCall.ch username:'],
-			['field' => 'password',  'prompt' => 'Please enter your eCall.ch password:'],
-			['field' => 'sender_id', 'prompt' => 'Please enter your eCall.ch sender ID:'],
-		],
-	];
 	private IClient $client;
 
 	public function __construct(
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'ecallsms',
+			name: 'EcallSMS',
+			fields: [
+				new FieldDefinition(
+					field: 'username',
+					prompt: 'Please enter your eCall.ch username:',
+				),
+				new FieldDefinition(
+					field: 'password',
+					prompt: 'Please enter your eCall.ch password:',
+				),
+				new FieldDefinition(
+					field: 'senderid',
+					prompt: 'Please enter your eCall.ch sender ID:',
+				),
+			]
+		);
 	}
 
 	#[\Override]
