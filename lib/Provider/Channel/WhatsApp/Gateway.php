@@ -16,7 +16,9 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
@@ -34,13 +36,6 @@ use Symfony\Component\Console\Question\Question;
  * @method static setBaseUrl(string $baseUrl)
  */
 class Gateway extends AGateway {
-	public const SCHEMA = [
-		'name' => 'WhatsApp',
-		'allow_markdown' => true,
-		'fields' => [
-			['field' => 'base_url', 'prompt' => 'Base URL to your WhatsApp API endpoint:'],
-		],
-	];
 	private string $instanceId;
 	private IClient $client;
 	private string $lazyBaseUrl = '';
@@ -54,6 +49,20 @@ class Gateway extends AGateway {
 		parent::__construct($appConfig);
 		$this->instanceId = $this->config->getSystemValue('instanceid');
 		$this->client = $this->clientService->newClient();
+	}
+
+	#[\Override]
+	public function createSettings(): Settings {
+		return new Settings(
+			name: 'WhatsApp',
+			allowMarkdown: true,
+			fields: [
+				new FieldDefinition(
+					field: 'base_url',
+					prompt: 'Base URL to your WhatsApp API endpoint:',
+				),
+			],
+		);
 	}
 
 	#[\Override]
@@ -90,7 +99,7 @@ class Gateway extends AGateway {
 	#[\Override]
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
 		$helper = new QuestionHelper();
-		$baseUrlQuestion = new Question(self::SCHEMA['fields'][0]['prompt'] . ' ');
+		$baseUrlQuestion = new Question($this->getSettings()->fields[0]->prompt . ' ');
 		$this->lazyBaseUrl = $helper->ask($input, $output, $baseUrlQuestion);
 		$this->lazyBaseUrl = rtrim($this->lazyBaseUrl, '/');
 

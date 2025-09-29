@@ -13,6 +13,8 @@ use Exception;
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 
@@ -31,17 +33,6 @@ use OCP\Http\Client\IClientService;
  * @method static setSender(string $sender)
  */
 class Ovh extends AProvider {
-	public const SCHEMA = [
-		'name' => 'OVH',
-		'fields' => [
-			['field' => 'endpoint',        'prompt' => 'Please enter the endpoint (ovh-eu, ovh-us, ovh-ca, soyoustart-eu, soyoustart-ca, kimsufi-eu, kimsufi-ca, runabove-ca):'],
-			['field' => 'application_key', 'prompt' => 'Please enter your application key:'],
-			['field' => 'application_secret','prompt' => 'Please enter your application secret:'],
-			['field' => 'consumer_key',    'prompt' => 'Please enter your consumer key:'],
-			['field' => 'account',         'prompt' => 'Please enter your account (sms-*****):'],
-			['field' => 'sender',          'prompt' => 'Please enter your sender:'],
-		],
-	];
 	private IClient $client;
 
 	/**
@@ -74,6 +65,39 @@ class Ovh extends AProvider {
 		IClientService $clientService,
 	) {
 		$this->client = $clientService->newClient();
+	}
+
+	public function createSettings(): Settings {
+		return new Settings(
+			id: 'ovh',
+			name: 'OVH',
+			fields: [
+				new FieldDefinition(
+					field: 'endpoint',
+					prompt: 'Please enter the endpoint (ovh-eu, ovh-us, ovh-ca, soyoustart-eu, soyoustart-ca, kimsufi-eu, kimsufi-ca, runabove-ca):',
+				),
+				new FieldDefinition(
+					field: 'application_key',
+					prompt: 'Please enter your application key:',
+				),
+				new FieldDefinition(
+					field: 'application_secret',
+					prompt: 'Please enter your application secret:',
+				),
+				new FieldDefinition(
+					field: 'consumer_key',
+					prompt: 'Please enter your consumer key:',
+				),
+				new FieldDefinition(
+					field: 'account',
+					prompt: 'Please enter your account (sms-*****):',
+				),
+				new FieldDefinition(
+					field: 'sender',
+					prompt: 'Please enter your sender:',
+				),
+			]
+		);
 	}
 
 	#[\Override]

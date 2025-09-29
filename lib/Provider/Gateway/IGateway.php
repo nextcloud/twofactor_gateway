@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Gateway;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IUser;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,13 +26,15 @@ interface IGateway {
 	 */
 	public function send(string $identifier, string $message, array $extra = []): void;
 
-	public function isComplete(array $schema = []): bool;
+	public function isComplete(?Settings $settings = null): bool;
 
-	public function getSettings(): array;
+	public function createSettings(): Settings;
+
+	public function getSettings(): Settings;
 
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int;
 
-	public function remove(array $schema = []): void;
+	public function remove(?Settings $settings = null): void;
 
-	public static function getProviderId(): string;
+	public function getProviderId(): string;
 }
