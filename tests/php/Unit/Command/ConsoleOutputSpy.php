@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Command;
 
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Coopied from BufferedOutput because Nextcloud expects ConsoleOutputInterface
@@ -39,5 +40,9 @@ class ConsoleOutputSpy extends ConsoleOutput {
 		if ($newline) {
 			$this->buffer .= \PHP_EOL;
 		}
+	}
+
+	public function getErrorOutput(): OutputInterface {
+		return $this;
 	}
 }

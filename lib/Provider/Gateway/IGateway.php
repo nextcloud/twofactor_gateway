@@ -36,5 +36,5 @@ interface IGateway {
 
 	public function remove(?Settings $settings = null): void;
 
-	public static function getProviderId(): string;
+	public function getProviderId(): string;
 }

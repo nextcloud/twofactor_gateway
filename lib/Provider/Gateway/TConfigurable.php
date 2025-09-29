@@ -52,7 +52,7 @@ trait TConfigurable {
 		$fields = $settings->fields;
 		foreach ($fields as $field) {
 			if ($field->field === $fieldName) {
-				return $this->getProviderId() . '_' . $fieldName;
+				return $settings->id . '_' . $fieldName;
 			}
 		}
 		throw new ConfigurationException('Invalid configuration field: ' . $fieldName . ', check SCHEMA at ' . static::class);

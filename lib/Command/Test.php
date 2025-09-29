@@ -18,23 +18,23 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Test extends Command {
-
 	public function __construct(
 		private IUserManager $userManager,
 		private Factory $gatewayFactory,
 	) {
 		parent::__construct('twofactorauth:gateway:test');
 
-		$ids = [];
 		$fqcn = $this->gatewayFactory->getFqcnList();
+		$gateways = [];
 		foreach ($fqcn as $fqcn) {
-			$ids[] = $fqcn::getProviderId();
+			$gateway = $this->gatewayFactory->get($fqcn);
+			$gateways[$gateway->getSettings()->id] = $gateway;
 		}
 
 		$this->addArgument(
 			'gateway',
 			InputArgument::REQUIRED,
-			'The name of the gateway: ' . implode(', ', $ids)
+			'The name of the gateway: ' . implode(', ', array_keys($gateways))
 		);
 		$this->addArgument(
 			'identifier',

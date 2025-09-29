@@ -23,8 +23,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
 /**
- * @method string getBotToken()
- * @method static setBotToken(string $botToken)
+ * @method string getToken()
+ * @method static setToken(string $token)
  */
 class Bot extends AProvider {
 	public function __construct(
@@ -47,7 +47,7 @@ class Bot extends AProvider {
 				HTML,
 			fields: [
 				new FieldDefinition(
-					field: 'bot_token',
+					field: 'token',
 					prompt: 'Please enter your Telegram bot token:',
 				),
 			]
@@ -60,10 +60,10 @@ class Bot extends AProvider {
 			$message = $this->l10n->t('`%s` is your Nextcloud verification code.', [$extra['code']]);
 		}
 		$this->logger->debug("sending telegram message to $identifier, message: $message");
-		$botToken = $this->getBotToken();
-		$this->logger->debug("telegram bot token: $botToken");
+		$token = $this->getToken();
+		$this->logger->debug("telegram bot token: $token");
 
-		$api = new BotApi($botToken);
+		$api = new BotApi($token);
 
 		$this->logger->debug("sending telegram message to $identifier");
 		try {
@@ -82,7 +82,7 @@ class Bot extends AProvider {
 		$settings = $this->getSettings();
 		$tokenQuestion = new Question($settings->fields[0]->prompt . ' ');
 		$token = $helper->ask($input, $output, $tokenQuestion);
-		$this->setBotToken($token);
+		$this->setToken($token);
 		$output->writeln("Using $token.");
 		return 0;
 	}
