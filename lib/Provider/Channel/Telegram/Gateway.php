@@ -81,10 +81,12 @@ class Gateway extends AGateway {
 
 	#[\Override]
 	public function remove(?Settings $settings = null): void {
-		if (!is_object($settings)) {
-			$settings = $this->getSettings();
+		foreach ($this->telegramProviderFactory->getFqcnList() as $fqcn) {
+			$provider = $this->telegramProviderFactory->get($fqcn);
+			$provider->setAppConfig($this->appConfig);
+			$settings = $provider->getSettings();
+			parent::remove($settings);
 		}
-		parent::remove($settings);
 	}
 
 	public function getProvider(string $providerName = ''): AProvider {

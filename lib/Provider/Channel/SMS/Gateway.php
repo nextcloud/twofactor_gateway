@@ -41,7 +41,7 @@ class Gateway extends AGateway {
 		$providers = [];
 		foreach ($namespaces as $ns) {
 			$provider = $this->smsProviderFactory->get($ns);
-			$providers[] = $this->smsProviderFactory->get($ns);
+			$providers[] = $provider;
 			$names[] = $provider->getSettings()->name;
 		}
 
@@ -99,10 +99,12 @@ class Gateway extends AGateway {
 
 	#[\Override]
 	public function remove(?Settings $settings = null): void {
-		if (!is_object($settings)) {
-			$settings = $this->getSettings();
+		foreach ($this->smsProviderFactory->getFqcnList() as $fqcn) {
+			$provider = $this->smsProviderFactory->get($fqcn);
+			$provider->setAppConfig($this->appConfig);
+			$settings = $provider->getSettings();
+			parent::remove($settings);
 		}
-		parent::remove($settings);
 	}
 
 	public function getProvider(string $providerName = ''): IProvider {

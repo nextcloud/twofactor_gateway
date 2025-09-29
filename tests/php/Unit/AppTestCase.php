@@ -14,39 +14,38 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 
 class AppTestCase extends TestCase {
+	public static array $store = [];
 
-	public function replaceAppConfig(array &$store): void {
-		$stub = $this->makeInMemoryAppConfig($store);
-		\OC::$server->registerService(IAppConfig::class, function () use ($stub) {
-			return $stub;
-		});
-	}
-
-	public function makeInMemoryAppConfig(array &$store): IAppConfig|Stub {
+	public function makeInMemoryAppConfig(): IAppConfig|Stub {
+		self::$store = [];
 		$appConfig = $this->createStub(IAppConfig::class);
 
 		$appConfig->method('getValueString')
-			->willReturnCallback(function (string $appId, string $key, string $default) use (&$store) {
-				if (!array_key_exists($appId, $store)) {
-					$store[$appId] = [];
+			->willReturnCallback(function (string $appId, string $key, string $default) {
+				if (!array_key_exists($appId, self::$store)) {
+					self::$store[$appId] = [];
 				}
-				if (array_key_exists($key, $store[$appId])) {
-					return (string)$store[$appId][$key];
+				if (array_key_exists($key, self::$store[$appId])) {
+					return (string)self::$store[$appId][$key];
 				}
 				return $default;
 			});
 
 		$appConfig->method('setValueString')
-			->willReturnCallback(function (string $appId, string $key, string $value) use (&$store) {
-				$store[$appId][$key] = $value;
+			->willReturnCallback(function (string $appId, string $key, string $value) {
+				self::$store[$appId][$key] = $value;
 				return true;
 			});
 
 		$appConfig->method('deleteKey')
-			->willReturnCallback(function (string $appId, string $key) use (&$store) {
-				unset($store[$appId][$key]);
+			->willReturnCallback(function (string $appId, string $key) {
+				unset(self::$store[$appId][$key]);
 				return true;
 			});
+
+		\OC::$server->registerService(IAppConfig::class, function () use ($appConfig) {
+			return $appConfig;
+		});
 
 		return $appConfig;
 	}

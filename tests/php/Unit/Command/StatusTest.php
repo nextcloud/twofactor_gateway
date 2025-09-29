@@ -17,8 +17,8 @@ use Symfony\Component\Console\Input\ArrayInput;
 class StatusTest extends AppTestCase {
 
 	public function testExecute(): void {
-		$store = [];
-		$this->replaceAppConfig($store);
+		$store = new \StdClass();
+		$this->makeInMemoryAppConfig($store);
 
 		/** @var Application */
 		$application = Server::get(Application::class);
@@ -31,8 +31,8 @@ class StatusTest extends AppTestCase {
 
 		$this->assertSame(0, $exitCode);
 		$this->assertStringContainsString('not configured', $output->fetch());
-		if (isset($store['twofactor_gateway'])) {
-			foreach ($store['twofactor_gateway'] as $key => $value) {
+		if (isset($store->twofactor_gateway)) {
+			foreach ($store->twofactor_gateway as $key => $value) {
 				$this->assertStringEndsWith('_provider_name', $key);
 				$this->assertEmpty($value);
 			}

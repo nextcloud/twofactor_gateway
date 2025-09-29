@@ -64,6 +64,8 @@ abstract class AGateway implements IGateway {
 	public function remove(?Settings $settings = null): void {
 		if (!is_object($settings)) {
 			$settings = $this->getSettings();
+		} else {
+			$this->settings = $settings;
 		}
 		foreach ($settings->fields as $field) {
 			$method = 'delete' . $this->toCamel($field->field);
@@ -76,7 +78,7 @@ abstract class AGateway implements IGateway {
 	}
 
 	#[\Override]
-	public static function getProviderId(): string {
+	public function getProviderId(): string {
 		$id = self::deriveIdFromFqcn(static::class);
 		if ($id === null) {
 			throw new \LogicException('Cannot derive gateway id from FQCN: ' . static::class);
