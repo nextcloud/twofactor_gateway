@@ -47,14 +47,13 @@ use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 
 final class SmsDoubleTest extends AppTestCase {
 	public function testSetThenGetAndChaining(): void {
-		$store = [];
 		$cfg = new SmsDouble();
-		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
+		$cfg->setAppConfig($this->makeInMemoryAppConfig());
 
 		$this->assertSame($cfg, $cfg->setUser('alice')->setPassword('secret'));
 
-		$this->assertSame('alice', $store['twofactor_gateway']['sms_double_user'] ?? null);
-		$this->assertSame('secret', $store['twofactor_gateway']['sms_double_password'] ?? null);
+		$this->assertSame('alice', self::$store['twofactor_gateway']['sms_double_user'] ?? null);
+		$this->assertSame('secret', self::$store['twofactor_gateway']['sms_double_password'] ?? null);
 
 		$this->assertSame('alice', $cfg->getUser());
 		$this->assertSame('secret', $cfg->getPassword());
@@ -62,9 +61,8 @@ final class SmsDoubleTest extends AppTestCase {
 
 	public function testDeleteKey(): void {
 		$this->expectException(ConfigurationException::class);
-		$store = [];
 		$cfg = new SmsDouble();
-		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
+		$cfg->setAppConfig($this->makeInMemoryAppConfig());
 		$this->assertSame($cfg, $cfg->setUser('alice'));
 		$this->assertSame('alice', $cfg->getUser());
 		$this->assertSame($cfg, $cfg->deleteUser());
@@ -72,39 +70,35 @@ final class SmsDoubleTest extends AppTestCase {
 	}
 
 	public function testCamelCaseAliasConversion(): void {
-		$store = [];
 		$cfg = new SmsDouble();
-		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
+		$cfg->setAppConfig($this->makeInMemoryAppConfig());
 
 		$cfg->setApiKey('K-123');
-		$this->assertSame('K-123', $store['twofactor_gateway']['sms_double_api_key'] ?? null);
+		$this->assertSame('K-123', self::$store['twofactor_gateway']['sms_double_api_key'] ?? null);
 		$this->assertSame('K-123', $cfg->getApiKey());
 	}
 
 	public function testGetMissingThrowsConfigurationException(): void {
 		$this->expectException(ConfigurationException::class);
 
-		$store = [];
 		$cfg = new SmsDouble();
-		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
+		$cfg->setAppConfig($this->makeInMemoryAppConfig());
 		$cfg->getPassword();
 	}
 
 	public function testUnknownAliasThrowsConfigurationException(): void {
 		$this->expectException(ConfigurationException::class);
 
-		$store = [];
 		$cfg = new SmsDouble();
-		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
+		$cfg->setAppConfig($this->makeInMemoryAppConfig());
 		$cfg->setToken('x');
 	}
 
 	public function testInvalidMethodPatternThrowsConfigurationException(): void {
 		$this->expectException(ConfigurationException::class);
 
-		$store = [];
 		$cfg = new SmsDouble();
-		$cfg->setAppConfig($this->makeInMemoryAppConfig($store));
+		$cfg->setAppConfig($this->makeInMemoryAppConfig());
 		$cfg->token('x');
 	}
 }

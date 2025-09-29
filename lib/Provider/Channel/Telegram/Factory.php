@@ -15,6 +15,7 @@ use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 
 /** @extends AFactory<AProvider> */
 class Factory extends AFactory {
+	private array $instancesByFqcn = [];
 	#[\Override]
 	protected function getPrefix(): string {
 		return 'OCA\\TwoFactorGateway\\Provider\\Channel\\Telegram\\Provider\\Drivers\\';
@@ -32,14 +33,19 @@ class Factory extends AFactory {
 
 	#[\Override]
 	public function get(string $name): object {
+		if (isset($this->instancesByFqcn[$name])) {
+			return $this->instancesByFqcn[$name];
+		}
 		if (isset($this->instances[$name])) {
 			return $this->instances[$name];
 		}
 		foreach ($this->getFqcnList() as $fqcn) {
 			$instance = \OCP\Server::get($fqcn);
-			if ($instance->getSettings()->id === $name) {
+			$settings = $instance->getSettings();
+			if ($fqcn === $name || $settings->id === $name) {
 				$instance->setAppConfig(\OCP\Server::get(\OCP\IAppConfig::class));
 				$this->instances[$name] = $instance;
+				$this->instancesByFqcn[$fqcn] = $instance;
 				return $instance;
 			}
 		}

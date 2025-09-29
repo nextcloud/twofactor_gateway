@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Command;
 
-use Exception;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory;
 use Symfony\Component\Console\Command\Command;
@@ -20,7 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class Remove extends Command {
-	private array $ids = [];
+	/** @var AGateway[] */
+	private array $gateways = [];
 
 	public function __construct(
 		private Factory $gatewayFactory,
@@ -29,31 +29,25 @@ class Remove extends Command {
 
 		$fqcn = $this->gatewayFactory->getFqcnList();
 		foreach ($fqcn as $fqcn) {
-			$this->ids[] = $fqcn::getProviderId();
+			$gateway = $this->gatewayFactory->get($fqcn);
+			$this->gateways[$gateway->getSettings()->id] = $gateway;
 		}
 
 		$this->addArgument(
 			'gateway',
 			InputArgument::OPTIONAL,
-			'The name of the gateway: ' . implode(', ', $this->ids)
+			'The name of the gateway: ' . implode(', ', array_keys($this->gateways))
 		);
 	}
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$gatewayName = strtolower((string)$input->getArgument('gateway'));
-		if (!in_array($gatewayName, $this->ids, true)) {
+		if (!array_key_exists($gatewayName, $this->gateways)) {
 			$helper = new QuestionHelper();
-			$choiceQuestion = new ChoiceQuestion('Please choose a provider:', $this->ids);
-			$gatewayName = $helper->ask($input, $output, $choiceQuestion);
-		}
-
-		try {
-			/** @var AGateway */
-			$gateway = $this->gatewayFactory->get($gatewayName);
-		} catch (Exception $e) {
-			$output->writeln('<error>' . $e->getMessage() . '</error>');
-			return 1;
+			$choiceQuestion = new ChoiceQuestion('Please choose a provider:', array_keys($this->gateways));
+			$selected = $helper->ask($input, $output, $choiceQuestion);
+			$gateway = $this->gateways[$selected];
 		}
 
 		$gateway->remove();
