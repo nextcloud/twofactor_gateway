@@ -50,6 +50,10 @@ class Test extends Command {
 
 		try {
 			$gateway = $this->gatewayFactory->get($gatewayName);
+			if (!$gateway->isComplete()) {
+				$output->writeln("<error>Gateway $gatewayName is not configured</error>");
+				return 1;
+			}
 		} catch (InvalidProviderException $e) {
 			$output->writeln("<error>{$e->getMessage()}</error>");
 			return 1;
