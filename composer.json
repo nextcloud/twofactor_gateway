@@ -31,12 +31,12 @@
 		],
 		"post-install-cmd": [
 			"@composer bin all install --ansi",
-			"php -d error_reporting=E_ALL\\&~E_DEPRECATED\\&~E_USER_DEPRECATED vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper add-prefix --force",
+			"php -d error_reporting=E_ALL\\&~E_DEPRECATED\\&~E_USER_DEPRECATED vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper add-prefix --force && > lib/Vendor/.gitkeep",
 			"composer dump-autoload"
 		],
 		"post-update-cmd": [
 			"@composer bin all update --ansi",
-			"php -d error_reporting=E_ALL\\&~E_DEPRECATED\\&~E_USER_DEPRECATED vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper add-prefix --force",
+			"php -d error_reporting=E_ALL\\&~E_DEPRECATED\\&~E_USER_DEPRECATED vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper add-prefix --force && > lib/Vendor/.gitkeep",
 			"composer dump-autoload"
 		],
 		"test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit -c tests/php/phpunit.xml",
