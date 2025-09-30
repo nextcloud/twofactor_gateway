@@ -24,8 +24,8 @@ class Status extends Command {
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$fqcn = $this->gatewayFactory->getFqcnList();
-		foreach ($fqcn as $fqcn) {
+		$fqcnList = $this->gatewayFactory->getFqcnList();
+		foreach ($fqcnList as $fqcn) {
 			/** @var AGateway */
 			$gateway = $this->gatewayFactory->get($fqcn);
 			$isConfigured = $gateway->isComplete();
