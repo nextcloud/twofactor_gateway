@@ -31,7 +31,7 @@ class Configure extends Command {
 		$fqcnList = $this->gatewayFactory->getFqcnList();
 		foreach ($fqcnList as $fqcn) {
 			$gateway = $this->gatewayFactory->get($fqcn);
-			$this->gateways[$gateway->getSettings()->id] = $gateway;
+			$this->gateways[$gateway->getProviderId()] = $gateway;
 		}
 
 		$this->addArgument(
