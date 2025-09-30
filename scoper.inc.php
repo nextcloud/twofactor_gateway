@@ -18,9 +18,13 @@ return [
 	'finders' => [
 		Finder::create()->files()
 			->exclude([
-				'vendor-bin'
+				'bamarni',
+				'bin',
+				'composer',
+				'nextcloud',
+				'vendor-bin',
 			])
-			->in('vendor/bacon')
-			->in('vendor/telegram-bot'),
+			->notName('autoload.php')
+			->in('vendor'),
 	],
 ];
