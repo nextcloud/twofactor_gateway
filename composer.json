@@ -26,10 +26,7 @@
 		"openapi": "generate-spec --verbose && (npm run typescript:generate || echo 'Please manually regenerate the typescript OpenAPI models')",
 		"psalm:update-baseline": "psalm --threads=$(nproc) --update-baseline --set-baseline=tests/psalm-baseline.xml",
 		"psalm": "psalm --no-cache --threads=$(nproc)",
-		"pre-install-cmd": [
-			"mkdir -p lib/Vendor"
-		],
-		"pre-update-cmd": [
+		"pre-autoload-dump": [
 			"mkdir -p lib/Vendor"
 		],
 		"post-install-cmd": [
