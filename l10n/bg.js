@@ -17,6 +17,7 @@ OC.L10N.register(
     "Confirm" : "Потвърдете",
     "Disable" : "Изключване",
     "Authentication code" : "Удостоверителен код",
+    "Submit" : "Изпращане",
     "An access code has been sent to %s" : "Код за достъп беше изпратен на %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Грешка при изпращане на съобщение. Моля, опитайте по-късно или се свържете с администратор.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Вашият мобилен номер е променен, като след това не бил верифициран. Пробвайте с друг механизъм за двустепенно удостоверяване или се свържете с администратора."
