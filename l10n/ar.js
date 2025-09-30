@@ -21,6 +21,7 @@ OC.L10N.register(
     "Your account was successfully configured to receive messages via {displayName}." : "تمّ بنجاحٍ إعداد حسابك لاستقبال الرسائل عبر {displayName}.",
     "Disable" : "تعطيل",
     "Authentication code" : "رمز المصادقة",
+    "Submit" : "إرسال ",
     "An access code has been sent to %s" : "تم إرسال رمزٍ للنفاذ إلى %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "حدث خطأ أثناء إرسال الرسالة. الرجاء إعادة المحاولة لاحقا أو الاتصال بمسؤول النظام.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "رقم هاتفك تغير و لم يتم التحقّق منه. إستخدم آليّةً أخرى للتحقق ثنائي العوامل أو تواصل مع المدير."
