@@ -26,6 +26,12 @@
 		"openapi": "generate-spec --verbose && (npm run typescript:generate || echo 'Please manually regenerate the typescript OpenAPI models')",
 		"psalm:update-baseline": "psalm --threads=$(nproc) --update-baseline --set-baseline=tests/psalm-baseline.xml",
 		"psalm": "psalm --no-cache --threads=$(nproc)",
+		"pre-install-cmd": [
+			"mkdir -p lib/Vendor"
+		],
+		"pre-update-cmd": [
+			"mkdir -p lib/Vendor"
+		],
 		"post-install-cmd": [
 			"@composer bin all install --ansi",
 			"php -d error_reporting=E_ALL\\&~E_DEPRECATED\\&~E_USER_DEPRECATED vendor-bin/php-scoper/vendor/humbug/php-scoper/bin/php-scoper add-prefix --force",
@@ -48,9 +54,10 @@
 	"autoload": {
 		"psr-4": {
 			"OCA\\TwoFactorGateway\\": "lib/",
-			"OCA\\TwoFactorGateway\\Tests\\Unit\\": "tests/php/Unit/",
-			"OCA\\TwoFactorGateway\\Vendor\\BaconQrCode\\": "lib/Vendor/bacon/bacon-qr-code/src/",
-			"OCA\\TwoFactorGateway\\Vendor\\TelegramBot\\Api\\": "lib/Vendor/telegram-bot/api/src/"
-		}
+			"OCA\\TwoFactorGateway\\Tests\\Unit\\": "tests/php/Unit/"
+		},
+		"classmap": [
+			"lib/Vendor/"
+		]
 	}
 }
