@@ -32,6 +32,8 @@ interface IGateway {
 
 	public function getSettings(): Settings;
 
+	public function getConfiguration(): array;
+
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int;
 
 	public function remove(?Settings $settings = null): void;
