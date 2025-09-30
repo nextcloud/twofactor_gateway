@@ -4,7 +4,14 @@
 version: 2
 updates:
   - package-ecosystem: "composer"
-    directory: "/"
+    directories:
+      - "/"
+      - "/vendor-bin/csfixer"
+      - "/vendor-bin/openapi-extractor"
+      - "/vendor-bin/php-scoper"
+      - "/vendor-bin/psalm"
+      - "/vendor-bin/telegram-client"
+      - "/vendor-bin/unit"
     schedule:
       interval: "daily"
 
