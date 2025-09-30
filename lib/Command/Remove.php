@@ -27,8 +27,8 @@ class Remove extends Command {
 	) {
 		parent::__construct('twofactorauth:gateway:remove');
 
-		$fqcn = $this->gatewayFactory->getFqcnList();
-		foreach ($fqcn as $fqcn) {
+		$fqcnList = $this->gatewayFactory->getFqcnList();
+		foreach ($fqcnList as $fqcn) {
 			$gateway = $this->gatewayFactory->get($fqcn);
 			$this->gateways[$gateway->getSettings()->id] = $gateway;
 		}
