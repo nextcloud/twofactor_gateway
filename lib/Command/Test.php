@@ -28,7 +28,7 @@ class Test extends Command {
 		$gateways = [];
 		foreach ($fqcnList as $fqcn) {
 			$gateway = $this->gatewayFactory->get($fqcn);
-			$gateways[$gateway->getSettings()->id] = $gateway;
+			$gateways[$gateway->getProviderId()] = $gateway;
 		}
 
 		$this->addArgument(
