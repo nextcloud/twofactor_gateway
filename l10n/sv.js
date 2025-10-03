@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "`%s` is your Nextcloud authentication code" : "`%s` är din Nextcloud autentiseringskod",
     "%s is your Nextcloud authentication code" : "%s är din autentiseringskod",
     "Message gateway verification" : "Meddelandegateway-verifiering",
     "Authenticate via SMS" : "Autentisera via SMS",
@@ -13,6 +14,7 @@ OC.L10N.register(
     "Authenticate via WhatsApp" : "Autentisera via WhatsApp",
     "XMPP verification" : "XMPP-verifiering",
     "Authenticate via XMPP" : "Autentisera via XMPP",
+    "`%s` is your verification code." : "`%s` är din verifieringskod.",
     "%s is your verification code." : "%s är din verifieringskod.",
     "no verification code set" : "ingen verifieringskod är satt",
     "verification token mismatch" : "verifieringstoken stämmer inte överens",
