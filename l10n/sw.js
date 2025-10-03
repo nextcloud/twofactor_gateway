@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "`%s` is your Nextcloud authentication code" : "`%s` ni msimbo wako wa uthibitishaji wa Nextcloud",
     "%s is your Nextcloud authentication code" : "%s ni msimbo wako wa uthibitishaji wa Nextcloud",
     "Message gateway verification" : "Uthibitishaji wa lango la ujumbe",
     "Authenticate via SMS" : "Thibitisha kupitia SMS",
@@ -13,6 +14,7 @@ OC.L10N.register(
     "Authenticate via WhatsApp" : "Thibitisha kupitia WhatsApp",
     "XMPP verification" : "Uthibitishaji wa XMPP",
     "Authenticate via XMPP" : "Thibitisha kupitia XMPP",
+    "`%s` is your verification code." : "`%s` ndio msimbo wako wa kuthibitisha.",
     "%s is your verification code." : "%s ni nambari yako ya kuthibitisha.",
     "no verification code set" : "hakuna msimbo wa uthibitishaji uliowekwa",
     "verification token mismatch" : "ishara ya uthibitishaji kutolingana",
