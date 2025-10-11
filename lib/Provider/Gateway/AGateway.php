@@ -41,10 +41,27 @@ abstract class AGateway implements IGateway {
 		$providerId = $settings->id ?? $this->getProviderId();
 		$fields = [];
 		foreach ($settings->fields as $field) {
-			$fields[] = $providerId . '_' . $field->field;
+			$fields[] = self::keyFromFieldName($providerId, $field->field);
 		}
 		$intersect = array_intersect($fields, $savedKeys);
 		return count($intersect) === count($fields);
+	}
+
+	#[\Override]
+	public function getConfiguration(?Settings $settings = null): array {
+		if (!is_object($settings)) {
+			$settings = $this->getSettings();
+		}
+		$providerId = $settings->id ?? $this->getProviderId();
+		$config = [];
+		foreach ($settings->fields as $field) {
+			$config[$field->field] = $this->appConfig->getValueString(
+				Application::APP_ID,
+				self::keyFromFieldName($providerId, $field->field),
+				$field->default,
+			);
+		}
+		return $config;
 	}
 
 	#[\Override]

@@ -45,6 +45,13 @@ trait TConfigurable {
 	}
 
 	/**
+	 * @return string
+	 */
+	private static function keyFromFieldName(string $id, string $fieldName):string {
+		return $id . '_' . $fieldName;
+	}
+
+	/**
 	 * @throws ConfigurationException
 	 */
 	private function keyFromField(string $fieldName): string {
@@ -52,7 +59,7 @@ trait TConfigurable {
 		$fields = $settings->fields;
 		foreach ($fields as $field) {
 			if ($field->field === $fieldName) {
-				return $settings->id . '_' . $fieldName;
+				return static::keyFromFieldName($settings->id, $fieldName);
 			}
 		}
 		throw new ConfigurationException('Invalid configuration field: ' . $fieldName . ', check SCHEMA at ' . static::class);
