@@ -19,8 +19,8 @@ jobs:
   matrix:
     runs-on: ubuntu-latest
     outputs:
-      php-version: ${{ steps.versions.outputs.php-min }}
-      server-version: ${{ steps.versions.outputs.server-min }}
+      php-version: ${{ steps.versions.outputs.php-min-list }}
+      server-max: ${{ steps.versions.outputs.branches-max-list }}
     steps:
       - name: Checkout app
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -64,6 +64,11 @@ jobs:
     needs: [changes, matrix]
     if: needs.changes.outputs.src != 'false'
 
+    strategy:
+      matrix:
+        php-versions: ${{ fromJson(needs.matrix.outputs.php-version) }}
+        server-versions: ${{ fromJson(needs.matrix.outputs.server-max) }}
+
     name: Coverage SQLite PHP ${{ matrix.php-version }} Nextcloud ${{ matrix.server-version }}
 
     steps:
@@ -87,10 +92,10 @@ jobs:
           persist-credentials: false
           path: apps/${{ env.APP_NAME }}
 
-      - name: Set up php ${{ matrix.php-version }}
+      - name: Set up php ${{ matrix.php-versions }}
         uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # v2.35.5
         with:
-          php-version: ${{ matrix.php-version }}
+          php-version: ${{ matrix.php-versions }}
           # https://docs.nextcloud.com/server/stable/admin_manual/installation/source_installation.html#prerequisites-for-manual-installation
           extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite
           coverage: xdebug
