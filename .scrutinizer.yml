@@ -5,7 +5,7 @@ build:
   image: default-jammy # New NodeJS versions require newer versions of glibc (noble was not available on 12/09/2025)
   environment:
     php:
-      version: 8.1
+      version: 8.2
     node:
       version: 20
 
