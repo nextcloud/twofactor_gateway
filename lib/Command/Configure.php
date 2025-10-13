@@ -49,6 +49,8 @@ class Configure extends Command {
 			$choiceQuestion = new ChoiceQuestion('Please choose a provider:', array_keys($this->gateways));
 			$selectedIndex = $helper->ask($input, $output, $choiceQuestion);
 			$gateway = $this->gateways[$selectedIndex];
+		} else {
+			$gateway = $this->gateways[$gatewayName];
 		}
 
 		try {
