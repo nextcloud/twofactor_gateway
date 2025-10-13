@@ -48,6 +48,8 @@ class Remove extends Command {
 			$choiceQuestion = new ChoiceQuestion('Please choose a provider:', array_keys($this->gateways));
 			$selected = $helper->ask($input, $output, $choiceQuestion);
 			$gateway = $this->gateways[$selected];
+		} else {
+			$gateway = $this->gateways[$gatewayName];
 		}
 
 		$gateway->remove();
