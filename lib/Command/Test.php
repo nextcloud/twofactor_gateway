@@ -44,7 +44,7 @@ class Test extends Command {
 	}
 
 	#[\Override]
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$gatewayName = $input->getArgument('gateway');
 		$identifier = $input->getArgument('identifier');
 
