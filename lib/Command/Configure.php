@@ -42,7 +42,7 @@ class Configure extends Command {
 	}
 
 	#[\Override]
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$gatewayName = strtolower((string)$input->getArgument('gateway'));
 		if (!array_key_exists($gatewayName, $this->gateways)) {
 			$helper = new QuestionHelper();
