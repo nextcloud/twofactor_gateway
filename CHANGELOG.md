@@ -15,6 +15,10 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 1.0.0 - 2025-10-13
+### Changed
+- Was made a very big refactor
+
 ## 0.20.0 - 2020-08-26
 (no code changes, just version bump)
 ### Added
