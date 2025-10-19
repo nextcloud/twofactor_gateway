@@ -31,6 +31,7 @@ class Status extends Command {
 			$isConfigured = $gateway->isComplete();
 			$settings = $gateway->getSettings();
 			$output->writeln($settings->name . ': ' . ($isConfigured ? 'configured' : 'not configured'));
+			$output->write(print_r($gateway->getConfiguration(), true), true, OutputInterface::VERBOSITY_VERBOSE);
 		}
 		return 0;
 	}
