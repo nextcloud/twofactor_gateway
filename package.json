@@ -30,7 +30,7 @@
     "vue": "^3.5.22"
   },
   "devDependencies": {
-    "@nextcloud/browserslist-config": "^3.1.0",
+    "@nextcloud/browserslist-config": "^3.1.1",
     "@nextcloud/eslint-config": "^8.4.2",
     "@nextcloud/stylelint-config": "^3.1.1",
     "@nextcloud/vite-config": "^2.5.2",
