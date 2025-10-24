@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "`%s` is your Nextcloud authentication code" : "`%s` 是您的 Nextcloud 驗證碼",
     "%s is your Nextcloud authentication code" : "%s 是你的 Nextcloud 驗證碼",
     "Message gateway verification" : "訊息閘道驗證",
     "Authenticate via SMS" : "透過短訊驗證",
@@ -13,6 +14,7 @@ OC.L10N.register(
     "Authenticate via WhatsApp" : "透過 WhatsApp 驗證",
     "XMPP verification" : "XMPP 驗證",
     "Authenticate via XMPP" : "透過 XMPP 驗證",
+    "`%s` is your verification code." : "`%s` 是您的驗證碼。",
     "%s is your verification code." : "%s 是您的驗證碼。",
     "no verification code set" : "沒有設置驗證碼",
     "verification token mismatch" : "驗證權杖不匹配",
