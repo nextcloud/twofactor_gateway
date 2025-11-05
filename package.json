@@ -39,7 +39,7 @@
     "vite-plugin-stylelint": "^6.0.2"
   },
   "engines": {
-    "node": "^22.0.0",
-    "npm": "^10.5.0"
+    "node": "^24.0.0",
+    "npm": "^11.3.0"
   }
 }
