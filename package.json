@@ -23,7 +23,7 @@
     "@nextcloud/axios": "^2.5.2",
     "@nextcloud/initial-state": "^3.0.0",
     "@nextcloud/l10n": "^3.4.1",
-    "@nextcloud/router": "^3.0.1",
+    "@nextcloud/router": "^3.1.0",
     "@nextcloud/vue": "^9.2.0",
     "dompurify": "^3.3.0",
     "markdown-it": "^14.1.0",
