@@ -1883,16 +1883,16 @@
         },
         {
             "name": "bacon/bacon-qr-code",
-            "version": "v3.0.1",
+            "version": "v3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Bacon/BaconQrCode.git",
-                "reference": "f9cc1f52b5a463062251d666761178dbdb6b544f"
+                "reference": "fe259c55425b8178f77fb6d1f84ba2473e21ed55"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/f9cc1f52b5a463062251d666761178dbdb6b544f",
-                "reference": "f9cc1f52b5a463062251d666761178dbdb6b544f",
+                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/fe259c55425b8178f77fb6d1f84ba2473e21ed55",
+                "reference": "fe259c55425b8178f77fb6d1f84ba2473e21ed55",
                 "shasum": ""
             },
             "require": {
@@ -1902,8 +1902,9 @@
             },
             "require-dev": {
                 "phly/keep-a-changelog": "^2.12",
-                "phpunit/phpunit": "^10.5.11 || 11.0.4",
+                "phpunit/phpunit": "^10.5.11 || ^11.0.4",
                 "spatie/phpunit-snapshot-assertions": "^5.1.5",
+                "spatie/pixelmatch-php": "^1.2.0",
                 "squizlabs/php_codesniffer": "^3.9"
             },
             "suggest": {
@@ -1931,9 +1932,9 @@
             "homepage": "https://github.com/Bacon/BaconQrCode",
             "support": {
                 "issues": "https://github.com/Bacon/BaconQrCode/issues",
-                "source": "https://github.com/Bacon/BaconQrCode/tree/v3.0.1"
+                "source": "https://github.com/Bacon/BaconQrCode/tree/v3.0.2"
             },
-            "time": "2024-10-01T13:55:55+00:00"
+            "time": "2025-11-16T22:59:48+00:00"
         },
         {
             "name": "danog/async-orm",
@@ -2333,25 +2334,25 @@
         },
         {
             "name": "danog/madelineproto",
-            "version": "8.6.0",
+            "version": "8.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/MadelineProto.git",
-                "reference": "abc3a54bf46babbaa9d55b1ae023c14947db1cdd"
+                "reference": "192526f50caf49bb9c77f6b0153d2985dacfc069"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/abc3a54bf46babbaa9d55b1ae023c14947db1cdd",
-                "reference": "abc3a54bf46babbaa9d55b1ae023c14947db1cdd",
+                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/192526f50caf49bb9c77f6b0153d2985dacfc069",
+                "reference": "192526f50caf49bb9c77f6b0153d2985dacfc069",
                 "shasum": ""
             },
             "require": {
-                "amphp/amp": "^3.1.0",
+                "amphp/amp": "^3.1.1",
                 "amphp/byte-stream": "^2.1.2",
                 "amphp/dns": "^2.4.0",
                 "amphp/file": "^3.2.0",
                 "amphp/http": "^2.1.2",
-                "amphp/http-client": "^5.3.3",
+                "amphp/http-client": "^5.3.4",
                 "amphp/http-client-cookies": "^2",
                 "amphp/http-server": "^3.4.3",
                 "amphp/log": "^2",
@@ -2359,7 +2360,7 @@
                 "amphp/postgres": "^2.1.1",
                 "amphp/redis": "^2.0.3",
                 "amphp/socket": "^2.3.1",
-                "amphp/websocket-client": "^2.0.1",
+                "amphp/websocket-client": "^2.0.2",
                 "bacon/bacon-qr-code": "^3.0.1",
                 "danog/async-orm": "^1.1.4",
                 "danog/better-prometheus": "^0.1.1",
@@ -2378,15 +2379,15 @@
                 "ext-xml": "*",
                 "ext-zlib": "*",
                 "league/uri": "^7.5.1",
-                "nikic/php-parser": "^5.5.0",
+                "nikic/php-parser": "^5.6.2",
                 "php-64bit": ">=8.2",
-                "phpseclib/phpseclib": "^3.0.46",
+                "phpseclib/phpseclib": "^3.0.47",
                 "psr/http-factory": "^1.1.0",
                 "psr/log": "^3.0.2",
                 "revolt/event-loop": "^1.0.7",
                 "symfony/polyfill-mbstring": ">=1.32",
                 "symfony/polyfill-php83": "^1.32",
-                "webmozart/assert": "^1.11"
+                "webmozart/assert": "^1.12.1"
             },
             "conflict": {
                 "ext-pthreads": "*",
@@ -2399,9 +2400,9 @@
                 "danog/phpdoc": "^0.1.24",
                 "dg/bypass-finals": "dev-master",
                 "ext-ctype": "*",
-                "phpunit/phpunit": "^9.6.23",
+                "phpunit/phpunit": "^9.6.29",
                 "revolt/event-loop-adapter-react": "^1.1.1",
-                "symfony/yaml": "^6.4.23",
+                "symfony/yaml": "^6.4.26",
                 "vimeo/psalm": "dev-master"
             },
             "suggest": {
@@ -2450,7 +2451,7 @@
             ],
             "support": {
                 "issues": "https://github.com/danog/MadelineProto/issues",
-                "source": "https://github.com/danog/MadelineProto/tree/8.6.0"
+                "source": "https://github.com/danog/MadelineProto/tree/8.6.1"
             },
             "funding": [
                 {
@@ -2458,7 +2459,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-27T11:57:12+00:00"
+            "time": "2025-11-16T18:29:49+00:00"
         },
         {
             "name": "danog/primemodule",
@@ -3197,16 +3198,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.6.1",
+            "version": "v5.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2"
+                "reference": "3a454ca033b9e06b63282ce19562e892747449bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2",
-                "reference": "f103601b29efebd7ff4a1ca7b3eeea9e3336a2a2",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/3a454ca033b9e06b63282ce19562e892747449bb",
+                "reference": "3a454ca033b9e06b63282ce19562e892747449bb",
                 "shasum": ""
             },
             "require": {
@@ -3249,9 +3250,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.6.1"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.6.2"
             },
-            "time": "2025-08-13T20:13:15+00:00"
+            "time": "2025-10-21T19:32:17+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -4592,28 +4593,28 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "1.11.0",
+            "version": "1.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991"
+                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/11cb2199493b2f8a3b53e7f19068fc6aac760991",
-                "reference": "11cb2199493b2f8a3b53e7f19068fc6aac760991",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/9be6926d8b485f55b9229203f962b51ed377ba68",
+                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68",
                 "shasum": ""
             },
             "require": {
                 "ext-ctype": "*",
+                "ext-date": "*",
+                "ext-filter": "*",
                 "php": "^7.2 || ^8.0"
             },
-            "conflict": {
-                "phpstan/phpstan": "<0.12.20",
-                "vimeo/psalm": "<4.6.1 || 4.6.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^8.5.13"
+            "suggest": {
+                "ext-intl": "",
+                "ext-simplexml": "",
+                "ext-spl": ""
             },
             "type": "library",
             "extra": {
@@ -4644,9 +4645,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/1.11.0"
+                "source": "https://github.com/webmozarts/assert/tree/1.12.1"
             },
-            "time": "2022-06-03T18:03:27+00:00"
+            "time": "2025-10-29T15:56:20+00:00"
         }
     ],
     "packages-dev": [],
