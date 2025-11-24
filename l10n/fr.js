@@ -8,6 +8,7 @@ OC.L10N.register(
     "Authenticate via Signal" : "S'authentifier via Signal",
     "Telegram verification" : "Vérification pour Telegram",
     "Authenticate via Telegram" : "S'authentifier via Telegram",
+    "WhatsApp verification" : "Vérification WhatsApp",
     "XMPP verification" : "Vérification XMPP",
     "Authenticate via XMPP" : "S'authentifier par XMPP",
     "Two-Factor Gateway" : "Passerelle à deux facteurs",
