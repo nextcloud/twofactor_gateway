@@ -11,6 +11,8 @@ namespace OCA\TwoFactorGateway\Controller;
 
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Drivers\CloudApiDriver;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
@@ -32,9 +34,9 @@ class WhatsAppCloudApiConfigurationController extends Controller {
 	/**
 	 * Get current WhatsApp Cloud API configuration
 	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
+	 * @return DataResponse
 	 */
+	#[ApiRoute(verb: 'GET', url: '/api/v1/whatsapp/configuration')]
 	public function getConfiguration(): DataResponse {
 		try {
 			// Only admin can access
@@ -59,9 +61,9 @@ class WhatsAppCloudApiConfigurationController extends Controller {
 	/**
 	 * Save WhatsApp Cloud API configuration
 	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
+	 * @return DataResponse
 	 */
+	#[ApiRoute(verb: 'POST', url: '/api/v1/whatsapp/configuration')]
 	public function saveConfiguration(
 		string $phone_number_id = '',
 		string $business_account_id = '',
@@ -99,9 +101,9 @@ class WhatsAppCloudApiConfigurationController extends Controller {
 	/**
 	 * Test WhatsApp Cloud API connection
 	 *
-	 * @NoAdminRequired
-	 * @NoCSRFRequired
+	 * @return DataResponse
 	 */
+	#[ApiRoute(verb: 'POST', url: '/api/v1/whatsapp/test')]
 	public function testConfiguration(
 		string $phone_number_id = '',
 		string $business_account_id = '',
