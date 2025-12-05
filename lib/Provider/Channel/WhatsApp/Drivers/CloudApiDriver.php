@@ -35,7 +35,7 @@ class CloudApiDriver implements IWhatsAppDriver {
 	private const API_BASE_URL = 'https://graph.facebook.com';
 
 	private IClient $client;
-	private ?array $cachedSettings = null;
+	private ?Settings $cachedSettings = null;
 
 	public function __construct(
 		private IAppConfig $appConfig,

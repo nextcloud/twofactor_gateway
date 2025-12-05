@@ -16,8 +16,11 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
+use OCP\IGroupManager;
 use OCP\IRequest;
+use OCP\IUserSession;
 use OCP\Security\ISecureRandom;
+use OCP\Util;
 use Psr\Log\LoggerInterface;
 
 class WhatsAppCloudApiConfigurationController extends Controller {
@@ -27,6 +30,8 @@ class WhatsAppCloudApiConfigurationController extends Controller {
 		private IClientService $clientService,
 		private LoggerInterface $logger,
 		private ISecureRandom $secureRandom,
+		private IUserSession $userSession,
+		private IGroupManager $groupManager,
 	) {
 		parent::__construct('twofactor_gateway', $request);
 	}
@@ -46,6 +51,7 @@ class WhatsAppCloudApiConfigurationController extends Controller {
 
 			$config = [
 				'phone_number_id' => $this->appConfig->getValueString('twofactor_gateway', 'whatsapp_cloud_phone_number_id', ''),
+				'phone_number_fb' => $this->appConfig->getValueString('twofactor_gateway', 'whatsapp_cloud_phone_number_fb', ''),
 				'business_account_id' => $this->appConfig->getValueString('twofactor_gateway', 'whatsapp_cloud_business_account_id', ''),
 				'api_key' => '', // Never send API key to frontend
 				'api_endpoint' => $this->appConfig->getValueString('twofactor_gateway', 'whatsapp_cloud_api_endpoint', ''),
@@ -66,6 +72,7 @@ class WhatsAppCloudApiConfigurationController extends Controller {
 	#[ApiRoute(verb: 'POST', url: '/api/v1/whatsapp/configuration')]
 	public function saveConfiguration(
 		string $phone_number_id = '',
+		string $phone_number_fb = '',
 		string $business_account_id = '',
 		string $api_key = '',
 		string $api_endpoint = '',
@@ -76,18 +83,21 @@ class WhatsAppCloudApiConfigurationController extends Controller {
 				return new DataResponse(['message' => 'Unauthorized'], 403);
 			}
 
-			// Validate required fields
-			if (empty($phone_number_id) || empty($business_account_id) || empty($api_key)) {
-				return new DataResponse([
-					'message' => 'Phone Number ID, Business Account ID, and API Key are required',
-				], 400);
-			}
+		// Validate required fields (api_key is optional - only save if provided)
+		if (empty($phone_number_id) || empty($business_account_id)) {
+			return new DataResponse([
+				'message' => 'Phone Number ID and Business Account ID are required',
+			], 400);
+		}
 
-			// Store configuration
-			$this->appConfig->setValueString('twofactor_gateway', 'whatsapp_cloud_phone_number_id', $phone_number_id);
-			$this->appConfig->setValueString('twofactor_gateway', 'whatsapp_cloud_business_account_id', $business_account_id);
+		// Store configuration
+		$this->appConfig->setValueString('twofactor_gateway', 'whatsapp_cloud_phone_number_id', $phone_number_id);
+		$this->appConfig->setValueString('twofactor_gateway', 'whatsapp_cloud_phone_number_fb', $phone_number_fb);
+		$this->appConfig->setValueString('twofactor_gateway', 'whatsapp_cloud_business_account_id', $business_account_id);
+		if (!empty($api_key)) {
 			$this->appConfig->setValueString('twofactor_gateway', 'whatsapp_cloud_api_key', $api_key);
-			$this->appConfig->setValueString('twofactor_gateway', 'whatsapp_cloud_api_endpoint', $api_endpoint ?: 'https://graph.facebook.com');
+		}
+		$this->appConfig->setValueString('twofactor_gateway', 'whatsapp_cloud_api_endpoint', $api_endpoint ?: 'https://graph.facebook.com');
 
 			$this->logger->info('WhatsApp Cloud API configuration saved');
 
@@ -106,6 +116,7 @@ class WhatsAppCloudApiConfigurationController extends Controller {
 	#[ApiRoute(verb: 'POST', url: '/api/v1/whatsapp/test')]
 	public function testConfiguration(
 		string $phone_number_id = '',
+		string $phone_number_fb = '',
 		string $business_account_id = '',
 		string $api_key = '',
 		string $api_endpoint = '',
@@ -116,18 +127,29 @@ class WhatsAppCloudApiConfigurationController extends Controller {
 				return new DataResponse(['message' => 'Unauthorized'], 403);
 			}
 
-			// Validate required fields
-			if (empty($phone_number_id) || empty($business_account_id) || empty($api_key)) {
-				return new DataResponse([
-					'message' => 'Phone Number ID, Business Account ID, and API Key are required',
-				], 400);
-			}
+		// Validate required fields (api_key is optional - use stored key if not provided)
+		if (empty($phone_number_id) || empty($business_account_id)) {
+			return new DataResponse([
+				'message' => 'Phone Number ID and Business Account ID are required',
+			], 400);
+		}
 
-			$endpoint = $api_endpoint ?: 'https://graph.facebook.com';
-			$client = $this->clientService->newClient();
+		// Use provided api_key or fall back to stored key
+		if (empty($api_key)) {
+			$api_key = $this->appConfig->getValueString('twofactor_gateway', 'whatsapp_cloud_api_key', '');
+		}
 
-			// Test the connection by getting phone number information
-			$url = sprintf('%s/v14.0/%s', rtrim($endpoint, '/'), $phone_number_id);
+		if (empty($api_key)) {
+			return new DataResponse([
+				'message' => 'API Key is required',
+			], 400);
+		}
+
+		$endpoint = $api_endpoint ?: 'https://graph.facebook.com';
+		$client = $this->clientService->newClient();
+
+		// Test the connection by getting phone number information
+		$url = sprintf('%s/v14.0/%s', rtrim($endpoint, '/'), $phone_number_id);
 
 			try {
 				$response = $client->get($url, [
@@ -157,11 +179,47 @@ class WhatsAppCloudApiConfigurationController extends Controller {
 	}
 
 	/**
+	 * Get WhatsApp webhook credentials
+	 *
+	 * @return DataResponse
+	 */
+	#[ApiRoute(verb: 'GET', url: '/api/v1/whatsapp/webhook-credentials')]
+	public function getWebhookCredentials(): DataResponse {
+		try {
+			// Only admin can access
+			if (!$this->isAdmin()) {
+				return new DataResponse(['message' => 'Unauthorized'], 403);
+			}
+
+			// Generate verification token if not exists
+			$token = $this->appConfig->getValueString('twofactor_gateway', 'whatsapp_cloud_verify_token', '');
+			if (empty($token)) {
+				$token = $this->secureRandom->generate(32, 'abcdefghijklmnopqrstuvwxyz0123456789');
+				$this->appConfig->setValueString('twofactor_gateway', 'whatsapp_cloud_verify_token', $token);
+			}
+
+			// Build webhook URL
+			$baseUrl = \OC::$server->getConfig()->getSystemValue('overwrite.cli.url') ?: \OC::$server->getConfig()->getSystemValue('url');
+			$webhookUrl = rtrim($baseUrl, '/') . '/ocs/v2.php/apps/twofactor_gateway/api/v1/webhooks/whatsapp';
+
+			return new DataResponse([
+				'webhook_url' => $webhookUrl,
+				'verify_token' => $token,
+			], 200);
+		} catch (\Exception $e) {
+			$this->logger->error('Error retrieving WhatsApp webhook credentials', ['exception' => $e]);
+			return new DataResponse(['message' => 'Error retrieving webhook credentials'], 500);
+		}
+	}
+
+	/**
 	 * Check if current user is admin
 	 */
 	private function isAdmin(): bool {
-		// This should be implemented based on Nextcloud's admin check
-		// For now, we'll use a simple check - in production, use proper admin verification
-		return $this->request->getHeader('X-Admin-Token') !== '' || $this->userId === 'admin';
+		$user = $this->userSession->getUser();
+		if ($user === null) {
+			return false;
+		}
+		return $this->groupManager->isAdmin($user->getUID());
 	}
 }

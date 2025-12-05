@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp;
 
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Config\DriverFactory;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Drivers\CloudApiDriver;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Drivers\IWhatsAppDriver;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Settings;
@@ -46,20 +47,39 @@ class Gateway extends AGateway {
 
 	#[\Override]
 	public function createSettings(): Settings {
-		// Retorna as configurações do driver ativo
-		return $this->getDriver()->getSettings();
+		// Retorna as configurações do driver ativo ou configurações vazias se não houver driver
+		$driver = $this->factory->create();
+		if ($driver === null) {
+			// Retorna Settings vazio se nenhum driver for configurado
+			return new Settings(
+				name: 'WhatsApp Cloud API',
+				id: 'whatsapp',
+				instructions: 'Send two-factor authentication codes via WhatsApp',
+				fields: [],
+			);
+		}
+		return $driver->getSettings();
 	}
 
 	#[\Override]
 	public function send(string $identifier, string $message, array $extra = []): void {
 		// Delega o envio para o driver
-		$this->getDriver()->send($identifier, $message, $extra);
+		$driver = $this->factory->create();
+		if ($driver === null) {
+			throw new ConfigurationException('WhatsApp is not configured');
+		}
+		$driver->send($identifier, $message, $extra);
 	}
 
 	#[\Override]
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
-		// Delega a configuração para o driver
-		return $this->getDriver()->cliConfigure($input, $output);
+		// Se nenhum driver está configurado, use o CloudApiDriver como padrão
+		$driver = $this->factory->create();
+		if ($driver === null) {
+			// Cria um CloudApiDriver para configuração inicial
+			$driver = new CloudApiDriver($this->appConfig, $this->clientService, $this->logger);
+		}
+		return $driver->cliConfigure($input, $output);
 	}
 
 	/**
@@ -70,7 +90,11 @@ class Gateway extends AGateway {
 	private function getDriver(): IWhatsAppDriver {
 		if ($this->driver === null) {
 			try {
-				$this->driver = $this->factory->create();
+				$created = $this->factory->create();
+				if ($created === null) {
+					throw new ConfigurationException('No WhatsApp driver configuration found');
+				}
+				$this->driver = $created;
 			} catch (ConfigurationException $e) {
 				$this->logger->error('Failed to create WhatsApp driver', ['exception' => $e]);
 				throw $e;

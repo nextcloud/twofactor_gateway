@@ -36,11 +36,17 @@ class DriverFactory {
 
 	/**
 	 * Cria instância do driver apropriado baseado na configuração armazenada
+	 * Retorna null se nenhuma configuração for encontrada
 	 *
 	 * @throws ConfigurationException se nenhum driver conseguir ser detectado/instanciado
 	 */
-	public function create(): IWhatsAppDriver {
+	public function create(): ?IWhatsAppDriver {
 		$storedConfig = $this->getStoredConfig();
+
+		// Se nenhuma configuração foi fornecida, retorna null
+		if (empty($storedConfig['api_key']) && empty($storedConfig['base_url'])) {
+			return null;
+		}
 
 		// Tenta detectar qual driver deve ser usado
 		foreach (self::DRIVERS as $driverClass) {

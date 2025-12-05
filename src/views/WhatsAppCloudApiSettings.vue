@@ -5,7 +5,7 @@
 <template>
 	<div class="whatsapp-cloud-api-settings">
 		<h2>{{ t('twofactor_gateway', 'WhatsApp Cloud API Configuration') }}</h2>
-		
+
 		<NcNoteCard type="info" class="info-note">
 			{{ t('twofactor_gateway', 'Configure the Meta/Facebook WhatsApp Cloud API to enable two-factor authentication via WhatsApp.') }}
 		</NcNoteCard>
@@ -24,8 +24,7 @@
 					id="phone-number-id"
 					v-model="formData.phoneNumberId"
 					:placeholder="t('twofactor_gateway', 'e.g., 1234567890')"
-					@update:model-value="markDirty"
-				/>
+					@update:model-value="markDirty" />
 			</div>
 
 			<!-- ID da Conta WhatsApp Business -->
@@ -41,8 +40,7 @@
 					id="business-account-id"
 					v-model="formData.businessAccountId"
 					:placeholder="t('twofactor_gateway', 'e.g., 1234567890')"
-					@update:model-value="markDirty"
-				/>
+					@update:model-value="markDirty" />
 			</div>
 
 			<!-- Chave da API -->
@@ -60,8 +58,7 @@
 					:placeholder="t('twofactor_gateway', 'Paste your API token here')"
 					type="password"
 					show-password
-					@update:model-value="markDirty"
-				/>
+					@update:model-value="markDirty" />
 			</div>
 
 			<!-- Endpoint da API (Opcional) -->
@@ -77,8 +74,7 @@
 					id="api-endpoint"
 					v-model="formData.apiEndpoint"
 					:placeholder="t('twofactor_gateway', 'https://graph.facebook.com')"
-					@update:model-value="markDirty"
-				/>
+					@update:model-value="markDirty" />
 			</div>
 		</div>
 
@@ -87,8 +83,7 @@
 			<NcButton
 				:disabled="!isDirty || isSaving || !isFormValid"
 				:aria-busy="isSaving"
-				@click="save"
-			>
+				@click="save">
 				<template #icon>
 					<NcLoadingIcon v-if="isSaving" :size="20" />
 					<Check v-else :size="20" />
@@ -100,8 +95,7 @@
 				v-if="isConfigured"
 				type="tertiary"
 				:disabled="isSaving"
-				@click="testConfiguration"
-			>
+				@click="testConfiguration">
 				<template #icon>
 					<NcLoadingIcon v-if="isTesting" :size="20" />
 					<CheckCircle v-else :size="20" />
@@ -113,8 +107,7 @@
 				v-if="isDirty"
 				type="secondary"
 				:disabled="isSaving"
-				@click="reset"
-			>
+				@click="reset">
 				{{ t('twofactor_gateway', 'Cancel') }}
 			</NcButton>
 		</div>
@@ -153,13 +146,16 @@
 import { ref, computed } from 'vue'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+/* eslint-disable-next-line n/no-extraneous-import */
 import { showSuccess, showError } from '@nextcloud/dialogs'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import { t } from '@nextcloud/l10n'
+/* eslint-disable-next-line n/no-extraneous-import */
 import Check from 'vue-material-design-icons/Check.vue'
+/* eslint-disable-next-line n/no-extraneous-import */
 import CheckCircle from 'vue-material-design-icons/CheckCircle.vue'
 
 const formData = ref({
