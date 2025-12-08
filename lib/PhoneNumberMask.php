@@ -9,13 +9,14 @@ namespace OCA\TwoFactorGateway;
 
 class PhoneNumberMask {
 
-	/**
-	 * convert 123456789 to ******789
-	 */
-	public static function maskNumber(string $number): string {
-		$length = strlen($number);
-		$start = $length - 3;
+        /**
+         * convert 123456789 to ******789
+         */
+        public static function maskNumber(string $number): string {
+                $length = strlen($number);
+                $visible = substr($number, -3);
+                $hiddenLength = max(0, $length - strlen($visible));
 
-		return str_repeat('*', $start) . substr($number, $start);
-	}
+                return str_repeat('*', $hiddenLength) . $visible;
+        }
 }
