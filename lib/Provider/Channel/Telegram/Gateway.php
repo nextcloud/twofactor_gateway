@@ -80,6 +80,29 @@ class Gateway extends AGateway {
 	}
 
 	#[\Override]
+	public function getConfiguration(?Settings $settings = null): array {
+		try {
+			$provider = $this->getProvider();
+			$settings = $provider->getSettings();
+			$config = parent::getConfiguration($settings);
+			$config['provider'] = $settings->name;
+			return $config;
+		} catch (ConfigurationException|\Throwable $e) {
+			$providers = [];
+			foreach ($this->telegramProviderFactory->getFqcnList() as $fqcn) {
+				$p = $this->telegramProviderFactory->get($fqcn);
+				$p->setAppConfig($this->appConfig);
+				$providerSettings = $p->getSettings();
+				$providers[$providerSettings->name] = parent::getConfiguration($providerSettings);
+			}
+			return [
+				'provider' => 'none',
+				'available_providers' => $providers,
+			];
+		}
+	}
+
+	#[\Override]
 	public function remove(?Settings $settings = null): void {
 		foreach ($this->telegramProviderFactory->getFqcnList() as $fqcn) {
 			$provider = $this->telegramProviderFactory->get($fqcn);
