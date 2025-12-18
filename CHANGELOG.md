@@ -15,6 +15,16 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 1.1.0 - 2025-12-18
+### Added
+- New gateway support for WhatsApp Web
+
+### Changed
+- Added support for verbose mode at status checks
+
+### Fixed
+- Test messages not being sent
+
 ## 1.0.0 - 2025-10-13
 ### Changed
 - Was made a very big refactor
