@@ -40,6 +40,20 @@ abstract class AFactory {
 		foreach ($this->getFqcnList() as $fqcn) {
 			$type = $this->typeFrom($fqcn);
 			if ($type !== $needle) {
+				if (str_ends_with($fqcn, '\\Gateway')) {
+					$factoryFqcn = str_replace('\\Gateway', '\\Factory', $fqcn);
+					if ($factoryFqcn !== $fqcn && class_exists($factoryFqcn)) {
+						$factory = \OCP\Server::get($factoryFqcn);
+						foreach ($factory->getFqcnList() as $driverFqcn) {
+							$gateway = $factory->get($driverFqcn);
+							$settings = $gateway->getSettings();
+							$this->instances[$settings->id] = $gateway;
+							if ($settings->id === $name) {
+								return $gateway;
+							}
+						}
+					}
+				}
 				continue;
 			}
 			$instance = \OCP\Server::get($fqcn);

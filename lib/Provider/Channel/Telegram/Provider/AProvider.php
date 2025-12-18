@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider;
 
+use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Gateway\TConfigurable;
 use OCA\TwoFactorGateway\Provider\Settings;
@@ -60,6 +61,18 @@ abstract class AProvider implements IProvider {
 
 	#[\Override]
 	abstract public function cliConfigure(InputInterface $input, OutputInterface $output): int;
+
+	public function isComplete(): bool {
+		$settings = $this->getSettings();
+		$savedKeys = $this->appConfig->getKeys(Application::APP_ID);
+		$providerId = $settings->id ?? $this->getProviderId();
+		$fields = [];
+		foreach ($settings->fields as $field) {
+			$fields[] = self::keyFromFieldName($providerId, $field->field);
+		}
+		$intersect = array_intersect($fields, $savedKeys);
+		return count($intersect) === count($fields);
+	}
 
 	private static function getIdFromProviderFqcn(string $fqcn): ?string {
 		$prefix = 'OCA\\TwoFactorGateway\\Provider\\Channel\\Telegram\\Provider\\Drivers\\';
