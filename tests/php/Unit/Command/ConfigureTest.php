@@ -28,13 +28,23 @@ class ConfigureTest extends AppTestCase {
 		$application->loadCommands($input, $output);
 		$application->setAutoExit(false);
 
+		// Find the SMS gateway index
+		$gatewayFactory = Server::get(\OCA\TwoFactorGateway\Provider\Gateway\Factory::class);
+		$gatewayChoices = [];
+		foreach ($gatewayFactory->getFqcnList() as $fqcn) {
+			$gateway = $gatewayFactory->get($fqcn);
+			$gatewayChoices[] = $gateway->getProviderId();
+		}
+		$smsGatewayIndex = array_search('sms', $gatewayChoices);
+		$this->assertNotFalse($smsGatewayIndex, 'SMS gateway not found in available gateways');
+
 		$factory = new SMSFactory();
 		foreach ($factory->getFqcnList() as $index => $fqcn) {
 			$gateway = $factory->get($fqcn);
 
 			$gatewaySettings = $gateway->getSettings();
 			$this->assertNotEmpty($gatewaySettings->fields, "Provider {$gatewaySettings->name} need to define fields.");
-			$inputStream = ['0', (string)$index];
+			$inputStream = [(string)$smsGatewayIndex, (string)$index];
 			$fields = [];
 			foreach ($gatewaySettings->fields as $field) {
 				$inputStream[] = 'some_value';
