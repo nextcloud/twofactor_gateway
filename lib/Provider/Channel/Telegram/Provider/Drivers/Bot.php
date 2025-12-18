@@ -13,10 +13,10 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Settings;
-use OCA\TwoFactorGateway\Vendor\TelegramBot\Api\BotApi;
-use OCA\TwoFactorGateway\Vendor\TelegramBot\Api\Exception as TelegramSDKException;
+use OCP\Http\Client\IClientService;
 use OCP\IL10N;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,9 +27,12 @@ use Symfony\Component\Console\Question\Question;
  * @method static setToken(string $token)
  */
 class Bot extends AProvider {
+	private const TELEGRAM_API_URL = 'https://api.telegram.org/bot';
+
 	public function __construct(
 		private LoggerInterface $logger,
 		private IL10N $l10n,
+		private IClientService $clientService,
 	) {
 	}
 
@@ -63,17 +66,38 @@ class Bot extends AProvider {
 		$token = $this->getToken();
 		$this->logger->debug("telegram bot token: $token");
 
-		$api = new BotApi($token);
+		$url = self::TELEGRAM_API_URL . $token . '/sendMessage';
+		$params = [
+			'chat_id' => $identifier,
+			'text' => $message,
+			'parse_mode' => 'markdown',
+		];
 
 		$this->logger->debug("sending telegram message to $identifier");
 		try {
-			$api->sendMessage($identifier, $message, parseMode: 'markdown');
-		} catch (TelegramSDKException $e) {
-			$this->logger->error($e);
+			$client = $this->clientService->newClient();
+			$response = $client->post($url, [
+				'json' => $params,
+				'timeout' => 10,
+			]);
 
-			throw new MessageTransmissionException($e->getMessage());
+			$body = $response->getBody();
+			$data = json_decode($body, true);
+
+			if (!isset($data['ok']) || $data['ok'] !== true) {
+				$errorDescription = $data['description'] ?? 'Unknown error';
+				$this->logger->error('Telegram API error: ' . $errorDescription);
+				throw new MessageTransmissionException('Telegram API error: ' . $errorDescription);
+			}
+
+			$this->logger->debug("telegram message to chat $identifier sent");
+		} catch (RuntimeException $e) {
+			$this->logger->error('Failed to send Telegram message', [
+				'exception' => $e,
+				'chat_id' => $identifier,
+			]);
+			throw new MessageTransmissionException('Failed to send Telegram message: ' . $e->getMessage(), 0, $e);
 		}
-		$this->logger->debug("telegram message to chat $identifier sent");
 	}
 
 	#[\Override]
