@@ -19,7 +19,7 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure sms
 ```
 
-### SMSGlobal 
+### SMSGlobal
 URL: https://www.smsglobal.com/
 Stability: Experimental
 
@@ -72,6 +72,91 @@ Interactive admin configuration:
 ```bash
 occ twofactorauth:gateway:configure whatsapp
 ```
+
+### GoWhatsApp
+URL: https://github.com/aldinokemal/go-whatsapp-web-multidevice
+Stability: Experimental
+
+This gateway sends messages via WhatsApp Web using the [go-whatsapp-web-multidevice](https://github.com/aldinokemal/go-whatsapp-web-multidevice) API service.
+
+⚠️ Important: run the service only on your **internal network**. Do not expose it to the public Internet.
+
+Follow these steps to activate the GoWhatsApp authentication gateway:
+
+1. Deploy the go-whatsapp-web-multidevice service.
+
+   You can use Docker to run the service:
+   ```bash
+   docker run -d \
+     --name whatsapp-api \
+     -p 3000:3000 \
+     -v whatsapp_data:/app/storages \
+     -e WEBHOOK="" \
+     aldinokemal2104/go-whatsapp-web-multidevice:latest
+   ```
+
+   Or use docker-compose:
+   ```yaml
+   services:
+     whatsapp:
+       image: aldinokemal2104/go-whatsapp-web-multidevice:latest
+       ports:
+         - "3000:3000"
+       volumes:
+         - whatsapp_data:/app/storages
+       environment:
+         - WEBHOOK=
+
+   volumes:
+     whatsapp_data:
+   ```
+
+   For more deployment options and configuration, see the [official documentation](https://github.com/aldinokemal/go-whatsapp-web-multidevice).
+
+2. (Optional) Configure Basic Authentication.
+
+   If you want to secure the API with basic authentication, you can set environment variables:
+   ```bash
+   -e BASICAUTH_USERNAME=your_username \
+   -e BASICAUTH_PASSWORD=your_password
+   ```
+
+3. Configure the Nextcloud Gateway.
+
+   Open a command shell on your Nextcloud server, navigate to the Nextcloud directory and run:
+   ```bash
+   occ twofactorauth:gateway:configure gowhatsapp
+   ```
+
+   You will be prompted for:
+   * **Base URL**: The URL where the API is running (e.g., `http://whatsapp:3000` or `http://localhost:3000`)
+   * **API Username**: If you configured basic auth (leave empty if not)
+   * **API Password**: If you configured basic auth (leave empty if not)
+   * **Phone number**: Your WhatsApp phone number with country code (e.g., `5511999998888`)
+
+4. Connect to WhatsApp.
+
+   After entering the configuration, the system will:
+   * Request a pairing code from WhatsApp
+   * Display the code on screen
+   * Wait for you to enter the code in your WhatsApp app
+
+   To link your device:
+   * Open WhatsApp on your phone
+   * Tap Menu (⋮) or Settings
+   * Tap Linked Devices
+   * Tap Link a Device
+   * Select "Link with phone number instead"
+   * Enter the displayed pairing code
+
+5. Verify the connection.
+
+   Once connected, the system will display:
+   * Verified Name: Your WhatsApp account name
+   * Status: Your WhatsApp status message
+   * Connected Devices: Number of linked devices
+
+   The GoWhatsApp authentication gateway is now ready. Follow the instructions in the [User Documentation] to activate the Gateway for specific users.
 
 ### Telegram
 
@@ -308,14 +393,14 @@ Interactive admin configuration (make sure to provide the full API login includi
 occ twofactorauth:gateway:configure sms
 ```
 
-### XMPP Gateway 
+### XMPP Gateway
 URL: https://xmpp.org/
 Stability: Experimental
 
-In order to use the service, you need to have an XMPP Account.                                      
+In order to use the service, you need to have an XMPP Account.
 At this time, you'll also need an XMPP Service provider who runs a prosody XMPP-Server with either mod_rest or mod_post_msg or run your own prosody server.
-Standard api path for mod_rest: https://xmpp.example.com/rest/message/chat/ 
-Standard api path for mod_post_msg: https://jabber.example.net/msg/ 
+Standard api path for mod_rest: https://xmpp.example.com/rest/message/chat/
+Standard api path for mod_post_msg: https://jabber.example.net/msg/
 See [mod_rest] and/or [mod_post_msg] for details.
 
 Interactive admin configuration:
