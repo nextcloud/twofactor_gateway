@@ -1,12 +1,12 @@
 { "translations": {
     "%s is your Nextcloud authentication code" : "Votre code d'authentification Nextcloud est %s",
+    "WhatsApp verification" : "Vérification WhatsApp",
     "Message gateway verification" : "Message du portail de vérification",
     "Authenticate via SMS" : "S'authentifier par SMS",
     "Signal verification" : "Vérification pour Signal",
     "Authenticate via Signal" : "S'authentifier via Signal",
     "Telegram verification" : "Vérification pour Telegram",
     "Authenticate via Telegram" : "S'authentifier via Telegram",
-    "WhatsApp verification" : "Vérification WhatsApp",
     "XMPP verification" : "Vérification XMPP",
     "Authenticate via XMPP" : "S'authentifier par XMPP",
     "Two-Factor Gateway" : "Passerelle à deux facteurs",
