@@ -3,6 +3,8 @@ OC.L10N.register(
     {
     "`%s` is your Nextcloud authentication code" : "`%s` је ваш Nextcloud кôд за проверу идентитета",
     "%s is your Nextcloud authentication code" : "%s je kod za proveru identiteta",
+    "WhatsApp verification" : "WhatsApp потврђивање",
+    "Authenticate via WhatsApp" : "Провери идентитет преко WhatsApp",
     "Message gateway verification" : "Мрежни пролаз порука за верификацију",
     "Authenticate via SMS" : "Провери идентитет преко SMS-а",
     "Signal verification" : "Сигнал верификација",
@@ -10,8 +12,6 @@ OC.L10N.register(
     "`%s` is your Nextcloud verification code." : "`%s` је ваш Nextcloud кôд за потврђивање.",
     "Telegram verification" : "Телеграм верификација",
     "Authenticate via Telegram" : "Провери идентитет преко Телеграма",
-    "WhatsApp verification" : "WhatsApp потврђивање",
-    "Authenticate via WhatsApp" : "Провери идентитет преко WhatsApp",
     "XMPP verification" : "XMPP потврђивање",
     "Authenticate via XMPP" : "Провери идентитет преко XMPP",
     "`%s` is your verification code." : "`%s` је ваш кôд за потврђивање.",

@@ -3,6 +3,8 @@ OC.L10N.register(
     {
     "`%s` is your Nextcloud authentication code" : "`%s` je váš ověřovací kód pro Nextcloud",
     "%s is your Nextcloud authentication code" : "%s je váš ověřovací kód pro Nextcloud",
+    "WhatsApp verification" : "WhatsApp ověření",
+    "Authenticate via WhatsApp" : "Ověřit přes WhatsApp",
     "Message gateway verification" : "Ověřování brány zpráv",
     "Authenticate via SMS" : "Ověřit prostřednictvím SMS",
     "Signal verification" : "Ověřování prostřednictvím služby Signal",
@@ -10,8 +12,6 @@ OC.L10N.register(
     "`%s` is your Nextcloud verification code." : "`%s` je váš Nextcloud ověřovací kód.",
     "Telegram verification" : "Ověřování prostřednictvím služby Telegram",
     "Authenticate via Telegram" : "Ověřit přes Telegram",
-    "WhatsApp verification" : "WhatsApp ověření",
-    "Authenticate via WhatsApp" : "Ověřit přes WhatsApp",
     "XMPP verification" : "XMPP ověření",
     "Authenticate via XMPP" : "Ověřit prostřednictvím XMPP",
     "`%s` is your verification code." : "`%s` je váš ověřovací kód.",

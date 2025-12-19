@@ -1,6 +1,8 @@
 { "translations": {
     "`%s` is your Nextcloud authentication code" : "Is é `%s` do chód fíordheimhnithe Nextcloud",
     "%s is your Nextcloud authentication code" : "%s is é do chód fíordheimhnithe Nextcloud",
+    "WhatsApp verification" : "Fíorú WhatsApp",
+    "Authenticate via WhatsApp" : "Fíordheimhniú trí WhatsApp",
     "Message gateway verification" : "Fíorú geata teachtaireachta",
     "Authenticate via SMS" : "Fíordheimhniú trí SMS",
     "Signal verification" : "Fíorú comhartha",
@@ -8,8 +10,6 @@
     "`%s` is your Nextcloud verification code." : "Is é `%s` do chód fíoraithe Nextcloud.",
     "Telegram verification" : "Fíorú teileagram",
     "Authenticate via Telegram" : "Fíordheimhnigh trí Telegram",
-    "WhatsApp verification" : "Fíorú WhatsApp",
-    "Authenticate via WhatsApp" : "Fíordheimhniú trí WhatsApp",
     "XMPP verification" : "Fíorú XMPP",
     "Authenticate via XMPP" : "Fíordheimhnigh trí XMPP",
     "`%s` is your verification code." : "Is é `%s` do chód fíoraithe.",

@@ -3,6 +3,8 @@ OC.L10N.register(
     {
     "`%s` is your Nextcloud authentication code" : "`%s` είναι ο κωδικός πιστοποίησης του Nextcloud",
     "%s is your Nextcloud authentication code" : "%s είναι ο κωδικός πιστοποίησης του Nextcloud",
+    "WhatsApp verification" : "Επαλήθευση WhatsApp",
+    "Authenticate via WhatsApp" : "Πιστοποίηση μέσω WhatsApp",
     "Message gateway verification" : "Πύλη επαλήθευσης μηνύματος",
     "Authenticate via SMS" : "Πιστοποίηση μέσω SMS",
     "Signal verification" : "Επαλήθευση Signal",
@@ -10,8 +12,6 @@ OC.L10N.register(
     "`%s` is your Nextcloud verification code." : "`%s` είναι ο κωδικός επαλήθευσης του Nextcloud.",
     "Telegram verification" : "Επαλήθευση Telegram",
     "Authenticate via Telegram" : "Πιστοποίηση μέσω Telegram",
-    "WhatsApp verification" : "Επαλήθευση WhatsApp",
-    "Authenticate via WhatsApp" : "Πιστοποίηση μέσω WhatsApp",
     "XMPP verification" : "Επαλήθευση XMPP",
     "Authenticate via XMPP" : "Πιστοποίηση μέσω XMPP",
     "`%s` is your verification code." : "`%s` είναι ο κωδικός επαλήθευσής σας.",

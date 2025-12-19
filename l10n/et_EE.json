@@ -1,6 +1,8 @@
 { "translations": {
     "`%s` is your Nextcloud authentication code" : "„%s“ on sinu Nextcloudi autentimiskood",
     "%s is your Nextcloud authentication code" : "%son sinu Nextcloudi autentimiskood",
+    "WhatsApp verification" : "Verifitseerimine WhatsApp'iga",
+    "Authenticate via WhatsApp" : "Autendi WhatsApp'i abil",
     "Message gateway verification" : "Verifitseerimine kasutades sõnumilüüsi",
     "Authenticate via SMS" : "Autendi SMS-i abil",
     "Signal verification" : "Verifitseerimine Signaliga",
@@ -8,8 +10,6 @@
     "`%s` is your Nextcloud verification code." : "„%s“ on sinu Nextcloudi verifitseerimiskood.",
     "Telegram verification" : "Verifitseerimine Telegramiga",
     "Authenticate via Telegram" : "Autendi Telegrami abil",
-    "WhatsApp verification" : "Verifitseerimine WhatsApp'iga",
-    "Authenticate via WhatsApp" : "Autendi WhatsApp'i abil",
     "XMPP verification" : "Verifitseerimine XMPP-ga",
     "Authenticate via XMPP" : "Autendi XMPP abil",
     "`%s` is your verification code." : "„%s“ on sinu verifitseerimiskood.",

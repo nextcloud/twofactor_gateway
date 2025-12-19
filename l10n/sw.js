@@ -3,6 +3,8 @@ OC.L10N.register(
     {
     "`%s` is your Nextcloud authentication code" : "`%s` ni msimbo wako wa uthibitishaji wa Nextcloud",
     "%s is your Nextcloud authentication code" : "%s ni msimbo wako wa uthibitishaji wa Nextcloud",
+    "WhatsApp verification" : "Uthibitishaji wa WhatsApp",
+    "Authenticate via WhatsApp" : "Thibitisha kupitia WhatsApp",
     "Message gateway verification" : "Uthibitishaji wa lango la ujumbe",
     "Authenticate via SMS" : "Thibitisha kupitia SMS",
     "Signal verification" : "Uthibitishaji wa mawimbi",
@@ -10,8 +12,6 @@ OC.L10N.register(
     "`%s` is your Nextcloud verification code." : "`%s` ni msimbo wako wa uthibitishaji wa Nextcloud.",
     "Telegram verification" : "Uthibitishaji wa Telegraph",
     "Authenticate via Telegram" : "Thibitisha kupitia Telegram",
-    "WhatsApp verification" : "Uthibitishaji wa WhatsApp",
-    "Authenticate via WhatsApp" : "Thibitisha kupitia WhatsApp",
     "XMPP verification" : "Uthibitishaji wa XMPP",
     "Authenticate via XMPP" : "Thibitisha kupitia XMPP",
     "`%s` is your verification code." : "`%s` ndio msimbo wako wa kuthibitisha.",
