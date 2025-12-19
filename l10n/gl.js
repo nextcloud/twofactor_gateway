@@ -3,6 +3,8 @@ OC.L10N.register(
     {
     "`%s` is your Nextcloud authentication code" : "«%s» é o seu código de autenticación de Nextcloud",
     "%s is your Nextcloud authentication code" : "%s é o seu código de autenticación de Nextcloud",
+    "WhatsApp verification" : "Verificación de WhatsApp",
+    "Authenticate via WhatsApp" : "Autenticación a través de WhatsApp",
     "Message gateway verification" : "Pasarela para a verificación por mensaxe ",
     "Authenticate via SMS" : "Autenticar a través de SMS",
     "Signal verification" : "Verificación de Signal",
@@ -10,8 +12,6 @@ OC.L10N.register(
     "`%s` is your Nextcloud verification code." : "«%s» é o seu código de verificación de Nextcloud.",
     "Telegram verification" : "Verificación de Telegram",
     "Authenticate via Telegram" : "Autenticar a través do Telegram",
-    "WhatsApp verification" : "Verificación de WhatsApp",
-    "Authenticate via WhatsApp" : "Autenticación a través de WhatsApp",
     "XMPP verification" : "Verificación de XMPP",
     "Authenticate via XMPP" : "Autenticar a través de XMPP",
     "`%s` is your verification code." : "«%s» é o seu código de verificación.",

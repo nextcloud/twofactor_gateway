@@ -1,6 +1,8 @@
 { "translations": {
     "`%s` is your Nextcloud authentication code" : "`%s` to Twój kod uwierzytelniający Nextcloud",
     "%s is your Nextcloud authentication code" : "%s to Twój kod uwierzytelnienia Nextcloud",
+    "WhatsApp verification" : "Weryfikacja przez WhatsApp",
+    "Authenticate via WhatsApp" : "Uwierzytelnij się przez WhatsApp",
     "Message gateway verification" : "Weryfikacja bramki wiadomości",
     "Authenticate via SMS" : "Uwierzytelnij przez SMS",
     "Signal verification" : "Weryfikacja Signal",
@@ -8,8 +10,6 @@
     "`%s` is your Nextcloud verification code." : "`%s` to Twój kod weryfikacyjny Nextcloud.",
     "Telegram verification" : "Weryfikacja Telegram",
     "Authenticate via Telegram" : "Uwierzytelnij przez Telegram",
-    "WhatsApp verification" : "Weryfikacja przez WhatsApp",
-    "Authenticate via WhatsApp" : "Uwierzytelnij się przez WhatsApp",
     "XMPP verification" : "Weryfikacja przez XMPP",
     "Authenticate via XMPP" : "Uwierzytelnij się przez XMPP",
     "`%s` is your verification code." : "`%s` to Twój kod weryfikacyjny.",

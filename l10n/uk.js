@@ -3,6 +3,8 @@ OC.L10N.register(
     {
     "`%s` is your Nextcloud authentication code" : "Ваш код авторизації у хмарі Nextcloud: %s",
     "%s is your Nextcloud authentication code" : "Ваш код підтвердження авторизації у хмарі Nextcloud: %s",
+    "WhatsApp verification" : "Підтвердження через WhatsApp",
+    "Authenticate via WhatsApp" : "Авторизація через WhatsApp",
     "Message gateway verification" : "Підтвердження авторизації через SMS",
     "Authenticate via SMS" : "Отримати одноразовий код через SMS",
     "Signal verification" : "Підтвердження через Signal",
@@ -10,8 +12,6 @@ OC.L10N.register(
     "`%s` is your Nextcloud verification code." : "Ваш код підтвердження у хмарі Nextcloud: %s",
     "Telegram verification" : "Підтвердження через Telegram",
     "Authenticate via Telegram" : "Отримати одноразовий код у Telegram",
-    "WhatsApp verification" : "Підтвердження через WhatsApp",
-    "Authenticate via WhatsApp" : "Авторизація через WhatsApp",
     "XMPP verification" : "Підтвердження авторизації через XMPP",
     "Authenticate via XMPP" : "Отримати одноразовий код через XMPP",
     "`%s` is your verification code." : "Ваш код підтвердження: %s",

@@ -3,6 +3,8 @@ OC.L10N.register(
     {
     "`%s` is your Nextcloud authentication code" : "`%s` بولسا سىزنىڭ Nextcloud دەلىللەش كودىڭىز",
     "%s is your Nextcloud authentication code" : "%s سىزنىڭ Nextcloud دەلىللەش كودىڭىز",
+    "WhatsApp verification" : "ۋوتساپ دەلىللەش",
+    "Authenticate via WhatsApp" : "ۋوتساپ ئارقىلىق دەلىللەش",
     "Message gateway verification" : "ئۇچۇر دەرۋازىسىنى دەلىللەش",
     "Authenticate via SMS" : "قىسقا ئۇچۇر ئارقىلىق دەلىللەش",
     "Signal verification" : "سىگنال دەلىللەش",
@@ -10,8 +12,6 @@ OC.L10N.register(
     "`%s` is your Nextcloud verification code." : "`%s` بولسا سىزنىڭ Nextcloud دەلىللەش كودىڭىز",
     "Telegram verification" : "تېلېگرامما دەلىللەش",
     "Authenticate via Telegram" : "تېلېگرامما ئارقىلىق دەلىللەش",
-    "WhatsApp verification" : "ۋوتساپ دەلىللەش",
-    "Authenticate via WhatsApp" : "ۋوتساپ ئارقىلىق دەلىللەش",
     "XMPP verification" : "XMPP دەلىللەش",
     "Authenticate via XMPP" : "XMPP ئارقىلىق دەلىللەش",
     "`%s` is your verification code." : "`%s` بولسا سىزنىڭ دەلىللەش كودىڭىز",
