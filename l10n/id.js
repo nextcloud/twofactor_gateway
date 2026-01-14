@@ -4,6 +4,7 @@ OC.L10N.register(
     "Enable" : "Aktifkan",
     "Verify" : "Verifikasi",
     "Confirm" : "Konfirmasi",
-    "Disable" : "Nonaktifkan"
+    "Disable" : "Nonaktifkan",
+    "Submit" : "Kirim"
 },
 "nplurals=1; plural=0;");
