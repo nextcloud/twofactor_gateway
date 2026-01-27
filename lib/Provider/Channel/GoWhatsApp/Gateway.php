@@ -403,7 +403,7 @@ class Gateway extends AGateway {
 		return $userInfo !== null ? true : null;
 	}
 
-	private function checkDeviceStatus(InputInterface $input, OutputInterface $output, string $deviceJid): bool|null {
+	private function checkDeviceStatus(InputInterface $input, OutputInterface $output, string $deviceJid): ?bool {
 		$userInfo = $this->fetchUserInfo($deviceJid);
 
 		if ($userInfo !== null) {
@@ -535,7 +535,7 @@ class Gateway extends AGateway {
 		return $this->performLogout($output);
 	}
 
-	private function handleDeviceIssue(InputInterface $input, OutputInterface $output): false|null {
+	private function handleDeviceIssue(InputInterface $input, OutputInterface $output): ?false {
 		$output->writeln('');
 		$output->writeln('<comment>The device appears to have connection issues.</comment>');
 		$output->writeln('<comment>Options:</comment>');
@@ -556,7 +556,7 @@ class Gateway extends AGateway {
 		return false;
 	}
 
-	private function performLogout(OutputInterface $output): false|null {
+	private function performLogout(OutputInterface $output): ?false {
 		$output->writeln('<info>Logging out device...</info>');
 		try {
 			$this->client->get($this->getBaseUrl() . '/app/logout');
