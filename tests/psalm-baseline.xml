@@ -9,7 +9,12 @@
   </file>
   <file src="lib/Provider/Channel/GoWhatsApp/Gateway.php">
     <UndefinedClass>
+      <code><![CDATA[$e]]></code>
+      <code><![CDATA[$e]]></code>
+      <code><![CDATA[$e]]></code>
+      <code><![CDATA[BadResponseException]]></code>
       <code><![CDATA[RequestException]]></code>
+      <code><![CDATA[\GuzzleHttp\Exception\ConnectException]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Provider/Channel/Telegram/Provider/Drivers/ClientCli/Login.php">
