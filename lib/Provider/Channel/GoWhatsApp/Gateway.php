@@ -11,10 +11,12 @@ namespace OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp;
 
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\RequestException;
+use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Settings;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
@@ -60,6 +62,7 @@ class Gateway extends AGateway {
 		private IClientService $clientService,
 		private IL10N $l10n,
 		private LoggerInterface $logger,
+		private IEventDispatcher $eventDispatcher,
 	) {
 		parent::__construct($appConfig);
 		$this->client = $this->clientService->newClient();
@@ -649,6 +652,8 @@ class Gateway extends AGateway {
 			$data = json_decode($body, true);
 
 			if ($status === 401 || ($data['code'] ?? '') === 'AUTHENTICATION_ERROR') {
+				$this->eventDispatcher->dispatchTyped(new WhatsAppAuthenticationErrorEvent());
+
 				throw new MessageTransmissionException(
 					$this->l10n->t('Authentication failed with WhatsApp API. Please verify username/password or log in again.'),
 					self::CODE_AUTHENTICATION,
