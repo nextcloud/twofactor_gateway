@@ -18,6 +18,7 @@ use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
+use OCP\IL10N;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -37,6 +38,13 @@ use Symfony\Component\Console\Question\Question;
  * @method static setPassword(string $password)
  */
 class Gateway extends AGateway {
+	private const CODE_NOT_ON_WHATSAPP = 1001;
+	private const CODE_AUTHENTICATION = 1401;
+	private const CODE_FORBIDDEN = 1403;
+	private const CODE_VERIFY_FAILED = 1500;
+	private const CODE_SEND_FAILED = 2001;
+	private const CODE_SEND_UNKNOWN = 2002;
+
 	private IClient $client;
 	private string $lazyBaseUrl = '';
 	private string $lazyPhone = '';
@@ -46,6 +54,7 @@ class Gateway extends AGateway {
 	public function __construct(
 		public IAppConfig $appConfig,
 		private IClientService $clientService,
+		private IL10N $l10n,
 		private LoggerInterface $logger,
 	) {
 		parent::__construct($appConfig);
@@ -82,9 +91,29 @@ class Gateway extends AGateway {
 	public function send(string $identifier, string $message, array $extra = []): void {
 		$this->logger->debug("sending whatsapp message to $identifier, message: $message");
 
-		$isOnWhatsApp = $this->checkUserOnWhatsApp($identifier);
-		if (!$isOnWhatsApp) {
-			throw new MessageTransmissionException('The phone number is not registered on WhatsApp.');
+		try {
+			$isOnWhatsApp = $this->checkUserOnWhatsApp($identifier);
+			if (!$isOnWhatsApp) {
+				throw new MessageTransmissionException(
+					$this->l10n->t('The phone number is not registered on WhatsApp.'),
+					self::CODE_NOT_ON_WHATSAPP,
+				);
+			}
+		} catch (MessageTransmissionException $e) {
+			$this->logger->error('Could not verify WhatsApp user', [
+				'identifier' => $identifier,
+				'exception' => $e,
+			]);
+			throw $e;
+		} catch (\Exception $e) {
+			$this->logger->error('Could not verify WhatsApp user', [
+				'identifier' => $identifier,
+				'exception' => $e,
+			]);
+			throw new MessageTransmissionException(
+				$this->l10n->t('Failed to verify WhatsApp user.'),
+				self::CODE_VERIFY_FAILED,
+			);
 		}
 
 		$phone = $this->formatPhoneNumber($identifier);
@@ -102,18 +131,27 @@ class Gateway extends AGateway {
 			$data = json_decode($body, true);
 
 			if (($data['code'] ?? '') !== 'SUCCESS') {
-				throw new MessageTransmissionException($data['message'] ?? 'Failed to send message');
+				throw new MessageTransmissionException(
+					$data['message'] ?? $this->l10n->t('Failed to send message'),
+					self::CODE_SEND_FAILED,
+				);
 			}
 
 			$this->logger->debug("whatsapp message to $identifier sent successfully", [
 				'message_id' => $data['results']['message_id'] ?? null,
 			]);
+		} catch (MessageTransmissionException $e) {
+			$this->logger->error('Could not send WhatsApp message', [
+				'identifier' => $identifier,
+				'exception' => $e,
+			]);
+			throw $e;
 		} catch (\Exception $e) {
 			$this->logger->error('Could not send WhatsApp message', [
 				'identifier' => $identifier,
 				'exception' => $e,
 			]);
-			throw new MessageTransmissionException('Failed to send WhatsApp message: ' . $e->getMessage());
+			throw new MessageTransmissionException('Failed to send WhatsApp message: ' . $e->getMessage(), self::CODE_SEND_UNKNOWN);
 		}
 	}
 
@@ -618,12 +656,43 @@ class Gateway extends AGateway {
 
 			return ($data['code'] ?? '') === 'SUCCESS'
 				&& ($data['results']['is_on_whatsapp'] ?? false) === true;
+		} catch (BadResponseException|RequestException $e) {
+			$status = $e->getResponse()?->getStatusCode();
+			$body = (string)($e->getResponse()?->getBody() ?? '');
+			$data = json_decode($body, true);
+
+			if ($status === 401 || ($data['code'] ?? '') === 'AUTHENTICATION_ERROR') {
+				throw new MessageTransmissionException(
+					$this->l10n->t('Authentication failed with WhatsApp API. Please verify username/password or log in again.'),
+					self::CODE_AUTHENTICATION,
+				);
+			}
+
+			if ($status === 403) {
+				throw new MessageTransmissionException('Access to the WhatsApp API was denied (403). Check permissions or IP allowlist.', self::CODE_FORBIDDEN);
+			}
+
+			$this->logger->error('Error checking if user is on WhatsApp', [
+				'phone' => $phoneNumber,
+				'status' => $status,
+				'response' => $body,
+				'exception' => $e,
+			]);
+
+			$message = $data['message'] ?? $e->getMessage();
+			throw new MessageTransmissionException(
+				$this->l10n->t('Failed to verify WhatsApp user.'),
+				self::CODE_VERIFY_FAILED,
+			);
 		} catch (\Exception $e) {
 			$this->logger->error('Error checking if user is on WhatsApp', [
 				'phone' => $phoneNumber,
 				'exception' => $e,
 			]);
-			return false;
+			throw new MessageTransmissionException(
+				$this->l10n->t('Failed to verify WhatsApp user.'),
+				self::CODE_VERIFY_FAILED,
+			);
 		}
 	}
 
