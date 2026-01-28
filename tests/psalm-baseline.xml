@@ -12,7 +12,15 @@
       <code><![CDATA[$e]]></code>
       <code><![CDATA[$e]]></code>
       <code><![CDATA[$e]]></code>
+      <code><![CDATA[$e]]></code>
+      <code><![CDATA[$e]]></code>
+      <code><![CDATA[$e]]></code>
+      <code><![CDATA[$e]]></code>
+      <code><![CDATA[$e]]></code>
+      <code><![CDATA[$e]]></code>
       <code><![CDATA[BadResponseException]]></code>
+      <code><![CDATA[BadResponseException]]></code>
+      <code><![CDATA[RequestException]]></code>
       <code><![CDATA[RequestException]]></code>
       <code><![CDATA[\GuzzleHttp\Exception\ConnectException]]></code>
     </UndefinedClass>
