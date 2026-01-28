@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\AppInfo;
 
+use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
+use OCA\TwoFactorGateway\Listener\NotificationListener;
+use OCA\TwoFactorGateway\Notification\Notifier;
 use OCA\TwoFactorGateway\Provider\Factory;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -25,6 +28,9 @@ class Application extends App implements IBootstrap {
 
 	#[\Override]
 	public function register(IRegistrationContext $context): void {
+		$context->registerNotifierService(Notifier::class);
+		$context->registerEventListener(WhatsAppAuthenticationErrorEvent::class, NotificationListener::class);
+
 		$providerFactory = Server::get(Factory::class);
 		$fqcn = $providerFactory->getFqcnList();
 		foreach ($fqcn as $class) {
