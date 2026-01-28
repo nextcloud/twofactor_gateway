@@ -45,6 +45,10 @@ class Gateway extends AGateway {
 	private const CODE_SEND_FAILED = 2001;
 	private const CODE_SEND_UNKNOWN = 2002;
 
+	private const CONFIG_SUCCESS = 0;
+	private const CONFIG_ERROR = 1;
+	private const CONFIG_CONTINUE = 2;
+
 	private IClient $client;
 	private string $lazyBaseUrl = '';
 	private string $lazyPhone = '';
