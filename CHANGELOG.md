@@ -15,6 +15,10 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 2.2.0 - 2026-01-28
+### Added
+- New gateway support for WhatsApp Web using the service GoWhatsApp
+
 ## 2.1.0 - 2025-12-18
 ### Added
 - New gateway support for WhatsApp Web
