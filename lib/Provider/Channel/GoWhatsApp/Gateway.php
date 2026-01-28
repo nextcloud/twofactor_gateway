@@ -164,7 +164,7 @@ class Gateway extends AGateway {
 		}
 
 		$result = $this->tryReuseExistingDevice($input, $output, $helper);
-		if ($result !== null) {
+		if ($result !== self::CONFIG_CONTINUE) {
 			return $result;
 		}
 
@@ -197,12 +197,12 @@ class Gateway extends AGateway {
 		}
 	}
 
-	private function tryReuseExistingDevice(InputInterface $input, OutputInterface $output, QuestionHelper $helper): ?int {
+	private function tryReuseExistingDevice(InputInterface $input, OutputInterface $output, QuestionHelper $helper): int {
 		$output->writeln('<info>Checking for existing devices...</info>');
 		$devices = $this->fetchDevices();
 
 		if ($devices === null || empty($devices)) {
-			return null;
+			return self::CONFIG_CONTINUE;
 		}
 
 		$output->writeln('');
@@ -221,10 +221,10 @@ class Gateway extends AGateway {
 		}
 
 		if ($choice === 2) {
-			return 1;
+			return self::CONFIG_ERROR;
 		}
 
-		return null;
+		return self::CONFIG_CONTINUE;
 	}
 
 	private function collectCredentials(InputInterface $input, OutputInterface $output, QuestionHelper $helper): void {
@@ -237,62 +237,31 @@ class Gateway extends AGateway {
 		$this->lazyPassword = $helper->ask($input, $output, $passwordQuestion);
 	}
 
-	private function tryReuseDeviceWithAuth(InputInterface $input, OutputInterface $output, QuestionHelper $helper, array $devices): ?int {
-		if (empty($devices)) {
-			return null;
-		}
-
-		$output->writeln('');
-		$output->writeln('<info>Found ' . count($devices) . ' connected device(s):</info>');
-		$this->displayDeviceList($output, $devices);
-
-		$choice = $this->askDeviceAction($input, $output, $helper);
-
-		if ($choice === 0) {
-			return $this->configureWithDeviceAndAuth($input, $output, $devices[0]);
-		}
-
-		if ($choice === 1) {
-			$output->writeln('<info>Logging out device...</info>');
-			$this->performLogout($output);
-		}
-
-		if ($choice === 2) {
-			return 1;
-		}
-
-		return null;
-	}
-
 	private function setupNewDeviceWithPairingCode(InputInterface $input, OutputInterface $output, QuestionHelper $helper): int {
 		$phoneQuestion = new Question($this->getSettings()->fields[3]->prompt . ' ');
 		$this->lazyPhone = $helper->ask($input, $output, $phoneQuestion);
 		$this->lazyPhone = preg_replace('/\D/', '', $this->lazyPhone);
 
-		$pairingResult = $this->requestPairingCode($input, $output);
-		if ($pairingResult === null) {
-			return 1;
+		$pairingCode = $this->requestPairingCode($input, $output);
+		if ($pairingCode === null) {
+			return self::CONFIG_ERROR;
 		}
 
-		if ($pairingResult === false) {
-			return 0;
-		}
-
-		return $this->displayPairingCodeAndWaitConfirmation($output, $pairingResult);
+		return $this->displayPairingCodeAndWaitConfirmation($output, $pairingCode);
 	}
 
-	private function configureWithDevice(OutputInterface $output, array $device): ?int {
+	private function configureWithDevice(OutputInterface $output, array $device): int {
 		$firstDevice = $device['device'] ?? '';
 		preg_match('/^(\d+)/', $firstDevice, $matches);
 
 		if (empty($matches[1])) {
-			return null;
+			return self::CONFIG_CONTINUE;
 		}
 
 		$this->lazyPhone = $matches[1];
 
 		$statusCheck = $this->checkDeviceStatusQuiet($firstDevice);
-		if ($statusCheck === true) {
+		if ($statusCheck) {
 			$this->setBaseUrl($this->lazyBaseUrl);
 			$this->setPhone($this->lazyPhone);
 			$output->writeln('<info>✓ Configuration saved using existing device.</info>');
@@ -300,18 +269,18 @@ class Gateway extends AGateway {
 			$output->writeln('<comment>Base URL:</comment> ' . $this->lazyBaseUrl);
 			$output->writeln('<comment>Phone:</comment> ' . $this->lazyPhone);
 			$output->writeln('');
-			return 0;
+			return self::CONFIG_SUCCESS;
 		}
 
-		return null;
+		return self::CONFIG_CONTINUE;
 	}
 
-	private function configureWithDeviceAndAuth(InputInterface $input, OutputInterface $output, array $device): ?int {
+	private function configureWithDeviceAndAuth(InputInterface $input, OutputInterface $output, array $device): int {
 		$firstDevice = $device['device'] ?? '';
 		preg_match('/^(\d+)/', $firstDevice, $matches);
 
 		if (empty($matches[1])) {
-			return null;
+			return self::CONFIG_CONTINUE;
 		}
 
 		$this->lazyPhone = $matches[1];
@@ -319,7 +288,7 @@ class Gateway extends AGateway {
 		$output->writeln('<info>Checking device status...</info>');
 		$statusCheck = $this->checkDeviceStatus($input, $output, $firstDevice);
 
-		if ($statusCheck === true) {
+		if ($statusCheck === self::CONFIG_SUCCESS) {
 			$this->setBaseUrl($this->lazyBaseUrl);
 			$this->setUsername($this->lazyUsername);
 			$this->setPassword($this->lazyPassword);
@@ -330,14 +299,14 @@ class Gateway extends AGateway {
 			$output->writeln('<comment>Username:</comment> ' . $this->lazyUsername);
 			$output->writeln('<comment>Phone:</comment> ' . $this->lazyPhone);
 			$output->writeln('');
-			return 0;
+			return self::CONFIG_SUCCESS;
 		}
 
-		if ($statusCheck === false) {
-			return 1;
+		if ($statusCheck === self::CONFIG_ERROR) {
+			return self::CONFIG_ERROR;
 		}
 
-		return null;
+		return self::CONFIG_CONTINUE;
 	}
 
 	private function displayPairingCodeAndWaitConfirmation(OutputInterface $output, string $pairCode): int {
@@ -398,7 +367,7 @@ class Gateway extends AGateway {
 
 		$output->writeln('');
 		$output->writeln('<error>Timeout waiting for WhatsApp confirmation</error>');
-		return 1;
+		return self::CONFIG_ERROR;
 	}
 
 	private function displayDeviceList(OutputInterface $output, array $devices): void {
@@ -436,17 +405,17 @@ class Gateway extends AGateway {
 		$output->writeln('');
 	}
 
-	private function checkDeviceStatusQuiet(string $deviceJid): ?bool {
+	private function checkDeviceStatusQuiet(string $deviceJid): bool {
 		$userInfo = $this->fetchUserInfo($deviceJid);
-		return $userInfo !== null ? true : null;
+		return $userInfo !== null;
 	}
 
-	private function checkDeviceStatus(InputInterface $input, OutputInterface $output, string $deviceJid): ?bool {
+	private function checkDeviceStatus(InputInterface $input, OutputInterface $output, string $deviceJid): int {
 		$userInfo = $this->fetchUserInfo($deviceJid);
 
 		if ($userInfo !== null) {
 			$this->displayDeviceInfo($output, $userInfo);
-			return true;
+			return self::CONFIG_SUCCESS;
 		}
 
 		$output->writeln('<error>Device is not responding or not logged in.</error>');
@@ -497,24 +466,32 @@ class Gateway extends AGateway {
 		}
 	}
 
-	private function requestPairingCode(InputInterface $input, OutputInterface $output): string|false|null {
+	private function requestPairingCode(InputInterface $input, OutputInterface $output): ?string {
 		$output->writeln('<info>Requesting pairing code...</info>');
 
-		$response = $this->fetchPairingCode();
+		$result = $this->fetchPairingCode();
 
-		if ($response === null) {
+		if (!$result['success'] && !$result['alreadyLoggedIn']) {
 			$output->writeln('<error>Could not connect to the WhatsApp API. Please check the URL.</error>');
 			return null;
 		}
 
-		if ($response === false) {
-			return $this->handleAlreadyLoggedIn($input, $output);
+		if ($result['alreadyLoggedIn']) {
+			$configResult = $this->handleAlreadyLoggedIn($input, $output);
+			if ($configResult !== null) {
+				return null;
+			}
+			$result = $this->fetchPairingCode();
+			if (!$result['success']) {
+				$output->writeln('<error>Could not get pairing code after logout.</error>');
+				return null;
+			}
 		}
 
-		return $response;
+		return $result['code'];
 	}
 
-	private function fetchPairingCode(): string|false|null {
+	private function fetchPairingCode(): array {
 		try {
 			$response = $this->client->get($this->getBaseUrl() . '/app/login-with-code', [
 				'query' => ['phone' => $this->lazyPhone],
@@ -524,29 +501,33 @@ class Gateway extends AGateway {
 			$data = json_decode($body, true);
 
 			if (($data['code'] ?? '') !== 'SUCCESS') {
-				return null;
+				return ['success' => false, 'code' => null, 'alreadyLoggedIn' => false];
 			}
 
 			$pairCode = $data['results']['pair_code'] ?? '';
-			return empty($pairCode) ? null : $pairCode;
+			if (empty($pairCode)) {
+				return ['success' => false, 'code' => null, 'alreadyLoggedIn' => false];
+			}
+
+			return ['success' => true, 'code' => $pairCode, 'alreadyLoggedIn' => false];
 		} catch (BadResponseException $e) {
 			if ($e->getCode() === 400) {
 				$body = (string)$e->getResponse()->getBody();
 				$data = json_decode($body, true);
 
 				if (($data['code'] ?? '') === 'ALREADY_LOGGED_IN') {
-					return false;
+					return ['success' => false, 'code' => null, 'alreadyLoggedIn' => true];
 				}
 			}
 			$this->logger->error('API connection error', ['exception' => $e]);
-			return null;
+			return ['success' => false, 'code' => null, 'alreadyLoggedIn' => false];
 		} catch (RequestException $e) {
 			$this->logger->error('API connection error', ['exception' => $e]);
-			return null;
+			return ['success' => false, 'code' => null, 'alreadyLoggedIn' => false];
 		}
 	}
 
-	private function handleAlreadyLoggedIn(InputInterface $input, OutputInterface $output): ?false {
+	private function handleAlreadyLoggedIn(InputInterface $input, OutputInterface $output): int {
 		$output->writeln('<info>Account is already logged in.</info>');
 
 		$userInfo = $this->fetchUserInfo($this->lazyPhone . '@s.whatsapp.net');
@@ -567,13 +548,14 @@ class Gateway extends AGateway {
 			$this->setPassword($this->lazyPassword);
 			$this->setPhone($this->lazyPhone);
 			$output->writeln('<info>Configuration saved successfully.</info>');
-			return false;
+			return self::CONFIG_SUCCESS;
 		}
 
-		return $this->performLogout($output);
+		$logoutSuccess = $this->performLogout($output);
+		return $logoutSuccess ? self::CONFIG_CONTINUE : self::CONFIG_ERROR;
 	}
 
-	private function handleDeviceIssue(InputInterface $input, OutputInterface $output): ?false {
+	private function handleDeviceIssue(InputInterface $input, OutputInterface $output): int {
 		$output->writeln('');
 		$output->writeln('<comment>The device appears to have connection issues.</comment>');
 		$output->writeln('<comment>Options:</comment>');
@@ -588,18 +570,19 @@ class Gateway extends AGateway {
 		);
 
 		if ($helper->ask($input, $output, $logoutQuestion)) {
-			return $this->performLogout($output);
+			$logoutSuccess = $this->performLogout($output);
+			return $logoutSuccess ? self::CONFIG_CONTINUE : self::CONFIG_ERROR;
 		}
 
-		return false;
+		return self::CONFIG_ERROR;
 	}
 
-	private function performLogout(OutputInterface $output): ?false {
+	private function performLogout(OutputInterface $output): bool {
 		$output->writeln('<info>Logging out device...</info>');
 		try {
 			$this->client->get($this->getBaseUrl() . '/app/logout');
 			$output->writeln('<info>Device logged out successfully. Please set up a new device.</info>');
-			return null;
+			return true;
 		} catch (\Exception $e) {
 			$output->writeln('<error>Could not logout device. Please try manually.</error>');
 			$this->logger->error('Logout failed', ['exception' => $e]);
