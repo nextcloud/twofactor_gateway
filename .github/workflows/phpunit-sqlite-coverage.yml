@@ -133,7 +133,7 @@ jobs:
         run: composer run test:coverage
 
       - name: Upload Scrutinizer coverage
-        uses: sudo-bot/action-scrutinizer@latest
+        uses: sudo-bot/action-scrutinizer@e7b8e19a30b41be2aeba1c09ae4674cf5011c20a # latest
         if: github.repository == 'nextcloud/twofactor_gateway'
         with:
             cli-args: >
