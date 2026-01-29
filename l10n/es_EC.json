@@ -1,4 +1,5 @@
 { "translations": {
+    "Two-Factor Gateway" : "Two-Factor Gateway",
     "%s is your Nextcloud authentication code" : "%s es su código de autenticación de Nextcloud",
     "Message gateway verification" : "Verificación del servicio de mensajes",
     "Authenticate via SMS" : "Autenticación mediante SMS",
@@ -8,7 +9,6 @@
     "Authenticate via Telegram" : "Autenticación mediante Telegram",
     "XMPP verification" : "Verificación de XMPP",
     "Authenticate via XMPP" : "Autenticación mediante XMPP",
-    "Two-Factor Gateway" : "Two-Factor Gateway",
     "You are not using {displayName} for two-factor authentication at the moment." : "Actualmente no estás usando {displayName} para la autenticación de dos factores.",
     "Enable" : "Habilitar",
     "Could not verify your code. Please try again." : "No se pudo verificar tu código. Por favor, inténtalo de nuevo.",

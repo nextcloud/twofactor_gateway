@@ -1,4 +1,5 @@
 { "translations": {
+    "Two-Factor Gateway" : "Bramka uwierzytelnienia dwuskładnikowego",
     "`%s` is your Nextcloud authentication code" : "`%s` to Twój kod uwierzytelniający Nextcloud",
     "%s is your Nextcloud authentication code" : "%s to Twój kod uwierzytelnienia Nextcloud",
     "WhatsApp verification" : "Weryfikacja przez WhatsApp",
@@ -16,7 +17,6 @@
     "%s is your verification code." : "%s to Twój kod weryfikacyjny.",
     "no verification code set" : "Nie ustawiono kodu weryfikacyjnego",
     "verification token mismatch" : "Niezgodność tokena weryfikacyjnego",
-    "Two-Factor Gateway" : "Bramka uwierzytelnienia dwuskładnikowego",
     "Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)" : "Dostawcy bramki uwierzytelniania dwuskładnikowego (Signal, SMS, Telegram, WhatsApp, XMPP)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP." : "Zestaw dostawców dwuskładnikowych Nextcloud do wysyłania kodów uwierzytelniających przez Signal, SMS, Telegram, WhatsApp i XMPP.",
     "You are not using {displayName} for two-factor authentication at the moment." : "Nie używasz obecnie {displayName} do uwierzytelniania dwuskładnikowego.",

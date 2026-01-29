@@ -1,4 +1,5 @@
 { "translations": {
+    "Two-Factor Gateway" : "Geata Dhá-Fachtóir",
     "`%s` is your Nextcloud authentication code" : "Is é `%s` do chód fíordheimhnithe Nextcloud",
     "%s is your Nextcloud authentication code" : "%s is é do chód fíordheimhnithe Nextcloud",
     "WhatsApp verification" : "Fíorú WhatsApp",
@@ -16,7 +17,6 @@
     "%s is your verification code." : "Is é %s do chód fíoraithe.",
     "no verification code set" : "níl aon chód fíoraithe socraithe",
     "verification token mismatch" : "mí-oiriúnacht chomhartha fíoraithe",
-    "Two-Factor Gateway" : "Geata Dhá-Fachtóir",
     "Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)" : "Soláthraithe geata dhá fhachtóir (Comhartha, SMS, Telegram, WhatsApp, XMPP)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP." : "Sraith soláthraithe dhá fhachtóir Nextcloud chun cóid fíordheimhnithe a sheoladh trí Signal, SMS, Telegram, WhatsApp agus XMPP.",
     "You are not using {displayName} for two-factor authentication at the moment." : "Níl {displayName} in úsáid agat le haghaidh fíordheimhnithe dhá fhachtóir faoi láthair.",

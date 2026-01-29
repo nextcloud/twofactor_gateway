@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "二要素ゲートウェイ",
     "%s is your Nextcloud authentication code" : "%sはあなたのNextcloud認証コードです",
     "Message gateway verification" : "メッセージゲートウェイ 認証",
     "Authenticate via SMS" : "SMS経由で認証",
@@ -8,7 +9,6 @@ OC.L10N.register(
     "Authenticate via Signal" : "Signal経由で認証",
     "Telegram verification" : "Telegram 認証",
     "Authenticate via Telegram" : "Telegram経由で認証",
-    "Two-Factor Gateway" : "二要素ゲートウェイ",
     "Enable" : "有効にする",
     "Verify" : "検証",
     "Confirm" : "承認",
