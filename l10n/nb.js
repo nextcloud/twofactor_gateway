@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "To-faktor inngangsport",
     "%s is your Nextcloud authentication code" : "%s er din Nextcloud-autentiseringskode",
     "Message gateway verification" : "Verifisering via melding gateway",
     "Authenticate via SMS" : "Autentiser via SMS",
@@ -10,7 +11,6 @@ OC.L10N.register(
     "Authenticate via Telegram" : "Autentiser med Telegram",
     "XMPP verification" : "XMPP-verifisering",
     "Authenticate via XMPP" : "Autentiser via XMPP",
-    "Two-Factor Gateway" : "To-faktor inngangsport",
     "You are not using {displayName} for two-factor authentication at the moment." : "Du bruker ikke {displayName} for tofaktorautentisering for øyeblikket.",
     "Enable" : "Aktiver",
     "Could not verify your code. Please try again." : "Kunne ikke verifisere koden din, vennligst forsøk igjen.",

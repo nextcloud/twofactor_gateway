@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Dvostopenjski prehod",
     "%s is your Nextcloud authentication code" : "%s je overitvena koda Nextcloud",
     "Message gateway verification" : "Preverjanje s sporočilom",
     "Authenticate via SMS" : "Overi prek SMS",
@@ -10,7 +11,6 @@ OC.L10N.register(
     "Authenticate via Telegram" : "Overi s programom Telegram",
     "XMPP verification" : "Overitev XMPP",
     "Authenticate via XMPP" : "Overitev prek XMPP",
-    "Two-Factor Gateway" : "Dvostopenjski prehod",
     "Enable" : "Omogoči",
     "Verify" : "Overi",
     "Confirm" : "Potrdi",

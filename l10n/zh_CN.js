@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "两步验证网关",
     "%s is your Nextcloud authentication code" : "%s 是您在 Nextcloud 的授权认证代码",
     "Message gateway verification" : "消息网关验证",
     "Authenticate via SMS" : "通过短信认证",
@@ -8,7 +9,6 @@ OC.L10N.register(
     "Authenticate via Signal" : "通过信号认证",
     "Telegram verification" : "电报验证",
     "Authenticate via Telegram" : "通过电报认证",
-    "Two-Factor Gateway" : "两步验证网关",
     "Enable" : "开启",
     "Verify" : "验证",
     "Confirm" : "确认",

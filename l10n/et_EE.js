@@ -1,8 +1,13 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : " Kaheastmelise autentimise lüüs",
     "`%s` is your Nextcloud authentication code" : "„%s“ on sinu Nextcloudi autentimiskood",
     "%s is your Nextcloud authentication code" : "%son sinu Nextcloudi autentimiskood",
+    "The phone number is not registered on WhatsApp." : "See telefoninumber pole WhatsAppis registreeritud.",
+    "Failed to verify WhatsApp user." : "WhatsAppi kasutaja verifitseerimine ei õnnestunud.",
+    "Failed to send message" : "Sõnumi saatmine ei õnnestu",
+    "Authentication failed with WhatsApp API. Please verify username/password or log in again." : "WhatsAppi API abil autentimine ei õnnestu. Palun kontrolli, et kasutajanimi ja salasõna on õiged ja logi uuesti sisse.",
     "WhatsApp verification" : "Verifitseerimine WhatsApp'iga",
     "Authenticate via WhatsApp" : "Autendi WhatsApp'i abil",
     "Message gateway verification" : "Verifitseerimine kasutades sõnumilüüsi",
@@ -18,7 +23,6 @@ OC.L10N.register(
     "%s is your verification code." : "„%s“ on sinu verifitseerimiskood.",
     "no verification code set" : "Verifitseerimiskood on määramata",
     "verification token mismatch" : "Verifitseerimiskoodi tunnusload ei klapi",
-    "Two-Factor Gateway" : " Kaheastmelise autentimise lüüs",
     "Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)" : "Kaheastmelise autentimise lüüsi teenusepakkujad (Signal, SMS, Telegram, WhatsApp, XMPP)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP." : "Nextcloudi kaheastmelise autentimise teenusepakkujate valik saatmaks autentimiskoode Signali, SMS-i, Telegrami, WhatsApp'i ja XMPP vahendusel.",
     "You are not using {displayName} for two-factor authentication at the moment." : "Sa hetkel ei kasuta „{displayName}“ teenusepakkujat kaheastmelise autentimise jaoks.",

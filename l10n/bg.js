@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Двустепенен шлюз",
     "%s is your Nextcloud authentication code" : "%s е вашия Nextcloud удостоверителен код",
     "Message gateway verification" : "Потвърждение на шлюза за съобщения",
     "Authenticate via SMS" : "Удостоверяване с SMS",
@@ -10,7 +11,6 @@ OC.L10N.register(
     "Authenticate via Telegram" : "Удостоверяване с Telegram",
     "XMPP verification" : "XMPP потвърждение",
     "Authenticate via XMPP" : "Удостоверяване с XMPP",
-    "Two-Factor Gateway" : "Двустепенен шлюз",
     "You are not using {displayName} for two-factor authentication at the moment." : "В момента не използвате двустепенно удостоверяване за {displayName}",
     "Enable" : "Включена",
     "Verify" : "Потвърждаване",

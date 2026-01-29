@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Passerelle à deux facteurs",
     "%s is your Nextcloud authentication code" : "Votre code d'authentification Nextcloud est %s",
     "WhatsApp verification" : "Vérification WhatsApp",
     "Message gateway verification" : "Message du portail de vérification",
@@ -11,7 +12,6 @@ OC.L10N.register(
     "Authenticate via Telegram" : "S'authentifier via Telegram",
     "XMPP verification" : "Vérification XMPP",
     "Authenticate via XMPP" : "S'authentifier par XMPP",
-    "Two-Factor Gateway" : "Passerelle à deux facteurs",
     "You are not using {displayName} for two-factor authentication at the moment." : "Vous n'utilisez pas {displayName} pour l'authentification à double facteurs pour le moment.",
     "Enable" : "Activer",
     "Could not verify your code. Please try again." : "Impossible de vérifier votre code. Veuillez réessayer.",

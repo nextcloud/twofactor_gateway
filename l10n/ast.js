@@ -1,11 +1,11 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Pasera de l'autenticación en dos pasos",
     "Message gateway verification" : "Verificación per SMS",
     "Signal verification" : "Verificación per Signal",
     "Telegram verification" : "Verificación per Telegram",
     "XMPP verification" : "Verificación per XMPP",
-    "Two-Factor Gateway" : "Pasera de l'autenticación en dos pasos",
     "You are not using {displayName} for two-factor authentication at the moment." : "Nesti momentu, nun tas usando l'autenticación en dos pasos {displayName}",
     "Enable" : "Activar",
     "Could not verify your code. Please try again." : "Nun se pudo verificar el códigu. Volvi tentalo.",

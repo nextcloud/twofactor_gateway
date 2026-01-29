@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Passarel·la de dos factors",
     "%s is your Nextcloud authentication code" : "El vostre codi d'autenticació del Nextcloud és %s",
     "Message gateway verification" : "Verificació amb la passarel·la de missatges",
     "Authenticate via SMS" : "Autentica'm amb un SMS",
@@ -8,7 +9,6 @@ OC.L10N.register(
     "Authenticate via Signal" : "Autentica'm amb el Signal",
     "Telegram verification" : "Verificació amb el Telegram",
     "Authenticate via Telegram" : "Autentica'm amb el Telegram",
-    "Two-Factor Gateway" : "Passarel·la de dos factors",
     "Enable" : "Activa",
     "Verify" : "Verifica",
     "Confirm" : "Confirma",

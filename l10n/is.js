@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Tveggja-þrepa auðkenningargátt",
     "%s is your Nextcloud authentication code" : "%s er auðkenningarkóðinn þinn á Nextcloud",
     "Message gateway verification" : "Gátt fyrir auðkenningu með skilaboðum",
     "Authenticate via SMS" : "Auðkenning með SMS",
@@ -8,7 +9,6 @@ OC.L10N.register(
     "Authenticate via Signal" : "Auðkenning með Signal",
     "Telegram verification" : "Telegram sannvottun",
     "Authenticate via Telegram" : "Auðkenning með Telegram",
-    "Two-Factor Gateway" : "Tveggja-þrepa auðkenningargátt",
     "Verify" : "Sannprófa",
     "Confirm" : "Staðfesta",
     "Disable" : "Gera óvirkt",

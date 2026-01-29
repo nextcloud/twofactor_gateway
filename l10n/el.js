@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Πύλη Δύο Παραγόντων",
     "`%s` is your Nextcloud authentication code" : "`%s` είναι ο κωδικός πιστοποίησης του Nextcloud",
     "%s is your Nextcloud authentication code" : "%s είναι ο κωδικός πιστοποίησης του Nextcloud",
     "WhatsApp verification" : "Επαλήθευση WhatsApp",
@@ -18,7 +19,6 @@ OC.L10N.register(
     "%s is your verification code." : "%s είναι ο κωδικός επαλήθευσής σας.",
     "no verification code set" : "δεν έχει οριστεί κωδικός επαλήθευσης",
     "verification token mismatch" : "αναντιστοιχία token επαλήθευσης",
-    "Two-Factor Gateway" : "Πύλη Δύο Παραγόντων",
     "Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)" : "Πάροχοι πύλης δύο παραγόντων (Signal, SMS, Telegram, WhatsApp, XMPP)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP." : "Ένα σύνολο παρόχων δύο παραγόντων του Nextcloud για αποστολή κωδικών πιστοποίησης μέσω Signal, SMS, Telegram, WhatsApp και XMPP.",
     "You are not using {displayName} for two-factor authentication at the moment." : "Δεν χρησιμοποιείτε το {displayName} για πιστοποίηση δύο παραγόντων αυτήν τη στιγμή.",

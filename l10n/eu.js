@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Bi faktoreko atebidea",
     "%s is your Nextcloud authentication code" : "Zure Nextcloud autentifikazio kodea %s da.",
     "Message gateway verification" : "Mezuaren egiaztaketa",
     "Authenticate via SMS" : "Autentifikatu SMS bidez",
@@ -10,7 +11,6 @@ OC.L10N.register(
     "Authenticate via Telegram" : "Autentifikatu Telegram bidez",
     "XMPP verification" : "XMPP egiaztapena",
     "Authenticate via XMPP" : "Autentifikatu XMPP bidez",
-    "Two-Factor Gateway" : "Bi faktoreko atebidea",
     "Enable" : "Aktibatu",
     "Verify" : "Egiaztatu",
     "Confirm" : "Berretsi",
