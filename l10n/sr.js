@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Мрежни пролаз за двофакторску проверу идентитета",
     "`%s` is your Nextcloud authentication code" : "`%s` је ваш Nextcloud кôд за проверу идентитета",
     "%s is your Nextcloud authentication code" : "%s je kod za proveru identiteta",
     "WhatsApp verification" : "WhatsApp потврђивање",
@@ -18,7 +19,6 @@ OC.L10N.register(
     "%s is your verification code." : "%s је ваш кôд за потврђивање.",
     "no verification code set" : "није постављен кôд за потврђивање",
     "verification token mismatch" : "жетон потврђивања се не подудара",
-    "Two-Factor Gateway" : "Мрежни пролаз за двофакторску проверу идентитета",
     "Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)" : "Пружаоци услуге пролаза за други фактор (Signal, SMS, Telegram, WhatsApp, XMPP)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP." : "Скуп пружаоца услуге двофакторске провере идентитета којима треба послати кодове за проверу идентитета преко апликација Signal, SMS,  Telegram, WhatsApp и XMPP.",
     "You are not using {displayName} for two-factor authentication at the moment." : "Тренутно не користите {displayName} за двофакторску аутентификацију.",

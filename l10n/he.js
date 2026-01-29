@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "שער גישה דו־שלבי",
     "%s is your Nextcloud authentication code" : "%s הוא קוד האימות הבא שלך ב־Nextcloud",
     "Message gateway verification" : "אימות דרך שער הודעות",
     "Authenticate via SMS" : "אימות דרך מסרון",
@@ -8,7 +9,6 @@ OC.L10N.register(
     "Authenticate via Signal" : "אימות דרך Signal",
     "Telegram verification" : "אימות ע\"י תוכנת Telegram",
     "Authenticate via Telegram" : "אימות דרך טלגרם",
-    "Two-Factor Gateway" : "שער גישה דו־שלבי",
     "Verify" : "אימות",
     "Confirm" : "אימות",
     "Disable" : "השבתה",

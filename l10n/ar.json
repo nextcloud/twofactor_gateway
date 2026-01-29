@@ -1,4 +1,5 @@
 { "translations": {
+    "Two-Factor Gateway" : "بوابة التحقق المُثنى",
     "%s is your Nextcloud authentication code" : "%s هو رمز المصادقة الخاص بنكست كلاود",
     "Message gateway verification" : "التحقّق من بوابة الرسائل Message Gateway",
     "Authenticate via SMS" : "التحقّق عبر الرسائل القصيرة SMS",
@@ -8,7 +9,6 @@
     "Authenticate via Telegram" : "التحقّق عبر التطبيق Telegram",
     "XMPP verification" : "التحقّق من XMPP",
     "Authenticate via XMPP" : "التحقّق عبر XMPP",
-    "Two-Factor Gateway" : "بوابة التحقق المُثنى",
     "You are not using {displayName} for two-factor authentication at the moment." : "أنت لا تستخدم {displayName} لغرض التحقق ثنائي العوامل من الهويّة في الوقت الحاضر.",
     "Enable" : "تنشيط",
     "Could not verify your code. Please try again." : "لم يُمكن التحقّق من رمزك. رجاءً، حاول مرةً أخرى",

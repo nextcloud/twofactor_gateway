@@ -1,8 +1,13 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Gateway de dois fatores",
     "`%s` is your Nextcloud authentication code" : "`%s` é o seu código de autenticação do Nextcloud",
     "%s is your Nextcloud authentication code" : "%s é seu código de autenticação do Nextcloud",
+    "The phone number is not registered on WhatsApp." : "O número de telefone não está registrado no WhatsApp.",
+    "Failed to verify WhatsApp user." : "Falha ao verificar o usuário do WhatsApp.",
+    "Failed to send message" : "Falha ao enviar a mensagem",
+    "Authentication failed with WhatsApp API. Please verify username/password or log in again." : "Falha na autenticação com a API do WhatsApp. Verifique o nome de usuário/senha ou faça login novamente.",
     "WhatsApp verification" : "Verificação via WhatsApp",
     "Authenticate via WhatsApp" : "Autenticar via WhatsApp",
     "Message gateway verification" : "Verificação do gateway de mensagens",
@@ -18,7 +23,6 @@ OC.L10N.register(
     "%s is your verification code." : "%s é seu código de verificação.",
     "no verification code set" : "nenhum código de verificação definido",
     "verification token mismatch" : "incompatibilidade do token de verificação",
-    "Two-Factor Gateway" : "Gateway de dois fatores",
     "Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)" : "Provedores de gateway de dois fatores (Signal, SMS, Telegram, WhatsApp, XMPP)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP." : "Um conjunto de provedores de segundo fator do Nextcloud para enviar códigos de autenticação via Signal, SMS, Telegram, WhatsApp e XMPP.",
     "You are not using {displayName} for two-factor authentication at the moment." : "Você não está usando {displayName} para autenticação de dois fatores no momento.",

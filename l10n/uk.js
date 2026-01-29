@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Двофакторна авторизація",
     "`%s` is your Nextcloud authentication code" : "Код авторизації у хмарі Nextcloud: %s",
     "%s is your Nextcloud authentication code" : "Код авторизації у хмарі Nextcloud: %s",
     "WhatsApp verification" : "Підтвердження через WhatsApp",
@@ -18,7 +19,6 @@ OC.L10N.register(
     "%s is your verification code." : "Код підтвердження: %s",
     "no verification code set" : "не встановлено коду підтвердження",
     "verification token mismatch" : "невідовідний токен підтвердження",
-    "Two-Factor Gateway" : "Двофакторна авторизація",
     "Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)" : "Провайдери шлюзів двофакторної авторизації (Signal, SMS, Telegram, WhatsApp, XMPP)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP." : "Набір постачальників послуг двофакторної авторизації для надсилання кодів авторизації за допомогою Signal, SMS, Telegram, WhatsApp та XMPP.",
     "You are not using {displayName} for two-factor authentication at the moment." : "Ви ще не користуєтеся {displayName} для підтвердження авторизації.",

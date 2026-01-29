@@ -1,4 +1,5 @@
 { "translations": {
+    "Two-Factor Gateway" : "雙重認證通訊閘",
     "`%s` is your Nextcloud authentication code" : "`%s` 是您的 Nextcloud 驗證碼",
     "%s is your Nextcloud authentication code" : "%s 是你的 Nextcloud 驗證碼",
     "WhatsApp verification" : "WhatsApp 驗證",
@@ -16,7 +17,6 @@
     "%s is your verification code." : "%s 是您的驗證碼。",
     "no verification code set" : "沒有設置驗證碼",
     "verification token mismatch" : "驗證權杖不匹配",
-    "Two-Factor Gateway" : "雙重認證通訊閘",
     "Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)" : "雙重認證通訊閘提供者（Signal，SMS，Telegram，WhatsApp, XMPP）",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP." : "一組 Nextcloud 雙重認證提供者，可通過 Signal、SMS、Telegram, WhatsApp 和 XMPP 發送驗證碼。",
     "You are not using {displayName} for two-factor authentication at the moment." : "您目前並未使用 {displayName} 進行兩步驟驗證。",
