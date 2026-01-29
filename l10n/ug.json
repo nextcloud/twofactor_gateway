@@ -1,4 +1,5 @@
 { "translations": {
+    "Two-Factor Gateway" : "ئىككى ئامىللىق كىرىش ئېغىزى",
     "`%s` is your Nextcloud authentication code" : "`%s` بولسا سىزنىڭ Nextcloud دەلىللەش كودىڭىز",
     "%s is your Nextcloud authentication code" : "%s سىزنىڭ Nextcloud دەلىللەش كودىڭىز",
     "WhatsApp verification" : "ۋوتساپ دەلىللەش",
@@ -16,7 +17,6 @@
     "%s is your verification code." : "%s بولسا سىزنىڭ دەلىللەش كودىڭىز",
     "no verification code set" : "دەلىللەش كودى بەلگىلەنمىدى",
     "verification token mismatch" : "دەلىللەش بەلگىسى ماس كەلمىدى",
-    "Two-Factor Gateway" : "ئىككى ئامىللىق كىرىش ئېغىزى",
     "Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)" : "ئىككى ئامىللىق كىرىش ئېغىزى تەمىنلىگۈچى (سىگنال، SMS، تېلىگرام، ۋوتساپ، XMPP)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP." : "بىر يۈرۈش Nextcloud ئىككى ئامىللىق تەمىنلىگۈچىلەر سىگنال ، قىسقا ئۇچۇر ۋە تېلېگرامما ئارقىلىق دەلىللەش كودى ئەۋەتىدۇ.",
     "You are not using {displayName} for two-factor authentication at the moment." : "سىز ھازىر {displayName} نى ئىككى ئامىللىق دەلىللەش ئۈچۈن ئىشلەتمەيسىز.",

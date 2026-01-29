@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Kétlépcsős hitelesítési átjáró",
     "%s is your Nextcloud authentication code" : "%s a Nextcloud-hitelesítőkódja",
     "Message gateway verification" : "Üzenetátjáró ellenőrzése",
     "Authenticate via SMS" : "Hitelesítés SMS-sel",
@@ -10,7 +11,6 @@ OC.L10N.register(
     "Authenticate via Telegram" : "Hitelesítés Telegrammal",
     "XMPP verification" : "XMPP ellenőrzés",
     "Authenticate via XMPP" : "Hitelesítés XMPP-vel",
-    "Two-Factor Gateway" : "Kétlépcsős hitelesítési átjáró",
     "You are not using {displayName} for two-factor authentication at the moment." : "Jelenleg nem használja a következőt a kétléőcsős hitelesítéshez: {displayName}.",
     "Enable" : "Engedélyezés",
     "Could not verify your code. Please try again." : "A kód nem ellenőrizhető. Próbálja meg újra.",

@@ -1,8 +1,8 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "%s is your Nextcloud authentication code" : "%ser Nextcloud autorisasjons koden deira",
     "Two-Factor Gateway" : "To-faktor inngangsport",
+    "%s is your Nextcloud authentication code" : "%ser Nextcloud autorisasjons koden deira",
     "Enable" : "SLå på",
     "Verify" : "Stadfest",
     "Disable" : "Slå av",

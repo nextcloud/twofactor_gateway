@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Lango la vipengele viwili",
     "`%s` is your Nextcloud authentication code" : "`%s` ni msimbo wako wa uthibitishaji wa Nextcloud",
     "%s is your Nextcloud authentication code" : "%s ni msimbo wako wa uthibitishaji wa Nextcloud",
     "WhatsApp verification" : "Uthibitishaji wa WhatsApp",
@@ -18,7 +19,6 @@ OC.L10N.register(
     "%s is your verification code." : "%s ni nambari yako ya kuthibitisha.",
     "no verification code set" : "hakuna msimbo wa uthibitishaji uliowekwa",
     "verification token mismatch" : "ishara ya uthibitishaji kutolingana",
-    "Two-Factor Gateway" : "Lango la vipengele viwili",
     "Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)" : "Watoa huduma wa lango la mambo mawili (Signal, SMS, Telegram, WhatsApp, XMPP)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP." : "Seti ya watoa huduma wa vipengele viwili vya Nextcloud kutuma misimbo ya uthibitishaji kupitia Mawimbi, SMS, Telegramu, WhatsApp na XMPP.",
     "You are not using {displayName} for two-factor authentication at the moment." : "Hutumii {displayName} kwa uthibitishaji wa vipengele viwili kwa sasa.",

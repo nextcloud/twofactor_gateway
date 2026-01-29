@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Dvofaktorski pristupni poslužitelj",
     "%s is your Nextcloud authentication code" : "%s je vaša šifra za autentifikaciju u Nextcloud",
     "Message gateway verification" : "Provjera pristupnog poslužitelja za poruke",
     "Authenticate via SMS" : "Autentifikacija putem SMS poruka",
@@ -8,7 +9,6 @@ OC.L10N.register(
     "Authenticate via Signal" : "Autentifikacija putem signala",
     "Telegram verification" : "Provjera Telegrama",
     "Authenticate via Telegram" : "Autentificiraj se putem Telegrama",
-    "Two-Factor Gateway" : "Dvofaktorski pristupni poslužitelj",
     "Enable" : "Omogućite",
     "Verify" : "Provjeri",
     "Confirm" : "Potvrdi",

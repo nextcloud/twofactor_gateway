@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Dvojfaktorová brána",
     "%s is your Nextcloud authentication code" : "%s je váš Nextcloud autentizačný kód",
     "Message gateway verification" : "Overovanie brány správ",
     "Authenticate via SMS" : "Overiť pomocou SMS",
@@ -10,7 +11,6 @@ OC.L10N.register(
     "Authenticate via Telegram" : "Overit pomocou Telegram",
     "XMPP verification" : "Overenie XMPP",
     "Authenticate via XMPP" : "Overiť pomocou XMPP",
-    "Two-Factor Gateway" : "Dvojfaktorová brána",
     "You are not using {displayName} for two-factor authentication at the moment." : "V súčasnosti nepoužívate {displayName} pre dvoj-faktorové overenie.",
     "Enable" : "Povoliť",
     "Could not verify your code. Please try again." : "Nie je možné overiť váš kód. Prosím skúste to znova.",

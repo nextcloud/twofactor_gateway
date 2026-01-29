@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Brána pro dvouúrovňové ověřování",
     "`%s` is your Nextcloud authentication code" : "`%s` je váš ověřovací kód pro Nextcloud",
     "%s is your Nextcloud authentication code" : "%s je váš ověřovací kód pro Nextcloud",
     "WhatsApp verification" : "WhatsApp ověření",
@@ -18,7 +19,6 @@ OC.L10N.register(
     "%s is your verification code." : "%s je váš ověřovací kód",
     "no verification code set" : "nenastaven žádný kód pro ověření",
     "verification token mismatch" : "neshoda v ověřovacím token",
-    "Two-Factor Gateway" : "Brána pro dvouúrovňové ověřování",
     "Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)" : "Poskytovatelé brány dvouúrovňového ověřování (Signal, SMS, Telegram, WhatsApp, XMPP)",
     "A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP." : "Sada poskytovatelů dvouúrovňového ověřování pro Nextcloud pro posílání ověřovacích kódů prostřednictvím služeb Signal, SMS, Telegram, WhatsApp a XMPP.",
     "You are not using {displayName} for two-factor authentication at the moment." : "V tuto chvíli pro dvoufázové ověřování nepoužíváte {displayName}.",

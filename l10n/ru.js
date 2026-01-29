@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "Шлюз для передачи второго фактора",
     "%s is your Nextcloud authentication code" : "Код подтверждения Nextcloud: «%s»",
     "Message gateway verification" : "Шлюз для отправки сообщений подтверждения",
     "Authenticate via SMS" : "Аутентифицировать с помощью СМС",
@@ -9,7 +10,6 @@ OC.L10N.register(
     "Telegram verification" : "Telegram",
     "Authenticate via Telegram" : "Аутентифицировать с помощью Telegram",
     "Authenticate via XMPP" : "Аутентификация через XMPP",
-    "Two-Factor Gateway" : "Шлюз для передачи второго фактора",
     "Enable" : "Включить",
     "Verify" : "Подтвердить",
     "A confirmation code has been sent to {phone}. Please insert the code here:" : "Код подтверждения был отправлен на {phone}. Пожалуйста, вставьте код сюда:",

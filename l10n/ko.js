@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Two-Factor Gateway" : "2단계 인증 게이트웨이",
     "%s is your Nextcloud authentication code" : "%s: Nextcloud 인증 코드입니다.",
     "Message gateway verification" : "메시지 게이트웨이 확인",
     "Authenticate via SMS" : "SMS로 인증",
@@ -8,7 +9,6 @@ OC.L10N.register(
     "Authenticate via Signal" : "Signal로 인증",
     "Telegram verification" : "Telegram 확인",
     "Authenticate via Telegram" : "Telegram으로 인증",
-    "Two-Factor Gateway" : "2단계 인증 게이트웨이",
     "Enable" : "활성화",
     "Verify" : "인증",
     "Confirm" : "확인",
