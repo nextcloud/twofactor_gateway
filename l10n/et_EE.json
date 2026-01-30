@@ -1,5 +1,7 @@
 { "translations": {
     "Two-Factor Gateway" : " Kaheastmelise autentimise lüüs",
+    "Two-Factor Gateway: WhatsApp API authentication failed" : "Kaheastmelise autentimise lüüs: Autentimine WhatsAppi API abil ei õnnestunud",
+    "The authentication with WhatsApp API has failed. The Two-Factor Gateway (WhatsApp) will not work until this is resolved. Please reconfigure the WhatsApp gateway using the command line tool." : "Autentimine WhatsAppi API abil ei õnnestunud. Kaheastmelise autentimise lüüs (WhatsApp) töötab kuni see viga on lahendatud. Palun seadista WhatsAppi lüüs käsurea tarviku abil uuesti.",
     "`%s` is your Nextcloud authentication code" : "„%s“ on sinu Nextcloudi autentimiskood",
     "%s is your Nextcloud authentication code" : "%son sinu Nextcloudi autentimiskood",
     "The phone number is not registered on WhatsApp." : "See telefoninumber pole WhatsAppis registreeritud.",
