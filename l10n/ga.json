@@ -5,7 +5,7 @@
     "`%s` is your Nextcloud authentication code" : "Is é `%s` do chód fíordheimhnithe Nextcloud",
     "%s is your Nextcloud authentication code" : "%s is é do chód fíordheimhnithe Nextcloud",
     "The phone number is not registered on WhatsApp." : "Níl an uimhir theileafóin cláraithe ar WhatsApp.",
-    "Failed to verify WhatsApp user." : "Failed to verify WhatsApp user.",
+    "Failed to verify WhatsApp user." : "Theip ar fhíorú úsáideoir WhatsApp.",
     "Failed to send message" : "Theip ar an teachtaireacht a sheoladh",
     "Authentication failed with WhatsApp API. Please verify username/password or log in again." : "Theip ar fhíordheimhniú le WhatsApp API. Fíoraigh d'ainm úsáideora/pasfhocal nó logáil isteach arís.",
     "WhatsApp verification" : "Fíorú WhatsApp",
