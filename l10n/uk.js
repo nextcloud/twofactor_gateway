@@ -2,7 +2,7 @@ OC.L10N.register(
     "twofactor_gateway",
     {
     "Two-Factor Gateway" : "Двофакторна автентифікація",
-    "Two-Factor Gateway: WhatsApp API authentication failed" : "Шлюз для другого фактору автентифікації: не вдалося автентифікуватися через API WhatsApp",
+    "Two-Factor Gateway: WhatsApp API authentication failed" : "Шлюз для другого фактора автентифікації: не вдалося автентифікуватися через API WhatsApp",
     "The authentication with WhatsApp API has failed. The Two-Factor Gateway (WhatsApp) will not work until this is resolved. Please reconfigure the WhatsApp gateway using the command line tool." : "Не вдалося пройти автентифікацію за допомогою API WhatsApp. Шлюз двофакторної автентифікації (WhatsApp) не працюватиме, доки цю проблемо не буде вирішено. Повторно налаштуйте шлюз WhatsApp за допомогою командного рядку.",
     "`%s` is your Nextcloud authentication code" : "Одноразовий код входу до хмари Nextcloud: %s",
     "%s is your Nextcloud authentication code" : "Одноразовий код входу до хмари Nextcloud: %s",
