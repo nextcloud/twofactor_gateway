@@ -27,7 +27,7 @@
     "@nextcloud/vue": "^9.5.0",
     "dompurify": "^3.3.0",
     "markdown-it": "^14.1.0",
-    "vue": "^3.5.27"
+    "vue": "^3.5.28"
   },
   "devDependencies": {
     "@nextcloud/browserslist-config": "^3.1.2",
