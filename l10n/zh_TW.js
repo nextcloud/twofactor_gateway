@@ -1,7 +1,9 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
-    "Two-Factor Gateway" : "兩步驟驗證中心",
+    "Two-Factor Gateway" : "兩步驟驗證閘道",
+    "Two-Factor Gateway: WhatsApp API authentication failed" : "兩步驟驗證閘道：WhatsApp API 驗證失敗",
+    "The authentication with WhatsApp API has failed. The Two-Factor Gateway (WhatsApp) will not work until this is resolved. Please reconfigure the WhatsApp gateway using the command line tool." : "與 WhatsApp API 的驗證失敗。在問題解決之前，兩步驟驗證閘道 (WhatsApp) 將無法運作。請使用命令列工具重新設定 WhatsApp 閘道。",
     "`%s` is your Nextcloud authentication code" : "`%s` 是您的 Nextcloud 驗證碼",
     "%s is your Nextcloud authentication code" : "%s 是你的 Nextcloud 驗證碼",
     "The phone number is not registered on WhatsApp." : "電話號碼尚未於 WhatsApp 上註冊。",
