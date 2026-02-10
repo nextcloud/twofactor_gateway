@@ -208,7 +208,15 @@ class Gateway extends AGateway {
 		$output->writeln('<info>Checking for existing devices...</info>');
 		$devices = $this->fetchDevices();
 
-		if ($devices === null || empty($devices)) {
+		if ($devices === null) {
+			$output->writeln('<info>No devices found. Creating a new device...</info>');
+			if (!$this->createNewDevice($output)) {
+				return self::CONFIG_ERROR;
+			}
+			$devices = $this->fetchDevices();
+		}
+
+		if (empty($devices)) {
 			return self::CONFIG_CONTINUE;
 		}
 
@@ -468,8 +476,39 @@ class Gateway extends AGateway {
 			}
 
 			return [];
+		} catch (\GuzzleHttp\Exception\BadResponseException $e) {
+			if ($e->getResponse()?->getStatusCode() === 404) {
+				return null;
+			}
+			return [];
 		} catch (\Exception) {
 			return null;
+		}
+	}
+
+	private function createNewDevice(OutputInterface $output): bool {
+		try {
+			$response = $this->client->post($this->getBaseUrl() . '/devices', [
+				'timeout' => 5,
+				'json' => [
+					'device_name' => 'Nextcloud',
+				],
+			]);
+
+			$body = (string)$response->getBody();
+			$data = json_decode($body, true);
+
+			if (($data['code'] ?? '') === 'SUCCESS' || ($data['code'] ?? '') === 'CREATED') {
+
+				return true;
+			}
+
+			$output->writeln('<error>\u2717 Failed to create device: ' . ($data['message'] ?? 'Unknown error') . '</error>');
+			return false;
+		} catch (\Exception $e) {
+			$output->writeln('<error>\u2717 Error creating device: ' . $e->getMessage() . '</error>');
+			$this->logger->error('Failed to create device', ['exception' => $e]);
+			return false;
 		}
 	}
 
@@ -501,7 +540,9 @@ class Gateway extends AGateway {
 	private function fetchPairingCode(): array {
 		try {
 			$response = $this->client->get($this->getBaseUrl() . '/app/login-with-code', [
-				'query' => ['phone' => $this->lazyPhone],
+				'query' => [
+					'phone' => $this->lazyPhone,
+				],
 			]);
 
 			$body = (string)$response->getBody();
@@ -599,9 +640,13 @@ class Gateway extends AGateway {
 
 	private function validateUrlReachability(OutputInterface $output): bool {
 		try {
-			$response = $this->client->get($this->lazyBaseUrl . '/app/status', [
+			$this->client->post($this->lazyBaseUrl . '/devices', [
 				'timeout' => 5,
+				'json' => [
+					'device_name' => 'Nextcloud',
+				],
 			]);
+
 			$output->writeln('<info>✓ API is reachable.</info>');
 			return true;
 		} catch (\GuzzleHttp\Exception\ConnectException $e) {
