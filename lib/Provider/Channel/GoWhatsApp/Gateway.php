@@ -34,6 +34,10 @@ use Symfony\Component\Console\Question\Question;
  * @method static setBaseUrl(string $baseUrl)
  * @method string getPhone()
  * @method static setPhone(string $phone)
+ * @method string getDeviceName()
+ * @method static setDeviceName(string $deviceName)
+ * @method string getDeviceId()
+ * @method static setDeviceId(string $deviceId)
  * @method string getUsername()
  * @method static setUsername(string $username)
  * @method string getPassword()
@@ -56,6 +60,8 @@ class Gateway extends AGateway {
 	private string $lazyPhone = '';
 	private string $lazyUsername = '';
 	private string $lazyPassword = '';
+	private string $lazyDeviceName = '';
+	private string $lazyDeviceId = '';
 
 	public function __construct(
 		public IAppConfig $appConfig,
@@ -77,6 +83,17 @@ class Gateway extends AGateway {
 				new FieldDefinition(
 					field: 'base_url',
 					prompt: 'Base URL to your WhatsApp API endpoint:',
+				),
+				new FieldDefinition(
+					field: 'device_name',
+					prompt: 'Device name shown in WhatsApp linked devices:',
+					default: 'Nextcloud',
+					optional: true,
+				),
+				new FieldDefinition(
+					field: 'device_id',
+					prompt: 'Device ID (auto-generated, do not edit):',
+					optional: true,
 				),
 				new FieldDefinition(
 					field: 'username',
@@ -126,13 +143,20 @@ class Gateway extends AGateway {
 		$phone = $this->formatPhoneNumber($identifier);
 
 		try {
-			$response = $this->client->post($this->getBaseUrl() . '/send/message', [
+			$options = [
 				'json' => [
 					'phone' => $phone,
 					'message' => $message,
 				],
 				'auth' => $this->getBasicAuth(),
-			]);
+			];
+
+			$deviceId = $this->getDeviceId();
+			if (!empty($deviceId)) {
+				$options['headers'] = ['X-Device-Id' => $deviceId];
+			}
+
+			$response = $this->client->post($this->getBaseUrl() . '/send/message', $options);
 
 			$body = (string)$response->getBody();
 			$data = json_decode($body, true);
@@ -175,15 +199,27 @@ class Gateway extends AGateway {
 			return $result;
 		}
 
+		// Only collect device name if we need to create a new device
+		if ($this->lazyDeviceName === '') {
+			$this->collectDeviceName($input, $output, $helper);
+		}
 		$this->collectCredentials($input, $output, $helper);
 
 		return $this->setupNewDeviceWithPairingCode($input, $output, $helper);
 	}
 
+	private function collectDeviceName(InputInterface $input, OutputInterface $output, QuestionHelper $helper): void {
+		$defaultDeviceName = $this->getDeviceNameValue();
+		$deviceNameQuestion = new Question($this->getFieldPrompt('device_name') . ' ', $defaultDeviceName);
+		$deviceName = (string)$helper->ask($input, $output, $deviceNameQuestion);
+		$deviceName = trim($deviceName);
+		$this->lazyDeviceName = $deviceName !== '' ? $deviceName : $defaultDeviceName;
+	}
+
 	private function collectAndValidateBaseUrl(InputInterface $input, OutputInterface $output, QuestionHelper $helper): bool {
 		while (true) {
-			$baseUrlQuestion = new Question($this->getSettings()->fields[0]->prompt . ' ');
-			$this->lazyBaseUrl = $helper->ask($input, $output, $baseUrlQuestion);
+			$baseUrlQuestion = new Question($this->getFieldPrompt('base_url') . ' ');
+			$this->lazyBaseUrl = (string)($helper->ask($input, $output, $baseUrlQuestion) ?? '');
 			$this->lazyBaseUrl = rtrim($this->lazyBaseUrl, '/');
 
 			$output->writeln('<info>Testing connection to API...</info>');
@@ -206,56 +242,88 @@ class Gateway extends AGateway {
 
 	private function tryReuseExistingDevice(InputInterface $input, OutputInterface $output, QuestionHelper $helper): int {
 		$output->writeln('<info>Checking for existing devices...</info>');
-		$devices = $this->fetchDevices();
+		$allDevices = $this->fetchDevices();
 
-		if ($devices === null) {
+
+		if (empty($allDevices)) {
 			$output->writeln('<info>No devices found. Creating a new device...</info>');
-			if (!$this->createNewDevice($output)) {
-				return self::CONFIG_ERROR;
-			}
-			$devices = $this->fetchDevices();
-		}
-
-		if (empty($devices)) {
 			return self::CONFIG_CONTINUE;
 		}
 
 		$output->writeln('');
-		$output->writeln('<info>Found ' . count($devices) . ' connected device(s):</info>');
-		$this->displayDeviceList($output, $devices);
+		$output->writeln('<info>Found ' . count($allDevices) . ' device(s):</info>');
+		$this->displayDeviceList($output, $allDevices);
 
-		$choice = $this->askDeviceAction($input, $output, $helper);
+		// Ask user what to do with existing device(s)
+		$output->writeln('');
+		$choice = $this->askDeviceChoiceAction($input, $output, $helper);
 
 		if ($choice === 0) {
-			return $this->configureWithDevice($output, $devices[0]);
+			// Use existing device
+			$device = reset($allDevices);
+			$output->writeln('<info>Using device: ' . ($device['display_name'] ?? $device['id'] ?? '') . '</info>');
+
+			// Logout other devices if multiple exist
+			if (count($allDevices) > 1) {
+				$output->writeln('<info>Logging out other devices...</info>');
+				foreach ($allDevices as $otherDevice) {
+					if (($otherDevice['id'] ?? '') !== ($device['id'] ?? '')) {
+						$this->logoutDevice($output, $otherDevice);
+					}
+				}
+			}
+
+			return $this->configureWithDevice($output, $device);
 		}
 
 		if ($choice === 1) {
-			$output->writeln('<info>Logging out device...</info>');
-			$this->performLogout($output);
+			// Logout all and create new
+			$this->collectDeviceName($input, $output, $helper);
+			$output->writeln('<info>Logging out all devices...</info>');
+			$this->logoutAllDevices($output, $allDevices);
+			$output->writeln('<info>Creating new device...</info>');
+			if (!$this->createNewDevice($output)) {
+				return self::CONFIG_ERROR;
+			}
+			return self::CONFIG_CONTINUE;
 		}
 
 		if ($choice === 2) {
-			return self::CONFIG_ERROR;
+			// Create new device (keep existing)
+			$this->collectDeviceName($input, $output, $helper);
+			$output->writeln('<info>Creating new device...</info>');
+			if (!$this->createNewDevice($output)) {
+				return self::CONFIG_ERROR;
+			}
+			return self::CONFIG_CONTINUE;
 		}
+
 
 		return self::CONFIG_CONTINUE;
 	}
 
 	private function collectCredentials(InputInterface $input, OutputInterface $output, QuestionHelper $helper): void {
-		$usernameQuestion = new Question($this->getSettings()->fields[1]->prompt . ' ');
-		$this->lazyUsername = $helper->ask($input, $output, $usernameQuestion);
+		$usernameQuestion = new Question($this->getFieldPrompt('username') . ' ');
+		$this->lazyUsername = (string)($helper->ask($input, $output, $usernameQuestion) ?? '');
 
-		$passwordQuestion = new Question($this->getSettings()->fields[2]->prompt . ' ');
+		$passwordQuestion = new Question($this->getFieldPrompt('password') . ' ');
 		$passwordQuestion->setHidden(true);
 		$passwordQuestion->setHiddenFallback(false);
-		$this->lazyPassword = $helper->ask($input, $output, $passwordQuestion);
+		$this->lazyPassword = (string)($helper->ask($input, $output, $passwordQuestion) ?? '');
 	}
 
 	private function setupNewDeviceWithPairingCode(InputInterface $input, OutputInterface $output, QuestionHelper $helper): int {
-		$phoneQuestion = new Question($this->getSettings()->fields[3]->prompt . ' ');
-		$this->lazyPhone = $helper->ask($input, $output, $phoneQuestion);
-		$this->lazyPhone = preg_replace('/\D/', '', $this->lazyPhone);
+		// Create a new device first if device_id is not already set
+		if (empty($this->lazyDeviceId)) {
+			$output->writeln('<info>Creating new device...</info>');
+			if (!$this->createNewDevice($output)) {
+				return self::CONFIG_ERROR;
+			}
+		}
+
+		$phoneQuestion = new Question($this->getFieldPrompt('phone') . ' ');
+		$this->lazyPhone = (string)($helper->ask($input, $output, $phoneQuestion) ?? '');
+		$this->lazyPhone = (string)preg_replace('/\D/', '', $this->lazyPhone);
 
 		$pairingCode = $this->requestPairingCode($input, $output);
 		if ($pairingCode === null) {
@@ -266,19 +334,39 @@ class Gateway extends AGateway {
 	}
 
 	private function configureWithDevice(OutputInterface $output, array $device): int {
-		$firstDevice = $device['device'] ?? '';
-		preg_match('/^(\d+)/', $firstDevice, $matches);
+		// Device is an array with API v8 fields: id, jid, phone_number, display_name, state
+		$deviceId = $device['id'] ?? '';
+		$deviceJid = $device['jid'] ?? '';
+		$phoneNumber = $device['phone_number'] ?? '';
 
-		if (empty($matches[1])) {
+		// Use device_id for API calls
+		if (!empty($deviceId)) {
+			$this->lazyDeviceId = $deviceId;
+		} else {
 			return self::CONFIG_CONTINUE;
 		}
 
-		$this->lazyPhone = $matches[1];
+		// Extract phone number from jid (format: "phone@s.whatsapp.net") or use phone_number field
+		if (!empty($deviceJid)) {
+			preg_match('/^(\d+)@/', $deviceJid, $matches);
+			if (!empty($matches[1])) {
+				$this->lazyPhone = $matches[1];
+			}
+		} elseif (!empty($phoneNumber)) {
+			// Fallback to phone_number field if available
+			$this->lazyPhone = preg_replace('/\D/', '', $phoneNumber) ?? '';
+		}
 
-		$statusCheck = $this->checkDeviceStatusQuiet($firstDevice);
+		if (empty($this->lazyPhone)) {
+			return self::CONFIG_CONTINUE;
+		}
+
+		$statusCheck = $this->checkDeviceStatusQuiet($deviceJid ?: $this->lazyPhone . '@s.whatsapp.net');
 		if ($statusCheck) {
 			$this->setBaseUrl($this->lazyBaseUrl);
 			$this->setPhone($this->lazyPhone);
+			$this->setDeviceName($this->getDeviceNameValue());
+			$this->setDeviceId($this->lazyDeviceId);
 			$output->writeln('<info>✓ Configuration saved using existing device.</info>');
 			$output->writeln('');
 			$output->writeln('<comment>Base URL:</comment> ' . $this->lazyBaseUrl);
@@ -291,23 +379,43 @@ class Gateway extends AGateway {
 	}
 
 	private function configureWithDeviceAndAuth(InputInterface $input, OutputInterface $output, array $device): int {
-		$firstDevice = $device['device'] ?? '';
-		preg_match('/^(\d+)/', $firstDevice, $matches);
+		// Device is an array with API v8 fields: id, jid, phone_number, display_name, state
+		$deviceId = $device['id'] ?? '';
+		$deviceJid = $device['jid'] ?? '';
+		$phoneNumber = $device['phone_number'] ?? '';
 
-		if (empty($matches[1])) {
+		// Use device_id for API calls
+		if (!empty($deviceId)) {
+			$this->lazyDeviceId = $deviceId;
+		} else {
 			return self::CONFIG_CONTINUE;
 		}
 
-		$this->lazyPhone = $matches[1];
+		// Extract phone number from jid (format: "phone@s.whatsapp.net") or use phone_number field
+		if (!empty($deviceJid)) {
+			preg_match('/^(\d+)@/', $deviceJid, $matches);
+			if (!empty($matches[1])) {
+				$this->lazyPhone = $matches[1];
+			}
+		} elseif (!empty($phoneNumber)) {
+			// Fallback to phone_number field if available
+			$this->lazyPhone = preg_replace('/\D/', '', $phoneNumber) ?? '';
+		}
+
+		if (empty($this->lazyPhone)) {
+			return self::CONFIG_CONTINUE;
+		}
 
 		$output->writeln('<info>Checking device status...</info>');
-		$statusCheck = $this->checkDeviceStatus($input, $output, $firstDevice);
+		$statusCheck = $this->checkDeviceStatus($input, $output, $deviceJid ?: $this->lazyPhone . '@s.whatsapp.net');
 
 		if ($statusCheck === self::CONFIG_SUCCESS) {
 			$this->setBaseUrl($this->lazyBaseUrl);
 			$this->setUsername($this->lazyUsername);
 			$this->setPassword($this->lazyPassword);
 			$this->setPhone($this->lazyPhone);
+			$this->setDeviceName($this->getDeviceNameValue());
+			$this->setDeviceId($this->lazyDeviceId);
 			$output->writeln('<info>✓ Configuration saved using existing device.</info>');
 			$output->writeln('');
 			$output->writeln('<comment>Base URL:</comment> ' . $this->lazyBaseUrl);
@@ -351,9 +459,15 @@ class Gateway extends AGateway {
 			sleep(2);
 
 			try {
-				$userInfoResponse = $this->client->get($this->getBaseUrl() . '/user/info', [
-					'query' => ['phone' => $this->lazyPhone . '@s.whatsapp.net'],
-				]);
+				$options = ['query' => ['phone' => $this->lazyPhone . '@s.whatsapp.net']];
+
+				// Add device_id as header if available
+				$deviceId = $this->getDeviceId();
+				if (!empty($deviceId)) {
+					$options['headers'] = ['X-Device-Id' => $deviceId];
+				}
+
+				$userInfoResponse = $this->client->get($this->getBaseUrl() . '/user/info', $options);
 
 				$userInfoBody = (string)$userInfoResponse->getBody();
 				$userInfoData = json_decode($userInfoBody, true);
@@ -369,6 +483,8 @@ class Gateway extends AGateway {
 					$this->setUsername($this->lazyUsername);
 					$this->setPassword($this->lazyPassword);
 					$this->setPhone($this->lazyPhone);
+					$this->setDeviceName($this->getDeviceNameValue());
+					$this->setDeviceId($this->lazyDeviceId);
 					return 0;
 				}
 			} catch (\Exception) {
@@ -387,9 +503,30 @@ class Gateway extends AGateway {
 
 	private function displayDeviceList(OutputInterface $output, array $devices): void {
 		foreach ($devices as $index => $device) {
-			$name = $device['name'] ?? 'Unknown';
-			$deviceId = $device['device'] ?? 'Unknown';
-			$output->writeln('  ' . ($index + 1) . '. <comment>' . $name . '</comment> (' . $deviceId . ')');
+			$deviceId = $device['id'] ?? 'Unknown';
+			$displayName = $device['display_name'] ?? '';
+			$phoneNumber = $device['phone_number'] ?? '';
+			$state = $device['state'] ?? 'unknown';
+			$createdAt = $device['created_at'] ?? '';
+
+			if (in_array($state, ['connected', 'logged_in'], true)) {
+				$stateFormatted = '<info>' . $state . '</info>';
+			} else {
+				$stateFormatted = '<error>' . $state . '</error>';
+			}
+
+			// Format created_at timestamp
+			$createdFormatted = '';
+			if (!empty($createdAt)) {
+				try {
+					$date = new \DateTime($createdAt);
+					$createdFormatted = ' - Created: ' . $date->format('Y-m-d H:i:s');
+				} catch (\Exception) {
+				}
+			}
+
+			$output->writeln('  ' . ($index + 1) . '. <comment>' . ($displayName ?: $phoneNumber ?: 'Unknown') . '</comment>');
+			$output->writeln('     ID: ' . $deviceId . ' [' . $stateFormatted . ']' . $createdFormatted);
 		}
 		$output->writeln('');
 	}
@@ -460,16 +597,13 @@ class Gateway extends AGateway {
 
 	private function fetchDevices(): ?array {
 		try {
-			$response = $this->client->get($this->getBaseUrl() . '/app/devices', [
+			$response = $this->client->get($this->getBaseUrl() . '/devices', [
 				'timeout' => 5,
+				'auth' => $this->getBasicAuth(),
 			]);
 
 			$body = (string)$response->getBody();
 			$data = json_decode($body, true);
-
-			if (($data['code'] ?? '') === 'SUCCESS' && isset($data['data'])) {
-				return $data['data'];
-			}
 
 			if (($data['code'] ?? '') === 'SUCCESS' && isset($data['results'])) {
 				return $data['results'];
@@ -491,15 +625,23 @@ class Gateway extends AGateway {
 			$response = $this->client->post($this->getBaseUrl() . '/devices', [
 				'timeout' => 5,
 				'json' => [
-					'device_name' => 'Nextcloud',
+					'device_id' => $this->getDeviceNameValue(),
 				],
 			]);
 
 			$body = (string)$response->getBody();
 			$data = json_decode($body, true);
 
-			if (($data['code'] ?? '') === 'SUCCESS' || ($data['code'] ?? '') === 'CREATED') {
+			$this->logger->debug('Create device response', ['data' => $data]);
 
+			if (($data['code'] ?? '') === 'SUCCESS' || ($data['code'] ?? '') === 'CREATED') {
+				$deviceId = $data['results']['id'];
+				if (!empty($deviceId)) {
+					$this->lazyDeviceId = $deviceId;
+					$this->logger->info('Captured device_id', ['device_id' => $deviceId]);
+				} else {
+					$this->logger->warning('No device_id found in create device response');
+				}
 				return true;
 			}
 
@@ -539,11 +681,19 @@ class Gateway extends AGateway {
 
 	private function fetchPairingCode(): array {
 		try {
-			$response = $this->client->get($this->getBaseUrl() . '/app/login-with-code', [
-				'query' => [
-					'phone' => $this->lazyPhone,
-				],
+			$this->logger->debug('Fetching pairing code', [
+				'phone' => $this->lazyPhone,
+				'device_id' => $this->lazyDeviceId,
 			]);
+
+			$options = ['query' => ['phone' => $this->lazyPhone]];
+
+			$deviceId = $this->getDeviceId();
+			if (!empty($deviceId)) {
+				$options['headers'] = ['X-Device-Id' => $deviceId];
+			}
+
+			$response = $this->client->get($this->getBaseUrl() . '/app/login-with-code', $options);
 
 			$body = (string)$response->getBody();
 			$data = json_decode($body, true);
@@ -595,12 +745,45 @@ class Gateway extends AGateway {
 			$this->setUsername($this->lazyUsername);
 			$this->setPassword($this->lazyPassword);
 			$this->setPhone($this->lazyPhone);
-			$output->writeln('<info>Configuration saved successfully.</info>');
+			$this->setDeviceName($this->getDeviceNameValue());		$this->setDeviceId($this->lazyDeviceId);			$output->writeln('<info>Configuration saved successfully.</info>');
 			return self::CONFIG_SUCCESS;
 		}
 
 		$logoutSuccess = $this->performLogout($output);
 		return $logoutSuccess ? self::CONFIG_CONTINUE : self::CONFIG_ERROR;
+	}
+
+	private function getFieldPrompt(string $fieldName): string {
+		foreach ($this->getSettings()->fields as $field) {
+			if ($field->field === $fieldName) {
+				return $field->prompt;
+			}
+		}
+		return $fieldName . ':';
+	}
+
+	private function getFieldDefault(string $fieldName): string {
+		foreach ($this->getSettings()->fields as $field) {
+			if ($field->field === $fieldName) {
+				return $field->default;
+			}
+		}
+		return '';
+	}
+
+	private function getDeviceNameValue(): string {
+		if ($this->lazyDeviceName !== '') {
+			return $this->lazyDeviceName;
+		}
+
+		try {
+			$this->lazyDeviceName = $this->getDeviceName();
+			return $this->lazyDeviceName;
+		} catch (\Exception) {
+		}
+
+		$this->lazyDeviceName = $this->getFieldDefault('device_name') ?: 'Nextcloud';
+		return $this->lazyDeviceName;
 	}
 
 	private function handleDeviceIssue(InputInterface $input, OutputInterface $output): int {
@@ -628,7 +811,14 @@ class Gateway extends AGateway {
 	private function performLogout(OutputInterface $output): bool {
 		$output->writeln('<info>Logging out device...</info>');
 		try {
-			$this->client->get($this->getBaseUrl() . '/app/logout');
+			$options = [];
+
+			$deviceId = $this->getDeviceId();
+			if (!empty($deviceId)) {
+				$options['headers'] = ['X-Device-Id' => $deviceId];
+			}
+
+			$this->client->get($this->getBaseUrl() . '/app/logout', $options);
 			$output->writeln('<info>Device logged out successfully. Please set up a new device.</info>');
 			return true;
 		} catch (\Exception $e) {
@@ -640,11 +830,8 @@ class Gateway extends AGateway {
 
 	private function validateUrlReachability(OutputInterface $output): bool {
 		try {
-			$this->client->post($this->lazyBaseUrl . '/devices', [
+			$this->client->get($this->lazyBaseUrl . '/devices', [
 				'timeout' => 5,
-				'json' => [
-					'device_name' => 'Nextcloud',
-				],
 			]);
 
 			$output->writeln('<info>✓ API is reachable.</info>');
@@ -681,10 +868,17 @@ class Gateway extends AGateway {
 	private function checkUserOnWhatsApp(string $phoneNumber): bool {
 		try {
 			$phone = preg_replace('/\D/', '', $phoneNumber);
-			$response = $this->client->get($this->getBaseUrl() . '/user/check', [
+			$options = [
 				'query' => ['phone' => $phone],
 				'auth' => $this->getBasicAuth(),
-			]);
+			];
+
+			$deviceId = $this->getDeviceId();
+			if (!empty($deviceId)) {
+				$options['headers'] = ['X-Device-Id' => $deviceId];
+			}
+
+			$response = $this->client->get($this->getBaseUrl() . '/user/check', $options);
 
 			$body = (string)$response->getBody();
 			$data = json_decode($body, true);
@@ -752,11 +946,24 @@ class Gateway extends AGateway {
 		return $this->lazyBaseUrl;
 	}
 
-	private function askDeviceAction(InputInterface $input, OutputInterface $output, QuestionHelper $helper): int {
+	private function getDeviceId(): string {
+		if ($this->lazyDeviceId !== '') {
+			return $this->lazyDeviceId;
+		}
+		try {
+			/** @var string */
+			$this->lazyDeviceId = parent::__call('getDeviceId', []);
+		} catch (\Exception) {
+			$this->lazyDeviceId = '';
+		}
+		return $this->lazyDeviceId;
+	}
+
+	private function askDeviceChoiceAction(InputInterface $input, OutputInterface $output, QuestionHelper $helper): int {
 		$actions = [
-			'Use this device',
-			'Try another device',
-			'Abort configuration',
+			'Use an existing device (logout others)',
+			'Logout all devices and create new one',
+			'Create a new device (keep existing ones)',
 		];
 
 		$question = new ChoiceQuestion(
@@ -771,5 +978,41 @@ class Gateway extends AGateway {
 		return array_search($choice, $actions, true) !== false
 			? (int)array_search($choice, $actions, true)
 			: 0;
+	}
+
+	private function logoutDevice(OutputInterface $output, array $device): bool {
+		try {
+			$deviceId = $device['id'] ?? '';
+			if (empty($deviceId)) {
+				return false;
+			}
+
+			$currentDeviceId = $this->lazyDeviceId;
+			$this->lazyDeviceId = $deviceId;
+
+			$this->performLogout($output);
+
+			$this->lazyDeviceId = $currentDeviceId;
+
+			return true;
+		} catch (\Exception $e) {
+			$this->logger->error('Failed to logout device', [
+				'device_id' => $device['id'] ?? '',
+				'exception' => $e,
+			]);
+			return false;
+		}
+	}
+
+	private function logoutAllDevices(OutputInterface $output, array $devices): void {
+		foreach ($devices as $device) {
+			$deviceId = $device['id'] ?? '';
+			$displayName = $device['display_name'] ?? $deviceId;
+
+			if (!empty($deviceId)) {
+				$output->writeln('  Logging out: ' . $displayName);
+				$this->logoutDevice($output, $device);
+			}
+		}
 	}
 }
