@@ -59,7 +59,25 @@ class Test extends Command {
 			return 1;
 		}
 
-		$gateway->send($identifier, 'Test', ['code' => '123456']);
+		$message = 'Test';
+
+		$output->writeln('');
+		$output->writeln('<info>════════════════════════════════════════════════════════════════</info>');
+		$output->writeln('<info>  Two-Factor Gateway Test</info>');
+		$output->writeln('<info>════════════════════════════════════════════════════════════════</info>');
+		$output->writeln('');
+		$output->writeln('  <comment>Gateway:</comment>     ' . $gatewayName);
+		$output->writeln('  <comment>Recipient:</comment>   ' . $identifier);
+		$output->writeln('  <comment>Message:</comment>     ' . $message);
+		$output->writeln('');
+		$output->writeln('<info>Sending message...</info>');
+
+		$gateway->send($identifier, $message);
+
+		$output->writeln('');
+		$output->writeln('<info>✓ Message successfully sent!</info>');
+		$output->writeln('');
+
 		return 0;
 	}
 }
