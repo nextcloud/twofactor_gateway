@@ -20,12 +20,12 @@ Types of changes:
 - Make compatible with Go WhatsApp v8
 - Improve output of test command
 
-## 2.1.1 - 2026-02-10
+## 2.2.1 - 2026-02-10
 ### Changed
 - Make compatible with Go WhatsApp v8
 - Improve output of test command
 
-## 1.1.1 - 2026-02-10
+## 1.2.1 - 2026-02-10
 ### Changed
 - Make compatible with Go WhatsApp v8
 - Improve output of test command
