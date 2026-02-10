@@ -745,7 +745,9 @@ class Gateway extends AGateway {
 			$this->setUsername($this->lazyUsername);
 			$this->setPassword($this->lazyPassword);
 			$this->setPhone($this->lazyPhone);
-			$this->setDeviceName($this->getDeviceNameValue());		$this->setDeviceId($this->lazyDeviceId);			$output->writeln('<info>Configuration saved successfully.</info>');
+			$this->setDeviceName($this->getDeviceNameValue());
+			$this->setDeviceId($this->lazyDeviceId);
+			$output->writeln('<info>Configuration saved successfully.</info>');
 			return self::CONFIG_SUCCESS;
 		}
 
