@@ -15,6 +15,16 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 2.2.1 - 2026-02-10
+### Changed
+- Make compatible with Go WhatsApp v8
+- Improve output of test command
+
+## 1.1.1 - 2026-02-10
+### Changed
+- Make compatible with Go WhatsApp v8
+- Improve output of test command
+
 ## 2.2.0 - 2026-01-28
 ### Added
 - New gateway support for WhatsApp Web using the service GoWhatsApp
