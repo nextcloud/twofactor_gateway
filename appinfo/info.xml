@@ -9,7 +9,7 @@
 	<name>Two-Factor Gateway</name>
 	<summary>Two-factor gateway providers (Signal, SMS, Telegram, WhatsApp, XMPP)</summary>
 	<description>A set of Nextcloud two-factor providers to send authentication codes via Signal, SMS, Telegram, WhatsApp and XMPP.</description>
-	<version>2.2.1</version>
+	<version>2.2.2</version>
 	<licence>agpl</licence>
 	<author>Christoph Wurst</author>
 	<author>Vitor Mattos</author>
