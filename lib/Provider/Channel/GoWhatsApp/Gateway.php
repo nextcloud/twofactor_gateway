@@ -901,6 +901,15 @@ class Gateway extends AGateway {
 				);
 			}
 
+			if ($status === 404 || ($data['code'] ?? '') === 'DEVICE_NOT_FOUND') {
+				$this->eventDispatcher->dispatchTyped(new WhatsAppAuthenticationErrorEvent());
+
+				throw new MessageTransmissionException(
+					$this->l10n->t('WhatsApp device not found or not connected. Please reconfigure the device.'),
+					self::CODE_AUTHENTICATION,
+				);
+			}
+
 			if ($status === 403) {
 				throw new MessageTransmissionException('Access to the WhatsApp API was denied (403). Check permissions or IP allowlist.', self::CODE_FORBIDDEN);
 			}
