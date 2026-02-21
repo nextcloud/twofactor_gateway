@@ -10,6 +10,7 @@ OC.L10N.register(
     "Failed to verify WhatsApp user." : "Failed to verify WhatsApp user.",
     "Failed to send message" : "Failed to send message",
     "Authentication failed with WhatsApp API. Please verify username/password or log in again." : "Authentication failed with WhatsApp API. Please verify username/password or log in again.",
+    "WhatsApp device not found or not connected. Please reconfigure the device." : "WhatsApp device not found or not connected. Please reconfigure the device.",
     "WhatsApp verification" : "WhatsApp verification",
     "Authenticate via WhatsApp" : "Authenticate via WhatsApp",
     "Message gateway verification" : "Message gateway verification",

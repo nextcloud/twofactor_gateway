@@ -8,6 +8,7 @@
     "Failed to verify WhatsApp user." : "無法驗證 WhatsApp 用戶。",
     "Failed to send message" : "傳送訊息失敗",
     "Authentication failed with WhatsApp API. Please verify username/password or log in again." : "與 WhatsApp API 的驗證失敗。請檢查用戶名稱／密碼，或重新登入。",
+    "WhatsApp device not found or not connected. Please reconfigure the device." : "WhatsApp 裝置未找到或未連線，請重新設定。",
     "WhatsApp verification" : "WhatsApp 驗證",
     "Authenticate via WhatsApp" : "透過 WhatsApp 驗證",
     "Message gateway verification" : "訊息閘道驗證",
