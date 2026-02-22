@@ -2,8 +2,10 @@ OC.L10N.register(
     "twofactor_gateway",
     {
     "%s is your Nextcloud authentication code" : "%s таны Nextcloud баталгаажуулалтын код юм",
+    "Enable" : "Идэвхжүүлэх",
     "Verify" : "Шалнгах",
     "Confirm" : "Батлах",
+    "Disable" : "Идэвхгүй болгох",
     "Authentication code" : "танилтын код",
     "Submit" : "мэдэгдэх",
     "An access code has been sent to %s" : "ашиглах кодыг%sруу илгээсэн байна",
