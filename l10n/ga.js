@@ -10,6 +10,7 @@ OC.L10N.register(
     "Failed to verify WhatsApp user." : "Theip ar fhíorú úsáideoir WhatsApp.",
     "Failed to send message" : "Theip ar an teachtaireacht a sheoladh",
     "Authentication failed with WhatsApp API. Please verify username/password or log in again." : "Theip ar fhíordheimhniú le WhatsApp API. Fíoraigh d'ainm úsáideora/pasfhocal nó logáil isteach arís.",
+    "WhatsApp device not found or not connected. Please reconfigure the device." : "Gléas WhatsApp gan aimsiú nó gan nasc. Athchumraigh an gléas le do thoil.",
     "WhatsApp verification" : "Fíorú WhatsApp",
     "Authenticate via WhatsApp" : "Fíordheimhniú trí WhatsApp",
     "Message gateway verification" : "Fíorú geata teachtaireachta",
