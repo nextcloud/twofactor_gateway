@@ -10,6 +10,7 @@ OC.L10N.register(
     "Failed to verify WhatsApp user." : "WhatsAppi kasutaja verifitseerimine ei õnnestunud.",
     "Failed to send message" : "Sõnumi saatmine ei õnnestu",
     "Authentication failed with WhatsApp API. Please verify username/password or log in again." : "WhatsAppi API abil autentimine ei õnnestu. Palun kontrolli, et kasutajanimi ja salasõna on õiged ja logi uuesti sisse.",
+    "WhatsApp device not found or not connected. Please reconfigure the device." : "WhatsAppi seade pole leitav või on ühendamata. Palun seadista seade uuesti.",
     "WhatsApp verification" : "Verifitseerimine WhatsApp'iga",
     "Authenticate via WhatsApp" : "Autendi WhatsApp'i abil",
     "Message gateway verification" : "Verifitseerimine kasutades sõnumilüüsi",
