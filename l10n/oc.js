@@ -6,6 +6,7 @@ OC.L10N.register(
     "Authenticate via Signal" : "Autentificacion via Signal",
     "Telegram verification" : "Verificacion via Telegram",
     "Authenticate via Telegram" : "Autentificacion via Telegram",
+    "Enable" : "Activar",
     "Verify" : "Verificar",
     "Confirm" : "Confirmar",
     "Disable" : "Desactivar",
