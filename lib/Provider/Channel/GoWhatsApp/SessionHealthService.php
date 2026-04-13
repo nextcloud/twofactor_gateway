@@ -256,9 +256,9 @@ class SessionHealthService {
 			if (!$isHealthy) {
 				$score += match ($state) {
 					'disconnected' => 20,
-					'connecting'   => 10,
-					'unreachable'  => 50,
-					default        => 15,
+					'connecting' => 10,
+					'unreachable' => 50,
+					default => 15,
 				};
 				// Extra penalty for oscillation (was healthy, now not)
 				if ($prevHealthy) {
