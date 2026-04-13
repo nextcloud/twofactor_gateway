@@ -281,11 +281,11 @@ class SessionHealthServiceTest extends AppTestCase {
 	// -------------------------------------------------------------------------
 
 	private function configureBaseUrl(string $url): void {
-		$this->appConfig->setValueString('twofactor_gateway', 'go_whatsapp_base_url', $url);
+		$this->appConfig->setValueString('twofactor_gateway', 'gowhatsapp_base_url', $url);
 	}
 
 	private function configureDeviceId(string $deviceId): void {
-		$this->appConfig->setValueString('twofactor_gateway', 'go_whatsapp_device_id', $deviceId);
+		$this->appConfig->setValueString('twofactor_gateway', 'gowhatsapp_device_id', $deviceId);
 	}
 
 	private function storeHistory(array $entries): void {
