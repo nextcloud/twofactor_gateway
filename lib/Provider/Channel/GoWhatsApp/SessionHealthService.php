@@ -83,12 +83,7 @@ class SessionHealthService {
 	 * computes a risk score, and dispatches the appropriate event when needed.
 	 */
 	public function checkAndDispatch(): void {
-		$baseUrl = $this->appConfig->getValueString(
-			Application::APP_ID,
-			self::APPCONFIG_KEY_BASE_URL,
-			'',
-		);
-
+		$baseUrl = $this->getBaseUrl();
 		if ($baseUrl === '') {
 			$this->logger->debug('GoWhatsApp base URL not configured; skipping session health check.');
 			return;
@@ -97,30 +92,13 @@ class SessionHealthService {
 		$now = $this->timeFactory->getTime();
 		$deviceState = $this->fetchDeviceState($baseUrl);
 
-		// CRITICAL path – logged out
-		if (in_array($deviceState, self::CRITICAL_STATES, true)) {
+		if ($this->isCriticalState($deviceState)) {
 			$this->logger->warning('GoWhatsApp session health: device is logged_out → dispatching CRITICAL event.');
 			$this->eventDispatcher->dispatchTyped(new WhatsAppAuthenticationErrorEvent());
 			return;
 		}
 
-		// Append current snapshot to rolling history
-		$history = $this->loadHistory();
-		$history[] = ['ts' => $now, 'state' => $deviceState];
-
-		// Prune old entries outside the observation window
-		$window = (int)$this->appConfig->getValueString(
-			Application::APP_ID,
-			self::CONFIG_TIME_WINDOW,
-			(string)600,
-		);
-		$history = array_values(array_filter(
-			$history,
-			static fn (array $e): bool => $e['ts'] >= $now - $window,
-		));
-
-		$this->saveHistory($history);
-
+		$history = $this->updateHistory($deviceState, $now);
 		$riskScore = $this->computeRiskScore($history);
 
 		$this->logger->debug('GoWhatsApp session health check completed.', [
@@ -129,54 +107,95 @@ class SessionHealthService {
 			'risk_score' => $riskScore,
 		]);
 
-		$warningThreshold = (int)$this->appConfig->getValueString(
-			Application::APP_ID,
-			self::CONFIG_WARNING_SCORE,
-			(string)80,
-		);
-
-		if ($riskScore < $warningThreshold) {
+		if ($riskScore < $this->getConfigInt(self::CONFIG_WARNING_SCORE, 80)) {
 			return;
 		}
 
-		// Check cooldown to avoid notification storms
-		$cooldown = (int)$this->appConfig->getValueString(
-			Application::APP_ID,
-			self::CONFIG_WARNING_COOLDOWN,
-			(string)3600,
-		);
-		$lastWarnTs = (int)$this->appConfig->getValueString(
-			Application::APP_ID,
-			self::CONFIG_LAST_WARNING_TS,
-			'0',
-		);
-
-		if ($now - $lastWarnTs < $cooldown) {
-			$this->logger->debug('GoWhatsApp session WARNING suppressed (within cooldown).', [
-				'risk_score' => $riskScore,
-				'seconds_since_last_warning' => $now - $lastWarnTs,
-			]);
+		if ($this->isWithinCooldown($now)) {
 			return;
 		}
 
-		$reason = $this->buildWarningReason($history, $riskScore);
-		$this->logger->warning('GoWhatsApp session health: instability detected → dispatching WARNING event.', [
-			'risk_score' => $riskScore,
-			'reason' => $reason,
-		]);
-
-		$this->appConfig->setValueString(
-			Application::APP_ID,
-			self::CONFIG_LAST_WARNING_TS,
-			(string)$now,
-		);
-
-		$this->eventDispatcher->dispatchTyped(new WhatsAppSessionWarningEvent($riskScore, $reason));
+		$this->dispatchWarning($riskScore, $history, $now);
 	}
 
 	// -------------------------------------------------------------------------
 	// Private helpers
 	// -------------------------------------------------------------------------
+
+	private function getBaseUrl(): string {
+		return $this->appConfig->getValueString(
+			Application::APP_ID,
+			self::APPCONFIG_KEY_BASE_URL,
+			'',
+		);
+	}
+
+	private function isCriticalState(string $state): bool {
+		return in_array($state, self::CRITICAL_STATES, true);
+	}
+
+	/**
+	 * Appends the current state to the rolling history, prunes entries outside
+	 * the observation window, persists the result, and returns the pruned list.
+	 */
+	private function updateHistory(string $state, int $now): array {
+		$window = $this->getConfigInt(self::CONFIG_TIME_WINDOW, 600);
+		$history = $this->loadHistory();
+		$history[] = ['ts' => $now, 'state' => $state];
+		$history = array_values(array_filter(
+			$history,
+			static fn (array $e): bool => $e['ts'] >= $now - $window,
+		));
+		$this->saveHistory($history);
+		return $history;
+	}
+
+	/**
+	 * Returns true (and logs a debug message) when a WARNING was already sent
+	 * within the configured cooldown period, suppressing duplicate alerts.
+	 */
+	private function isWithinCooldown(int $now): bool {
+		$cooldown = $this->getConfigInt(self::CONFIG_WARNING_COOLDOWN, 3600);
+		$lastWarnTs = (int)$this->appConfig->getValueString(
+			Application::APP_ID,
+			self::CONFIG_LAST_WARNING_TS,
+			'0',
+		);
+		$elapsed = $now - $lastWarnTs;
+		if ($elapsed < $cooldown) {
+			$this->logger->debug('GoWhatsApp session WARNING suppressed (within cooldown).', [
+				'seconds_since_last_warning' => $elapsed,
+			]);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Records the warning timestamp, logs it, and dispatches the WARNING event.
+	 */
+	private function dispatchWarning(int $riskScore, array $history, int $now): void {
+		$reason = $this->buildWarningReason($history, $riskScore);
+		$this->logger->warning('GoWhatsApp session health: instability detected → dispatching WARNING event.', [
+			'risk_score' => $riskScore,
+			'reason' => $reason,
+		]);
+		$this->appConfig->setValueString(
+			Application::APP_ID,
+			self::CONFIG_LAST_WARNING_TS,
+			(string)$now,
+		);
+		$this->eventDispatcher->dispatchTyped(new WhatsAppSessionWarningEvent($riskScore, $reason));
+	}
+
+	/** Reads an integer config value, falling back to $default when absent. */
+	private function getConfigInt(string $key, int $default): int {
+		return (int)$this->appConfig->getValueString(
+			Application::APP_ID,
+			$key,
+			(string)$default,
+		);
+	}
 
 	/**
 	 * Fetches the current device state from the Go API.
