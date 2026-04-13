@@ -266,7 +266,7 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure sms
 ```
 
-## Voipbuster
+### Voipbuster
 URL: https://voipbuster.com
 Stability: Experimental
 
@@ -418,6 +418,48 @@ Interactive admin configuration:
 ```bash
 occ twofactorauth:gateway:configure sms
 ```
+
+### ClockworkSMS
+URL: https://www.clockworksms.com/
+Stability: Experimental
+
+Use the HTTP API provided by ClockworkSMS for sending SMS.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
+Select `clockworksms` and enter your API token.
+
+### Huawei E3531
+Stability: Experimental
+
+Use the local HTTP API of a Huawei E3531 USB stick connected to the server.
+No external service or account is required.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
+Select `huawei_e3531` and enter the base URL of the device (default: `http://192.168.8.1/api`).
+
+### SipGate
+URL: https://www.sipgate.de/
+Stability: Experimental
+
+Use the SMS API provided by SipGate for sending SMS via `https://api.sipgate.com/v2/sessions/sms`.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
+Select `sipgate` and enter:
+* **Token ID** (`token-id` from your SipGate personal access token)
+* **Access token** (the token secret)
+* **Web SMS extension** (the `sXXX` extension configured for web SMS in your SipGate account)
 
 [User Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/User%20Documentation/
 [mod_rest]: https://modules.prosody.im/mod_rest.html
