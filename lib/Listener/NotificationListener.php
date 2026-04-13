@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Listener;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
+use OCA\TwoFactorGateway\Events\WhatsAppSessionWarningEvent;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -32,14 +33,21 @@ class NotificationListener implements IEventListener {
 
 	#[\Override]
 	public function handle(Event $event): void {
-		if (!($event instanceof WhatsAppAuthenticationErrorEvent)) {
+		if ($event instanceof WhatsAppAuthenticationErrorEvent) {
+			$this->notifyAdmins('whatsapp_auth_error');
 			return;
 		}
 
-		$this->notifyAdmins();
+		if ($event instanceof WhatsAppSessionWarningEvent) {
+			$this->notifyAdmins('whatsapp_session_warning', [
+				'risk_score' => (string)$event->getRiskScore(),
+				'reason' => $event->getReason(),
+			]);
+			return;
+		}
 	}
 
-	private function notifyAdmins(): void {
+	private function notifyAdmins(string $subject, array $parameters = []): void {
 		try {
 			$adminGroup = $this->groupManager->get('admin');
 			if ($adminGroup === null) {
@@ -50,19 +58,21 @@ class NotificationListener implements IEventListener {
 			$admins = $adminGroup->getUsers();
 			$this->logger->info('Found ' . count($admins) . ' admins to notify');
 
+			$objectId = $subject === 'whatsapp_auth_error' ? 'authentication' : 'session_health';
+
 			foreach ($admins as $user) {
 				try {
 					$notification = $this->notificationManager->createNotification();
 					$notification
 						->setApp(Application::APP_ID)
 						->setDateTime($this->timeFactory->getDateTime())
-						->setObject('whatsapp_error', 'authentication')
-						->setSubject('whatsapp_auth_error')
+						->setObject('whatsapp_error', $objectId)
+						->setSubject($subject, $parameters)
 						->setUser($user->getUID());
 
 					$this->logger->info('About to notify user: ' . $user->getUID());
 					$this->notificationManager->notify($notification);
-					$this->logger->info('WhatsApp auth error notification sent to ' . $user->getUID());
+					$this->logger->info('WhatsApp notification sent to ' . $user->getUID());
 				} catch (\Exception $e) {
 					$this->logger->error('Failed to notify user ' . $user->getUID() . ': ' . $e->getMessage(), [
 						'exception' => $e,
@@ -70,7 +80,7 @@ class NotificationListener implements IEventListener {
 				}
 			}
 		} catch (\Exception $e) {
-			$this->logger->error('Error notifying admins about WhatsApp auth error: ' . $e->getMessage(), [
+			$this->logger->error('Error notifying admins about WhatsApp event: ' . $e->getMessage(), [
 				'exception' => $e,
 			]);
 		}
