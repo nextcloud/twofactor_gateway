@@ -43,6 +43,11 @@ class AppTestCase extends TestCase {
 				return true;
 			});
 
+		$appConfig->method('hasKey')
+			->willReturnCallback(function (string $appId, string $key, ?bool $lazy = false) {
+				return isset(self::$store[$appId]) && array_key_exists($key, self::$store[$appId]);
+			});
+
 		\OC::$server->registerService(IAppConfig::class, function () use ($appConfig) {
 			return $appConfig;
 		});

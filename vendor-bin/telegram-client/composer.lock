@@ -887,16 +887,16 @@
         },
         {
             "name": "amphp/mysql",
-            "version": "v3.0.0",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/mysql.git",
-                "reference": "0eb9d1df67c206c043b1a1c6ad7ba1bc2aa836bf"
+                "reference": "bef63fda61eefca601be54aa1d983a6a31b4a50f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/mysql/zipball/0eb9d1df67c206c043b1a1c6ad7ba1bc2aa836bf",
-                "reference": "0eb9d1df67c206c043b1a1c6ad7ba1bc2aa836bf",
+                "url": "https://api.github.com/repos/amphp/mysql/zipball/bef63fda61eefca601be54aa1d983a6a31b4a50f",
+                "reference": "bef63fda61eefca601be54aa1d983a6a31b4a50f",
                 "shasum": ""
             },
             "require": {
@@ -945,7 +945,7 @@
             "description": "Asynchronous MySQL client for PHP based on Amp.",
             "support": {
                 "issues": "https://github.com/amphp/mysql/issues",
-                "source": "https://github.com/amphp/mysql/tree/v3.0.0"
+                "source": "https://github.com/amphp/mysql/tree/v3.0.1"
             },
             "funding": [
                 {
@@ -953,7 +953,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-03-10T17:33:58+00:00"
+            "time": "2025-11-08T22:59:09+00:00"
         },
         {
             "name": "amphp/parallel",
@@ -1170,16 +1170,16 @@
         },
         {
             "name": "amphp/postgres",
-            "version": "v2.1.1",
+            "version": "v2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/postgres.git",
-                "reference": "c62555c6497782399a166f15c8da8e64be456141"
+                "reference": "b68c4d5929d0ec1701781dbbb0bb81dd8d0a42d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/postgres/zipball/c62555c6497782399a166f15c8da8e64be456141",
-                "reference": "c62555c6497782399a166f15c8da8e64be456141",
+                "url": "https://api.github.com/repos/amphp/postgres/zipball/b68c4d5929d0ec1701781dbbb0bb81dd8d0a42d7",
+                "reference": "b68c4d5929d0ec1701781dbbb0bb81dd8d0a42d7",
                 "shasum": ""
             },
             "require": {
@@ -1195,7 +1195,7 @@
                 "ext-pgsql": "*",
                 "ext-pq": "*",
                 "phpunit/phpunit": "^9",
-                "psalm/phar": "5.23"
+                "psalm/phar": "6.15.1"
             },
             "type": "library",
             "autoload": {
@@ -1230,7 +1230,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/postgres/issues",
-                "source": "https://github.com/amphp/postgres/tree/v2.1.1"
+                "source": "https://github.com/amphp/postgres/tree/v2.2.1"
             },
             "funding": [
                 {
@@ -1238,7 +1238,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-21T04:45:08+00:00"
+            "time": "2026-02-25T04:47:18+00:00"
         },
         {
             "name": "amphp/process",
@@ -1533,16 +1533,16 @@
         },
         {
             "name": "amphp/sql",
-            "version": "v2.0.1",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/sql.git",
-                "reference": "2a7962dba23bf017bbdd3c3a0af0eb212481627b"
+                "reference": "258bafe5ecf8a0491d86681f2a2af1dee2933a69"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/sql/zipball/2a7962dba23bf017bbdd3c3a0af0eb212481627b",
-                "reference": "2a7962dba23bf017bbdd3c3a0af0eb212481627b",
+                "url": "https://api.github.com/repos/amphp/sql/zipball/258bafe5ecf8a0491d86681f2a2af1dee2933a69",
+                "reference": "258bafe5ecf8a0491d86681f2a2af1dee2933a69",
                 "shasum": ""
             },
             "require": {
@@ -1552,7 +1552,7 @@
             "require-dev": {
                 "amphp/php-cs-fixer-config": "^2",
                 "phpunit/phpunit": "^9",
-                "psalm/phar": "5.23"
+                "psalm/phar": "6.15.1"
             },
             "type": "library",
             "autoload": {
@@ -1575,7 +1575,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/sql/issues",
-                "source": "https://github.com/amphp/sql/tree/v2.0.1"
+                "source": "https://github.com/amphp/sql/tree/v2.1.1"
             },
             "funding": [
                 {
@@ -1583,7 +1583,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-23T16:16:34+00:00"
+            "time": "2026-02-25T04:44:15+00:00"
         },
         {
             "name": "amphp/sql-common",
@@ -2334,16 +2334,16 @@
         },
         {
             "name": "danog/madelineproto",
-            "version": "8.6.2",
+            "version": "8.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/MadelineProto.git",
-                "reference": "5b0d9d3691dd07e6d9e2ec7ceba79edf767874eb"
+                "reference": "b7acfdd9fe3728e0a920d0009dd07e659fa4b76f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/5b0d9d3691dd07e6d9e2ec7ceba79edf767874eb",
-                "reference": "5b0d9d3691dd07e6d9e2ec7ceba79edf767874eb",
+                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/b7acfdd9fe3728e0a920d0009dd07e659fa4b76f",
+                "reference": "b7acfdd9fe3728e0a920d0009dd07e659fa4b76f",
                 "shasum": ""
             },
             "require": {
@@ -2401,6 +2401,7 @@
                 "dg/bypass-finals": "dev-master",
                 "ext-ctype": "*",
                 "phpunit/phpunit": "^9.6.29",
+                "quasarstream/webrtc": "^1.0",
                 "revolt/event-loop-adapter-react": "^1.1.1",
                 "symfony/yaml": "^6.4.26",
                 "vimeo/psalm": "dev-master"
@@ -2451,7 +2452,7 @@
             ],
             "support": {
                 "issues": "https://github.com/danog/MadelineProto/issues",
-                "source": "https://github.com/danog/MadelineProto/tree/8.6.2"
+                "source": "https://github.com/danog/MadelineProto/tree/8.6.4"
             },
             "funding": [
                 {
@@ -2459,7 +2460,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-12-06T17:11:41+00:00"
+            "time": "2026-03-03T10:07:45+00:00"
         },
         {
             "name": "danog/primemodule",
@@ -3385,16 +3386,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.49",
+            "version": "3.0.51",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "6233a1e12584754e6b5daa69fe1289b47775c1b9"
+                "reference": "d59c94077f9c9915abb51ddb52ce85188ece1748"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/6233a1e12584754e6b5daa69fe1289b47775c1b9",
-                "reference": "6233a1e12584754e6b5daa69fe1289b47775c1b9",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d59c94077f9c9915abb51ddb52ce85188ece1748",
+                "reference": "d59c94077f9c9915abb51ddb52ce85188ece1748",
                 "shasum": ""
             },
             "require": {
@@ -3475,7 +3476,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.49"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.51"
             },
             "funding": [
                 {
@@ -3491,7 +3492,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-27T09:17:28+00:00"
+            "time": "2026-04-10T01:33:53+00:00"
         },
         {
             "name": "promphp/prometheus_client_php",
@@ -4672,5 +4673,5 @@
     "platform-overrides": {
         "php": "8.2.4"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
