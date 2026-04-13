@@ -81,7 +81,6 @@ class TelegramAProviderTestDouble extends AProvider {
 	public function send(string $identifier, string $message) {
 	}
 
-	#[\Override]
 	public function createSettings(): Settings {
 		return new Settings(
 			name: 'Telegram Test',
@@ -100,7 +99,6 @@ class TelegramAProviderTestDouble extends AProvider {
 }
 
 class TelegramAProviderEmptyFieldsTestDouble extends TelegramAProviderTestDouble {
-	#[\Override]
 	public function createSettings(): Settings {
 		return new Settings(
 			name: 'Telegram Empty',
