@@ -58,8 +58,8 @@ class SessionHealthService {
 	private const CONFIG_WARNING_SCORE = 'gowhatsapp_health_warning_score_threshold';
 	private const CONFIG_WARNING_COOLDOWN = 'gowhatsapp_health_warning_cooldown';
 
-	private const APPCONFIG_KEY_BASE_URL = 'go_whatsapp_base_url';
-	private const APPCONFIG_KEY_DEVICE_ID = 'go_whatsapp_device_id';
+	private const APPCONFIG_KEY_BASE_URL = 'gowhatsapp_base_url';
+	private const APPCONFIG_KEY_DEVICE_ID = 'gowhatsapp_device_id';
 
 	/** States that are considered healthy; everything else contributes to risk */
 	private const HEALTHY_STATES = ['connected', 'logged_in'];
