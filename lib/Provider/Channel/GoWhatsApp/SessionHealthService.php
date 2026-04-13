@@ -98,7 +98,7 @@ class SessionHealthService {
 		$deviceState = $this->fetchDeviceState($baseUrl);
 
 		// CRITICAL path – logged out
-		if ($deviceState === 'logged_out') {
+		if (in_array($deviceState, self::CRITICAL_STATES, true)) {
 			$this->logger->warning('GoWhatsApp session health: device is logged_out → dispatching CRITICAL event.');
 			$this->eventDispatcher->dispatchTyped(new WhatsAppAuthenticationErrorEvent());
 			return;
