@@ -49,6 +49,11 @@ class Notifier implements INotifier {
 			return $this->parseWhatsAppAuthError($notification, $l);
 		}
 
+		if ($notification->getSubject() === 'whatsapp_session_warning') {
+			$this->logger->debug('Preparing WhatsApp session warning notification for user ' . $notification->getUser());
+			return $this->parseWhatsAppSessionWarning($notification, $l);
+		}
+
 		$this->logger->warning('Unknown notification subject: ' . $notification->getSubject());
 		throw new UnknownNotificationException();
 	}
@@ -58,6 +63,23 @@ class Notifier implements INotifier {
 			->setParsedSubject($l->t('Two-Factor Gateway: WhatsApp API authentication failed'))
 			->setParsedMessage($l->t('The authentication with WhatsApp API has failed. The Two-Factor Gateway (WhatsApp) will not work until this is resolved. Please reconfigure the WhatsApp gateway using the command line tool.'))
 			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/error.svg')))
+			->setLink($this->url->linkToRouteAbsolute('settings.AdminSettings.index', ['section' => 'overview']));
+
+		return $notification;
+	}
+
+	private function parseWhatsAppSessionWarning(INotification $notification, \OCP\IL10N $l): INotification {
+		$params = $notification->getSubjectParameters();
+		$reason = $params['reason'] ?? '';
+
+		$notification
+			->setParsedSubject($l->t('Two-Factor Gateway: WhatsApp session instability detected'))
+			->setParsedMessage(
+				$reason !== ''
+					? $l->t('WhatsApp session instability detected: %s', [$reason])
+					: $l->t('The WhatsApp session is showing signs of instability and may require re-authentication soon. Please monitor the situation and reconfigure the WhatsApp gateway if needed.')
+			)
+			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/warning.svg')))
 			->setLink($this->url->linkToRouteAbsolute('settings.AdminSettings.index', ['section' => 'overview']));
 
 		return $notification;
