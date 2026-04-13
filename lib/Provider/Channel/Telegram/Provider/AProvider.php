@@ -64,14 +64,14 @@ abstract class AProvider implements IProvider {
 
 	public function isComplete(): bool {
 		$settings = $this->getSettings();
-		$savedKeys = $this->appConfig->getKeys(Application::APP_ID);
 		$providerId = $settings->id ?? $this->getProviderId();
-		$fields = [];
 		foreach ($settings->fields as $field) {
-			$fields[] = self::keyFromFieldName($providerId, $field->field);
+			$key = self::keyFromFieldName($providerId, $field->field);
+			if (!$this->appConfig->hasKey(Application::APP_ID, $key, true)) {
+				return false;
+			}
 		}
-		$intersect = array_intersect($fields, $savedKeys);
-		return count($intersect) === count($fields);
+		return true;
 	}
 
 	private static function getIdFromProviderFqcn(string $fqcn): ?string {
