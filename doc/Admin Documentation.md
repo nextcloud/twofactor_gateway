@@ -34,11 +34,11 @@ occ twofactorauth:gateway:configure sms
 URL: https://www.signal.org/
 Stability: Experimental
 
-This gateways allows you to send messages via the Signal protocol. By
+This gateway allows you to send messages via the Signal protocol. By
 default it tries to use the native HTTP endpoint of
 [signal-cli](https://github.com/AsamK/signal-cli) which is available
 since [signal-cli 0.11.5](https://github.com/AsamK/signal-cli/blob/master/CHANGELOG.md#0115---2022-11-07).
-There maybe packages for your Linux distribution or Docker images, please refer to the installation
+There may be packages for your Linux distribution or Docker images, please refer to the installation
 instructions provided by the [signal-cli](https://github.com/AsamK/signal-cli) project.
 
 If the native HTTP endpoint of signal-cli is not available then it
@@ -56,11 +56,11 @@ Once you've set up the gateway, you can configure this app interactively:
 occ twofactorauth:gateway:configure signal
 ```
 
-You need to speficy the URL where the API provider is listening and
+You need to specify the URL where the API provider is listening and
 the Signal-account of the sending Signal user.
 
 ### WhatsApp
-URL: whatsapp.com
+URL: https://www.whatsapp.com
 Stability: Experimental
 
 This gateway sends messages via WhatsApp Web through the internal service [wwebjs-api](https://github.com/avoylenko/wwebjs-api).
@@ -164,7 +164,7 @@ Follow these steps to activate the GoWhatsApp authentication gateway:
 URL: https://www.telegram.org/
 Stability: Unstable
 
-This gateways allows you to send messages via the Telegram protocol. In order to send messages,
+This gateway allows you to send messages via the Telegram protocol. In order to send messages,
 you have to register a [Telegram Bot](https://core.telegram.org/bots), which is used to send
 authentication codes to users after they have initiated a conversation and entered their
 Telegram ID.
@@ -198,7 +198,7 @@ Follow these steps to activate the Telegram authentication gateway:
 URL: https://www.telegram.org/
 Stability: Experimental
 
-This gateways allows you to send messages using the Telegram client API. In order to send
+This gateway allows you to send messages using the Telegram client API. In order to send
 messages, you have to create a Telegram application and use a Telegram account to
 authenticate. After this, the sysadmin will need to authenticate with a Telegram account
 to link the account to the Nextcloud Twofactor Gateway. The Telegram account will be used to send
@@ -409,7 +409,7 @@ occ twofactorauth:gateway:configure xmpp
 ```
 
 ### SMSApi.com
-Url: https://smsapi.com/de
+URL: https://smsapi.com/de
 Stability: Experimental
 
 Use the HTTPS service provided by SMSApi.com for sending SMS.
