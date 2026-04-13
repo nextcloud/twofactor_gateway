@@ -25,6 +25,9 @@
 	<dependencies>
 		<nextcloud min-version="32" max-version="32"/>
 	</dependencies>
+	<jobs>
+		<job>OCA\TwoFactorGateway\BackgroundJob\GoWhatsAppSessionMonitorJob</job>
+	</jobs>
 	<commands>
 		<command>OCA\TwoFactorGateway\Command\Configure</command>
 		<command>OCA\TwoFactorGateway\Command\Status</command>
