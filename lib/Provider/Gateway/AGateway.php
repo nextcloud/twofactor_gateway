@@ -39,8 +39,12 @@ abstract class AGateway implements IGateway {
 		}
 		$providerId = $settings->id ?? $this->getProviderId();
 		foreach ($settings->fields as $field) {
+			if ($field->optional) {
+				continue;
+			}
 			$key = self::keyFromFieldName($providerId, $field->field);
-			if (!$this->appConfig->hasKey(Application::APP_ID, $key, true)) {
+			// Use null so both lazy and non-lazy stored keys are found.
+			if (!$this->appConfig->hasKey(Application::APP_ID, $key, null)) {
 				return false;
 			}
 		}
