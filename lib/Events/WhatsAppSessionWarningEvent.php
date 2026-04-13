@@ -21,8 +21,8 @@ use OCP\EventDispatcher\Event;
  */
 class WhatsAppSessionWarningEvent extends Event {
 	/**
-	 * @param int    $riskScore   Accumulated heuristic risk score that triggered the warning.
-	 * @param string $reason      Human-readable description of the anomaly detected.
+	 * @param int $riskScore Accumulated heuristic risk score that triggered the warning.
+	 * @param string $reason Human-readable description of the anomaly detected.
 	 */
 	public function __construct(
 		private readonly int $riskScore,
