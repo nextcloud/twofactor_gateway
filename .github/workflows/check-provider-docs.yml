@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
+# SPDX-License-Identifier: MIT
+
+name: Check provider documentation
+
+on: pull_request
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-provider-docs-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  check-provider-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check new providers are documented
+        run: |
+          set -euo pipefail
+          BASE="${{ github.base_ref }}"
+          MISSING=()
+
+          # SMS sub-drivers: extract name: from createSettings() and check Admin Documentation
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+            NAME=$(grep -oP "(?<=name: ')([^']+)" "$file" | head -1)
+            [[ -z "$NAME" ]] && continue
+            if ! grep -qi "$NAME" "doc/Admin Documentation.md"; then
+              MISSING+=("SMS driver '$NAME' (${file}) missing from doc/Admin Documentation.md")
+            fi
+          done < <(git diff --name-only --diff-filter=A "origin/${BASE}...HEAD" -- 'lib/Provider/Channel/SMS/Provider/Drivers/*.php')
+
+          # New top-level channels: check channel directory name in Admin Documentation
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+            CHANNEL=$(basename "$(dirname "$file")")
+            if ! grep -qi "$CHANNEL" "doc/Admin Documentation.md"; then
+              MISSING+=("Channel '$CHANNEL' (${file}) missing from doc/Admin Documentation.md")
+            fi
+          done < <(git diff --name-only --diff-filter=A "origin/${BASE}...HEAD" -- 'lib/Provider/Channel/*/Gateway.php')
+
+          if [[ ${#MISSING[@]} -gt 0 ]]; then
+            echo "::error::The following providers are missing documentation:"
+            for m in "${MISSING[@]}"; do
+              echo "::error::  - $m"
+            done
+            exit 1
+          fi
+
+          echo "All new providers are documented."
