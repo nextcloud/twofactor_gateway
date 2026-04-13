@@ -14,6 +14,7 @@ use OCA\TwoFactorGateway\Events\WhatsAppSessionWarningEvent;
 use OCA\TwoFactorGateway\Listener\NotificationListener;
 use OCA\TwoFactorGateway\Notification\Notifier;
 use OCA\TwoFactorGateway\Provider\Factory;
+use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -42,5 +43,8 @@ class Application extends App implements IBootstrap {
 
 	#[\Override]
 	public function boot(IBootContext $context): void {
+		$context->injectFn(static function (GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager): void {
+			$goWhatsAppSessionMonitorJobManager->sync();
+		});
 	}
 }
