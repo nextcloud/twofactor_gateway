@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+site_name: Two-Factor Gateway
+docs_dir: doc
+nav:
+  - Admin Documentation: 'Admin Documentation.md'
+  - User Documentation: 'User Documentation.md'
