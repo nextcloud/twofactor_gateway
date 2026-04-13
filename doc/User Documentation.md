@@ -14,23 +14,34 @@ Stability: Experimental
 
 Use the Webservices provided by playSMS for sending SMS.
 
-### SMSGlobal 
+### SMSGlobal
 URL: https://www.smsglobal.com
 Stability: Experimental
 
 Use the Webservices provided by SMSGlobal for sending SMS.
 
-### WhatsApp 
+### WhatsApp
 URL: https://www.whatsapp.com
 Stability: Experimental
 
-This gateways allows you to send messages via WhatsApp.
+This gateway allows you to send messages via WhatsApp.
 
 ### Signal
 URL: https://www.signal.org/
 Stability: Experimental
 
-This gateways allows you to send messages via the Signal protocol.
+This gateway allows you to send messages via the Signal protocol.
+
+### GoWhatsApp
+URL: https://github.com/aldinokemal/go-whatsapp-web-multidevice
+Stability: Experimental
+
+This gateway allows you to send messages via WhatsApp.
+
+1. Log in to Nextcloud and open **Settings -> Personal -> Security**.
+2. Press the `Enable` button under the GoWhatsApp label.
+3. Enter your WhatsApp phone number with country code (e.g., `5511999998888`) and press `Verify`.
+4. Approve the incoming WhatsApp message with the verification code and enter it in Nextcloud.
 
 ### Telegram bot API
 URL: https://www.telegram.org/
