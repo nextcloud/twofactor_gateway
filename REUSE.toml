@@ -16,13 +16,11 @@ SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
 path = [
-	".readthedocs.yaml",
 	".tx/config",
 	"composer.json",
 	"composer.lock",
 	"img/*.svg",
 	"krankerl.toml",
-	"mkdocs.yml",
 	"package-lock.json",
 	"package.json",
 	"screenshots/*.png",
