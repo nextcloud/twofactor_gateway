@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 /**
+ * SPDX-FileCopyrightText: 2026 Pierre LEROUGE <pierre.lerouge@cegedim.com>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
  * @author Pierre LEROUGE <pierre.lerouge@cegedim.com>
  *
  * Nextcloud - Two-factor Gateway for Cegedim.Cloud Vortext
