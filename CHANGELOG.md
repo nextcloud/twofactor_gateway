@@ -15,20 +15,46 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 3.1.0 - 2026-04-14
+### Added
+- #968 add Cegedim Vortext SMS gateway
+
+### Changed
+- #983 add heuristic session health monitor for early logout detection
+- #938 #936 #934 #932 #939 #962 #948 #942 #945 #950 #949 #951 #946 #956 #961 #930 #955 #958 #959 #979 #980 #981 bump dependencies
+
+### Fixed
+- #966 fix lazy appconfig iscomplete regression
+
+## 2.3.0 - 2026-04-14
+### Added
+- #967 add Cegedim Vortext SMS gateway
+
+### Changed
+- #982 add heuristic session health monitor for early logout detection
+- #937 #935 #933 #941 #940 #964 #947 #943 #944 #954 #957 #952 #931 #960 #963 #953 #978 bump dependencies
+
+### Fixed
+- #965 fix lazy appconfig iscomplete regression
+
 ## 3.0.1 - 2026-02-10
 ### Changed
 - Make compatible with Go WhatsApp v8
 - Improve output of test command
 
-## 2.2.1 - 2026-02-10
+## 2.1.1 - 2026-02-10
 ### Changed
 - Make compatible with Go WhatsApp v8
 - Improve output of test command
 
-## 1.2.1 - 2026-02-10
+## 1.1.1 - 2026-02-10
 ### Changed
 - Make compatible with Go WhatsApp v8
 - Improve output of test command
+
+## 3.0.0 - 2026-01-28
+### Added
+- Say hello to Nextcloud 33!
 
 ## 2.1.0 - 2025-12-18
 ### Added
