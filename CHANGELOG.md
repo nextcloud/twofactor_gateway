@@ -37,10 +37,6 @@ Types of changes:
 ### Fixed
 - #965 fix lazy appconfig iscomplete regression
 
-## 1.3.0 - 2026-04-14
-### Changed
-- update translations
-
 ## 3.0.1 - 2026-02-10
 ### Changed
 - Make compatible with Go WhatsApp v8
