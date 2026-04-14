@@ -31,4 +31,7 @@
 		<command>OCA\TwoFactorGateway\Command\Test</command>
 		<command>OCA\TwoFactorGateway\Command\Remove</command>
 	</commands>
+	<settings>
+		<admin>OCA\TwoFactorGateway\Settings\AdminSettings</admin>
+	</settings>
 </info>
