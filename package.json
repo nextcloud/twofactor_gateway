@@ -12,7 +12,10 @@
     "stylelint": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --ignore-pattern \"css/main-*.chunk.css\"",
     "stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --ignore-pattern \"css/main-*.chunk.css\" --fix",
     "typescript:check": "tsc --noEmit -p tsconfig.json",
-    "typescript:generate": "npx openapi-typescript ./openapi.json -t -o src/types/openapi/openapi.ts"
+    "typescript:generate": "npx openapi-typescript ./openapi.json -t -o src/types/openapi/openapi.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "browserslist": [
     "extends @nextcloud/browserslist-config"
@@ -35,12 +38,17 @@
     "@nextcloud/eslint-config": "^8.4.2",
     "@nextcloud/stylelint-config": "^3.2.1",
     "@nextcloud/vite-config": "^2.5.2",
+    "@playwright/test": "^1.59.1",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.9.1",
+    "jsdom": "^29.0.2",
     "openapi-typescript": "^7.13.0",
     "vite-plugin-eslint": "^1.8.1",
-    "vite-plugin-stylelint": "^6.1.0"
+    "vite-plugin-stylelint": "^6.1.0",
+    "vitest": "^4.1.4"
   },
   "engines": {
     "node": "^24.0.0",
