@@ -1,17 +1,17 @@
 {
   "name": "twofactor_gateway",
-  "version": "3.1.0",
+  "version": "3.0.0-dev.0",
   "description": "A two-factor auth provider for Nextcloud",
   "type": "module",
   "scripts": {
     "build": "vite build --mode production",
     "dev": "vite build --mode development",
     "watch": "vite build --mode development --watch",
-    "lint": "eslint src/main.ts src/views/GatewaySettings.vue",
-    "lint:fix": "eslint --fix src/main.ts src/views/GatewaySettings.vue",
+    "lint": "eslint src/",
+    "lint:fix": "eslint --fix src/",
     "stylelint": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --ignore-pattern \"css/main-*.chunk.css\"",
     "stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --ignore-pattern \"css/main-*.chunk.css\" --fix",
-    "typescript:check": "tsc --noEmit",
+    "typescript:check": "tsc --noEmit -p tsconfig.json",
     "typescript:generate": "npx openapi-typescript ./openapi.json -t -o src/types/openapi/openapi.ts"
   },
   "browserslist": [
@@ -24,21 +24,23 @@
     "@nextcloud/initial-state": "^3.0.0",
     "@nextcloud/l10n": "^3.4.1",
     "@nextcloud/router": "^3.1.0",
-    "@nextcloud/vue": "^9.4.0",
-    "dompurify": "^3.3.0",
-    "markdown-it": "^14.1.0",
-    "vue": "^3.5.27"
+    "@nextcloud/vue": "^9.6.0",
+    "dompurify": "^3.4.0",
+    "markdown-it": "^14.1.1",
+    "vue": "^3.5.32",
+    "vue-material-design-icons": "^5.3.1"
   },
   "devDependencies": {
     "@nextcloud/browserslist-config": "^3.1.2",
     "@nextcloud/eslint-config": "^8.4.2",
-    "@nextcloud/stylelint-config": "^3.2.0",
+    "@nextcloud/stylelint-config": "^3.2.1",
     "@nextcloud/vite-config": "^2.5.2",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
-    "openapi-typescript": "^7.10.1",
+    "@vue/tsconfig": "^0.9.1",
+    "openapi-typescript": "^7.13.0",
     "vite-plugin-eslint": "^1.8.1",
-    "vite-plugin-stylelint": "^6.0.4"
+    "vite-plugin-stylelint": "^6.1.0"
   },
   "engines": {
     "node": "^24.0.0",
