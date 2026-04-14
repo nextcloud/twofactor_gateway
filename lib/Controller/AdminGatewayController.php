@@ -36,7 +36,7 @@ class AdminGatewayController extends OCSController {
 	/**
 	 * List all available gateways with current configuration instances.
 	 *
-	 * @return JSONResponse<Http::STATUS_OK, list<mixed>, array{}>
+	 * @return JSONResponse<Http::STATUS_OK, array<int, array<string, mixed>>, array{}>
 	 *
 	 * 200: OK
 	 */
@@ -53,9 +53,9 @@ class AdminGatewayController extends OCSController {
 	/**
 	 * Create a new configuration instance for a gateway.
 	 *
-	 * @param string $gateway  The gateway id (e.g. "sms", "telegram")
-	 * @param string $label    Human-readable name for this instance
-	 * @param array<string, string> $config  Field values
+	 * @param string $gateway The gateway id (e.g. "sms", "telegram")
+	 * @param string $label Human-readable name for this instance
+	 * @param array<string, string> $config Field values
 	 *
 	 * @return JSONResponse<Http::STATUS_CREATED, array<string, mixed>, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
@@ -78,7 +78,7 @@ class AdminGatewayController extends OCSController {
 	/**
 	 * Get a single configuration instance.
 	 *
-	 * @param string $gateway    The gateway id
+	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id
 	 *
 	 * @return JSONResponse<Http::STATUS_OK, array<string, mixed>, array{}>|JSONResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
@@ -106,10 +106,10 @@ class AdminGatewayController extends OCSController {
 	/**
 	 * Update an existing configuration instance.
 	 *
-	 * @param string $gateway    The gateway id
+	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id
-	 * @param string $label      Updated label
-	 * @param array<string, string> $config  Updated field values
+	 * @param string $label Updated label
+	 * @param array<string, string> $config Updated field values
 	 *
 	 * @return JSONResponse<Http::STATUS_OK, array<string, mixed>, array{}>|JSONResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
@@ -137,7 +137,7 @@ class AdminGatewayController extends OCSController {
 	/**
 	 * Delete a configuration instance.
 	 *
-	 * @param string $gateway    The gateway id
+	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id
 	 *
 	 * @return JSONResponse<Http::STATUS_OK, array{}, array{}>|JSONResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
@@ -173,7 +173,7 @@ class AdminGatewayController extends OCSController {
 	 * The instance's field values are mirrored to the primary config keys used by
 	 * the 2-FA flow and CLI commands.
 	 *
-	 * @param string $gateway    The gateway id
+	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id to promote
 	 *
 	 * @return JSONResponse<Http::STATUS_OK, array{}, array{}>|JSONResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
@@ -206,7 +206,7 @@ class AdminGatewayController extends OCSController {
 	/**
 	 * Send a test message using a specific configuration instance.
 	 *
-	 * @param string $gateway    The gateway id
+	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id to test
 	 * @param string $identifier The recipient identifier (e.g. phone number)
 	 *
