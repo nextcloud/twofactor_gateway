@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AGatewayTest extends TestCase {
 	#[DataProvider('providerIsComplete')]
-	public function testIsCompleteUsesLazyHasKeyWithoutGetKeys(array $existingKeys, bool $expected, int $expectedHasKeyCalls): void {
+	public function testIsCompleteUsesNullLazyHasKeyWithoutGetKeys(array $existingKeys, bool $expected, int $expectedHasKeyCalls): void {
 		$appConfig = $this->createMock(IAppConfig::class);
 		$appConfig->expects($this->never())
 			->method('getKeys');
@@ -29,7 +29,7 @@ class AGatewayTest extends TestCase {
 			->method('hasKey')
 			->willReturnCallback(function (string $appId, string $key, ?bool $lazy) use ($existingKeys) {
 				$this->assertSame('twofactor_gateway', $appId);
-				$this->assertTrue($lazy);
+				$this->assertNull($lazy);
 				return in_array($key, $existingKeys, true);
 			});
 
@@ -58,6 +58,22 @@ class AGatewayTest extends TestCase {
 		];
 	}
 
+	public function testIsCompleteSkipsOptionalFields(): void {
+		$appConfig = $this->createMock(IAppConfig::class);
+		// Only the required field should trigger a hasKey call; optional must be skipped.
+		$appConfig->expects($this->once())
+			->method('hasKey')
+			->willReturnCallback(function (string $appId, string $key, ?bool $lazy) {
+				$this->assertSame('twofactor_gateway', $appId);
+				$this->assertSame('sms_api_key', $key);
+				return true;
+			});
+
+		$gateway = new TestGatewayWithOptional($appConfig);
+
+		$this->assertTrue($gateway->isComplete());
+	}
+
 	public function testIsCompleteUsesProvidedSettingsIdAndFields(): void {
 		$appConfig = $this->createMock(IAppConfig::class);
 		$appConfig->expects($this->once())
@@ -65,7 +81,7 @@ class AGatewayTest extends TestCase {
 			->willReturnCallback(function (string $appId, string $key, ?bool $lazy) {
 				$this->assertSame('twofactor_gateway', $appId);
 				$this->assertSame('custom_token', $key);
-				$this->assertTrue($lazy);
+				$this->assertNull($lazy);
 				return true;
 			});
 		$appConfig->expects($this->never())
@@ -98,6 +114,29 @@ class AGatewayTest extends TestCase {
 		);
 
 		$this->assertTrue($gateway->isComplete($settings));
+	}
+}
+
+class TestGatewayWithOptional extends AGateway {
+	#[\Override]
+	public function send(string $identifier, string $message, array $extra = []): void {
+	}
+
+	#[\Override]
+	public function createSettings(): Settings {
+		return new Settings(
+			name: 'SMS',
+			id: 'sms',
+			fields: [
+				new FieldDefinition(field: 'api_key', prompt: 'API key'),
+				new FieldDefinition(field: 'device_id', prompt: 'Device ID', optional: true),
+			],
+		);
+	}
+
+	#[\Override]
+	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
+		return 0;
 	}
 }
 

@@ -91,7 +91,7 @@ Follow these steps to activate the GoWhatsApp authentication gateway:
      --name whatsapp-api \
      -p 3000:3000 \
      -v whatsapp_data:/app/storages \
-     -e WEBHOOK="" \
+     -e WHATSAPP_WEBHOOK="" \
      aldinokemal2104/go-whatsapp-web-multidevice:latest
    ```
 
@@ -105,7 +105,7 @@ Follow these steps to activate the GoWhatsApp authentication gateway:
        volumes:
          - whatsapp_data:/app/storages
        environment:
-         - WEBHOOK=
+         - WHATSAPP_WEBHOOK=
 
    volumes:
      whatsapp_data:
@@ -157,6 +157,36 @@ Follow these steps to activate the GoWhatsApp authentication gateway:
    * Connected Devices: Number of linked devices
 
    The GoWhatsApp authentication gateway is now ready. Follow the instructions in the [User Documentation] to activate the Gateway for specific users.
+
+6. (Optional, recommended) Enable hybrid monitoring (webhook + polling fallback).
+
+   The app now supports a hybrid strategy:
+   * Webhook: fast-path trigger for session health checks
+   * Polling job: fallback safety net every 5 minutes
+
+   Alert logic (short version):
+   * **CRITICAL**: immediate alert when the session is detected as `logged_out`.
+   * **WARNING**: risk-score alert for instability (for example repeated `disconnected`/`unreachable` states) inside the configured time window.
+
+   Configure webhook settings in the gateway config (or via app config):
+   * **webhook_hybrid_enabled**: `1` to enable
+   * **webhook_secret**: shared HMAC secret
+   * **webhook_min_check_interval**: minimum seconds between webhook-triggered checks (default `30`)
+
+   You can also set these values directly:
+   ```bash
+   occ config:app:set twofactor_gateway gowhatsapp_webhook_hybrid_enabled --value="1"
+   occ config:app:set twofactor_gateway gowhatsapp_webhook_secret --value="your-secret-key"
+   occ config:app:set twofactor_gateway gowhatsapp_webhook_min_check_interval --value="30"
+   ```
+
+   Configure GoWhatsApp to send webhooks to:
+   * `https://<your-nextcloud>/index.php/apps/twofactor_gateway/gowhatsapp/webhook`
+
+   Security requirements:
+   * Configure `WHATSAPP_WEBHOOK_SECRET` (or `--webhook-secret`) on GoWhatsApp.
+   * The app validates `X-Hub-Signature-256` using `sha256=<digest>`.
+   * Keep HTTPS enabled and restrict ingress to trusted sources whenever possible.
 
 ### Telegram
 
