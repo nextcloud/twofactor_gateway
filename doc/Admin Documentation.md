@@ -172,12 +172,14 @@ Follow these steps to activate the GoWhatsApp authentication gateway:
    * **webhook_hybrid_enabled**: `1` to enable
    * **webhook_secret**: shared HMAC secret
    * **webhook_min_check_interval**: minimum seconds between webhook-triggered checks (default `30`)
+   * **webhook_event_filter**: comma-separated list of event types to process; events not in the list are silently ignored. Leave empty to process all events. Default: `connection_status,login_success,logout_complete`
 
    You can also set these values directly:
    ```bash
    occ config:app:set twofactor_gateway gowhatsapp_webhook_hybrid_enabled --value="1"
    occ config:app:set twofactor_gateway gowhatsapp_webhook_secret --value="your-secret-key"
    occ config:app:set twofactor_gateway gowhatsapp_webhook_min_check_interval --value="30"
+   occ config:app:set twofactor_gateway gowhatsapp_webhook_event_filter --value="connection_status,login_success,logout_complete"
    ```
 
    Configure GoWhatsApp to send webhooks to:
