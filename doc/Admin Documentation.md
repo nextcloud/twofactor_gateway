@@ -91,7 +91,7 @@ Follow these steps to activate the GoWhatsApp authentication gateway:
      --name whatsapp-api \
      -p 3000:3000 \
      -v whatsapp_data:/app/storages \
-     -e WEBHOOK="" \
+     -e WHATSAPP_WEBHOOK="" \
      aldinokemal2104/go-whatsapp-web-multidevice:latest
    ```
 
@@ -105,7 +105,7 @@ Follow these steps to activate the GoWhatsApp authentication gateway:
        volumes:
          - whatsapp_data:/app/storages
        environment:
-         - WEBHOOK=
+         - WHATSAPP_WEBHOOK=
 
    volumes:
      whatsapp_data:
