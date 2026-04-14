@@ -25,12 +25,14 @@ class WebhookIngestionService {
 	private const APPCONFIG_KEY_WEBHOOK_SECRET = 'gowhatsapp_webhook_secret';
 	private const APPCONFIG_KEY_DEVICE_ID = 'gowhatsapp_device_id';
 	private const APPCONFIG_KEY_MIN_CHECK_INTERVAL = 'gowhatsapp_webhook_min_check_interval';
+	private const APPCONFIG_KEY_EVENT_FILTER = 'gowhatsapp_webhook_event_filter';
 
 	private const APPCONFIG_KEY_LAST_EVENT_HASH = 'gowhatsapp_webhook_last_event_hash';
 	private const APPCONFIG_KEY_LAST_EVENT_TS = 'gowhatsapp_webhook_last_event_ts';
 	private const APPCONFIG_KEY_LAST_CHECK_TS = 'gowhatsapp_webhook_last_check_ts';
 
 	private const DEFAULT_MIN_CHECK_INTERVAL = 30;
+	private const DEFAULT_EVENT_FILTER = 'connection_status,login_success,logout_complete';
 	private const DUPLICATE_WINDOW = 120;
 
 	public function __construct(
@@ -105,6 +107,14 @@ class WebhookIngestionService {
 			];
 		}
 
+		if (!$this->isEventTypeAllowed($data)) {
+			return [
+				'status' => 202,
+				'processed' => false,
+				'message' => 'webhook event type filtered out',
+			];
+		}
+
 		$this->markEventAsSeen($eventHash, $now);
 
 		$lastCheckTs = (int)$this->appConfig->getValueString(self::APP_ID, self::APPCONFIG_KEY_LAST_CHECK_TS, '0');
@@ -164,5 +174,36 @@ class WebhookIngestionService {
 	private function markEventAsSeen(string $eventHash, int $now): void {
 		$this->appConfig->setValueString(self::APP_ID, self::APPCONFIG_KEY_LAST_EVENT_HASH, $eventHash);
 		$this->appConfig->setValueString(self::APP_ID, self::APPCONFIG_KEY_LAST_EVENT_TS, (string)$now);
+	}
+
+	private function isEventTypeAllowed(array $data): bool {
+		$eventType = is_string($data['event_type'] ?? null) ? trim($data['event_type']) : '';
+		
+		// If no event_type in payload, allow it (backward compatibility)
+		if ($eventType === '') {
+			return true;
+		}
+
+		$filterConfig = trim($this->appConfig->getValueString(
+			self::APP_ID,
+			self::APPCONFIG_KEY_EVENT_FILTER,
+			self::DEFAULT_EVENT_FILTER,
+		));
+
+		// If filter is empty string, allow all
+		if ($filterConfig === '') {
+			return true;
+		}
+
+		// Parse comma-separated whitelist
+		$allowedEvents = array_map('trim', explode(',', $filterConfig));
+		$allowedEvents = array_filter($allowedEvents, fn($e) => $e !== '');
+
+		// If filter is configured but empty after parsing, allow all
+		if (empty($allowedEvents)) {
+			return true;
+		}
+
+		return in_array($eventType, $allowedEvents, true);
 	}
 }
