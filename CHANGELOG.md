@@ -15,10 +15,6 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
-## 1.3.0 - 2026-04-14
-### Changed
-- Update translations
-
 ## 1.2.1 - 2026-02-10
 ### Changed
 - Make compatible with Go WhatsApp v8
