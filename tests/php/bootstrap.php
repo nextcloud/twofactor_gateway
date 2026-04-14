@@ -15,4 +15,5 @@ if (!defined('PHPUNIT_RUN')) {
 require_once __DIR__ . '/../../../../lib/base.php';
 require_once __DIR__ . '/../../../../tests/autoload.php';
 
-Server::get(IAppManager::class)->loadApp('twofactor_gateway');
+// Don't load the app here - let makeInMemoryAppConfig handle dependency injection in tests
+// Server::get(IAppManager::class)->loadApp('twofactor_gateway');
