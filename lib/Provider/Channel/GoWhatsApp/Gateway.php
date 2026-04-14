@@ -107,6 +107,23 @@ class Gateway extends AGateway {
 					field: 'phone',
 					prompt: 'Phone number for WhatsApp Web access:',
 				),
+				new FieldDefinition(
+					field: 'webhook_hybrid_enabled',
+					prompt: 'Enable hybrid monitoring webhook (1/0):',
+					default: '0',
+					optional: true,
+				),
+				new FieldDefinition(
+					field: 'webhook_secret',
+					prompt: 'Webhook HMAC secret for X-Hub-Signature-256:',
+					optional: true,
+				),
+				new FieldDefinition(
+					field: 'webhook_min_check_interval',
+					prompt: 'Minimum seconds between webhook-triggered checks:',
+					default: '30',
+					optional: true,
+				),
 			],
 		);
 	}
