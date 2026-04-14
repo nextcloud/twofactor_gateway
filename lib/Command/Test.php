@@ -23,6 +23,7 @@ class Test extends Command {
 		private Factory $gatewayFactory,
 	) {
 		parent::__construct('twofactorauth:gateway:test');
+		$this->setDescription('Send a test message through a gateway');
 
 		$fqcnList = $this->gatewayFactory->getFqcnList();
 		$gateways = [];

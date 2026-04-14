@@ -29,6 +29,7 @@ class Configure extends Command {
 		private GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager,
 	) {
 		parent::__construct('twofactorauth:gateway:configure');
+		$this->setDescription('Configure a gateway for sending messages');
 
 		$fqcnList = $this->gatewayFactory->getFqcnList();
 		foreach ($fqcnList as $fqcn) {

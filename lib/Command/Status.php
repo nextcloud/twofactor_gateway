@@ -20,6 +20,7 @@ class Status extends Command {
 		private Factory $gatewayFactory,
 	) {
 		parent::__construct('twofactorauth:gateway:status');
+		$this->setDescription('Show the status of all configured gateways');
 	}
 
 	#[\Override]
