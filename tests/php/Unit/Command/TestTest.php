@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Command;
 
 use OC\Console\Application;
-use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\Server;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -37,10 +36,10 @@ class TestTest extends AppTestCase {
 		self::$store = [];
 
 		$gateway = $this->createGoWhatsAppGateway($appConfig);
-		
+
 		$settings = $gateway->getSettings();
 		$this->assertNotNull($settings);
-		
+
 		// Show all required fields
 		$requiredFields = [];
 		foreach ($settings->fields as $field) {
@@ -48,12 +47,12 @@ class TestTest extends AppTestCase {
 				$requiredFields[] = $field->field;
 			}
 		}
-		
+
 		$this->assertNotEmpty($requiredFields, 'GoWhatsApp should have required fields');
-		
+
 		// Now check isComplete - should be false with empty config
 		$isComplete = $gateway->isComplete();
-		$this->assertFalse($isComplete, "GoWhatsApp isComplete should be false with empty configuration. Required fields are: " . implode(', ', $requiredFields));
+		$this->assertFalse($isComplete, 'GoWhatsApp isComplete should be false with empty configuration. Required fields are: ' . implode(', ', $requiredFields));
 	}
 
 	public function testGoWhatsAppIsCompleteWithRequiredConfig(): void {
@@ -87,7 +86,7 @@ class TestTest extends AppTestCase {
 
 		// Test with directly instantiated gateway
 		$gateway = $this->createGoWhatsAppGateway($this->makeInMemoryAppConfig());
-		
+
 		$input = new ArrayInput(['twofactorauth:gateway:test', 'gateway' => $gateway->getProviderId(), 'identifier' => 'some_identifier']);
 		$exitCode = $application->run($input, $output);
 		$this->assertSame(1, $exitCode, "Gateway {$gateway->getProviderId()} should return exit code 1 when not configured");
