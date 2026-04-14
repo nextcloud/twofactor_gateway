@@ -11,21 +11,20 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\GoWhatsApp;
 
 use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Events\WhatsAppSessionWarningEvent;
+use OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\DeviceStateFetcher;
+use OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\HealthRiskScorer;
 use OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\SessionHealthService;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Http\Client\IClient;
-use OCP\Http\Client\IClientService;
-use OCP\Http\Client\IResponse;
 use OCP\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
 class SessionHealthServiceTest extends AppTestCase {
 	private IAppConfig $appConfig;
-	private IClient&MockObject $httpClient;
-	private IClientService&MockObject $clientService;
+	private DeviceStateFetcher&MockObject $fetcher;
+	private HealthRiskScorer&MockObject $riskScorer;
 	private IEventDispatcher&MockObject $eventDispatcher;
 	private ITimeFactory&MockObject $timeFactory;
 	private LoggerInterface&MockObject $logger;
@@ -37,9 +36,8 @@ class SessionHealthServiceTest extends AppTestCase {
 
 		$this->appConfig = $this->makeInMemoryAppConfig();
 
-		$this->httpClient = $this->createMock(IClient::class);
-		$this->clientService = $this->createMock(IClientService::class);
-		$this->clientService->method('newClient')->willReturn($this->httpClient);
+		$this->fetcher = $this->createMock(DeviceStateFetcher::class);
+		$this->riskScorer = $this->createMock(HealthRiskScorer::class);
 
 		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
@@ -47,7 +45,8 @@ class SessionHealthServiceTest extends AppTestCase {
 
 		$this->service = new SessionHealthService(
 			appConfig: $this->appConfig,
-			clientService: $this->clientService,
+			deviceStateFetcher: $this->fetcher,
+			riskScorer: $this->riskScorer,
 			eventDispatcher: $this->eventDispatcher,
 			timeFactory: $this->timeFactory,
 			logger: $this->logger,
@@ -60,25 +59,22 @@ class SessionHealthServiceTest extends AppTestCase {
 
 	public function testSkipsCheckWhenBaseUrlNotConfigured(): void {
 		$this->timeFactory->expects($this->never())->method('getTime');
-		$this->httpClient->expects($this->never())->method('get');
+		$this->fetcher->expects($this->never())->method('fetch');
 		$this->eventDispatcher->expects($this->never())->method('dispatchTyped');
 
 		$this->service->checkAndDispatch();
 	}
 
 	// -------------------------------------------------------------------------
-	// checkAndDispatch – healthy state → records INFO, no event dispatched
+	// checkAndDispatch – healthy state → records entry in history, no event
 	// -------------------------------------------------------------------------
 
 	public function testRecordsInfoEntryForHealthyDevice(): void {
 		$this->configureBaseUrl('http://whatsapp.local');
-		$this->configureDeviceId('dev-1');
 		$now = 1_000_000;
 		$this->timeFactory->method('getTime')->willReturn($now);
-
-		$this->stubDevicesResponse([
-			['id' => 'dev-1', 'state' => 'connected'],
-		]);
+		$this->fetcher->method('fetch')->willReturn('connected');
+		$this->riskScorer->method('computeScore')->willReturn(0);
 
 		$this->eventDispatcher->expects($this->never())->method('dispatchTyped');
 
@@ -91,17 +87,14 @@ class SessionHealthServiceTest extends AppTestCase {
 	}
 
 	// -------------------------------------------------------------------------
-	// checkAndDispatch – single disconnect → no event yet (below threshold)
+	// checkAndDispatch – risk score below threshold → no event dispatched
 	// -------------------------------------------------------------------------
 
-	public function testNoEventOnSingleDisconnect(): void {
+	public function testNoEventWhenRiskScoreBelowThreshold(): void {
 		$this->configureBaseUrl('http://whatsapp.local');
-		$this->configureDeviceId('dev-1');
 		$this->timeFactory->method('getTime')->willReturn(1_000_000);
-
-		$this->stubDevicesResponse([
-			['id' => 'dev-1', 'state' => 'disconnected'],
-		]);
+		$this->fetcher->method('fetch')->willReturn('disconnected');
+		$this->riskScorer->method('computeScore')->willReturn(10); // well below default 80
 
 		$this->eventDispatcher->expects($this->never())->method('dispatchTyped');
 
@@ -109,26 +102,15 @@ class SessionHealthServiceTest extends AppTestCase {
 	}
 
 	// -------------------------------------------------------------------------
-	// checkAndDispatch – multiple disconnects above threshold → WARNING event
+	// checkAndDispatch – risk score at or above threshold → WARNING event
 	// -------------------------------------------------------------------------
 
-	public function testDispatchesWarningAfterRepeatedDisconnects(): void {
+	public function testDispatchesWarningWhenRiskScoreReachesThreshold(): void {
 		$this->configureBaseUrl('http://whatsapp.local');
-		$this->configureDeviceId('dev-1');
-		$now = 1_000_300;
-		$this->timeFactory->method('getTime')->willReturn($now);
-
-		// Pre-populate 3 disconnects within the time window (600 s default)
-		$window = 600;
-		$this->storeHistory([
-			['ts' => $now - $window + 10, 'state' => 'disconnected'],
-			['ts' => $now - $window + 60, 'state' => 'disconnected'],
-			['ts' => $now - $window + 120, 'state' => 'disconnected'],
-		]);
-
-		$this->stubDevicesResponse([
-			['id' => 'dev-1', 'state' => 'disconnected'],
-		]);
+		$this->timeFactory->method('getTime')->willReturn(1_000_300);
+		$this->fetcher->method('fetch')->willReturn('disconnected');
+		$this->riskScorer->method('computeScore')->willReturn(90);
+		$this->riskScorer->method('buildReason')->willReturn('test reason');
 
 		$this->eventDispatcher->expects($this->once())
 			->method('dispatchTyped')
@@ -143,12 +125,8 @@ class SessionHealthServiceTest extends AppTestCase {
 
 	public function testDispatchesCriticalEventForLoggedOutDevice(): void {
 		$this->configureBaseUrl('http://whatsapp.local');
-		$this->configureDeviceId('dev-1');
 		$this->timeFactory->method('getTime')->willReturn(1_000_000);
-
-		$this->stubDevicesResponse([
-			['id' => 'dev-1', 'state' => 'logged_out'],
-		]);
+		$this->fetcher->method('fetch')->willReturn('logged_out');
 
 		$this->eventDispatcher->expects($this->once())
 			->method('dispatchTyped')
@@ -158,49 +136,27 @@ class SessionHealthServiceTest extends AppTestCase {
 	}
 
 	// -------------------------------------------------------------------------
-	// checkAndDispatch – API unreachable → scores as disconnect, no fatal error
-	// -------------------------------------------------------------------------
-
-	public function testHandlesApiUnreachableGracefully(): void {
-		$this->configureBaseUrl('http://whatsapp.local');
-		$this->configureDeviceId('dev-1');
-		$this->timeFactory->method('getTime')->willReturn(1_000_000);
-
-		$this->httpClient
-			->method('get')
-			->willThrowException(new \Exception('Connection refused'));
-
-		$this->eventDispatcher->expects($this->never())->method('dispatchTyped');
-
-		// Must not throw
-		$this->service->checkAndDispatch();
-	}
-
-	// -------------------------------------------------------------------------
 	// checkAndDispatch – old history entries are pruned (outside window)
 	// -------------------------------------------------------------------------
 
 	public function testPrunesHistoryEntriesOlderThanWindow(): void {
 		$this->configureBaseUrl('http://whatsapp.local');
-		$this->configureDeviceId('dev-1');
 		$now = 1_000_000;
 		$window = 600;
 		$this->timeFactory->method('getTime')->willReturn($now);
 
 		$this->storeHistory([
-			['ts' => $now - $window - 1, 'state' => 'disconnected'],  // too old
+			['ts' => $now - $window - 1, 'state' => 'disconnected'],   // too old
 			['ts' => $now - $window - 100, 'state' => 'disconnected'], // also too old
 		]);
 
-		$this->stubDevicesResponse([
-			['id' => 'dev-1', 'state' => 'connected'],
-		]);
+		$this->fetcher->method('fetch')->willReturn('connected');
+		$this->riskScorer->method('computeScore')->willReturn(0);
 
 		$this->eventDispatcher->expects($this->never())->method('dispatchTyped');
 
 		$this->service->checkAndDispatch();
 
-		// Only the fresh entry should be in history (old ones were pruned)
 		$history = $this->getStoredHistory();
 		foreach ($history as $entry) {
 			$this->assertGreaterThan($now - $window, $entry['ts']);
@@ -213,16 +169,10 @@ class SessionHealthServiceTest extends AppTestCase {
 
 	public function testDoesNotRepeatWarningWithinCooldown(): void {
 		$this->configureBaseUrl('http://whatsapp.local');
-		$this->configureDeviceId('dev-1');
 		$now = 1_000_300;
-		$window = 600;
 		$this->timeFactory->method('getTime')->willReturn($now);
-
-		$this->storeHistory([
-			['ts' => $now - $window + 10, 'state' => 'disconnected'],
-			['ts' => $now - $window + 60, 'state' => 'disconnected'],
-			['ts' => $now - $window + 120, 'state' => 'disconnected'],
-		]);
+		$this->fetcher->method('fetch')->willReturn('disconnected');
+		$this->riskScorer->method('computeScore')->willReturn(90);
 
 		// Simulate that a warning was already sent 5 minutes ago
 		$this->appConfig->setValueString(
@@ -231,11 +181,6 @@ class SessionHealthServiceTest extends AppTestCase {
 			(string)($now - 5 * 60),
 		);
 
-		$this->stubDevicesResponse([
-			['id' => 'dev-1', 'state' => 'disconnected'],
-		]);
-
-		// Should be suppressed during cooldown
 		$this->eventDispatcher->expects($this->never())->method('dispatchTyped');
 
 		$this->service->checkAndDispatch();
@@ -247,16 +192,11 @@ class SessionHealthServiceTest extends AppTestCase {
 
 	public function testRepeatsWarningAfterCooldownExpires(): void {
 		$this->configureBaseUrl('http://whatsapp.local');
-		$this->configureDeviceId('dev-1');
 		$now = 1_000_300;
-		$window = 600;
 		$this->timeFactory->method('getTime')->willReturn($now);
-
-		$this->storeHistory([
-			['ts' => $now - $window + 10, 'state' => 'disconnected'],
-			['ts' => $now - $window + 60, 'state' => 'disconnected'],
-			['ts' => $now - $window + 120, 'state' => 'disconnected'],
-		]);
+		$this->fetcher->method('fetch')->willReturn('disconnected');
+		$this->riskScorer->method('computeScore')->willReturn(90);
+		$this->riskScorer->method('buildReason')->willReturn('reason');
 
 		// Last warning was sent 2 hours ago → cooldown (1 h default) has expired
 		$this->appConfig->setValueString(
@@ -264,10 +204,6 @@ class SessionHealthServiceTest extends AppTestCase {
 			SessionHealthService::CONFIG_LAST_WARNING_TS,
 			(string)($now - 2 * 3600),
 		);
-
-		$this->stubDevicesResponse([
-			['id' => 'dev-1', 'state' => 'disconnected'],
-		]);
 
 		$this->eventDispatcher->expects($this->once())
 			->method('dispatchTyped')
@@ -282,10 +218,6 @@ class SessionHealthServiceTest extends AppTestCase {
 
 	private function configureBaseUrl(string $url): void {
 		$this->appConfig->setValueString('twofactor_gateway', 'gowhatsapp_base_url', $url);
-	}
-
-	private function configureDeviceId(string $deviceId): void {
-		$this->appConfig->setValueString('twofactor_gateway', 'gowhatsapp_device_id', $deviceId);
 	}
 
 	private function storeHistory(array $entries): void {
@@ -303,18 +235,5 @@ class SessionHealthServiceTest extends AppTestCase {
 			'[]',
 		);
 		return json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
-	}
-
-	private function stubDevicesResponse(array $devices): void {
-		$body = $this->createStub(\Psr\Http\Message\StreamInterface::class);
-		$body->method('__toString')->willReturn(json_encode([
-			'code' => 'SUCCESS',
-			'results' => $devices,
-		]));
-
-		$response = $this->createStub(IResponse::class);
-		$response->method('getBody')->willReturn($body);
-
-		$this->httpClient->method('get')->willReturn($response);
 	}
 }
