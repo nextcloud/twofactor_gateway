@@ -24,7 +24,7 @@ class StatusTest extends AppTestCase {
 		$application = Server::get(Application::class);
 		$input = new ArrayInput([]);
 		$output = new ConsoleOutputSpy();
-		
+
 		// Use direct command execution to bypass upgrade check
 		$command = Server::get(Status::class);
 		$exitCode = $command->run($input, $output);
