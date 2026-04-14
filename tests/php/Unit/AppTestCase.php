@@ -54,7 +54,8 @@ class AppTestCase extends TestCase {
 		});
 
 		$goWhatsAppSessionMonitorJobManager = $this->createStub(GoWhatsAppSessionMonitorJobManager::class);
-		$goWhatsAppSessionMonitorJobManager->method('sync')->willReturnCallback(function () {});
+		$goWhatsAppSessionMonitorJobManager->method('sync')->willReturnCallback(function () {
+		});
 
 		\OC::$server->registerService(GoWhatsAppSessionMonitorJobManager::class, function () use ($goWhatsAppSessionMonitorJobManager) {
 			return $goWhatsAppSessionMonitorJobManager;
