@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit;
 
+use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
 use OCP\IAppConfig;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
@@ -50,6 +51,13 @@ class AppTestCase extends TestCase {
 
 		\OC::$server->registerService(IAppConfig::class, function () use ($appConfig) {
 			return $appConfig;
+		});
+
+		$goWhatsAppSessionMonitorJobManager = $this->createStub(GoWhatsAppSessionMonitorJobManager::class);
+		$goWhatsAppSessionMonitorJobManager->method('sync')->willReturnCallback(function () {});
+
+		\OC::$server->registerService(GoWhatsAppSessionMonitorJobManager::class, function () use ($goWhatsAppSessionMonitorJobManager) {
+			return $goWhatsAppSessionMonitorJobManager;
 		});
 
 		return $appConfig;
