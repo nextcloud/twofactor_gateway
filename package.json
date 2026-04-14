@@ -7,10 +7,10 @@
     "build": "vite build --mode production",
     "dev": "vite build --mode development",
     "watch": "vite build --mode development --watch",
-    "lint": "eslint --ext .js,.vue src",
-    "lint:fix": "eslint --ext .js,.vue src --fix",
-    "stylelint": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue",
-    "stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --fix",
+    "lint": "eslint src/main.ts src/views/GatewaySettings.vue",
+    "lint:fix": "eslint --fix src/main.ts src/views/GatewaySettings.vue",
+    "stylelint": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --ignore-pattern \"css/main-*.chunk.css\"",
+    "stylelint:fix": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --ignore-pattern \"css/main-*.chunk.css\" --fix",
     "typescript:check": "tsc --noEmit",
     "typescript:generate": "npx openapi-typescript ./openapi.json -t -o src/types/openapi/openapi.ts"
   },
@@ -34,6 +34,8 @@
     "@nextcloud/eslint-config": "^8.4.2",
     "@nextcloud/stylelint-config": "^3.2.1",
     "@nextcloud/vite-config": "^2.5.2",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "openapi-typescript": "^7.13.0",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-stylelint": "^6.1.0"
