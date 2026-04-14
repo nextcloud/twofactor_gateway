@@ -40,7 +40,6 @@ class TestTest extends AppTestCase {
 		$settings = $gateway->getSettings();
 		$this->assertNotNull($settings);
 
-		// Show all required fields
 		$requiredFields = [];
 		foreach ($settings->fields as $field) {
 			if (!$field->optional) {
@@ -50,7 +49,6 @@ class TestTest extends AppTestCase {
 
 		$this->assertNotEmpty($requiredFields, 'GoWhatsApp should have required fields');
 
-		// Now check isComplete - should be false with empty config
 		$isComplete = $gateway->isComplete();
 		$this->assertFalse($isComplete, 'GoWhatsApp isComplete should be false with empty configuration. Required fields are: ' . implode(', ', $requiredFields));
 	}
@@ -59,7 +57,6 @@ class TestTest extends AppTestCase {
 		$appConfig = $this->makeInMemoryAppConfig();
 		self::$store = [];
 
-		// Set all required fields
 		$appConfig->setValueString('twofactor_gateway', 'gowhatsapp_base_url', 'http://localhost:3000');
 		$appConfig->setValueString('twofactor_gateway', 'gowhatsapp_username', 'admin');
 		$appConfig->setValueString('twofactor_gateway', 'gowhatsapp_password', 'password123');
@@ -84,7 +81,6 @@ class TestTest extends AppTestCase {
 		$application->loadCommands(new ArrayInput([]), $output);
 		$application->setAutoExit(false);
 
-		// Test with directly instantiated gateway
 		$gateway = $this->createGoWhatsAppGateway($this->makeInMemoryAppConfig());
 
 		$input = new ArrayInput(['twofactorauth:gateway:test', 'gateway' => $gateway->getProviderId(), 'identifier' => 'some_identifier']);
