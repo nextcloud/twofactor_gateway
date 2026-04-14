@@ -55,11 +55,7 @@ class Remove extends Command {
 		}
 
 		$gateway->remove();
-		try {
-			$this->goWhatsAppSessionMonitorJobManager->sync();
-		} catch (\Throwable $e) {
-			// Silently ignore if GoWhatsApp monitor sync fails
-		}
+		$this->goWhatsAppSessionMonitorJobManager->sync();
 		$output->writeln("Removed configuration for gateway $gatewayName");
 		return 0;
 	}
