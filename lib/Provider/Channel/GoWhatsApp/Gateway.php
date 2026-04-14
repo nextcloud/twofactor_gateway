@@ -124,12 +124,6 @@ class Gateway extends AGateway {
 					default: '30',
 					optional: true,
 				),
-				new FieldDefinition(
-					field: 'webhook_event_filter',
-					prompt: 'Webhook event type whitelist (comma-separated, leave empty for all):',
-					default: 'connection_status,login_success,logout_complete',
-					optional: true,
-				),
 			],
 		);
 	}
