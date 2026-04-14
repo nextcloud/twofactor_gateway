@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Command;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Command\Remove;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Factory as SMSFactory;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Factory as TelegramFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
@@ -73,10 +74,9 @@ class RemoveTest extends AppTestCase {
 		$input->setStream(self::createStream([(string)$index]));
 		$output = new ConsoleOutputSpy();
 
-		$application->loadCommands($input, $output);
-		$application->setAutoExit(false);
-
-		$exit = $application->run($input, $output);
+		// Use direct command execution to bypass upgrade check
+		$command = Server::get(Remove::class);
+		$exit = $command->run($input, $output);
 		$this->assertSame(0, $exit, 'Comando de remoção retornou código diferente de 0.');
 	}
 
