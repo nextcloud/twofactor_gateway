@@ -43,8 +43,12 @@ class Application extends App implements IBootstrap {
 
 	#[\Override]
 	public function boot(IBootContext $context): void {
-		$context->injectFn(static function (GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager): void {
-			$goWhatsAppSessionMonitorJobManager->sync();
-		});
+		try {
+			$context->injectFn(static function (GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager): void {
+				$goWhatsAppSessionMonitorJobManager->sync();
+			});
+		} catch (\Throwable $e) {
+			// Silently ignore if GoWhatsApp monitor sync fails during boot
+		}
 	}
 }
