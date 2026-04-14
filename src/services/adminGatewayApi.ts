@@ -36,8 +36,17 @@ export interface TestResult {
 	message: string
 }
 
-function ocsData<T>(response: { data: { ocs: { data: T } } }): T {
-	return response.data.ocs.data
+function ocsData<T>(response: any): T {
+	console.log('OCS Response:', response)
+	console.log('Response struc:', { data: response.data, dataType: typeof response.data })
+	if (response.data?.ocs?.data) {
+		return response.data.ocs.data
+	}
+	// Fallback for OCSController DataResponse that returns raw array
+	if (Array.isArray(response.data)) {
+		return response.data as T
+	}
+	throw new Error(`Unexpected OCS response structure: ${JSON.stringify(response.data)}`)
 }
 
 /**
