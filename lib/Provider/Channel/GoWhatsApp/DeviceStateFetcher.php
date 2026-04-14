@@ -28,6 +28,7 @@ use Psr\Log\LoggerInterface;
  */
 class DeviceStateFetcher {
 	private const APPCONFIG_KEY_DEVICE_ID = 'gowhatsapp_device_id';
+	private const DEVICES_ENDPOINT = '/devices';
 
 	public function __construct(
 		private readonly IAppConfig $appConfig,
@@ -37,7 +38,11 @@ class DeviceStateFetcher {
 	}
 
 	/**
-	 * Contacts {$baseUrl}/devices and returns the device's current state string.
+	 * Returns the device state using the most precise available source.
+	 *
+	 * For configured devices, it first queries /devices/{id}/status to avoid
+	 * loading the full devices list on every poll. It falls back to /devices
+	 * for backward compatibility and richer state resolution.
 	 */
 	public function fetch(string $baseUrl): string {
 		$deviceId = $this->appConfig->getValueString(
@@ -46,6 +51,62 @@ class DeviceStateFetcher {
 			'',
 		);
 
+		if ($deviceId !== '') {
+			$statusState = $this->fetchFromStatusEndpoint($baseUrl, $deviceId);
+			if ($statusState !== null) {
+				return $statusState;
+			}
+		}
+
+		return $this->fetchFromDevicesEndpoint($baseUrl, $deviceId);
+	}
+
+	/**
+	 * Uses /devices/{id}/status when possible.
+	 *
+	 * Returns null to signal that caller should fall back to /devices
+	 * (for older GoWhatsApp versions or ambiguous disconnected states).
+	 */
+	private function fetchFromStatusEndpoint(string $baseUrl, string $deviceId): ?string {
+		try {
+			$client = $this->clientService->newClient();
+			$response = $client->get(
+				$baseUrl . self::DEVICES_ENDPOINT . '/' . rawurlencode($deviceId) . '/status',
+				['timeout' => 5],
+			);
+			$body = (string)$response->getBody();
+			$data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+
+			if (($data['code'] ?? '') !== 'SUCCESS' || !isset($data['results'])) {
+				$this->logger->debug('GoWhatsApp /devices/{id}/status returned non-SUCCESS; falling back to /devices.', [
+					'device_id' => $deviceId,
+				]);
+				return null;
+			}
+
+			$isLoggedIn = (bool)($data['results']['is_logged_in'] ?? false);
+			if ($isLoggedIn) {
+				return 'logged_in';
+			}
+
+			$isConnected = (bool)($data['results']['is_connected'] ?? false);
+			if ($isConnected) {
+				return 'connected';
+			}
+
+			// Ambiguous state (both false): let /devices decide logged_out vs disconnected.
+			return null;
+		} catch (\Throwable $e) {
+			$this->logger->debug('GoWhatsApp /devices/{id}/status unavailable; falling back to /devices.', [
+				'device_id' => $deviceId,
+				'exception' => $e,
+			]);
+			return null;
+		}
+	}
+
+	private function fetchFromDevicesEndpoint(string $baseUrl, string $deviceId): string {
+
 		try {
 			$client = $this->clientService->newClient();
 			$options = ['timeout' => 5];
@@ -53,7 +114,7 @@ class DeviceStateFetcher {
 				$options['headers'] = ['X-Device-Id' => $deviceId];
 			}
 
-			$response = $client->get($baseUrl . '/devices', $options);
+			$response = $client->get($baseUrl . self::DEVICES_ENDPOINT, $options);
 			$body = (string)$response->getBody();
 			$data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
 
