@@ -127,6 +127,30 @@ class DeviceStateFetcherTest extends AppTestCase {
 		$this->assertSame('logged_out', $this->fetcher->fetch('http://gowa.local'));
 	}
 
+	public function testReturnsLoggedOutWhenConfiguredDeviceAndDevicesResultsIsNull(): void {
+		$this->configureDeviceId('missing-id');
+
+		$this->httpClient->expects($this->exactly(2))
+			->method('get')
+			->willReturnCallback(function (string $url) {
+				if (str_ends_with($url, '/status')) {
+					throw new \Exception('Status endpoint unavailable');
+				}
+
+				$stream = $this->createStub(\Psr\Http\Message\StreamInterface::class);
+				$stream->method('__toString')->willReturn(
+					json_encode(['code' => 'SUCCESS', 'results' => null]),
+				);
+
+				$response = $this->createStub(IResponse::class);
+				$response->method('getBody')->willReturn($stream);
+
+				return $response;
+			});
+
+		$this->assertSame('logged_out', $this->fetcher->fetch('http://gowa.local'));
+	}
+
 	public function testUsesRawUrlEncodingForStatusEndpointDeviceId(): void {
 		$this->configureDeviceId('my device/1');
 
