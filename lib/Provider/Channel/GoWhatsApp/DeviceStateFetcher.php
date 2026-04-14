@@ -118,12 +118,20 @@ class DeviceStateFetcher {
 			$body = (string)$response->getBody();
 			$data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
 
-			if (($data['code'] ?? '') !== 'SUCCESS' || !isset($data['results'])) {
+			if (($data['code'] ?? '') !== 'SUCCESS' || !array_key_exists('results', $data)) {
 				$this->logger->info('GoWhatsApp /devices returned non-SUCCESS.', ['body' => $body]);
 				return 'disconnected';
 			}
 
-			return $this->resolveDeviceState($data['results'], $deviceId);
+			if ($deviceId !== '' && (!is_array($data['results']) || $data['results'] === [])) {
+				$this->logger->warning('GoWhatsApp device list is empty for configured device_id; treating as logged_out.', [
+					'device_id' => $deviceId,
+				]);
+				return 'logged_out';
+			}
+
+			$devices = is_array($data['results']) ? $data['results'] : [];
+			return $this->resolveDeviceState($devices, $deviceId);
 		} catch (\JsonException $e) {
 			$this->logger->error('GoWhatsApp /devices response is not valid JSON.', ['exception' => $e]);
 			return 'unreachable';
