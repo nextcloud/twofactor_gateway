@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+default:
+  autoload:
+    '': '%paths.base%/../features/bootstrap'
+  suites:
+    default:
+      contexts:
+        - FeatureContext
+        - LibreSign\Behat\MailpitExtension\Context\MailpitContext
+      paths:
+        - '%paths.base%/../features'
+
+  extensions:
+    LibreSign\Behat\MailpitExtension\ServiceContainer\MailpitExtension:
+      base_url: http://mailpit:8025
+    PhpBuiltin\Server:
+      runAs: www-data
+      workers: 10
+    jarnaiz\JUnitFormatter\JUnitFormatterExtension:
+      filename: report.xml
+      outputDir: '%paths.base%/../output/'
