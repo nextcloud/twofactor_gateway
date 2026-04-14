@@ -105,4 +105,54 @@ class GoWhatsAppSessionMonitorJobManagerTest extends TestCase {
 
 		$this->manager->sync();
 	}
+
+	public function testLogsAndContinuesWhenGatewayFactoryFails(): void {
+		$exception = new \RuntimeException('gateway factory failure');
+
+		$this->gatewayFactory->expects($this->once())
+			->method('get')
+			->with('gowhatsapp')
+			->willThrowException($exception);
+
+		$this->jobList->expects($this->never())->method('has');
+		$this->jobList->expects($this->never())->method('add');
+		$this->jobList->expects($this->never())->method('remove');
+
+		$this->logger->expects($this->once())
+			->method('warning')
+			->with(
+				'Failed to sync GoWhatsApp session monitor background job.',
+				$this->callback(static fn (array $context): bool => ($context['exception'] ?? null) === $exception),
+			);
+
+		$this->manager->sync();
+	}
+
+	public function testLogsAndContinuesWhenJobListFails(): void {
+		$exception = new \RuntimeException('job list failure');
+
+		$this->gatewayFactory->expects($this->once())
+			->method('get')
+			->with('gowhatsapp')
+			->willReturn($this->gateway);
+		$this->gateway->expects($this->once())
+			->method('isComplete')
+			->willReturn(true);
+
+		$this->jobList->expects($this->once())
+			->method('has')
+			->with(GoWhatsAppSessionMonitorJob::class, null)
+			->willThrowException($exception);
+		$this->jobList->expects($this->never())->method('add');
+		$this->jobList->expects($this->never())->method('remove');
+
+		$this->logger->expects($this->once())
+			->method('warning')
+			->with(
+				'Failed to sync GoWhatsApp session monitor background job.',
+				$this->callback(static fn (array $context): bool => ($context['exception'] ?? null) === $exception),
+			);
+
+		$this->manager->sync();
+	}
 }
