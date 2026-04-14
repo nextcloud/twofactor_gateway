@@ -21,6 +21,7 @@
 					:placeholder="t('twofactor_gateway', 'Select a gateway…')"
 					label="label"
 					track-by="value"
+					:reduce="(opt: { value: string; label: string }) => opt.value"
 					@update:model-value="onGatewayChange" />
 			</div>
 
