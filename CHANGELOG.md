@@ -15,6 +15,17 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 2.3.0 - 2026-04-14
+### Added
+- #967 add Cegedim Vortext SMS gateway
+
+### Changed
+- #982 add heuristic session health monitor for early logout detection
+- #937 #935 #933 #941 #940 #964 #947 #943 #944 #954 #957 #952 #931 #960 #963 #953 #978 bump dependencies
+
+### Fixed
+- #965 fix lazy appconfig iscomplete regression
+
 ## 2.2.1 - 2026-02-10
 ### Changed
 - Make compatible with Go WhatsApp v8
