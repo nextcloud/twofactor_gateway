@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Controller;
 
 use OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\WebhookIngestionService;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -26,7 +27,14 @@ class GoWhatsAppWebhookController extends Controller {
 	}
 
 	/**
-	 * Ingests signed GoWhatsApp webhook events for hybrid monitoring.
+	 * Ingest a signed GoWhatsApp webhook event for hybrid monitoring
+	 *
+	 * @return JSONResponse<Http::STATUS_ACCEPTED, array{processed: bool, message: string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{processed: bool, message: string}, array{}>|JSONResponse<Http::STATUS_UNAUTHORIZED, array{processed: bool, message: string}, array{}>|JSONResponse<Http::STATUS_SERVICE_UNAVAILABLE, array{processed: bool, message: string}, array{}>
+	 *
+	 * 202: Event accepted (processed or intentionally skipped)
+	 * 400: Malformed request body
+	 * 401: Invalid or missing HMAC signature
+	 * 503: Webhook ingestion is disabled
 	 */
 	#[PublicPage]
 	#[NoCSRFRequired]
