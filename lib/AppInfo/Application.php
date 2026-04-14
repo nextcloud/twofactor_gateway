@@ -15,6 +15,7 @@ use OCA\TwoFactorGateway\Listener\NotificationListener;
 use OCA\TwoFactorGateway\Notification\Notifier;
 use OCA\TwoFactorGateway\Provider\Factory;
 use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Settings\AdminSettings;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -33,6 +34,7 @@ class Application extends App implements IBootstrap {
 		$context->registerNotifierService(Notifier::class);
 		$context->registerEventListener(WhatsAppAuthenticationErrorEvent::class, NotificationListener::class);
 		$context->registerEventListener(WhatsAppSessionWarningEvent::class, NotificationListener::class);
+		$context->registerSettings(AdminSettings::class);
 
 		$providerFactory = Server::get(Factory::class);
 		$fqcn = $providerFactory->getFqcnList();
