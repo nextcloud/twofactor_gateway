@@ -14,33 +14,20 @@ use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Events\WhatsAppSessionWarningEvent;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
-use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
 use Psr\Log\LoggerInterface;
 
 /**
- * Polls the GoWhatsApp API periodically, scores session health heuristically,
- * and dispatches either a WARNING or CRITICAL event when thresholds are reached.
+ * Orchestrates the GoWhatsApp session health check cycle.
  *
- * ### Health levels
- *
- * | Level    | Condition                                                 | Event dispatched                    |
- * |----------|-----------------------------------------------------------|-------------------------------------|
- * | INFO     | Device state "connected" or "logged_in"                   | –                                   |
- * | WARNING  | Risk score ≥ warning threshold within the time window     | WhatsAppSessionWarningEvent         |
- * | CRITICAL | Device state "logged_out" or auth/device-not-found error  | WhatsAppAuthenticationErrorEvent    |
- *
- * ### Risk scoring (per entry within the observation window)
- *
- * | Device state      | Points |
- * |-------------------|--------|
- * | disconnected      |     20 |
- * | connecting        |     10 |
- * | unreachable       |     50 |
- * | any other unknown |     15 |
- *
- * Additionally, each state oscillation (healthy → unhealthy transition) adds
- * 10 extra points to capture rapid reconnection cycles indicative of instability.
+ * On each invocation by the background job it:
+ *   1. Guards against an unconfigured base URL.
+ *   2. Delegates HTTP fetching to DeviceStateFetcher.
+ *   3. Short-circuits on CRITICAL states (dispatches WhatsAppAuthenticationErrorEvent).
+ *   4. Updates the rolling history window stored in IAppConfig.
+ *   5. Delegates risk scoring to HealthRiskScorer.
+ *   6. Suppresses WARNING repeats within the cooldown period.
+ *   7. Dispatches WhatsAppSessionWarningEvent when the risk score exceeds the threshold.
  *
  * ### Default thresholds (configurable via IAppConfig)
  *
@@ -49,6 +36,8 @@ use Psr\Log\LoggerInterface;
  * | gowhatsapp_health_time_window               | 600     | Observation window in seconds (10 minutes) |
  * | gowhatsapp_health_warning_score_threshold   | 80      | Risk score needed to raise WARNING         |
  * | gowhatsapp_health_warning_cooldown          | 3600    | Seconds to suppress repeated WARNINGs      |
+ *
+ * See HealthRiskScorer for state weights and scoring details.
  */
 class SessionHealthService {
 	public const CONFIG_HISTORY_KEY = 'gowhatsapp_health_history';
@@ -59,17 +48,14 @@ class SessionHealthService {
 	private const CONFIG_WARNING_COOLDOWN = 'gowhatsapp_health_warning_cooldown';
 
 	private const APPCONFIG_KEY_BASE_URL = 'gowhatsapp_base_url';
-	private const APPCONFIG_KEY_DEVICE_ID = 'gowhatsapp_device_id';
-
-	/** States that are considered healthy; everything else contributes to risk */
-	private const HEALTHY_STATES = ['connected', 'logged_in'];
 
 	/** States that immediately trigger CRITICAL */
 	private const CRITICAL_STATES = ['logged_out'];
 
 	public function __construct(
 		private readonly IAppConfig $appConfig,
-		private readonly IClientService $clientService,
+		private readonly DeviceStateFetcher $deviceStateFetcher,
+		private readonly HealthRiskScorer $riskScorer,
 		private readonly IEventDispatcher $eventDispatcher,
 		private readonly ITimeFactory $timeFactory,
 		private readonly LoggerInterface $logger,
@@ -90,7 +76,7 @@ class SessionHealthService {
 		}
 
 		$now = $this->timeFactory->getTime();
-		$deviceState = $this->fetchDeviceState($baseUrl);
+		$deviceState = $this->deviceStateFetcher->fetch($baseUrl);
 
 		if ($this->isCriticalState($deviceState)) {
 			$this->logger->warning('GoWhatsApp session health: device is logged_out → dispatching CRITICAL event.');
@@ -99,7 +85,7 @@ class SessionHealthService {
 		}
 
 		$history = $this->updateHistory($deviceState, $now);
-		$riskScore = $this->computeRiskScore($history);
+		$riskScore = $this->riskScorer->computeScore($history);
 
 		$this->logger->debug('GoWhatsApp session health check completed.', [
 			'device_state' => $deviceState,
@@ -175,7 +161,7 @@ class SessionHealthService {
 	 * Records the warning timestamp, logs it, and dispatches the WARNING event.
 	 */
 	private function dispatchWarning(int $riskScore, array $history, int $now): void {
-		$reason = $this->buildWarningReason($history, $riskScore);
+		$reason = $this->riskScorer->buildReason($history, $riskScore);
 		$this->logger->warning('GoWhatsApp session health: instability detected → dispatching WARNING event.', [
 			'risk_score' => $riskScore,
 			'reason' => $reason,
@@ -195,123 +181,6 @@ class SessionHealthService {
 			$key,
 			(string)$default,
 		);
-	}
-
-	/**
-	 * Fetches the current device state from the Go API.
-	 *
-	 * Returns a state string: one of the values found in the `/devices` response,
-	 * or "unreachable" when the API cannot be contacted.
-	 */
-	private function fetchDeviceState(string $baseUrl): string {
-		$deviceId = $this->appConfig->getValueString(
-			Application::APP_ID,
-			self::APPCONFIG_KEY_DEVICE_ID,
-			'',
-		);
-
-		try {
-			$client = $this->clientService->newClient();
-			$options = ['timeout' => 5];
-			if ($deviceId !== '') {
-				$options['headers'] = ['X-Device-Id' => $deviceId];
-			}
-
-			$response = $client->get($baseUrl . '/devices', $options);
-			$body = (string)$response->getBody();
-			$data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
-
-			if (($data['code'] ?? '') !== 'SUCCESS' || !isset($data['results'])) {
-				$this->logger->info('GoWhatsApp /devices returned non-SUCCESS.', ['body' => $body]);
-				return 'disconnected';
-			}
-
-			$devices = $data['results'];
-
-			// If a specific device ID is configured, find the matching entry
-			if ($deviceId !== '') {
-				foreach ($devices as $device) {
-					if (($device['id'] ?? '') === $deviceId) {
-						return (string)($device['state'] ?? 'disconnected');
-					}
-				}
-				// Configured device ID not found in list
-				$this->logger->warning('GoWhatsApp device_id not found in /devices response.', [
-					'device_id' => $deviceId,
-				]);
-				return 'logged_out';
-			}
-
-			// No specific device configured – use the first one
-			if (!empty($devices)) {
-				return (string)($devices[0]['state'] ?? 'disconnected');
-			}
-
-			return 'disconnected';
-		} catch (\JsonException $e) {
-			$this->logger->error('GoWhatsApp /devices response is not valid JSON.', ['exception' => $e]);
-			return 'unreachable';
-		} catch (\Exception $e) {
-			$this->logger->info('GoWhatsApp API unreachable during health check.', ['exception' => $e]);
-			return 'unreachable';
-		}
-	}
-
-	/**
-	 * Computes an integer risk score for the given history entries.
-	 *
-	 * Healthy states contribute 0 points.  All other states contribute a
-	 * positive weight, and each oscillation (healthy → unhealthy) adds a
-	 * bonus to capture rapid reconnection cycles.
-	 */
-	private function computeRiskScore(array $history): int {
-		$score = 0;
-		$prevHealthy = true; // assume healthy before first recorded entry
-
-		foreach ($history as $entry) {
-			$state = $entry['state'] ?? 'unknown';
-			$isHealthy = in_array($state, self::HEALTHY_STATES, true);
-
-			if (!$isHealthy) {
-				$score += match ($state) {
-					'disconnected' => 20,
-					'connecting' => 10,
-					'unreachable' => 50,
-					default => 15,
-				};
-				// Extra penalty for oscillation (was healthy, now not)
-				if ($prevHealthy) {
-					$score += 10;
-				}
-			}
-
-			$prevHealthy = $isHealthy;
-		}
-
-		return $score;
-	}
-
-	/**
-	 * Builds a human-readable warning reason string summarising the observed
-	 * unhealthy states in the current history window.
-	 */
-	private function buildWarningReason(array $history, int $riskScore): string {
-		$counts = [];
-		foreach ($history as $entry) {
-			$state = $entry['state'] ?? 'unknown';
-			if (!in_array($state, self::HEALTHY_STATES, true)) {
-				$counts[$state] = ($counts[$state] ?? 0) + 1;
-			}
-		}
-
-		$parts = [];
-		foreach ($counts as $state => $count) {
-			$parts[] = "$count × $state";
-		}
-
-		$summary = implode(', ', $parts);
-		return "Session instability detected (risk score: $riskScore). Observed: $summary. "
-			. 'The session may require re-authentication soon.';
 	}
 
 	private function loadHistory(): array {
