@@ -15,7 +15,6 @@ use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IAppConfig;
-use OCP\Security\ISecureRandom;
 
 /**
  * Manages multiple named configuration instances per gateway, stored in IAppConfig.
@@ -44,7 +43,7 @@ class GatewayConfigService {
 	 * Return the full list of available gateways together with their configured
 	 * instances, ready to be serialised to the admin frontend.
 	 *
-	 * @return list<array{id: string, name: string, instructions: string, allowMarkdown: bool, fields: list<mixed>, instances: list<mixed>}>
+	 * @return array<int, array<string, mixed>>
 	 */
 	public function getGatewayList(): array {
 		$result = [];
@@ -232,7 +231,12 @@ class GatewayConfigService {
 	private function loadRegistry(string $gatewayId): array {
 		$raw = $this->appConfig->getValueString(Application::APP_ID, $this->registryKey($gatewayId), '[]');
 		$data = json_decode($raw, true);
-		return is_array($data) ? $data : [];
+		if (!is_array($data)) {
+			return [];
+		}
+		/** @var list<array{id: string, label: string, default: bool, createdAt: string}> */
+		$result = array_values($data);
+		return $result;
 	}
 
 	/**
