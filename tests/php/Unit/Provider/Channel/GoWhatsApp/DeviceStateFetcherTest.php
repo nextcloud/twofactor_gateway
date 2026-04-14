@@ -44,26 +44,98 @@ class DeviceStateFetcherTest extends AppTestCase {
 	}
 
 	// -------------------------------------------------------------------------
-	// Device ID matching
+	// Device ID configured -> prefer /devices/{id}/status
 	// -------------------------------------------------------------------------
 
-	public function testReturnsStateForMatchingDeviceId(): void {
+	public function testUsesStatusEndpointAndReturnsLoggedInWhenAvailable(): void {
 		$this->configureDeviceId('device-A');
-		$this->stubResponse([
-			['id' => 'device-A', 'state' => 'connected'],
-			['id' => 'device-B', 'state' => 'disconnected'],
-		]);
+
+		$this->httpClient->expects($this->once())
+			->method('get')
+			->with(
+				'http://gowa.local/devices/device-A/status',
+				$this->callback(static fn (array $opts): bool => ($opts['timeout'] ?? null) === 5),
+			)
+			->willReturn($this->buildStatusResponseStub(true, true));
+
+		$this->assertSame('logged_in', $this->fetcher->fetch('http://gowa.local'));
+	}
+
+	public function testUsesStatusEndpointAndReturnsConnectedWhenLoggedInIsFalse(): void {
+		$this->configureDeviceId('device-A');
+
+		$this->httpClient->expects($this->once())
+			->method('get')
+			->with('http://gowa.local/devices/device-A/status', $this->anything())
+			->willReturn($this->buildStatusResponseStub(true, false));
 
 		$this->assertSame('connected', $this->fetcher->fetch('http://gowa.local'));
 	}
 
-	public function testReturnsLoggedOutWhenDeviceIdNotFoundInList(): void {
+	public function testFallsBackToDevicesListWhenStatusEndpointIndicatesDisconnected(): void {
+		$this->configureDeviceId('device-A');
+
+		$this->httpClient->expects($this->exactly(2))
+			->method('get')
+			->willReturnCallback(function (string $url, array $options) {
+				if (str_ends_with($url, '/status')) {
+					return $this->buildStatusResponseStub(false, false);
+				}
+
+				$this->assertSame('device-A', $options['headers']['X-Device-Id'] ?? '');
+				return $this->buildDevicesResponseStub([
+					['id' => 'device-A', 'state' => 'disconnected'],
+				]);
+			});
+
+		$this->assertSame('disconnected', $this->fetcher->fetch('http://gowa.local'));
+	}
+
+	public function testFallsBackToDevicesListWhenStatusEndpointFails(): void {
+		$this->configureDeviceId('device-A');
+
+		$this->httpClient->expects($this->exactly(2))
+			->method('get')
+			->willReturnCallback(function (string $url, array $options) {
+				if (str_ends_with($url, '/status')) {
+					throw new \Exception('Status endpoint unavailable');
+				}
+
+				$this->assertSame('device-A', $options['headers']['X-Device-Id'] ?? '');
+				return $this->buildDevicesResponseStub([
+					['id' => 'device-A', 'state' => 'connected'],
+				]);
+			});
+
+		$this->assertSame('connected', $this->fetcher->fetch('http://gowa.local'));
+	}
+
+	public function testReturnsLoggedOutWhenDeviceIdNotFoundInFallbackList(): void {
 		$this->configureDeviceId('missing-id');
-		$this->stubResponse([
-			['id' => 'device-A', 'state' => 'connected'],
-		]);
+
+		$this->httpClient->expects($this->exactly(2))
+			->method('get')
+			->willReturnCallback(function (string $url) {
+				if (str_ends_with($url, '/status')) {
+					return $this->buildStatusResponseStub(false, false, 'ERROR');
+				}
+				return $this->buildDevicesResponseStub([
+					['id' => 'device-A', 'state' => 'connected'],
+				]);
+			});
 
 		$this->assertSame('logged_out', $this->fetcher->fetch('http://gowa.local'));
+	}
+
+	public function testUsesRawUrlEncodingForStatusEndpointDeviceId(): void {
+		$this->configureDeviceId('my device/1');
+
+		$this->httpClient->expects($this->once())
+			->method('get')
+			->with('http://gowa.local/devices/my%20device%2F1/status', $this->anything())
+			->willReturn($this->buildStatusResponseStub(true, true));
+
+		$this->assertSame('logged_in', $this->fetcher->fetch('http://gowa.local'));
 	}
 
 	// -------------------------------------------------------------------------
@@ -71,7 +143,7 @@ class DeviceStateFetcherTest extends AppTestCase {
 	// -------------------------------------------------------------------------
 
 	public function testReturnsFirstDeviceStateWhenNoDeviceIdConfigured(): void {
-		$this->stubResponse([
+		$this->stubDevicesResponse([
 			['id' => 'device-A', 'state' => 'disconnected'],
 			['id' => 'device-B', 'state' => 'connected'],
 		]);
@@ -80,7 +152,7 @@ class DeviceStateFetcherTest extends AppTestCase {
 	}
 
 	public function testReturnsDisconnectedWhenDeviceListIsEmpty(): void {
-		$this->stubResponse([]);
+		$this->stubDevicesResponse([]);
 
 		$this->assertSame('disconnected', $this->fetcher->fetch('http://gowa.local'));
 	}
@@ -90,19 +162,19 @@ class DeviceStateFetcherTest extends AppTestCase {
 	// -------------------------------------------------------------------------
 
 	public function testReturnsDisconnectedOnNonSuccessResponse(): void {
-		$this->stubRawResponse(json_encode(['code' => 'ERROR', 'results' => []]));
+		$this->stubRawDevicesResponse(json_encode(['code' => 'ERROR', 'results' => []]));
 
 		$this->assertSame('disconnected', $this->fetcher->fetch('http://gowa.local'));
 	}
 
 	public function testReturnsDisconnectedWhenResultsKeyAbsent(): void {
-		$this->stubRawResponse(json_encode(['code' => 'SUCCESS']));
+		$this->stubRawDevicesResponse(json_encode(['code' => 'SUCCESS']));
 
 		$this->assertSame('disconnected', $this->fetcher->fetch('http://gowa.local'));
 	}
 
 	public function testReturnsUnreachableOnInvalidJson(): void {
-		$this->stubRawResponse('not-json{{');
+		$this->stubRawDevicesResponse('not-json{{');
 
 		$this->assertSame('unreachable', $this->fetcher->fetch('http://gowa.local'));
 	}
@@ -121,16 +193,19 @@ class DeviceStateFetcherTest extends AppTestCase {
 	// HTTP request options
 	// -------------------------------------------------------------------------
 
-	public function testSendsXDeviceIdHeaderWhenDeviceIdIsConfigured(): void {
+	public function testSendsXDeviceIdHeaderWhenFallbackCallsDevicesList(): void {
 		$this->configureDeviceId('myDev');
 
-		$this->httpClient->expects($this->once())
+		$this->httpClient->expects($this->exactly(2))
 			->method('get')
-			->with(
-				$this->stringEndsWith('/devices'),
-				$this->callback(fn (array $opts) => ($opts['headers']['X-Device-Id'] ?? '') === 'myDev'),
-			)
-			->willReturn($this->buildResponseStub([['id' => 'myDev', 'state' => 'connected']]));
+			->willReturnCallback(function (string $url, array $opts) {
+				if (str_ends_with($url, '/status')) {
+					return $this->buildStatusResponseStub(false, false);
+				}
+
+				$this->assertSame('myDev', $opts['headers']['X-Device-Id'] ?? '');
+				return $this->buildDevicesResponseStub([['id' => 'myDev', 'state' => 'connected']]);
+			});
 
 		$this->fetcher->fetch('http://gowa.local');
 	}
@@ -142,7 +217,7 @@ class DeviceStateFetcherTest extends AppTestCase {
 				$this->anything(),
 				$this->callback(fn (array $opts) => !isset($opts['headers'])),
 			)
-			->willReturn($this->buildResponseStub([]));
+			->willReturn($this->buildDevicesResponseStub([]));
 
 		$this->fetcher->fetch('http://gowa.local');
 	}
@@ -151,7 +226,7 @@ class DeviceStateFetcherTest extends AppTestCase {
 		$this->httpClient->expects($this->once())
 			->method('get')
 			->with('http://custom.host:3000/devices', $this->anything())
-			->willReturn($this->buildResponseStub([]));
+			->willReturn($this->buildDevicesResponseStub([]));
 
 		$this->fetcher->fetch('http://custom.host:3000');
 	}
@@ -164,11 +239,11 @@ class DeviceStateFetcherTest extends AppTestCase {
 		$this->appConfig->setValueString('twofactor_gateway', 'gowhatsapp_device_id', $deviceId);
 	}
 
-	private function stubResponse(array $devices): void {
-		$this->httpClient->method('get')->willReturn($this->buildResponseStub($devices));
+	private function stubDevicesResponse(array $devices): void {
+		$this->httpClient->method('get')->willReturn($this->buildDevicesResponseStub($devices));
 	}
 
-	private function stubRawResponse(string $body): void {
+	private function stubRawDevicesResponse(string $body): void {
 		$stream = $this->createStub(\Psr\Http\Message\StreamInterface::class);
 		$stream->method('__toString')->willReturn($body);
 
@@ -178,10 +253,29 @@ class DeviceStateFetcherTest extends AppTestCase {
 		$this->httpClient->method('get')->willReturn($response);
 	}
 
-	private function buildResponseStub(array $devices): IResponse {
+	private function buildDevicesResponseStub(array $devices): IResponse {
 		$stream = $this->createStub(\Psr\Http\Message\StreamInterface::class);
 		$stream->method('__toString')->willReturn(
 			json_encode(['code' => 'SUCCESS', 'results' => $devices]),
+		);
+
+		$response = $this->createStub(IResponse::class);
+		$response->method('getBody')->willReturn($stream);
+
+		return $response;
+	}
+
+	private function buildStatusResponseStub(bool $isConnected, bool $isLoggedIn, string $code = 'SUCCESS'): IResponse {
+		$stream = $this->createStub(\Psr\Http\Message\StreamInterface::class);
+		$stream->method('__toString')->willReturn(
+			json_encode([
+				'code' => $code,
+				'results' => [
+					'device_id' => 'device-A',
+					'is_connected' => $isConnected,
+					'is_logged_in' => $isLoggedIn,
+				],
+			]),
 		);
 
 		$response = $this->createStub(IResponse::class);
