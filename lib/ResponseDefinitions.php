@@ -20,6 +20,28 @@ namespace OCA\TwoFactorGateway;
  *     },
  *     version: string,
  * }
+ * @psalm-type TwoFactorGatewayFieldDefinition = array{
+ *     field: string,
+ *     prompt: string,
+ *     default: string,
+ *     optional: bool,
+ * }
+ * @psalm-type TwoFactorGatewayInstance = array{
+ *     id: string,
+ *     label: string,
+ *     default: bool,
+ *     createdAt: string,
+ *     config: array<string, string>,
+ *     isComplete: bool,
+ * }
+ * @psalm-type TwoFactorGatewayGatewayInfo = array{
+ *     id: string,
+ *     name: string,
+ *     instructions: string,
+ *     allowMarkdown: bool,
+ *     fields: list<TwoFactorGatewayFieldDefinition>,
+ *     instances: list<TwoFactorGatewayInstance>,
+ * }
  */
 final class ResponseDefinitions {
 }
