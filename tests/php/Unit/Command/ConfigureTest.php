@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Command;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Command\Configure;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Factory as SMSFactory;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\Server;
@@ -25,7 +26,8 @@ class ConfigureTest extends AppTestCase {
 		$application = Server::get(\OC\Console\Application::class);
 		$output = new ConsoleOutputSpy();
 		$input = new ArrayInput(['twofactorauth:gateway:configure']);
-		$application->loadCommands($input, $output);
+		// Don't call loadCommands - manually register and run the command instead
+		$command = Server::get(Configure::class);
 		$application->setAutoExit(false);
 
 		// Find the SMS gateway index
@@ -52,7 +54,7 @@ class ConfigureTest extends AppTestCase {
 			}
 
 			$input->setStream(self::createStream($inputStream));
-			$exitCode = $application->run($input, $output);
+			$exitCode = $command->run($input, $output);
 			$this->assertSame(0, $exitCode);
 			foreach ($fields as $key) {
 				$this->assertArrayHasKey($key, self::$store[Application::APP_ID] ?? [], "Field {$key} of provider {$gatewaySettings->name} was not saved.");

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Command;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Command\Remove;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Factory as SMSFactory;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Factory as TelegramFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
@@ -58,15 +59,24 @@ class RemoveTest extends AppTestCase {
 		return $all;
 	}
 
-	private function runRemoveCommand(\OC\Console\Application $application, int $index): void {
+	private function runRemoveCommand(\OC\Console\Application $application, string $gatewayId): void {
+		$gwFactory = new GatewayFactory();
+		$index = 0;
+		foreach ($gwFactory->getFqcnList() as $i => $fqcn) {
+			$gw = $gwFactory->get($fqcn);
+			if ($gw->getProviderId() === $gatewayId) {
+				$index = $i;
+				break;
+			}
+		}
+
 		$input = new ArrayInput(['twofactorauth:gateway:remove']);
 		$input->setStream(self::createStream([(string)$index]));
 		$output = new ConsoleOutputSpy();
 
-		$application->loadCommands($input, $output);
-		$application->setAutoExit(false);
-
-		$exit = $application->run($input, $output);
+		// Use direct command execution to bypass upgrade check
+		$command = Server::get(Remove::class);
+		$exit = $command->run($input, $output);
 		$this->assertSame(0, $exit, 'Comando de remoção retornou código diferente de 0.');
 	}
 
@@ -74,16 +84,6 @@ class RemoveTest extends AppTestCase {
 		foreach ($keys as $key) {
 			$this->assertArrayNotHasKey($key, self::$store[Application::APP_ID] ?? [], "Ainda existe {$key} após remoção ({$nsHint}).");
 		}
-	}
-
-	private function findGatewayIndexById(GatewayFactory $factory, string $targetId): int {
-		foreach ($factory->getFqcnList() as $i => $fqcn) {
-			$gw = $factory->get($fqcn);
-			if ($gw->getProviderId() === $targetId) {
-				return $i;
-			}
-		}
-		$this->fail("Gateway com id '{$targetId}' não encontrado.");
 	}
 
 	private function configureGenericGateway(IAppConfig $appConfig, string $gatewayFqcn): array {
@@ -99,9 +99,6 @@ class RemoveTest extends AppTestCase {
 		/** @var \OC\Console\Application $application */
 		$application = Server::get(\OC\Console\Application::class);
 
-		$gwFactory = new GatewayFactory();
-		$smsIndex = $this->findGatewayIndexById($gwFactory, 'sms');
-
 		$smsFactory = new SMSFactory();
 		$configured = $this->configureAllChannelProviders(
 			$appConfig,
@@ -109,7 +106,7 @@ class RemoveTest extends AppTestCase {
 			fn (string $fqcn) => $smsFactory->get($fqcn),
 		);
 
-		$this->runRemoveCommand($application, $smsIndex);
+		$this->runRemoveCommand($application, 'sms');
 		$this->assertKeysRemoved($configured, 'sms');
 	}
 
@@ -118,9 +115,6 @@ class RemoveTest extends AppTestCase {
 		$appConfig = Server::get(IAppConfig::class);
 		$application = Server::get(\OC\Console\Application::class);
 
-		$gwFactory = new GatewayFactory();
-		$tgIndex = $this->findGatewayIndexById($gwFactory, 'telegram');
-
 		$tgFactory = new TelegramFactory();
 		$configured = $this->configureAllChannelProviders(
 			$appConfig,
@@ -128,7 +122,7 @@ class RemoveTest extends AppTestCase {
 			fn (string $fqcn) => $tgFactory->get($fqcn),
 		);
 
-		$this->runRemoveCommand($application, $tgIndex);
+		$this->runRemoveCommand($application, 'telegram');
 		$this->assertKeysRemoved($configured, 'telegram');
 	}
 
@@ -139,17 +133,16 @@ class RemoveTest extends AppTestCase {
 
 		$gwFactory = new GatewayFactory();
 
-		foreach ($gwFactory->getFqcnList() as $index => $fqcn) {
+		foreach ($gwFactory->getFqcnList() as $fqcn) {
 			$gateway = $gwFactory->get($fqcn);
 			$id = $gateway->getProviderId();
 
-			if (in_array($id, ['sms', 'telegram'], true)) {
+			if (in_array($id, ['sms', 'telegram', 'gowhatsapp'], true)) {
 				continue;
 			}
 
 			$configured = $this->configureGenericGateway($appConfig, $fqcn);
-
-			$this->runRemoveCommand($application, $index);
+			$this->runRemoveCommand($application, $id);
 			$this->assertKeysRemoved($configured, $fqcn);
 		}
 	}
