@@ -28,6 +28,7 @@ class Remove extends Command {
 		private GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager,
 	) {
 		parent::__construct('twofactorauth:gateway:remove');
+		$this->setDescription('Remove a gateway configuration');
 
 		$fqcnList = $this->gatewayFactory->getFqcnList();
 		foreach ($fqcnList as $fqcn) {
