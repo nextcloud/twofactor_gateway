@@ -25,18 +25,24 @@ class GoWhatsAppSessionMonitorJobManager {
 	}
 
 	public function sync(): void {
-		$shouldBeActive = $this->isGoWhatsAppConfigured();
-		$isActive = $this->jobList->has(GoWhatsAppSessionMonitorJob::class, null);
+		try {
+			$shouldBeActive = $this->isGoWhatsAppConfigured();
+			$isActive = $this->jobList->has(GoWhatsAppSessionMonitorJob::class, null);
 
-		if ($shouldBeActive && !$isActive) {
-			$this->jobList->add(GoWhatsAppSessionMonitorJob::class, null);
-			$this->logger->info('Activated GoWhatsApp session monitor background job.');
-			return;
-		}
+			if ($shouldBeActive && !$isActive) {
+				$this->jobList->add(GoWhatsAppSessionMonitorJob::class, null);
+				$this->logger->info('Activated GoWhatsApp session monitor background job.');
+				return;
+			}
 
-		if (!$shouldBeActive && $isActive) {
-			$this->jobList->remove(GoWhatsAppSessionMonitorJob::class, null);
-			$this->logger->info('Deactivated GoWhatsApp session monitor background job (gateway not configured).');
+			if (!$shouldBeActive && $isActive) {
+				$this->jobList->remove(GoWhatsAppSessionMonitorJob::class, null);
+				$this->logger->info('Deactivated GoWhatsApp session monitor background job (gateway not configured).');
+			}
+		} catch (\Throwable $e) {
+			$this->logger->warning('Failed to sync GoWhatsApp session monitor background job.', [
+				'exception' => $e,
+			]);
 		}
 	}
 
