@@ -39,12 +39,12 @@ class HealthRiskScorer {
 	 */
 	private const STATE_WEIGHTS = [
 		'disconnected' => 20,
-		'connecting'   => 10,
-		'unreachable'  => 50,
+		'connecting' => 10,
+		'unreachable' => 50,
 	];
 
 	private const DEFAULT_STATE_WEIGHT = 15;
-	private const OSCILLATION_PENALTY  = 10;
+	private const OSCILLATION_PENALTY = 10;
 
 	/**
 	 * Computes a risk score from the history window.
