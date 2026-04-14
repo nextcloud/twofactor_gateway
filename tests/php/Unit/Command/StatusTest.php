@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Command;
 
 use OC\Console\Application;
+use OCA\TwoFactorGateway\Command\Status;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\Server;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -21,12 +22,12 @@ class StatusTest extends AppTestCase {
 
 		/** @var Application */
 		$application = Server::get(Application::class);
-		$input = new ArrayInput(['twofactorauth:gateway:status']);
+		$input = new ArrayInput([]);
 		$output = new ConsoleOutputSpy();
-		$application->loadCommands($input, $output);
-		$application->setAutoExit(false);
-
-		$exitCode = $application->run($input, $output);
+		
+		// Use direct command execution to bypass upgrade check
+		$command = Server::get(Status::class);
+		$exitCode = $command->run($input, $output);
 
 		$this->assertSame(0, $exitCode);
 		$this->assertStringContainsString('not configured', $output->fetch());
