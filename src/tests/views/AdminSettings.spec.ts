@@ -7,11 +7,22 @@ import { defineComponent } from 'vue'
 import AdminSettings from '../../views/AdminSettings.vue'
 import type { GatewayInfo } from '../../services/adminGatewayApi.ts'
 
-const GatewaySectionStub = vi.hoisted(() => ({
-	name: 'GatewaySection',
-	props: ['gateway'],
-	emits: ['updated'],
-	template: '<div class="gateway-section" :data-gateway-id="gateway.id">{{ gateway.name }}</div>',
+const GatewayInstanceCardStub = vi.hoisted(() => ({
+	name: 'GatewayInstanceCard',
+	props: ['instance', 'providerName'],
+	template: '<div class="gateway-instance-card" :data-provider="providerName">{{ instance.label }}</div>',
+}))
+
+const GatewayInstanceModalStub = vi.hoisted(() => ({
+	name: 'GatewayInstanceModal',
+	props: ['show'],
+	template: '<div class="gateway-instance-modal" :data-show="show" />',
+}))
+
+const GatewayTestModalStub = vi.hoisted(() => ({
+	name: 'GatewayTestModal',
+	props: ['show'],
+	template: '<div class="gateway-test-modal" :data-show="show" />',
 }))
 
 Object.defineProperty(window, 'matchMedia', {
@@ -37,6 +48,10 @@ vi.mock('@nextcloud/l10n', () => ({
 
 vi.mock('../../services/adminGatewayApi.ts', () => ({
 	listGateways: vi.fn().mockResolvedValue([]),
+	createInstance: vi.fn(),
+	updateInstance: vi.fn(),
+	deleteInstance: vi.fn(),
+	setDefaultInstance: vi.fn(),
 }))
 
 vi.mock('@nextcloud/vue/components/NcButton', () => ({
@@ -57,12 +72,35 @@ vi.mock('@nextcloud/vue/components/NcLoadingIcon', () => ({
 	default: defineComponent({ template: '<div class="nc-loading-icon" />' }),
 }))
 
+vi.mock('@nextcloud/vue/components/NcDialog', () => ({
+	default: defineComponent({
+		props: ['open', 'name', 'message'],
+		template: '<div v-if="open" class="nc-dialog"><span class="message">{{ message }}</span><slot name="actions" /></div>',
+	}),
+}))
+
+vi.mock('@nextcloud/vue/components/NcSettingsSection', () => ({
+	default: defineComponent({
+		props: ['name', 'description', 'docUrl'],
+		template: '<div class="settings-section"><slot /></div>',
+	}),
+}))
+
+
 vi.mock('vue-material-design-icons/AlertCircle.vue', () => ({
 	default: defineComponent({ template: '<span class="alert-circle-icon" />' }),
 }))
 
-vi.mock('../../components/GatewaySection.vue', () => ({
-	default: GatewaySectionStub,
+vi.mock('../../components/GatewayInstanceCard.vue', () => ({
+	default: GatewayInstanceCardStub,
+}))
+
+vi.mock('../../components/GatewayInstanceModal.vue', () => ({
+	default: GatewayInstanceModalStub,
+}))
+
+vi.mock('../../components/GatewayTestModal.vue', () => ({
+	default: GatewayTestModalStub,
 }))
 
 describe('AdminSettings', () => {
@@ -82,20 +120,34 @@ describe('AdminSettings', () => {
 		expect(wrapper.find('.nc-loading-icon').exists()).toBe(false)
 	})
 
-	it('renders a GatewaySection for each gateway returned by the API', async () => {
+	it('renders a unified instance list without provider rows', async () => {
 		const { listGateways } = await import('../../services/adminGatewayApi.ts')
 		vi.mocked(listGateways).mockResolvedValueOnce([
-			{ id: 'signal', name: 'Signal', instructions: '', allowMarkdown: false, fields: [], instances: [] },
-			{ id: 'telegram', name: 'Telegram', instructions: '', allowMarkdown: false, fields: [], instances: [] },
+			{
+				id: 'signal',
+				name: 'Signal',
+				instructions: '',
+				allowMarkdown: false,
+				fields: [],
+				instances: [{ id: 's1', label: 'Signal Prod', default: true, createdAt: '', config: {}, isComplete: true }],
+			},
+			{
+				id: 'telegram',
+				name: 'Telegram',
+				instructions: '',
+				allowMarkdown: false,
+				fields: [],
+				instances: [{ id: 't1', label: 'Telegram Ops', default: false, createdAt: '', config: {}, isComplete: true }],
+			},
 		])
 
 		const wrapper = mount(AdminSettings)
 		await flushPromises()
 
-		const sections = wrapper.findAll('.gateway-section')
-		expect(sections).toHaveLength(2)
-		expect(sections[0].attributes('data-gateway-id')).toBe('signal')
-		expect(sections[1].attributes('data-gateway-id')).toBe('telegram')
+		const cards = wrapper.findAll('.gateway-instance-card')
+		expect(cards).toHaveLength(2)
+		expect(cards[0].attributes('data-provider')).toBe('Signal')
+		expect(cards[1].attributes('data-provider')).toBe('Telegram')
 	})
 
 	it('shows an error state when the API call fails', async () => {
@@ -114,7 +166,14 @@ describe('AdminSettings', () => {
 		vi.mocked(listGateways)
 			.mockRejectedValueOnce(new Error('First error'))
 			.mockResolvedValueOnce([
-				{ id: 'signal', name: 'Signal', instructions: '', allowMarkdown: false, fields: [], instances: [] },
+				{
+					id: 'signal',
+					name: 'Signal',
+					instructions: '',
+					allowMarkdown: false,
+					fields: [],
+					instances: [{ id: 's1', label: 'Signal Prod', default: true, createdAt: '', config: {}, isComplete: true }],
+				},
 			])
 
 		const wrapper = mount(AdminSettings)
@@ -127,28 +186,22 @@ describe('AdminSettings', () => {
 		await wrapper.find('button').trigger('click')
 		await flushPromises()
 
-		// Now gateway section renders
+		// Now the unified list renders cards
 		expect(wrapper.find('.nc-empty-content').exists()).toBe(false)
-		expect(wrapper.findAll('.gateway-section')).toHaveLength(1)
+		expect(wrapper.findAll('.gateway-instance-card')).toHaveLength(1)
 	})
 
-	it('reloads the gateway list when a GatewaySection emits "updated"', async () => {
+	it('opens create modal from the single add button', async () => {
 		const { listGateways } = await import('../../services/adminGatewayApi.ts')
-		vi.mocked(listGateways)
-			.mockResolvedValueOnce([
-				{ id: 'signal', name: 'Signal', instructions: '', allowMarkdown: false, fields: [], instances: [] },
-			])
-			.mockResolvedValueOnce([
-				{ id: 'signal', name: 'Signal', instructions: '', allowMarkdown: false, fields: [], instances: [] },
-				{ id: 'telegram', name: 'Telegram', instructions: '', allowMarkdown: false, fields: [], instances: [] },
-			])
+		vi.mocked(listGateways).mockResolvedValueOnce([])
 
 		const wrapper = mount(AdminSettings)
 		await flushPromises()
-		expect(wrapper.findAll('.gateway-section')).toHaveLength(1)
 
-		await wrapper.findComponent({ name: 'GatewaySection' }).vm.$emit('updated')
-		await flushPromises()
-		expect(wrapper.findAll('.gateway-section')).toHaveLength(2)
+		const addButton = wrapper.findAll('button').find((button) => button.text().includes('tr:Add provider configuration'))
+		expect(addButton).toBeDefined()
+		await addButton?.trigger('click')
+
+		expect(wrapper.findComponent({ name: 'GatewayInstanceModal' }).props('show')).toBe(true)
 	})
 })
