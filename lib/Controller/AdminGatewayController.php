@@ -16,7 +16,7 @@ use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
-use OCP\AppFramework\Http\JSONResponse;
+use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
@@ -36,14 +36,14 @@ class AdminGatewayController extends OCSController {
 	/**
 	 * List all available gateways with current configuration instances.
 	 *
-	 * @return JSONResponse<Http::STATUS_OK, array<int, array<string, mixed>>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<int, array<string, mixed>>, array{}>
 	 *
 	 * 200: OK
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'GET', url: '/admin/gateways')]
-	public function listGateways(): JSONResponse {
-		return new JSONResponse($this->configService->getGatewayList());
+	public function listGateways(): DataResponse {
+		return new DataResponse($this->configService->getGatewayList());
 	}
 
 	// ──────────────────────────────────────────────────────────────────────────
@@ -57,22 +57,22 @@ class AdminGatewayController extends OCSController {
 	 * @param string $label Human-readable name for this instance
 	 * @param array<string, string> $config Field values
 	 *
-	 * @return JSONResponse<Http::STATUS_CREATED, array<string, mixed>, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, array<string, mixed>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
 	 * 201: Created
 	 * 400: Unknown gateway
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/instances')]
-	public function createInstance(string $gateway, string $label, array $config = []): JSONResponse {
+	public function createInstance(string $gateway, string $label, array $config = []): DataResponse {
 		try {
 			$gw = $this->gatewayFactory->get($gateway);
 		} catch (\InvalidArgumentException $e) {
-			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
 		$instance = $this->configService->createInstance($gw, $label, $config);
-		return new JSONResponse($instance, Http::STATUS_CREATED);
+		return new DataResponse($instance, Http::STATUS_CREATED);
 	}
 
 	/**
@@ -81,7 +81,7 @@ class AdminGatewayController extends OCSController {
 	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id
 	 *
-	 * @return JSONResponse<Http::STATUS_OK, array<string, mixed>, array{}>|JSONResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
 	 * 200: OK
 	 * 404: Instance not found
@@ -89,17 +89,17 @@ class AdminGatewayController extends OCSController {
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'GET', url: '/admin/gateways/{gateway}/instances/{instanceId}')]
-	public function getInstance(string $gateway, string $instanceId): JSONResponse {
+	public function getInstance(string $gateway, string $instanceId): DataResponse {
 		try {
 			$gw = $this->gatewayFactory->get($gateway);
 		} catch (\InvalidArgumentException $e) {
-			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
-			return new JSONResponse($this->configService->getInstance($gw, $instanceId));
+			return new DataResponse($this->configService->getInstance($gw, $instanceId));
 		} catch (GatewayInstanceNotFoundException $e) {
-			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
 		}
 	}
 
@@ -111,7 +111,7 @@ class AdminGatewayController extends OCSController {
 	 * @param string $label Updated label
 	 * @param array<string, string> $config Updated field values
 	 *
-	 * @return JSONResponse<Http::STATUS_OK, array<string, mixed>, array{}>|JSONResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
 	 * 200: OK
 	 * 404: Instance not found
@@ -119,18 +119,18 @@ class AdminGatewayController extends OCSController {
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'PUT', url: '/admin/gateways/{gateway}/instances/{instanceId}')]
-	public function updateInstance(string $gateway, string $instanceId, string $label, array $config = []): JSONResponse {
+	public function updateInstance(string $gateway, string $instanceId, string $label, array $config = []): DataResponse {
 		try {
 			$gw = $this->gatewayFactory->get($gateway);
 		} catch (\InvalidArgumentException $e) {
-			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
 			$record = $this->configService->updateInstance($gw, $instanceId, $label, $config);
-			return new JSONResponse($record);
+			return new DataResponse($record);
 		} catch (GatewayInstanceNotFoundException $e) {
-			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
 		}
 	}
 
@@ -148,18 +148,18 @@ class AdminGatewayController extends OCSController {
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'DELETE', url: '/admin/gateways/{gateway}/instances/{instanceId}')]
-	public function deleteInstance(string $gateway, string $instanceId): JSONResponse {
+	public function deleteInstance(string $gateway, string $instanceId): DataResponse {
 		try {
 			$gw = $this->gatewayFactory->get($gateway);
 		} catch (\InvalidArgumentException $e) {
-			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
 			$this->configService->deleteInstance($gw, $instanceId);
-			return new JSONResponse([]);
+			return new DataResponse([]);
 		} catch (GatewayInstanceNotFoundException $e) {
-			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
 		}
 	}
 
@@ -176,7 +176,7 @@ class AdminGatewayController extends OCSController {
 	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id to promote
 	 *
-	 * @return JSONResponse<Http::STATUS_OK, array{}, array{}>|JSONResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
 	 * 200: OK
 	 * 404: Instance not found
@@ -184,18 +184,18 @@ class AdminGatewayController extends OCSController {
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/instances/{instanceId}/default')]
-	public function setDefaultInstance(string $gateway, string $instanceId): JSONResponse {
+	public function setDefaultInstance(string $gateway, string $instanceId): DataResponse {
 		try {
 			$gw = $this->gatewayFactory->get($gateway);
 		} catch (\InvalidArgumentException $e) {
-			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
 			$this->configService->setDefaultInstance($gw, $instanceId);
-			return new JSONResponse([]);
+			return new DataResponse([]);
 		} catch (GatewayInstanceNotFoundException $e) {
-			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
 		}
 	}
 
@@ -210,7 +210,7 @@ class AdminGatewayController extends OCSController {
 	 * @param string $instanceId The instance id to test
 	 * @param string $identifier The recipient identifier (e.g. phone number)
 	 *
-	 * @return JSONResponse<Http::STATUS_OK, array{success: bool, message: string}, array{}>|JSONResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|JSONResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{success: bool, message: string}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
 	 * 200: Test sent
 	 * 400: Gateway not complete or unknown gateway
@@ -218,21 +218,21 @@ class AdminGatewayController extends OCSController {
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/instances/{instanceId}/test')]
-	public function testInstance(string $gateway, string $instanceId, string $identifier): JSONResponse {
+	public function testInstance(string $gateway, string $instanceId, string $identifier): DataResponse {
 		try {
 			$gw = $this->gatewayFactory->get($gateway);
 		} catch (\InvalidArgumentException $e) {
-			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
 			$instance = $this->configService->getInstance($gw, $instanceId);
 		} catch (GatewayInstanceNotFoundException $e) {
-			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
 		}
 
 		if (!$instance['isComplete']) {
-			return new JSONResponse(
+			return new DataResponse(
 				['message' => 'Gateway instance is not fully configured.'],
 				Http::STATUS_BAD_REQUEST,
 			);
@@ -240,9 +240,9 @@ class AdminGatewayController extends OCSController {
 
 		try {
 			$gw->send($identifier, 'Test');
-			return new JSONResponse(['success' => true, 'message' => 'Test message sent successfully.']);
+			return new DataResponse(['success' => true, 'message' => 'Test message sent successfully.']);
 		} catch (MessageTransmissionException $e) {
-			return new JSONResponse(
+			return new DataResponse(
 				['success' => false, 'message' => $e->getMessage()],
 				Http::STATUS_BAD_REQUEST,
 			);
