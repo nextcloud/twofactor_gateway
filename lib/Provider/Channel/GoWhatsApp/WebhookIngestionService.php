@@ -178,7 +178,7 @@ class WebhookIngestionService {
 
 	private function isEventTypeAllowed(array $data): bool {
 		$eventType = is_string($data['event_type'] ?? null) ? trim($data['event_type']) : '';
-		
+
 		// If no event_type in payload, allow it (backward compatibility)
 		if ($eventType === '') {
 			return true;
@@ -197,7 +197,7 @@ class WebhookIngestionService {
 
 		// Parse comma-separated whitelist
 		$allowedEvents = array_map('trim', explode(',', $filterConfig));
-		$allowedEvents = array_filter($allowedEvents, fn($e) => $e !== '');
+		$allowedEvents = array_filter($allowedEvents, fn ($e) => $e !== '');
 
 		// If filter is configured but empty after parsing, allow all
 		if (empty($allowedEvents)) {
