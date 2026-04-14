@@ -57,7 +57,11 @@ class Configure extends Command {
 
 		try {
 			$result = $gateway->cliConfigure($input, $output);
-			$this->goWhatsAppSessionMonitorJobManager->sync();
+			try {
+				$this->goWhatsAppSessionMonitorJobManager->sync();
+			} catch (\Throwable $e) {
+				// Silently ignore if GoWhatsApp monitor sync fails
+			}
 			return $result;
 		} catch (InvalidProviderException $e) {
 			$output->writeln("<error>Invalid gateway $gatewayName</error>");
