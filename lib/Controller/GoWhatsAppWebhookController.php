@@ -48,9 +48,16 @@ class GoWhatsAppWebhookController extends Controller {
 		$signatureHeader = $this->request->getHeader('X-Hub-Signature-256');
 		$result = $this->webhookIngestionService->ingest($rawBody, $signatureHeader);
 
+		$status = match ($result['status']) {
+			Http::STATUS_BAD_REQUEST => Http::STATUS_BAD_REQUEST,
+			Http::STATUS_UNAUTHORIZED => Http::STATUS_UNAUTHORIZED,
+			Http::STATUS_SERVICE_UNAVAILABLE => Http::STATUS_SERVICE_UNAVAILABLE,
+			default => Http::STATUS_ACCEPTED,
+		};
+
 		return new JSONResponse([
 			'processed' => $result['processed'],
 			'message' => $result['message'],
-		], $result['status']);
+		], $status);
 	}
 }
