@@ -14,7 +14,10 @@ export default createAppConfig({
 	main: path.join(__dirname, 'src', 'main.js'),
 }, {
 	config: {
-		plugins: [eslint(), stylelint()],
+		plugins: [
+			...(!isProduction ? [eslint()] : []),
+			stylelint(),
+		],
 	},
 	minify: isProduction,
 })
