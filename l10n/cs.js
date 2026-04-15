@@ -2,8 +2,6 @@ OC.L10N.register(
     "twofactor_gateway",
     {
     "Two-Factor Gateway" : "Brána pro dvouúrovňové ověřování",
-    "Two-Factor Gateway: WhatsApp API authentication failed" : "Brána dvoufázového ověřování: WhatsApp API ověření se nezdařilo",
-    "The authentication with WhatsApp API has failed. The Two-Factor Gateway (WhatsApp) will not work until this is resolved. Please reconfigure the WhatsApp gateway using the command line tool." : "Ověření se pomocí WhatsApp API se nezdařilo. Brána dvoufázového ověřování (WhatsApp) nebude fungovat, dokud toto nebude vyřešeno. Přenastavte WhatsAPP bránu pomocí nástroje pro příkazový řádek.",
     "`%s` is your Nextcloud authentication code" : "`%s` je váš ověřovací kód pro Nextcloud",
     "%s is your Nextcloud authentication code" : "%s je váš ověřovací kód pro Nextcloud",
     "The phone number is not registered on WhatsApp." : "Telefonní číslo není registrováno na WhatsApp.",
