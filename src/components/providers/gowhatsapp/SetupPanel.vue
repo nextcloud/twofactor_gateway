@@ -90,8 +90,11 @@
 				<strong class="wizard-pairing-code-value">{{ wizardPairCode }}</strong>
 			</div>
 			<div v-if="pairingPolling" class="wizard-pairing-polling">
-				<NcLoadingIcon :size="20" />
-				<span>{{ t('twofactor_gateway', 'Waiting for confirmation…') }} ({{ pairingAttempt }}/{{ pairingMaxAttempts }})</span>
+				<span class="wizard-pairing-polling-label">{{ t('twofactor_gateway', 'Waiting for pairing confirmation…') }}</span>
+				<NcProgressBar
+					:value="Math.round((pairingAttempt / pairingMaxAttempts) * 100)"
+					type="linear"
+					size="small" />
 			</div>
 		</div>
 
@@ -136,8 +139,8 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
@@ -159,9 +162,9 @@ export default defineComponent({
 	name: 'GoWhatsAppSetupPanel',
 	components: {
 		NcButton,
-		NcLoadingIcon,
 		NcNoteCard,
 		NcPasswordField,
+		NcProgressBar,
 		NcTextField,
 	},
 	props: {
@@ -176,7 +179,7 @@ export default defineComponent({
 	data() {
 		return {
 			wizardLoading: false,
-		wizardSessionId: '' as string,
+			wizardSessionId: '' as string,
 			wizardStep: '',
 			wizardMessage: t('twofactor_gateway', 'Use the guided setup to validate API, choose device strategy, and complete pairing.'),
 			wizardMessageType: 'info' as 'info' | 'success' | 'warning' | 'error',
@@ -185,14 +188,14 @@ export default defineComponent({
 			wizardDeviceId: '',
 			wizardPhone: '',
 			wizardDevices: [] as WizardDevice[],
-		pairingPolling: false,
-		pairingAttempt: 0,
-		pairingMaxAttempts: 60,
-		pairingPollTimer: null as ReturnType<typeof setTimeout> | null,
-		bootstrapBaseUrl: this.config.base_url ?? '',
-		bootstrapDeviceName: this.config.device_name ?? '',
-		bootstrapUsername: this.config.username ?? '',
-		bootstrapPassword: this.config.password ?? '',
+			pairingPolling: false,
+			pairingAttempt: 0,
+			pairingMaxAttempts: 60,
+			pairingPollTimer: null as ReturnType<typeof setTimeout> | null,
+			bootstrapBaseUrl: this.config.base_url ?? '',
+			bootstrapDeviceName: this.config.device_name ?? '',
+			bootstrapUsername: this.config.username ?? '',
+			bootstrapPassword: this.config.password ?? '',
 		}
 	},
 	watch: {
@@ -476,9 +479,12 @@ export default defineComponent({
 
 .wizard-pairing-polling {
 	display: flex;
-	align-items: center;
+	flex-direction: column;
 	gap: 0.5rem;
-	color: var(--color-text-maxcontrast);
-	font-size: 0.875rem;
+
+	.wizard-pairing-polling-label {
+		color: var(--color-text-maxcontrast);
+		font-size: 0.875rem;
+	}
 }
 </style>
