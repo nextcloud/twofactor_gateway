@@ -4,7 +4,7 @@
 -->
 <template>
 	<div ref="wizardRoot" class="modal-wizard" tabindex="-1">
-		<h3>{{ t('twofactor_gateway', 'Guided GoWhatsApp Setup') }}</h3>
+		<h3>{{ t('twofactor_gateway', 'Guided WhatsApp Setup') }}</h3>
 		<NcNoteCard :type="wizardMessageType" class="wizard-note-card">
 			{{ wizardMessage }}
 		</NcNoteCard>
