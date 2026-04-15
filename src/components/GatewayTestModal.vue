@@ -23,6 +23,14 @@
 				<span>{{ result.message }}</span>
 			</div>
 
+			<div v-if="result?.accountInfo?.account_name" class="test-account-info">
+				<NcAvatar
+					:display-name="result.accountInfo.account_name"
+					:size="44"
+					:is-no-user="true" />
+				<span class="test-account-name">{{ result.accountInfo.account_name }}</span>
+			</div>
+
 			<div class="modal-actions">
 				<NcButton type="secondary" @click="$emit('close')">
 					{{ t('twofactor_gateway', 'Close') }}
@@ -44,6 +52,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
@@ -52,7 +61,7 @@ import { testInstance } from '../services/adminGatewayApi.ts'
 
 export default defineComponent({
 	name: 'GatewayTestModal',
-	components: { NcButton, NcLoadingIcon, NcModal, NcTextField },
+	components: { NcAvatar, NcButton, NcLoadingIcon, NcModal, NcTextField },
 
 	props: {
 		show: { type: Boolean, default: false },
@@ -153,6 +162,18 @@ export default defineComponent({
 		justify-content: flex-end;
 		gap: 0.5rem;
 		margin-top: 0.5rem;
+	}
+
+	.test-account-info {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.5rem 0;
+	}
+
+	.test-account-name {
+		font-weight: 500;
+		font-size: 1rem;
 	}
 }
 </style>
