@@ -51,6 +51,13 @@ vi.mock('@nextcloud/vue/components/NcLoadingIcon', () => ({
 	default: defineComponent({ template: '<span class="nc-loading-icon" />' }),
 }))
 
+vi.mock('@nextcloud/vue/components/NcAvatar', () => ({
+	default: defineComponent({
+		props: ['displayName', 'size', 'isNoUser'],
+		template: '<span class="nc-avatar" :data-display-name="displayName" />',
+	}),
+}))
+
 vi.mock('@nextcloud/vue/components/NcTextField', () => ({
 	default: defineComponent({
 		props: ['modelValue', 'label', 'placeholder', 'required'],
@@ -138,5 +145,36 @@ describe('GatewayTestModal', () => {
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
 		await wrapper.findAll('button').at(0)?.trigger('click')
 		expect(wrapper.emitted('close')).toBeDefined()
+	})
+
+	it('shows account info with NcAvatar when accountInfo is returned', async () => {
+		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(testInstance).mockResolvedValueOnce({
+			success: true,
+			message: 'Message sent successfully.',
+			accountInfo: { account_name: 'Acme Corp' },
+		})
+
+		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		await wrapper.find('input').setValue('+1234567890')
+		await wrapper.findAll('button').at(-1)?.trigger('click')
+		await flushPromises()
+
+		const avatar = wrapper.find('.nc-avatar')
+		expect(avatar.exists()).toBe(true)
+		expect(avatar.attributes('data-display-name')).toBe('Acme Corp')
+		expect(wrapper.find('.test-account-name').text()).toBe('Acme Corp')
+	})
+
+	it('does not show account info section when no accountInfo is returned', async () => {
+		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
+
+		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		await wrapper.find('input').setValue('+1234567890')
+		await wrapper.findAll('button').at(-1)?.trigger('click')
+		await flushPromises()
+
+		expect(wrapper.find('.test-account-info').exists()).toBe(false)
 	})
 })
