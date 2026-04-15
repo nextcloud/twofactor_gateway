@@ -83,7 +83,7 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInst
 	#[\Override]
 	public function createSettings(): Settings {
 		return new Settings(
-			name: 'GoWhatsApp',
+			name: 'WhatsApp web',
 			allowMarkdown: true,
 			fields: [
 				new FieldDefinition(
