@@ -11,6 +11,10 @@ export interface FieldDefinition {
 	prompt: string
 	default: string
 	optional: boolean
+	type?: string
+	hidden?: boolean
+	min?: number
+	max?: number
 }
 
 export interface GatewayInstance {
@@ -22,18 +26,39 @@ export interface GatewayInstance {
 	isComplete: boolean
 }
 
+export interface GatewayProviderDefinition {
+	id: string
+	name: string
+	fields: FieldDefinition[]
+}
+
 export interface GatewayInfo {
 	id: string
 	name: string
 	instructions: string
 	allowMarkdown: boolean
 	fields: FieldDefinition[]
+	providerSelector?: FieldDefinition
+	providerCatalog?: GatewayProviderDefinition[]
 	instances: GatewayInstance[]
 }
 
 export interface TestResult {
 	success: boolean
 	message: string
+	accountInfo?: {
+		account_name?: string
+	}
+}
+
+export interface InteractiveSetupResponse {
+	status: 'needs_input' | 'pending' | 'done' | 'error' | 'cancelled'
+	message?: string
+	messageType?: 'info' | 'success' | 'warning' | 'error'
+	sessionId?: string
+	step?: string
+	data?: Record<string, unknown>
+	config?: Record<string, string>
 }
 
 function ocsData<T>(response: any): T {
@@ -144,4 +169,45 @@ export async function testInstance(
 		{ identifier },
 	)
 	return ocsData<TestResult>(response)
+}
+
+export async function startInteractiveSetup(
+	gatewayId: string,
+	input: Record<string, string>,
+): Promise<InteractiveSetupResponse> {
+	const response = await axios.post(
+		generateOcsUrl('/apps/twofactor_gateway/admin/gateways/{gateway}/interactive-setup/start', {
+			gateway: gatewayId,
+		}),
+		{ input },
+	)
+	return ocsData<InteractiveSetupResponse>(response)
+}
+
+export async function interactiveSetupStep(
+	gatewayId: string,
+	sessionId: string,
+	action: string,
+	input: Record<string, unknown> = {},
+): Promise<InteractiveSetupResponse> {
+	const response = await axios.post(
+		generateOcsUrl('/apps/twofactor_gateway/admin/gateways/{gateway}/interactive-setup/step', {
+			gateway: gatewayId,
+		}),
+		{ sessionId, action, input },
+	)
+	return ocsData<InteractiveSetupResponse>(response)
+}
+
+export async function cancelInteractiveSetup(
+	gatewayId: string,
+	sessionId: string,
+): Promise<InteractiveSetupResponse> {
+	const response = await axios.post(
+		generateOcsUrl('/apps/twofactor_gateway/admin/gateways/{gateway}/interactive-setup/cancel', {
+			gateway: gatewayId,
+		}),
+		{ sessionId },
+	)
+	return ocsData<InteractiveSetupResponse>(response)
 }
