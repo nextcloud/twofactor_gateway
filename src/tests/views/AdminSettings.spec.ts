@@ -204,4 +204,63 @@ describe('AdminSettings', () => {
 
 		expect(wrapper.findComponent({ name: 'GatewayInstanceModal' }).props('show')).toBe(true)
 	})
+
+	it('uses catalog provider name for flattened instances', async () => {
+		const { listGateways } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(listGateways).mockResolvedValueOnce([
+			{
+				id: 'whatsapp',
+				name: 'WhatsApp',
+				instructions: '',
+				allowMarkdown: false,
+				fields: [],
+				providerSelector: { field: 'provider', prompt: 'Provider', default: '', optional: false },
+				providerCatalog: [
+					{ id: 'whatsapp', name: 'WhatsApp', fields: [] },
+					{ id: 'gowhatsapp', name: 'WhatsApp', fields: [] },
+				],
+				instances: [{ id: 'gowhatsapp:1', label: 'Default', default: true, createdAt: '', config: { provider: 'gowhatsapp' }, isComplete: true }],
+			},
+		])
+
+		const wrapper = mount(AdminSettings)
+		await flushPromises()
+
+		const cards = wrapper.findAll('.gateway-instance-card')
+		expect(cards).toHaveLength(1)
+		expect(cards[0].attributes('data-provider')).toBe('WhatsApp')
+	})
+
+	it('resolves edit target by emitted instance id', async () => {
+		const { listGateways } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(listGateways).mockResolvedValueOnce([
+			{
+				id: 'whatsapp',
+				name: 'WhatsApp',
+				instructions: '',
+				allowMarkdown: false,
+				fields: [],
+				providerSelector: { field: 'provider', prompt: 'Provider', default: '', optional: false },
+				providerCatalog: [
+					{ id: 'whatsapp', name: 'WhatsApp', fields: [] },
+					{ id: 'gowhatsapp', name: 'WhatsApp', fields: [] },
+				],
+				instances: [{ id: 'gowhatsapp:1', label: 'Default', default: true, createdAt: '', config: { provider: 'gowhatsapp' }, isComplete: true }],
+			},
+		])
+
+		const wrapper = mount(AdminSettings)
+		await flushPromises()
+
+		;(wrapper.vm as unknown as {
+			openEditById: (gatewayId: string, instanceId: string) => void
+			editingGatewayId: string
+			editingInstanceId: string
+			showModal: boolean
+		}).openEditById('whatsapp', 'gowhatsapp:1')
+
+		expect((wrapper.vm as { editingGatewayId: string }).editingGatewayId).toBe('whatsapp')
+		expect((wrapper.vm as { editingInstanceId: string }).editingInstanceId).toBe('gowhatsapp:1')
+		expect((wrapper.vm as { showModal: boolean }).showModal).toBe(true)
+	})
 })
