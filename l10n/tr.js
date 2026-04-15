@@ -2,8 +2,6 @@ OC.L10N.register(
     "twofactor_gateway",
     {
     "Two-Factor Gateway" : "İki adımlı doğrulama hizmeti sağlayıcısı",
-    "Two-Factor Gateway: WhatsApp API authentication failed" : "İkinci adım aracısı: Kimlik WhatsApp API ile doğrulanamadı",
-    "The authentication with WhatsApp API has failed. The Two-Factor Gateway (WhatsApp) will not work until this is resolved. Please reconfigure the WhatsApp gateway using the command line tool." : "Kimlik WhatsApp API ile doğrulanamadı. Bu sorun çözülene kadar ikinci adım aracısı (WhatsApp) çalışmayacak. Lütfen komut satırı aracı ile WhatsApp aracısını yeniden yapılandırın.",
     "`%s` is your Nextcloud authentication code" : "Nextcloud kimlik doğrulama kodunuz: `%s`",
     "%s is your Nextcloud authentication code" : "Nextcloud doğrulama kodunuz: %s",
     "The phone number is not registered on WhatsApp." : "Telefon numarası WhatsApp üzerinde kayıtlı değil.",
