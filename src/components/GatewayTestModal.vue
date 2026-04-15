@@ -13,11 +13,10 @@
 			<p>
 				{{ t('twofactor_gateway', 'Send a test message via "{label}" to verify it is properly configured.', { label }) }}
 			</p>
-
 			<NcTextField
 				v-model="identifier"
 				:label="t('twofactor_gateway', 'Recipient identifier')"
-				:placeholder="t('twofactor_gateway', 'e.g. phone number, username, chat ID…')"
+				:placeholder="identifierPlaceholder"
 				:required="true" />
 
 			<div v-if="result" class="test-result" :class="result.success ? 'test-result--success' : 'test-result--error'">
@@ -25,7 +24,7 @@
 			</div>
 
 			<div class="modal-actions">
-				<NcButton @click="$emit('close')">
+				<NcButton type="secondary" @click="$emit('close')">
 					{{ t('twofactor_gateway', 'Close') }}
 				</NcButton>
 				<NcButton
@@ -35,7 +34,7 @@
 					<template #icon>
 						<NcLoadingIcon v-if="testing" :size="20" />
 					</template>
-					{{ testing ? t('twofactor_gateway', 'Sending…') : t('twofactor_gateway', 'Send Test') }}
+					{{ sendButtonLabel }}
 				</NcButton>
 			</div>
 		</div>
@@ -82,6 +81,22 @@ export default defineComponent({
 				this.identifier = ''
 				this.result = null
 			}
+		},
+	},
+
+	computed: {
+		identifierPlaceholder(): string {
+			// TRANSLATORS "\u00A0" keeps the ellipsis attached to the previous word and avoids awkward line breaks.
+			return t('twofactor_gateway', 'e.g. phone number, username, chat ID\u00A0…')
+		},
+
+		sendButtonLabel(): string {
+			if (this.testing) {
+				// TRANSLATORS "\u00A0" keeps the ellipsis attached to the previous word and avoids awkward line breaks.
+				return t('twofactor_gateway', 'Sending\u00A0…')
+			}
+
+			return t('twofactor_gateway', 'Send Test')
 		},
 	},
 
