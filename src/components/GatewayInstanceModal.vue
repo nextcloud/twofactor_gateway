@@ -151,7 +151,7 @@ import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import { t } from '@nextcloud/l10n'
 import { resolveGatewaySetupPanel } from './providers/registry'
-import type { FieldDefinition, GatewayGroup, GatewayInfo } from '../services/adminGatewayApi.ts'
+import type { FieldDefinition, GatewayInfo } from '../services/adminGatewayApi.ts'
 
 export default defineComponent({
 	name: 'GatewayInstanceModal',
@@ -168,13 +168,10 @@ export default defineComponent({
 	props: {
 		show: { type: Boolean, default: false },
 		gateways: { type: Array as PropType<GatewayInfo[]>, required: true },
-		groups: { type: Array as PropType<GatewayGroup[]>, default: () => [] },
 		gatewayId: { type: String, default: '' },
 		instanceId: { type: String, default: '' },
 		initialLabel: { type: String, default: '' },
 		initialConfig: { type: Object as PropType<Record<string, string>>, default: () => ({}) },
-		initialGroupIds: { type: Array as PropType<string[]>, default: () => [] },
-		initialPriority: { type: Number, default: 0 },
 	},
 
 	emits: ['close', 'saved'],
@@ -189,8 +186,6 @@ export default defineComponent({
 			selectedGatewayId: this.gatewayId || '',
 			selectedCatalogProviderId: '',
 			wizardPanelActive: false,
-			selectedGroups: this.groups.filter((g) => this.initialGroupIds.includes(g.id)) as GatewayGroup[],
-			priority: this.initialPriority,
 			form: {
 				label: this.initialLabel,
 				config: { ...this.initialConfig } as Record<string, string>,
@@ -479,12 +474,6 @@ export default defineComponent({
 		initialLabel(val: string) {
 			this.form.label = val
 		},
-		initialGroupIds(val: string[]) {
-			this.selectedGroups = this.groups.filter((g) => val.includes(g.id))
-		},
-		initialPriority(val: number) {
-			this.priority = val
-		},
 		initialConfig(val: Record<string, string>) {
 			this.form.config = { ...val }
 			this.syncCatalogProviderSelection()
@@ -542,11 +531,6 @@ export default defineComponent({
 			}
 		},
 
-		onPriorityChange(value: unknown): void {
-			const normalizedValue = String(value ?? '').trim()
-			this.priority = normalizedValue === '' ? 0 : Number.parseInt(normalizedValue, 10)
-		},
-
 		syncCatalogProviderSelection() {
 			const gateway = this.selectedGateway
 			const catalog = this.normalizedProviderCatalog
@@ -592,8 +576,6 @@ export default defineComponent({
 			// Reset config when gateway changes while creating
 			this.selectedCatalogProviderId = ''
 			this.form.config = {}
-			this.selectedGroups = []
-			this.priority = 0
 			this.errors = {}
 		},
 
@@ -612,10 +594,6 @@ export default defineComponent({
 				return false
 			}
 			if (!this.selectedGateway) {
-				return false
-			}
-			if (this.isEditing && (!Number.isInteger(this.priority) || Number.isNaN(this.priority))) {
-				this.errors.priority = t('twofactor_gateway', 'Routing priority must be an integer.')
 				return false
 			}
 			if (this.hasProviderCatalog && !this.effectiveCatalogProviderId) {
@@ -686,8 +664,6 @@ export default defineComponent({
 					instanceId: this.instanceId,
 					label: this.form.label.trim(),
 					config,
-					groupIds: this.selectedGroups.map((g) => g.id).sort(),
-					priority: this.priority,
 				})
 			} finally {
 				this.saving = false
