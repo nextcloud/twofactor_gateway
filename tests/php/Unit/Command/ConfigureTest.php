@@ -62,4 +62,49 @@ class ConfigureTest extends AppTestCase {
 			}
 		}
 	}
+
+	public function testConfigureCreatesInstanceRegistryEntry(): void {
+		$this->makeInMemoryAppConfig();
+
+		/** @var \OC\Console\Application */
+		$application = Server::get(\OC\Console\Application::class);
+		$output = new ConsoleOutputSpy();
+		$input = new ArrayInput(['twofactorauth:gateway:configure']);
+		$application->loadCommands($input, $output);
+		$application->setAutoExit(false);
+
+		// Locate the SMS gateway choice index
+		$gatewayFactory = Server::get(\OCA\TwoFactorGateway\Provider\Gateway\Factory::class);
+		$gatewayChoices = [];
+		foreach ($gatewayFactory->getFqcnList() as $fqcn) {
+			$gatewayChoices[] = $gatewayFactory->get($fqcn)->getProviderId();
+		}
+		$smsGatewayIndex = array_search('sms', $gatewayChoices);
+		$this->assertNotFalse($smsGatewayIndex, 'SMS gateway not found');
+
+		// Pick the first SMS sub-provider, supply values for all its fields
+		$factory = new SMSFactory();
+		$fqcn = $factory->getFqcnList()[0];
+		$provider = $factory->get($fqcn);
+		$gatewaySettings = $provider->getSettings();
+
+		$inputStream = [(string)$smsGatewayIndex, '0'];
+		foreach ($gatewaySettings->fields as $field) {
+			$inputStream[] = 'test_value';
+		}
+
+		$input->setStream(self::createStream($inputStream));
+		$exitCode = $application->run($input, $output);
+		$this->assertSame(0, $exitCode);
+
+		// After configure, a registry entry must exist so the web UI can list the instance
+		$registryJson = self::$store[Application::APP_ID]['instances:sms'] ?? null;
+		$this->assertNotNull($registryJson, 'instances:sms registry entry must be created after CLI configure');
+
+		$registry = json_decode((string)$registryJson, true);
+		$this->assertIsArray($registry);
+		$this->assertCount(1, $registry);
+		$this->assertSame('Default', $registry[0]['label']);
+		$this->assertTrue($registry[0]['default']);
+	}
 }
