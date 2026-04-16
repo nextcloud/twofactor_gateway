@@ -15,7 +15,7 @@ use OCA\TwoFactorGateway\Provider\Settings;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 
 class GatewayChoiceFormatterTest extends AppTestCase {
-	public function testGatewayLabelsUseFriendlyNameAndId(): void {
+	public function testGatewayLabelsUseFriendlyNameOnly(): void {
 		$signalGateway = $this->createMock(IGateway::class);
 		$signalGateway->method('getSettings')->willReturn(new Settings(name: 'Signal', id: 'signal'));
 
@@ -27,8 +27,8 @@ class GatewayChoiceFormatterTest extends AppTestCase {
 			'gowhatsapp' => $goWhatsAppGateway,
 		]);
 
-		$this->assertSame('Signal (signal)', $labels['signal']);
-		$this->assertSame('WhatsApp web (gowhatsapp)', $labels['gowhatsapp']);
+		$this->assertSame('Signal', $labels['signal']);
+		$this->assertSame('WhatsApp web', $labels['gowhatsapp']);
 	}
 
 	public function testInstanceLabelsUseFriendlyDescription(): void {
@@ -53,11 +53,11 @@ class GatewayChoiceFormatterTest extends AppTestCase {
 
 	public function testResolveIdFromLabelReturnsMatchingId(): void {
 		$labels = [
-			'signal' => 'Signal (signal)',
-			'gowhatsapp' => 'WhatsApp web (gowhatsapp)',
+			'signal' => 'Signal',
+			'gowhatsapp' => 'WhatsApp web',
 		];
 
-		$this->assertSame('gowhatsapp', GatewayChoiceFormatter::resolveIdFromLabel($labels, 'WhatsApp web (gowhatsapp)'));
+		$this->assertSame('gowhatsapp', GatewayChoiceFormatter::resolveIdFromLabel($labels, 'WhatsApp web'));
 		$this->assertNull(GatewayChoiceFormatter::resolveIdFromLabel($labels, 'Missing'));
 	}
 }
