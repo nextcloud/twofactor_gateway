@@ -9,8 +9,9 @@
 
 		<!-- Loading -->
 		<div v-if="loading" class="admin-settings__loading">
+			<!-- TRANSLATORS "\u00A0" keeps the ellipsis attached to the previous word and avoids awkward line breaks. -->
 			<NcLoadingIcon :size="32" />
-			<p>{{ t('twofactor_gateway', 'Loading gateway configurations…') }}</p>
+			<p>{{ t('twofactor_gateway', 'Loading gateway configurations\u00A0…') }}</p>
 		</div>
 
 		<!-- Error state -->
@@ -42,7 +43,9 @@
 					:instance="item.instance"
 					:fields="item.fields"
 					:provider-name="item.providerName"
-					@edit="openEdit(item)"
+					:groups="groups"
+					@edit="openEditById(item.gatewayId, $event)"
+					@routing="openRoutingById(item.gatewayId, $event)"
 					@delete="confirmDelete(item)"
 					@set-default="onSetDefault(item)"
 					@test="openTest(item)" />
@@ -52,12 +55,26 @@
 		<GatewayInstanceModal
 			:show="showModal"
 			:gateways="gateways"
+			:groups="groups"
 			:gateway-id="editingGatewayId"
 			:instance-id="editingInstanceId"
 			:initial-label="editingLabel"
 			:initial-config="editingConfig"
+			:initial-group-ids="editingGroupIds"
+			:initial-priority="editingPriority"
 			@close="closeModal"
 			@saved="onSaved" />
+
+		<GatewayRoutingModal
+			v-if="routingItem"
+			:show="showRoutingModal"
+			:label="routingItem.instance.label"
+			:instance-id="routingItem.instance.id"
+			:groups="groups"
+			:initial-group-ids="routingItem.instance.groupIds"
+			:initial-priority="routingItem.instance.priority"
+			@close="closeRoutingModal"
+			@saved="onRoutingSaved" />
 
 		<GatewayTestModal
 			v-if="showTestModal"
@@ -80,7 +97,7 @@
 					<template #icon>
 						<NcLoadingIcon v-if="deleting" :size="20" />
 					</template>
-					{{ deleting ? t('twofactor_gateway', 'Deleting…') : t('twofactor_gateway', 'Delete') }}
+					{{ deleteButtonLabel }}
 				</NcButton>
 			</template>
 		</NcDialog>
@@ -99,13 +116,16 @@ import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
 import { t } from '@nextcloud/l10n'
 import GatewayInstanceCard from '../components/GatewayInstanceCard.vue'
 import GatewayInstanceModal from '../components/GatewayInstanceModal.vue'
+import GatewayRoutingModal from '../components/GatewayRoutingModal.vue'
 import GatewayTestModal from '../components/GatewayTestModal.vue'
 import {
 	createInstance,
 	deleteInstance,
 	listGateways,
+	listGroups,
 	setDefaultInstance,
 	type FieldDefinition,
+	type GatewayGroup,
 	type GatewayInfo,
 	type GatewayInstance,
 	updateInstance,
@@ -129,6 +149,7 @@ export default defineComponent({
 		AlertCircleIcon,
 		GatewayInstanceCard,
 		GatewayInstanceModal,
+		GatewayRoutingModal,
 		GatewayTestModal,
 	},
 
@@ -141,12 +162,17 @@ export default defineComponent({
 			loading: false,
 			error: '',
 			gateways: [] as GatewayInfo[],
+			groups: [] as GatewayGroup[],
 
 			showModal: false,
 			editingGatewayId: '',
 			editingInstanceId: '',
 			editingLabel: '',
 			editingConfig: {} as Record<string, string>,
+			editingGroupIds: [] as string[],
+			editingPriority: 0,
+			showRoutingModal: false,
+			routingItem: null as FlatInstanceEntry | null,
 
 			showTestModal: false,
 			testingGatewayId: '',
@@ -164,10 +190,14 @@ export default defineComponent({
 			const rows: FlatInstanceEntry[] = []
 			for (const gateway of this.gateways) {
 				for (const instance of gateway.instances) {
+					const selectedProviderId = gateway.providerSelector
+						? instance.config[gateway.providerSelector.field]
+						: undefined
+					const selectedProvider = gateway.providerCatalog?.find((provider) => provider.id === selectedProviderId)
 					rows.push({
 						gatewayId: gateway.id,
-						providerName: gateway.name,
-						fields: gateway.fields,
+						providerName: selectedProvider?.name ?? gateway.name,
+						fields: selectedProvider?.fields ?? gateway.fields,
 						instance,
 					})
 				}
@@ -182,6 +212,15 @@ export default defineComponent({
 				{ label: this.pendingDelete?.instance.label ?? '' },
 			)
 		},
+
+		deleteButtonLabel(): string {
+			if (this.deleting) {
+				// TRANSLATORS "\u00A0" keeps the ellipsis attached to the previous word and avoids awkward line breaks.
+				return t('twofactor_gateway', 'Deleting\u00A0…')
+			}
+
+			return t('twofactor_gateway', 'Delete')
+		},
 	},
 
 	async created() {
@@ -189,11 +228,22 @@ export default defineComponent({
 	},
 
 	methods: {
+		openEditById(gatewayId: string, instanceId: string) {
+			const item = this.allInstances.find((entry) => entry.gatewayId === gatewayId && entry.instance.id === instanceId)
+				?? this.allInstances.find((entry) => entry.instance.id === instanceId)
+			if (!item) {
+				return
+			}
+			this.openEdit(item)
+		},
+
 		openCreate() {
 			this.editingGatewayId = ''
 			this.editingInstanceId = ''
 			this.editingLabel = ''
 			this.editingConfig = {}
+			this.editingGroupIds = []
+			this.editingPriority = 0
 			this.showModal = true
 		},
 
@@ -201,12 +251,36 @@ export default defineComponent({
 			this.editingGatewayId = item.gatewayId
 			this.editingInstanceId = item.instance.id
 			this.editingLabel = item.instance.label
-			this.editingConfig = { ...item.instance.config }
+			const sanitizedConfig = { ...item.instance.config }
+			for (const field of item.fields) {
+				if (field.type === 'secret' && sanitizedConfig[field.field] !== undefined) {
+					sanitizedConfig[field.field] = ''
+				}
+			}
+			this.editingConfig = sanitizedConfig
+			this.editingGroupIds = [...item.instance.groupIds]
+			this.editingPriority = item.instance.priority
 			this.showModal = true
+		},
+
+		openRoutingById(gatewayId: string, instanceId: string) {
+			const item = this.allInstances.find((entry) => entry.gatewayId === gatewayId && entry.instance.id === instanceId)
+				?? this.allInstances.find((entry) => entry.instance.id === instanceId)
+			if (!item) {
+				return
+			}
+
+			this.routingItem = item
+			this.showRoutingModal = true
 		},
 
 		closeModal() {
 			this.showModal = false
+		},
+
+		closeRoutingModal() {
+			this.showRoutingModal = false
+			this.routingItem = null
 		},
 
 		openTest(item: FlatInstanceEntry) {
@@ -254,12 +328,12 @@ export default defineComponent({
 			}
 		},
 
-		async onSaved(payload: { gatewayId: string; instanceId: string; label: string; config: Record<string, string> }) {
+		async onSaved(payload: { gatewayId: string; instanceId: string; label: string; config: Record<string, string>; groupIds: string[]; priority: number }) {
 			try {
 				if (payload.instanceId) {
-					await updateInstance(payload.gatewayId, payload.instanceId, payload.label, payload.config)
+					await updateInstance(payload.gatewayId, payload.instanceId, payload.label, payload.config, payload.groupIds, payload.priority)
 				} else {
-					await createInstance(payload.gatewayId, payload.label, payload.config)
+					await createInstance(payload.gatewayId, payload.label, payload.config, payload.groupIds, payload.priority)
 				}
 				this.showModal = false
 				await this.loadGateways()
@@ -268,11 +342,34 @@ export default defineComponent({
 			}
 		},
 
+		async onRoutingSaved(payload: { groupIds: string[]; priority: number }) {
+			if (!this.routingItem) {
+				return
+			}
+
+			try {
+				await updateInstance(
+					this.routingItem.gatewayId,
+					this.routingItem.instance.id,
+					this.routingItem.instance.label,
+					this.routingItem.instance.config,
+					payload.groupIds,
+					payload.priority,
+				)
+				this.closeRoutingModal()
+				await this.loadGateways()
+			} catch (err) {
+				console.error('Failed to save gateway routing', err)
+			}
+		},
+
 		async loadGateways() {
 			this.loading = true
 			this.error = ''
 			try {
-				this.gateways = await listGateways()
+				const [gateways, groups] = await Promise.all([listGateways(), listGroups()])
+				this.gateways = gateways
+				this.groups = groups
 			} catch (err) {
 				console.error('Failed to load gateways', err)
 				this.error = t('twofactor_gateway', 'Could not load gateway list. Please check your connection and try again.')
