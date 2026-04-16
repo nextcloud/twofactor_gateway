@@ -19,6 +19,12 @@ const GatewayInstanceModalStub = vi.hoisted(() => ({
 	template: '<div class="gateway-instance-modal" :data-show="show" />',
 }))
 
+const GatewayRoutingModalStub = vi.hoisted(() => ({
+	name: 'GatewayRoutingModal',
+	props: ['show'],
+	template: '<div class="gateway-routing-modal" :data-show="show" />',
+}))
+
 const GatewayTestModalStub = vi.hoisted(() => ({
 	name: 'GatewayTestModal',
 	props: ['show'],
@@ -48,11 +54,25 @@ vi.mock('@nextcloud/l10n', () => ({
 
 vi.mock('../../services/adminGatewayApi.ts', () => ({
 	listGateways: vi.fn().mockResolvedValue([]),
+	listGroups: vi.fn().mockResolvedValue([]),
 	createInstance: vi.fn(),
 	updateInstance: vi.fn(),
 	deleteInstance: vi.fn(),
 	setDefaultInstance: vi.fn(),
 }))
+
+const makeInstance = (overrides: Record<string, unknown> = {}) => ({
+	id: 'instance-1',
+	providerId: 'signal',
+	label: 'Default',
+	default: true,
+	createdAt: '',
+	config: {},
+	isComplete: true,
+	groupIds: [],
+	priority: 0,
+	...overrides,
+})
 
 vi.mock('@nextcloud/vue/components/NcButton', () => ({
 	default: defineComponent({
@@ -99,6 +119,10 @@ vi.mock('../../components/GatewayInstanceModal.vue', () => ({
 	default: GatewayInstanceModalStub,
 }))
 
+vi.mock('../../components/GatewayRoutingModal.vue', () => ({
+	default: GatewayRoutingModalStub,
+}))
+
 vi.mock('../../components/GatewayTestModal.vue', () => ({
 	default: GatewayTestModalStub,
 }))
@@ -129,7 +153,7 @@ describe('AdminSettings', () => {
 				instructions: '',
 				allowMarkdown: false,
 				fields: [],
-				instances: [{ id: 's1', label: 'Signal Prod', default: true, createdAt: '', config: {}, isComplete: true }],
+				instances: [makeInstance({ id: 's1', providerId: 'signal', label: 'Signal Prod' })],
 			},
 			{
 				id: 'telegram',
@@ -137,7 +161,7 @@ describe('AdminSettings', () => {
 				instructions: '',
 				allowMarkdown: false,
 				fields: [],
-				instances: [{ id: 't1', label: 'Telegram Ops', default: false, createdAt: '', config: {}, isComplete: true }],
+				instances: [makeInstance({ id: 't1', providerId: 'telegram', label: 'Telegram Ops', default: false })],
 			},
 		])
 
@@ -172,7 +196,7 @@ describe('AdminSettings', () => {
 					instructions: '',
 					allowMarkdown: false,
 					fields: [],
-					instances: [{ id: 's1', label: 'Signal Prod', default: true, createdAt: '', config: {}, isComplete: true }],
+					instances: [makeInstance({ id: 's1', providerId: 'signal', label: 'Signal Prod' })],
 				},
 			])
 
@@ -219,7 +243,7 @@ describe('AdminSettings', () => {
 					{ id: 'whatsapp', name: 'WhatsApp', fields: [] },
 					{ id: 'gowhatsapp', name: 'WhatsApp', fields: [] },
 				],
-				instances: [{ id: 'gowhatsapp:1', label: 'Default', default: true, createdAt: '', config: { provider: 'gowhatsapp' }, isComplete: true }],
+				instances: [makeInstance({ id: 'gowhatsapp:1', providerId: 'gowhatsapp', config: { provider: 'gowhatsapp' } })],
 			},
 		])
 
@@ -245,7 +269,7 @@ describe('AdminSettings', () => {
 					{ id: 'whatsapp', name: 'WhatsApp', fields: [] },
 					{ id: 'gowhatsapp', name: 'WhatsApp', fields: [] },
 				],
-				instances: [{ id: 'gowhatsapp:1', label: 'Default', default: true, createdAt: '', config: { provider: 'gowhatsapp' }, isComplete: true }],
+				instances: [makeInstance({ id: 'gowhatsapp:1', providerId: 'gowhatsapp', config: { provider: 'gowhatsapp' } })],
 			},
 		])
 
@@ -262,5 +286,31 @@ describe('AdminSettings', () => {
 		expect((wrapper.vm as { editingGatewayId: string }).editingGatewayId).toBe('whatsapp')
 		expect((wrapper.vm as { editingInstanceId: string }).editingInstanceId).toBe('gowhatsapp:1')
 		expect((wrapper.vm as { showModal: boolean }).showModal).toBe(true)
+	})
+
+	it('resolves routing target by emitted instance id', async () => {
+		const { listGateways } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(listGateways).mockResolvedValueOnce([
+			{
+				id: 'whatsapp',
+				name: 'WhatsApp',
+				instructions: '',
+				allowMarkdown: false,
+				fields: [],
+				instances: [makeInstance({ id: 'gw-1', label: 'WhatsApp Ops' })],
+			},
+		])
+
+		const wrapper = mount(AdminSettings)
+		await flushPromises()
+
+		;(wrapper.vm as unknown as {
+			openRoutingById: (gatewayId: string, instanceId: string) => void
+			showRoutingModal: boolean
+			routingItem: { instance: { id: string } } | null
+		}).openRoutingById('whatsapp', 'gw-1')
+
+		expect((wrapper.vm as { showRoutingModal: boolean }).showRoutingModal).toBe(true)
+		expect((wrapper.vm as { routingItem: { instance: { id: string } } | null }).routingItem?.instance.id).toBe('gw-1')
 	})
 })
