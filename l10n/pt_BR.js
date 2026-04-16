@@ -2,6 +2,9 @@ OC.L10N.register(
     "twofactor_gateway",
     {
     "Two-Factor Gateway" : "Gateway de dois fatores",
+    "Two-Factor Gateway: WhatsApp authentication failed" : "Gateway de dois fatores: Falha na autenticação por WhatsApp",
+    "Two-Factor Gateway: WhatsApp session is unstable" : "Gateway de dois fatores: A sessão do WhatsApp está instável",
+    "The WhatsApp session is unstable and may require re-authentication soon. Monitor the session and reconfigure the GoWhatsApp gateway if needed." : "A sessão do WhatsApp está instável e poderá exigir uma nova autenticação em breve. Monitore a sessão e reconfigure o gateway do GoWhatsApp, se necessário.",
     "`%s` is your Nextcloud authentication code" : "`%s` é o seu código de autenticação do Nextcloud",
     "%s is your Nextcloud authentication code" : "%s é seu código de autenticação do Nextcloud",
     "The phone number is not registered on WhatsApp." : "O número de telefone não está registrado no WhatsApp.",
