@@ -9,8 +9,8 @@ import type { GatewayInfo } from '../../services/adminGatewayApi.ts'
 
 const GatewayInstanceCardStub = vi.hoisted(() => ({
 	name: 'GatewayInstanceCard',
-	props: ['instance', 'providerName'],
-	template: '<div class="gateway-instance-card" :data-provider="providerName">{{ instance.label }}</div>',
+	props: ['instance', 'providerName', 'showRoutingAction'],
+	template: '<div class="gateway-instance-card" :data-provider="providerName" :data-routing="showRoutingAction">{{ instance.label }}</div>',
 }))
 
 const GatewayInstanceModalStub = vi.hoisted(() => ({
@@ -312,5 +312,43 @@ describe('AdminSettings', () => {
 
 		expect((wrapper.vm as { showRoutingModal: boolean }).showRoutingModal).toBe(true)
 		expect((wrapper.vm as { routingItem: { instance: { id: string } } | null }).routingItem?.instance.id).toBe('gw-1')
+	})
+
+	it('hides routing action when a gateway has only one instance and no routing metadata', async () => {
+		const { listGateways } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(listGateways).mockResolvedValueOnce([
+			{
+				id: 'whatsapp',
+				name: 'WhatsApp',
+				instructions: '',
+				allowMarkdown: false,
+				fields: [],
+				instances: [makeInstance({ id: 'gw-1', priority: 0, groupIds: [] })],
+			},
+		])
+
+		const wrapper = mount(AdminSettings)
+		await flushPromises()
+
+		expect(wrapper.find('.gateway-instance-card').attributes('data-routing')).toBe('false')
+	})
+
+	it('keeps routing action visible when routing metadata already exists', async () => {
+		const { listGateways } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(listGateways).mockResolvedValueOnce([
+			{
+				id: 'whatsapp',
+				name: 'WhatsApp',
+				instructions: '',
+				allowMarkdown: false,
+				fields: [],
+				instances: [makeInstance({ id: 'gw-1', priority: 10, groupIds: ['admins'] })],
+			},
+		])
+
+		const wrapper = mount(AdminSettings)
+		await flushPromises()
+
+		expect(wrapper.find('.gateway-instance-card').attributes('data-routing')).toBe('true')
 	})
 })
