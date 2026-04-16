@@ -19,11 +19,19 @@ export interface FieldDefinition {
 
 export interface GatewayInstance {
 	id: string
+	providerId: string
 	label: string
 	default: boolean
 	createdAt: string
 	config: Record<string, string>
 	isComplete: boolean
+	groupIds: string[]
+	priority: number
+}
+
+export interface GatewayGroup {
+	id: string
+	displayName: string
 }
 
 export interface GatewayProviderDefinition {
@@ -62,8 +70,6 @@ export interface InteractiveSetupResponse {
 }
 
 function ocsData<T>(response: any): T {
-	console.log('OCS Response:', response)
-	console.log('Response struc:', { data: response.data, dataType: typeof response.data })
 	if (response.data?.ocs?.data) {
 		return response.data.ocs.data
 	}
@@ -83,16 +89,26 @@ export async function listGateways(): Promise<GatewayInfo[]> {
 }
 
 /**
+ * List all assignable groups for instance routing.
+ */
+export async function listGroups(): Promise<GatewayGroup[]> {
+	const response = await axios.get(generateOcsUrl('/apps/twofactor_gateway/admin/groups'))
+	return ocsData<GatewayGroup[]>(response)
+}
+
+/**
  * Create a new configuration instance for a gateway.
  */
 export async function createInstance(
 	gatewayId: string,
 	label: string,
 	config: Record<string, string>,
+	groupIds: string[] = [],
+	priority = 0,
 ): Promise<GatewayInstance> {
 	const response = await axios.post(
 		generateOcsUrl('/apps/twofactor_gateway/admin/gateways/{gateway}/instances', { gateway: gatewayId }),
-		{ label, config },
+		{ label, config, groupIds, priority },
 	)
 	return ocsData<GatewayInstance>(response)
 }
@@ -118,13 +134,15 @@ export async function updateInstance(
 	instanceId: string,
 	label: string,
 	config: Record<string, string>,
+	groupIds: string[] = [],
+	priority = 0,
 ): Promise<GatewayInstance> {
 	const response = await axios.put(
 		generateOcsUrl('/apps/twofactor_gateway/admin/gateways/{gateway}/instances/{instanceId}', {
 			gateway: gatewayId,
 			instanceId,
 		}),
-		{ label, config },
+		{ label, config, groupIds, priority },
 	)
 	return ocsData<GatewayInstance>(response)
 }
