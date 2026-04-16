@@ -104,35 +104,37 @@
 				</div>
 			</template>
 
-			<div v-if="canRenderProviderFields && !wizardPanelActive" class="modal-divider" />
+			<template v-if="instanceId && !wizardPanelActive">
+				<div class="modal-divider" />
 
-			<div v-if="canRenderProviderFields && !wizardPanelActive" class="modal-field">
-				<NcTextField
-					:model-value="String(priority)"
-					:label="t('twofactor_gateway', 'Routing priority')"
-					:placeholder="t('twofactor_gateway', '0 = default order, higher runs first')"
-					:error="!!errors.priority"
-					:helper-text="errors.priority ?? t('twofactor_gateway', 'Use this to define fallback order among matched instances.')"
-					@update:modelValue="onPriorityChange" />
-			</div>
+				<div class="modal-field">
+					<NcTextField
+						:model-value="String(priority)"
+						:label="t('twofactor_gateway', 'Routing priority')"
+						:placeholder="t('twofactor_gateway', '0 = default order, higher runs first')"
+						:error="!!errors.priority"
+						:helper-text="errors.priority ?? t('twofactor_gateway', 'Use this to define fallback order among matched instances.')"
+						@update:modelValue="onPriorityChange" />
+				</div>
 
-			<div v-if="groups.length > 0 && canRenderProviderFields && !wizardPanelActive" class="modal-field">
-				<label for="routing-groups-select">{{ t('twofactor_gateway', 'Routing groups') }}</label>
-				<NcSelect
-					input-id="routing-groups-select"
-					v-model="selectedGroups"
-					:options="groups"
-					:placeholder="t('twofactor_gateway', 'Restrict to groups\u00A0\u2026')"
-					label="displayName"
-					track-by="id"
-					:multiple="true"
-					:keep-open="true"
-					:deselect-from-dropdown="true"
-					:close-on-select="false" />
-				<small class="modal-help-text">
-					{{ t('twofactor_gateway', 'If no group is selected, this instance participates only in default fallback ordering.') }}
-				</small>
-			</div>
+				<div v-if="groups.length > 0" class="modal-field">
+					<label for="routing-groups-select">{{ t('twofactor_gateway', 'Routing groups') }}</label>
+					<NcSelect
+						input-id="routing-groups-select"
+						v-model="selectedGroups"
+						:options="groups"
+						:placeholder="t('twofactor_gateway', 'Restrict to groups\u00A0\u2026')"
+						label="displayName"
+						track-by="id"
+						:multiple="true"
+						:keep-open="true"
+						:deselect-from-dropdown="true"
+						:close-on-select="false" />
+					<small class="modal-help-text">
+						{{ t('twofactor_gateway', 'If no group is selected, this instance participates only in default fallback ordering.') }}
+					</small>
+				</div>
+			</template>
 
 
 			<component
@@ -645,7 +647,7 @@ export default defineComponent({
 			if (!this.selectedGateway) {
 				return false
 			}
-			if (!Number.isInteger(this.priority) || Number.isNaN(this.priority)) {
+			if (this.isEditing && (!Number.isInteger(this.priority) || Number.isNaN(this.priority))) {
 				this.errors.priority = t('twofactor_gateway', 'Routing priority must be an integer.')
 				return false
 			}
