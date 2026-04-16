@@ -56,13 +56,10 @@
 		<GatewayInstanceModal
 			:show="showModal"
 			:gateways="gateways"
-			:groups="groups"
 			:gateway-id="editingGatewayId"
 			:instance-id="editingInstanceId"
 			:initial-label="editingLabel"
 			:initial-config="editingConfig"
-			:initial-group-ids="editingGroupIds"
-			:initial-priority="editingPriority"
 			@close="closeModal"
 			@saved="onSaved" />
 
@@ -171,8 +168,6 @@ export default defineComponent({
 			editingInstanceId: '',
 			editingLabel: '',
 			editingConfig: {} as Record<string, string>,
-			editingGroupIds: [] as string[],
-			editingPriority: 0,
 			showRoutingModal: false,
 			routingItem: null as FlatInstanceEntry | null,
 
@@ -246,8 +241,6 @@ export default defineComponent({
 			this.editingInstanceId = ''
 			this.editingLabel = ''
 			this.editingConfig = {}
-			this.editingGroupIds = []
-			this.editingPriority = 0
 			this.showModal = true
 		},
 
@@ -262,8 +255,6 @@ export default defineComponent({
 				}
 			}
 			this.editingConfig = sanitizedConfig
-			this.editingGroupIds = [...item.instance.groupIds]
-			this.editingPriority = item.instance.priority
 			this.showModal = true
 		},
 
@@ -332,12 +323,21 @@ export default defineComponent({
 			}
 		},
 
-		async onSaved(payload: { gatewayId: string; instanceId: string; label: string; config: Record<string, string>; groupIds: string[]; priority: number }) {
+		async onSaved(payload: { gatewayId: string; instanceId: string; label: string; config: Record<string, string> }) {
 			try {
 				if (payload.instanceId) {
-					await updateInstance(payload.gatewayId, payload.instanceId, payload.label, payload.config, payload.groupIds, payload.priority)
+					const existingItem = this.allInstances.find((item) => item.gatewayId === payload.gatewayId && item.instance.id === payload.instanceId)
+						?? this.allInstances.find((item) => item.instance.id === payload.instanceId)
+					await updateInstance(
+						payload.gatewayId,
+						payload.instanceId,
+						payload.label,
+						payload.config,
+						existingItem?.instance.groupIds ?? [],
+						existingItem?.instance.priority ?? 0,
+					)
 				} else {
-					await createInstance(payload.gatewayId, payload.label, payload.config, payload.groupIds, payload.priority)
+					await createInstance(payload.gatewayId, payload.label, payload.config, [], 0)
 				}
 				this.showModal = false
 				await this.loadGateways()
