@@ -15,8 +15,8 @@ const GatewayInstanceCardStub = vi.hoisted(() => ({
 
 const GatewayInstanceModalStub = vi.hoisted(() => ({
 	name: 'GatewayInstanceModal',
-	props: ['show'],
-	template: '<div class="gateway-instance-modal" :data-show="show" />',
+	props: ['show', 'gatewayId', 'instanceId', 'initialLabel', 'initialConfig'],
+	template: '<div class="gateway-instance-modal" :data-show="show" :data-gateway="gatewayId" :data-instance="instanceId" />',
 }))
 
 const GatewayRoutingModalStub = vi.hoisted(() => ({
@@ -227,6 +227,34 @@ describe('AdminSettings', () => {
 		await addButton?.trigger('click')
 
 		expect(wrapper.findComponent({ name: 'GatewayInstanceModal' }).props('show')).toBe(true)
+	})
+
+	it('preserves routing metadata when saving general edits', async () => {
+		const api = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(api.listGateways).mockResolvedValueOnce([
+			{
+				id: 'signal',
+				name: 'Signal',
+				instructions: '',
+				allowMarkdown: false,
+				fields: [],
+				instances: [makeInstance({ id: 's1', label: 'Signal Prod', priority: 20, groupIds: ['admins'] })],
+			},
+		])
+
+		const wrapper = mount(AdminSettings)
+		await flushPromises()
+
+		await (wrapper.vm as unknown as {
+			onSaved: (payload: { gatewayId: string; instanceId: string; label: string; config: Record<string, string> }) => Promise<void>
+		}).onSaved({
+			gatewayId: 'signal',
+			instanceId: 's1',
+			label: 'Signal Prod 2',
+			config: { token: 'abc' },
+		})
+
+		expect(api.updateInstance).toHaveBeenCalledWith('signal', 's1', 'Signal Prod 2', { token: 'abc' }, ['admins'], 20)
 	})
 
 	it('uses catalog provider name for flattened instances', async () => {
