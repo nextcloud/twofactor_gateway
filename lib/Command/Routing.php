@@ -60,7 +60,13 @@ class Routing extends Command {
 			if (count($this->gateways) === 1) {
 				$gateway = reset($this->gateways);
 			} else {
-				$gatewayId = $helper->ask($input, $output, new ChoiceQuestion('Gateway:', array_keys($this->gateways)));
+				$labelsById = GatewayChoiceFormatter::gatewayLabels($this->gateways);
+				$selectedLabel = $helper->ask($input, $output, new ChoiceQuestion('Gateway:', array_values($labelsById)));
+				$gatewayId = GatewayChoiceFormatter::resolveIdFromLabel($labelsById, (string)$selectedLabel) ?? '';
+				if ($gatewayId === '') {
+					$output->writeln('<error>Invalid gateway selection.</error>');
+					return Command::FAILURE;
+				}
 				$gateway = $this->gateways[$gatewayId];
 			}
 		} else {
@@ -81,15 +87,13 @@ class Routing extends Command {
 		}
 
 		if (!array_key_exists($instanceId, $instanceById)) {
-			$choices = [];
-			foreach ($instances as $instance) {
-				$choices[$instance['id']] = sprintf('%s  [priority: %d, groups: %s]',
-					$instance['label'],
-					$instance['priority'],
-					$instance['groupIds'] !== [] ? implode(', ', $instance['groupIds']) : 'none',
-				);
+			$labelsById = GatewayChoiceFormatter::instanceLabels($instances);
+			$selectedLabel = $helper->ask($input, $output, new ChoiceQuestion('Instance:', array_values($labelsById)));
+			$instanceId = GatewayChoiceFormatter::resolveIdFromLabel($labelsById, (string)$selectedLabel) ?? '';
+			if ($instanceId === '') {
+				$output->writeln('<error>Invalid instance selection.</error>');
+				return Command::FAILURE;
 			}
-			$instanceId = $helper->ask($input, $output, new ChoiceQuestion('Instance:', array_keys($choices)));
 		}
 
 		$instance = $instanceById[$instanceId];
