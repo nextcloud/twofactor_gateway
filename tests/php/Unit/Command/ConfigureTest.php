@@ -54,6 +54,9 @@ class ConfigureTest extends AppTestCase {
 			$input->setStream(self::createStream($inputStream));
 			$exitCode = $application->run($input, $output);
 			$this->assertSame(0, $exitCode);
+			if ($index === 0) {
+				$this->assertStringContainsString('SMS (sms)', $output->fetch());
+			}
 			foreach ($fields as $key) {
 				$this->assertArrayHasKey($key, self::$store[Application::APP_ID] ?? [], "Field {$key} of provider {$gatewaySettings->name} was not saved.");
 			}
