@@ -6,7 +6,7 @@
   "scripts": {
     "build": "vite build --mode production",
     "dev": "vite build --mode development",
-    "watch": "vite build --mode development --watch",
+    "watch": "node ./build/tools/watch.mjs",
     "lint": "eslint src/",
     "lint:fix": "eslint --fix src/",
     "stylelint": "stylelint css/*.css css/*.scss src/**/*.scss src/**/*.vue --ignore-pattern \"css/main-*.chunk.css\"",
