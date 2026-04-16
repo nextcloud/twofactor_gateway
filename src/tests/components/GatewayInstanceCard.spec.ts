@@ -186,6 +186,14 @@ describe('GatewayInstanceCard', () => {
 		expect(wrapper.emitted('routing')).toEqual([['abc123']])
 	})
 
+	it('hides the routing button when routing is not relevant yet', () => {
+		const wrapper = mount(GatewayInstanceCard, {
+			props: { instance: makeInstance({ id: 'abc123' }), fields, showRoutingAction: false },
+		})
+		const routingButton = wrapper.findAll('button').find((b) => b.attributes('title') === 'tr:Routing')
+		expect(routingButton).toBeUndefined()
+	})
+
 	it('masks sensitive field values like tokens', () => {
 		const instance = makeInstance({
 			config: { token: 'mysecrettoken', url: 'http://example.com' },
