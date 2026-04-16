@@ -36,19 +36,30 @@ vi.mock('@nextcloud/vue/components/NcButton', () => ({
 	}),
 }))
 
+vi.mock('@nextcloud/vue/components/NcChip', () => ({
+	default: defineComponent({
+		props: ['variant', 'text', 'noClose'],
+		template: '<span class="nc-chip-test"><slot>{{ text }}</slot></span>',
+	}),
+}))
+
 vi.mock('vue-material-design-icons/Delete.vue', () => ({ default: defineComponent({ template: '<span />' }) }))
 vi.mock('vue-material-design-icons/Pencil.vue', () => ({ default: defineComponent({ template: '<span />' }) }))
 vi.mock('vue-material-design-icons/Star.vue', () => ({ default: defineComponent({ template: '<span />' }) }))
 vi.mock('vue-material-design-icons/StarOutline.vue', () => ({ default: defineComponent({ template: '<span />' }) }))
 vi.mock('vue-material-design-icons/TestTube.vue', () => ({ default: defineComponent({ template: '<span />' }) }))
+vi.mock('vue-material-design-icons/Tune.vue', () => ({ default: defineComponent({ template: '<span />' }) }))
 
 const makeInstance = (overrides: Partial<GatewayInstance> = {}): GatewayInstance => ({
 	id: 'abc123',
+	providerId: 'signal',
 	label: 'Test instance',
 	default: false,
 	createdAt: '2026-01-15T10:00:00+00:00',
 	config: {},
 	isComplete: true,
+	groupIds: [],
+	priority: 0,
 	...overrides,
 })
 
@@ -166,6 +177,15 @@ describe('GatewayInstanceCard', () => {
 		expect(wrapper.emitted('test')).toEqual([['abc123']])
 	})
 
+	it('emits "routing" with instance id when the routing button is clicked', async () => {
+		const wrapper = mount(GatewayInstanceCard, {
+			props: { instance: makeInstance({ id: 'abc123' }), fields },
+		})
+		const routingButton = wrapper.findAll('button').find((b) => b.attributes('title') === 'tr:Routing')
+		await routingButton?.trigger('click')
+		expect(wrapper.emitted('routing')).toEqual([['abc123']])
+	})
+
 	it('masks sensitive field values like tokens', () => {
 		const instance = makeInstance({
 			config: { token: 'mysecrettoken', url: 'http://example.com' },
@@ -178,6 +198,38 @@ describe('GatewayInstanceCard', () => {
 		expect(wrapper.text()).toContain('http://example.com')
 		expect(wrapper.text()).not.toContain('mysecrettoken')
 		expect(wrapper.text()).toContain('••••••••')
+	})
+
+	it('does not display hidden metadata fields', () => {
+		const instance = makeInstance({
+			config: { url: 'http://example.com', session_id: 'abc123' },
+		})
+		const fieldsWithHidden: FieldDefinition[] = [
+			{ field: 'url', prompt: 'URL', default: '', optional: false },
+			{ field: 'session_id', prompt: 'Session ID', default: '__INSTANCE_ID__', optional: true, hidden: true },
+		]
+		const wrapper = mount(GatewayInstanceCard, { props: { instance, fields: fieldsWithHidden } })
+		expect(wrapper.text()).toContain('http://example.com')
+		expect(wrapper.text()).toContain('tr:Reference: abc123')
+		expect(wrapper.text()).not.toContain('Session ID')
+	})
+
+	it('displays routing metadata when groups and priority are configured', () => {
+		const instance = makeInstance({ groupIds: ['client-a', 'admins'], priority: 20 })
+		const wrapper = mount(GatewayInstanceCard, {
+			props: {
+				instance,
+				fields,
+				groups: [
+					{ id: 'client-a', displayName: 'Client A' },
+					{ id: 'admins', displayName: 'Admins' },
+				],
+			},
+		})
+
+		expect(wrapper.text()).toContain('tr:Reference: abc123')
+		expect(wrapper.text()).toContain('tr:Priority: 20')
+		expect(wrapper.text()).toContain('tr:Groups: Client A, Admins')
 	})
 
 	it('displays the creation date', () => {
