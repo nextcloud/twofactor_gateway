@@ -22,6 +22,7 @@ use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\IGroupManager;
 use OCP\IRequest;
 
 class AdminGatewayController extends OCSController {
@@ -30,6 +31,7 @@ class AdminGatewayController extends OCSController {
 		private GatewayConfigService $configService,
 		private GatewayFactory $gatewayFactory,
 		private GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager,
+		private IGroupManager $groupManager,
 	) {
 		parent::__construct('twofactor_gateway', $request);
 	}
@@ -46,6 +48,29 @@ class AdminGatewayController extends OCSController {
 	public function listGateways(): DataResponse {
 		$this->goWhatsAppSessionMonitorJobManager->sync();
 		return new DataResponse($this->configService->getGatewayList());
+	}
+
+	/**
+	 * List assignable Nextcloud groups for per-instance routing.
+	 *
+	 * @return DataResponse<Http::STATUS_OK, list<array{id: string, displayName: string}>, array{}>
+	 *
+	 * 200: OK
+	 */
+	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
+	#[ApiRoute(verb: 'GET', url: '/admin/groups')]
+	public function getGroups(): DataResponse {
+		$groups = array_map(
+			static fn ($group): array => [
+				'id' => $group->getGID(),
+				'displayName' => $group->getDisplayName(),
+			],
+			$this->groupManager->search(''),
+		);
+
+		usort($groups, static fn (array $left, array $right): int => strcasecmp($left['displayName'], $right['displayName']));
+
+		return new DataResponse($groups);
 	}
 
 	/**
