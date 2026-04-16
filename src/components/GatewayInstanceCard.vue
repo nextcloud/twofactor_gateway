@@ -1,18 +1,29 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
-  - SPDX-License-Identifier: AGPL-3.0-or-later
+	- SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
+	- SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
 	<div class="gateway-instance-card" :class="{ 'gateway-instance-card--default': instance.default }">
 		<div class="card-header">
 			<div class="card-title">
 				<span class="card-label">{{ instance.label }}</span>
-				<span v-if="instance.default" class="badge badge--default">
+				<NcChip
+					v-if="providerName"
+					variant="tertiary"
+					no-close>
+					{{ providerName }}
+				</NcChip>
+				<NcChip
+					v-if="instance.default"
+					variant="primary"
+					no-close>
 					{{ t('twofactor_gateway', 'Default') }}
-				</span>
-				<span class="badge" :class="instance.isComplete ? 'badge--complete' : 'badge--incomplete'">
+				</NcChip>
+				<NcChip
+					:variant="instance.isComplete ? 'success' : 'warning'"
+					no-close>
 					{{ instance.isComplete ? t('twofactor_gateway', 'Configured') : t('twofactor_gateway', 'Incomplete') }}
-				</span>
+				</NcChip>
 			</div>
 
 			<div class="card-actions">
@@ -47,6 +58,16 @@
 					@click="$emit('test', instance.id)">
 					<template #icon>
 						<TestTubeIcon :size="20" />
+					</template>
+				</NcButton>
+
+				<NcButton
+					type="tertiary"
+					:title="t('twofactor_gateway', 'Routing')"
+					:aria-label="t('twofactor_gateway', 'Routing')"
+					@click="$emit('routing', instance.id)">
+					<template #icon>
+						<TuneIcon :size="20" />
 					</template>
 				</NcButton>
 
@@ -86,7 +107,18 @@
 		</div>
 
 		<div class="card-meta">
-			{{ t('twofactor_gateway', 'Created: {date}', { date: formatDate(instance.createdAt) }) }}
+			<div>
+				{{ t('twofactor_gateway', 'Reference: {reference}', { reference: instance.id }) }}
+			</div>
+			<div v-if="instance.priority > 0">
+				{{ t('twofactor_gateway', 'Priority: {priority}', { priority: instance.priority }) }}
+			</div>
+			<div v-if="routingGroupsLabel">
+				{{ t('twofactor_gateway', 'Groups: {groups}', { groups: routingGroupsLabel }) }}
+			</div>
+			<div>
+				{{ t('twofactor_gateway', 'Created: {date}', { date: formatDate(instance.createdAt) }) }}
+			</div>
 		</div>
 	</div>
 </template>
@@ -94,26 +126,30 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcChip from '@nextcloud/vue/components/NcChip'
 import DeleteIcon from 'vue-material-design-icons/Delete.vue'
 import PencilIcon from 'vue-material-design-icons/Pencil.vue'
 import StarIcon from 'vue-material-design-icons/Star.vue'
 import StarOutlineIcon from 'vue-material-design-icons/StarOutline.vue'
 import TestTubeIcon from 'vue-material-design-icons/TestTube.vue'
+import TuneIcon from 'vue-material-design-icons/Tune.vue'
 import { t } from '@nextcloud/l10n'
-import type { FieldDefinition, GatewayInstance } from '../services/adminGatewayApi.ts'
+import type { FieldDefinition, GatewayGroup, GatewayInstance } from '../services/adminGatewayApi.ts'
 
 const MASKED_FIELDS = ['token', 'password', 'secret', 'api_key', 'key', 'pass', 'credential']
 
 export default defineComponent({
 	name: 'GatewayInstanceCard',
-	components: { NcButton, DeleteIcon, PencilIcon, StarIcon, StarOutlineIcon, TestTubeIcon },
+	components: { NcButton, NcChip, DeleteIcon, PencilIcon, StarIcon, StarOutlineIcon, TestTubeIcon, TuneIcon },
 
 	props: {
 		instance: { type: Object as PropType<GatewayInstance>, required: true },
 		fields: { type: Array as PropType<FieldDefinition[]>, default: () => [] },
+		providerName: { type: String, default: '' },
+		groups: { type: Array as PropType<GatewayGroup[]>, default: () => [] },
 	},
 
-	emits: ['edit', 'delete', 'set-default', 'test'],
+	emits: ['edit', 'delete', 'set-default', 'test', 'routing'],
 
 	setup() {
 		return { t }
@@ -122,11 +158,34 @@ export default defineComponent({
 	computed: {
 		maskedConfig(): Record<string, string> {
 			const result: Record<string, string> = {}
+			const secretFields = new Set(
+				this.fields
+					.filter((field) => field.type === 'secret')
+					.map((field) => field.field),
+			)
+			const hiddenFields = new Set(
+				this.fields
+					.filter((field) => field.hidden)
+					.map((field) => field.field),
+			)
 			for (const [key, value] of Object.entries(this.instance.config)) {
-				const isSensitive = MASKED_FIELDS.some((f) => key.toLowerCase().includes(f))
+				if (key === 'provider' || hiddenFields.has(key)) {
+					continue
+				}
+				const isSensitive = secretFields.has(key) || MASKED_FIELDS.some((f) => key.toLowerCase().includes(f))
 				result[key] = isSensitive && value ? '••••••••' : (value || '—')
 			}
 			return result
+		},
+
+		routingGroupsLabel(): string {
+			if (this.instance.groupIds.length === 0) {
+				return ''
+			}
+
+			return this.instance.groupIds
+				.map((groupId) => this.groups.find((group) => group.id === groupId)?.displayName ?? groupId)
+				.join(', ')
 		},
 	},
 
@@ -186,27 +245,6 @@ export default defineComponent({
 		.card-actions {
 			display: flex;
 			gap: 0.25rem;
-		}
-	}
-
-	.badge {
-		font-size: 0.75rem;
-		padding: 0.1rem 0.5rem;
-		border-radius: 1rem;
-
-		&--default {
-			background: var(--color-primary-element-light, #d5e7ff);
-			color: var(--color-primary-element, #0066cc);
-		}
-
-		&--complete {
-			background: var(--color-success-bg, #d5f5d5);
-			color: var(--color-success, #1a7c1a);
-		}
-
-		&--incomplete {
-			background: var(--color-warning-bg, #fff3cd);
-			color: var(--color-warning, #996600);
 		}
 	}
 
