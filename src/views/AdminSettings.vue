@@ -44,6 +44,7 @@
 					:fields="item.fields"
 					:provider-name="item.providerName"
 					:groups="groups"
+					:show-routing-action="item.showRoutingAction"
 					@edit="openEditById(item.gatewayId, $event)"
 					@routing="openRoutingById(item.gatewayId, $event)"
 					@delete="confirmDelete(item)"
@@ -136,6 +137,7 @@ interface FlatInstanceEntry {
 	providerName: string
 	fields: FieldDefinition[]
 	instance: GatewayInstance
+	showRoutingAction: boolean
 }
 
 export default defineComponent({
@@ -189,6 +191,7 @@ export default defineComponent({
 		allInstances(): FlatInstanceEntry[] {
 			const rows: FlatInstanceEntry[] = []
 			for (const gateway of this.gateways) {
+				const routingRelevantForGateway = gateway.instances.length > 1
 				for (const instance of gateway.instances) {
 					const selectedProviderId = gateway.providerSelector
 						? instance.config[gateway.providerSelector.field]
@@ -199,6 +202,7 @@ export default defineComponent({
 						providerName: selectedProvider?.name ?? gateway.name,
 						fields: selectedProvider?.fields ?? gateway.fields,
 						instance,
+						showRoutingAction: routingRelevantForGateway || instance.groupIds.length > 0 || instance.priority > 0,
 					})
 				}
 			}
