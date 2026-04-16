@@ -62,6 +62,7 @@
 				</NcButton>
 
 				<NcButton
+					v-if="showRoutingAction"
 					type="tertiary"
 					:title="t('twofactor_gateway', 'Routing')"
 					:aria-label="t('twofactor_gateway', 'Routing')"
@@ -147,6 +148,7 @@ export default defineComponent({
 		fields: { type: Array as PropType<FieldDefinition[]>, default: () => [] },
 		providerName: { type: String, default: '' },
 		groups: { type: Array as PropType<GatewayGroup[]>, default: () => [] },
+		showRoutingAction: { type: Boolean, default: true },
 	},
 
 	emits: ['edit', 'delete', 'set-default', 'test', 'routing'],
