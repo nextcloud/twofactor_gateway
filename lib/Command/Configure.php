@@ -13,6 +13,7 @@ use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\GoWhatsAppSessionMonitorJobManager;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory;
+use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,6 +28,7 @@ class Configure extends Command {
 	public function __construct(
 		private Factory $gatewayFactory,
 		private GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager,
+		private GatewayConfigService $configService,
 	) {
 		parent::__construct('twofactorauth:gateway:configure');
 		$this->setDescription('Configure a gateway for sending messages');
@@ -71,13 +73,50 @@ class Configure extends Command {
 			$gateway = $this->gateways[$gatewayName];
 		}
 
+		// Remember the current default instance so we can restore legacy-key mirroring after the new
+		// instance's fields are written to the shared ("primary") keys by cliConfigure().
+		$existingDefaultId = $this->findDefaultInstanceId($gateway);
+
 		try {
 			$result = $gateway->cliConfigure($input, $output);
 			$this->goWhatsAppSessionMonitorJobManager->sync();
-			return $result;
 		} catch (InvalidProviderException $e) {
 			$output->writeln("<error>Invalid gateway $gatewayName</error>");
 			return 1;
 		}
+
+		if ($result !== Command::SUCCESS) {
+			return $result;
+		}
+
+		// Register the newly configured values as a named instance in the registry so
+		// the web UI can list it.  cliConfigure() writes the configuration to the shared
+		// legacy keys; we read it back from there and persist it as a proper instance.
+		$config = $gateway->getConfiguration();
+		$existingCount = count($this->configService->listInstances($gateway));
+		$label = $existingCount === 0 ? 'Default' : 'Instance ' . ($existingCount + 1);
+
+		$this->configService->createInstance($gateway, $label, $config);
+
+		// If there was a pre-existing default instance, its shared ("primary") legacy
+		// keys were overwritten by cliConfigure().  Re-mirror the default so the 2FA
+		// flow keeps using the correct configuration.
+		if ($existingDefaultId !== null) {
+			$this->configService->setDefaultInstance($gateway, $existingDefaultId);
+		}
+
+		return Command::SUCCESS;
+	}
+
+	/**
+	 * Return the id of the current default instance for $gateway, or null if none exists.
+	 */
+	private function findDefaultInstanceId(AGateway $gateway): ?string {
+		foreach ($this->configService->listInstances($gateway) as $instance) {
+			if ($instance['default']) {
+				return $instance['id'];
+			}
+		}
+		return null;
 	}
 }
