@@ -407,13 +407,11 @@ describe('GatewayInstanceModal (create mode)', () => {
 		})
 		await flushPromises()
 
-		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { gatewayId: string; label: string; config: Record<string, string>; priority: number; groupIds: string[] } | undefined
+		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { gatewayId: string; label: string; config: Record<string, string> } | undefined
 		expect(savedPayload).toBeDefined()
 		expect(savedPayload?.gatewayId).toBe('gowhatsapp')
 		expect(savedPayload?.label).toBe('Primary WhatsApp')
 		expect(savedPayload?.config.base_url).toBe('https://wa.example.com')
-		expect(savedPayload?.priority).toBe(0)
-		expect(savedPayload?.groupIds).toEqual([])
 	})
 
 	it('hides provider selector when catalog has duplicate entries for the same provider id', async () => {
@@ -619,16 +617,10 @@ describe('GatewayInstanceModal (edit mode)', () => {
 			props: {
 				show: true,
 				gateways: [signalGateway],
-				groups: [
-					{ id: 'client-a', displayName: 'Client A' },
-					{ id: 'admins', displayName: 'Admins' },
-				],
 				gatewayId: 'signal',
 				instanceId: 'abc123',
 				initialLabel: 'Production',
 				initialConfig: { url: 'http://signal.example.com' },
-				initialGroupIds: ['admins'],
-				initialPriority: 10,
 			},
 		})
 
@@ -774,21 +766,15 @@ describe('GatewayInstanceModal (edit mode)', () => {
 		expect(savedPayload?.config.webhook_min_check_interval).toBe('120')
 	})
 
-	it('preserves existing routing metadata when saving general edits', async () => {
+	it('emits only gateway, instance, label and config when saving general edits', async () => {
 		const wrapper = mount(GatewayInstanceModal, {
 			props: {
 				show: true,
 				gateways: [signalGateway],
-				groups: [
-					{ id: 'client-a', displayName: 'Client A' },
-					{ id: 'admins', displayName: 'Admins' },
-				],
 				gatewayId: 'signal',
 				instanceId: 'abc123',
 				initialLabel: 'Production',
 				initialConfig: { url: 'http://signal.example.com' },
-				initialGroupIds: ['admins'],
-				initialPriority: 10,
 			},
 		})
 
@@ -801,9 +787,10 @@ describe('GatewayInstanceModal (edit mode)', () => {
 		const saveButton = wrapper.findAll('button').at(-1)
 		await saveButton?.trigger('click')
 
-		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { label: string; groupIds: string[]; priority: number } | undefined
+		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { gatewayId: string; instanceId: string; label: string; config: Record<string, string> } | undefined
+		expect(savedPayload?.gatewayId).toBe('signal')
+		expect(savedPayload?.instanceId).toBe('abc123')
 		expect(savedPayload?.label).toBe('Production 2')
-		expect(savedPayload?.priority).toBe(10)
-		expect(savedPayload?.groupIds).toEqual(['admins'])
+		expect(savedPayload?.config.url).toBe('http://signal.example.com')
 	})
 })
