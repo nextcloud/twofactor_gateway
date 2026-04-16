@@ -21,6 +21,8 @@ use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCP\AppFramework\Http;
+use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IRequest;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -30,6 +32,7 @@ class AdminGatewayControllerTest extends TestCase {
 	private GatewayConfigService&MockObject $configService;
 	private GatewayFactory&MockObject $gatewayFactory;
 	private GoWhatsAppSessionMonitorJobManager&MockObject $goWhatsAppSessionMonitorJobManager;
+	private IGroupManager&MockObject $groupManager;
 
 	protected function setUp(): void {
 		parent::setUp();
@@ -37,6 +40,7 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->configService = $this->createMock(GatewayConfigService::class);
 		$this->gatewayFactory = $this->createMock(GatewayFactory::class);
 		$this->goWhatsAppSessionMonitorJobManager = $this->createMock(GoWhatsAppSessionMonitorJobManager::class);
+		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->goWhatsAppSessionMonitorJobManager->method('sync');
 
 		$this->controller = new AdminGatewayController(
@@ -44,6 +48,7 @@ class AdminGatewayControllerTest extends TestCase {
 			$this->configService,
 			$this->gatewayFactory,
 			$this->goWhatsAppSessionMonitorJobManager,
+			$this->groupManager,
 		);
 	}
 
@@ -108,6 +113,26 @@ class AdminGatewayControllerTest extends TestCase {
 		$data = $response->getData();
 		$this->assertCount(1, $data);
 		$this->assertSame('sms', $data[0]['id']);
+	}
+
+	public function testGetGroupsReturnsSortedAssignableGroups(): void {
+		$groupA = $this->createMock(IGroup::class);
+		$groupA->method('getGID')->willReturn('admins');
+		$groupA->method('getDisplayName')->willReturn('Admins');
+
+		$groupB = $this->createMock(IGroup::class);
+		$groupB->method('getGID')->willReturn('alpha');
+		$groupB->method('getDisplayName')->willReturn('Alpha');
+
+		$this->groupManager->method('search')->with('')->willReturn([$groupA, $groupB]);
+
+		$response = $this->controller->getGroups();
+
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
+		$this->assertSame([
+			['id' => 'admins', 'displayName' => 'Admins'],
+			['id' => 'alpha', 'displayName' => 'Alpha'],
+		], $response->getData());
 	}
 
 	public function testCreateInstanceReturns201OnSuccess(): void {
