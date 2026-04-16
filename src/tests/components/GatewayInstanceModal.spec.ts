@@ -72,9 +72,25 @@ vi.mock('@nextcloud/vue/components/NcPasswordField', () => ({
 
 vi.mock('@nextcloud/vue/components/NcSelect', () => ({
 	default: defineComponent({
-		props: ['modelValue', 'options', 'placeholder', 'label', 'trackBy', 'reduce'],
+		props: ['modelValue', 'options', 'placeholder', 'label', 'trackBy', 'reduce', 'multiple', 'keepOpen', 'closeOnSelect', 'deselectFromDropdown', 'inputId'],
 		emits: ['update:modelValue'],
-		template: '<select @change="$emit(\'update:modelValue\', $event.target.value)"><option v-for="opt in options" :key="opt.value" :value="opt.value">{{ opt.label }}</option></select>',
+		template: `<div class="nc-select-mock">
+			<select :multiple="multiple" @change="onSelectChange">
+				<option v-for="opt in options" :key="opt.id ?? opt.value" :value="opt.id ?? opt.value">{{ opt.displayName ?? opt.label }}</option>
+			</select>
+		</div>`,
+		methods: {
+			onSelectChange(event: Event) {
+				const select = event.target as HTMLSelectElement
+				if (this.multiple) {
+					const selectedIds = Array.from(select.selectedOptions).map((o) => o.value)
+					const selectedObjects = (this.options as Array<Record<string, string>>).filter((o) => selectedIds.includes(o.id ?? o.value))
+					this.$emit('update:modelValue', selectedObjects)
+				} else {
+					this.$emit('update:modelValue', select.value)
+				}
+			},
+		},
 	}),
 }))
 
@@ -391,11 +407,13 @@ describe('GatewayInstanceModal (create mode)', () => {
 		})
 		await flushPromises()
 
-		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { gatewayId: string; label: string; config: Record<string, string> } | undefined
+		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { gatewayId: string; label: string; config: Record<string, string>; priority: number; groupIds: string[] } | undefined
 		expect(savedPayload).toBeDefined()
 		expect(savedPayload?.gatewayId).toBe('gowhatsapp')
 		expect(savedPayload?.label).toBe('Primary WhatsApp')
 		expect(savedPayload?.config.base_url).toBe('https://wa.example.com')
+		expect(savedPayload?.priority).toBe(0)
+		expect(savedPayload?.groupIds).toEqual([])
 	})
 
 	it('hides provider selector when catalog has duplicate entries for the same provider id', async () => {
@@ -647,7 +665,10 @@ describe('GatewayInstanceModal (edit mode)', () => {
 		})
 
 		await flushPromises()
-		expect(wrapper.findAll('input')).toHaveLength(2)
+		const inputValues = wrapper.findAll('input').map((input) => (input.element as HTMLInputElement).value)
+		expect(inputValues).toContain('https://wa.example.com')
+		expect(wrapper.text()).not.toContain('Session ID')
+		expect(inputValues).toContain('abc123')
 	})
 
 	it('renders boolean fields as switch and emits 0/1 values', async () => {
@@ -712,8 +733,9 @@ describe('GatewayInstanceModal (edit mode)', () => {
 
 		await flushPromises()
 
-		const textInputs = wrapper.findAll('input[type="text"]')
-		const integerInput = textInputs.at(-1)
+		const integerInput = wrapper.findAll('input[type="text"]').find(
+			(input) => (input.element as HTMLInputElement).value === '30',
+		)
 		expect(integerInput?.exists()).toBe(true)
 
 		await integerInput?.setValue('-1')
@@ -726,5 +748,41 @@ describe('GatewayInstanceModal (edit mode)', () => {
 
 		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { config: Record<string, string> } | undefined
 		expect(savedPayload?.config.webhook_min_check_interval).toBe('120')
+	})
+
+	it('emits selected routing groups and priority', async () => {
+		const wrapper = mount(GatewayInstanceModal, {
+			props: {
+				show: true,
+				gateways: [signalGateway],
+				groups: [
+					{ id: 'client-a', displayName: 'Client A' },
+					{ id: 'admins', displayName: 'Admins' },
+				],
+				gatewayId: 'signal',
+				instanceId: 'abc123',
+				initialLabel: 'Production',
+				initialConfig: { url: 'http://signal.example.com' },
+				initialGroupIds: ['admins'],
+				initialPriority: 10,
+			},
+		})
+
+		await flushPromises()
+
+		const textInputs = wrapper.findAll('input[type="text"]')
+		const priorityInput = textInputs.at(-1)
+		await priorityInput?.setValue('30')
+
+		// Simulate selecting both groups via the NcSelect multiple mock
+		const groupSelect = wrapper.find('.nc-select-mock select')
+		await groupSelect.setValue(['admins', 'client-a'])
+
+		const saveButton = wrapper.findAll('button').at(-1)
+		await saveButton?.trigger('click')
+
+		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { groupIds: string[]; priority: number } | undefined
+		expect(savedPayload?.priority).toBe(30)
+		expect(savedPayload?.groupIds).toEqual(['admins', 'client-a'])
 	})
 })
