@@ -614,6 +614,30 @@ describe('GatewayInstanceModal (edit mode)', () => {
 		expect(wrapper.emitted('saved')).toBeDefined()
 	})
 
+	it('does not render routing controls in the general edit modal', async () => {
+		const wrapper = mount(GatewayInstanceModal, {
+			props: {
+				show: true,
+				gateways: [signalGateway],
+				groups: [
+					{ id: 'client-a', displayName: 'Client A' },
+					{ id: 'admins', displayName: 'Admins' },
+				],
+				gatewayId: 'signal',
+				instanceId: 'abc123',
+				initialLabel: 'Production',
+				initialConfig: { url: 'http://signal.example.com' },
+				initialGroupIds: ['admins'],
+				initialPriority: 10,
+			},
+		})
+
+		await flushPromises()
+
+		expect(wrapper.text()).not.toContain('tr:Routing priority')
+		expect(wrapper.text()).not.toContain('tr:Routing groups')
+	})
+
 	it('renders secret fields using password input component', () => {
 		const secretGateway: GatewayInfo = {
 			id: 'secretgw',
@@ -750,7 +774,7 @@ describe('GatewayInstanceModal (edit mode)', () => {
 		expect(savedPayload?.config.webhook_min_check_interval).toBe('120')
 	})
 
-	it('emits selected routing groups and priority', async () => {
+	it('preserves existing routing metadata when saving general edits', async () => {
 		const wrapper = mount(GatewayInstanceModal, {
 			props: {
 				show: true,
@@ -771,18 +795,15 @@ describe('GatewayInstanceModal (edit mode)', () => {
 		await flushPromises()
 
 		const textInputs = wrapper.findAll('input[type="text"]')
-		const priorityInput = textInputs.at(-1)
-		await priorityInput?.setValue('30')
-
-		// Simulate selecting both groups via the NcSelect multiple mock
-		const groupSelect = wrapper.find('.nc-select-mock select')
-		await groupSelect.setValue(['admins', 'client-a'])
+		const labelInput = textInputs.find((input) => (input.element as HTMLInputElement).value === 'Production')
+		await labelInput?.setValue('Production 2')
 
 		const saveButton = wrapper.findAll('button').at(-1)
 		await saveButton?.trigger('click')
 
-		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { groupIds: string[]; priority: number } | undefined
-		expect(savedPayload?.priority).toBe(30)
-		expect(savedPayload?.groupIds).toEqual(['admins', 'client-a'])
+		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { label: string; groupIds: string[]; priority: number } | undefined
+		expect(savedPayload?.label).toBe('Production 2')
+		expect(savedPayload?.priority).toBe(10)
+		expect(savedPayload?.groupIds).toEqual(['admins'])
 	})
 })
