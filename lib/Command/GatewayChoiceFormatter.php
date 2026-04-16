@@ -19,7 +19,7 @@ final class GatewayChoiceFormatter {
 	public static function gatewayLabels(array $gateways): array {
 		$labels = [];
 		foreach ($gateways as $gatewayId => $gateway) {
-			$labels[$gatewayId] = sprintf('%s (%s)', $gateway->getSettings()->name, $gatewayId);
+			$labels[$gatewayId] = $gateway->getSettings()->name;
 		}
 
 		return $labels;
