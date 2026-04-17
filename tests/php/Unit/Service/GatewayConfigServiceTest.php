@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\GatewayInstanceNotFoundException;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
