@@ -25,16 +25,6 @@
 				</div>
 			</div>
 
-			<div class="modal-field">
-				<NcTextField
-					:model-value="String(priority)"
-					:label="t('twofactor_gateway', 'Priority')"
-					:placeholder="t('twofactor_gateway', '0 = no preference, higher runs first')"
-					:error="!!errors.priority"
-					:helper-text="errors.priority ?? t('twofactor_gateway', 'Higher priority instances are tried first when multiple instances match.')"
-					@update:modelValue="onPriorityChange" />
-			</div>
-
 			<div v-if="groups.length > 0" class="modal-field">
 				<label for="routing-groups-select">{{ t('twofactor_gateway', 'Groups') }}</label>
 				<NcSelect
@@ -78,7 +68,6 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
-import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
 import type { GatewayGroup } from '../services/adminGatewayApi.ts'
 
@@ -89,7 +78,6 @@ export default defineComponent({
 		NcLoadingIcon,
 		NcModal,
 		NcSelect,
-		NcTextField,
 	},
 
 	props: {
@@ -98,7 +86,6 @@ export default defineComponent({
 		instanceId: { type: String, default: '' },
 		groups: { type: Array as PropType<GatewayGroup[]>, default: () => [] },
 		initialGroupIds: { type: Array as PropType<string[]>, default: () => [] },
-		initialPriority: { type: Number, default: 0 },
 	},
 
 	emits: ['close', 'saved'],
@@ -111,8 +98,6 @@ export default defineComponent({
 		return {
 			saving: false,
 			selectedGroups: this.groups.filter((group) => this.initialGroupIds.includes(group.id)) as GatewayGroup[],
-			priority: this.initialPriority,
-			errors: {} as Record<string, string>,
 		}
 	},
 
@@ -120,40 +105,17 @@ export default defineComponent({
 		initialGroupIds(value: string[]) {
 			this.selectedGroups = this.groups.filter((group) => value.includes(group.id))
 		},
-		initialPriority(value: number) {
-			this.priority = value
-		},
 		groups() {
 			this.selectedGroups = this.groups.filter((group) => this.initialGroupIds.includes(group.id))
 		},
 	},
 
 	methods: {
-		onPriorityChange(value: unknown): void {
-			const normalizedValue = String(value ?? '').trim()
-			this.priority = normalizedValue === '' ? 0 : Number.parseInt(normalizedValue, 10)
-		},
-
-		validate(): boolean {
-			this.errors = {}
-			if (!Number.isInteger(this.priority) || Number.isNaN(this.priority)) {
-				this.errors.priority = t('twofactor_gateway', 'Priority must be an integer.')
-				return false
-			}
-
-			return true
-		},
-
 		async save() {
-			if (!this.validate()) {
-				return
-			}
-
 			this.saving = true
 			try {
 				this.$emit('saved', {
 					groupIds: this.selectedGroups.map((group) => group.id).sort(),
-					priority: this.priority,
 				})
 			} finally {
 				this.saving = false
