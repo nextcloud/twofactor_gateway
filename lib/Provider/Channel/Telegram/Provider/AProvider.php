@@ -62,6 +62,17 @@ abstract class AProvider implements IProvider {
 	#[\Override]
 	abstract public function cliConfigure(InputInterface $input, OutputInterface $output): int;
 
+	/**
+	 * Clone provider with an ephemeral runtime configuration.
+	 *
+	 * @param array<string, string> $config
+	 */
+	public function withRuntimeConfig(array $config): static {
+		$clone = clone $this;
+		$clone->runtimeConfig = $config;
+		return $clone;
+	}
+
 	public function isComplete(): bool {
 		$settings = $this->getSettings();
 		$providerId = $settings->id ?? $this->getProviderId();
