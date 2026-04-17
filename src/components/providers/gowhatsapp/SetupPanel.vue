@@ -175,7 +175,7 @@ type WizardDevice = {
 }
 
 export default defineComponent({
-	name: 'GoWhatsAppSetupPanel',
+	name: 'SetupPanel',
 	components: {
 		NcAvatar,
 		NcButton,
@@ -253,7 +253,7 @@ export default defineComponent({
 				this.wizardMessageType = 'warning'
 				return
 			}
-			this.pairingPollTimer = setTimeout(() => { void this.pollPairingOnce() }, 3000)
+			this.pairingPollTimer = setTimeout(() => { this.pollPairingOnce() }, 3000)
 		},
 
 		async pollPairingOnce() {
@@ -301,15 +301,15 @@ export default defineComponent({
 			}
 
 			switch (response.status) {
-				case 'done':
-					return 'success'
-				case 'error':
-					return 'error'
-				case 'needs_input':
-				case 'pending':
-				case 'cancelled':
-				default:
-					return 'info'
+			case 'done':
+				return 'success'
+			case 'error':
+				return 'error'
+			case 'needs_input':
+			case 'pending':
+			case 'cancelled':
+			default:
+				return 'info'
 			}
 		},
 
