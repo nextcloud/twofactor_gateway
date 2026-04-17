@@ -111,6 +111,27 @@ vi.mock('vue-material-design-icons/AlertCircle.vue', () => ({
 	default: defineComponent({ template: '<span class="alert-circle-icon" />' }),
 }))
 
+vi.mock('vue-material-design-icons/DragVertical.vue', () => ({
+	default: defineComponent({ template: '<span class="drag-vertical-icon" />' }),
+}))
+
+vi.mock('vuedraggable', () => ({
+	default: defineComponent({
+		name: 'draggable',
+		props: {
+			modelValue: { type: Array, default: () => [] },
+		},
+		emits: ['update:modelValue', 'end'],
+		template: `
+			<div class="draggable-stub">
+				<template v-for="(item, index) in modelValue" :key="index">
+					<slot name="item" :element="item" :index="index" />
+				</template>
+			</div>
+		`,
+	}),
+}))
+
 vi.mock('../../components/GatewayInstanceCard.vue', () => ({
 	default: GatewayInstanceCardStub,
 }))
@@ -378,5 +399,74 @@ describe('AdminSettings', () => {
 		await flushPromises()
 
 		expect(wrapper.find('.gateway-instance-card').attributes('data-routing')).toBe('true')
+	})
+
+	it('updates priorities when instances are reordered via drag and drop', async () => {
+		const api = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(api.listGateways)
+			.mockResolvedValueOnce([
+				{
+					id: 'signal',
+					name: 'Signal',
+					instructions: '',
+					allowMarkdown: false,
+					fields: [],
+					instances: [
+						makeInstance({ id: 's1', label: 'Signal', priority: 2 }),
+					],
+				},
+				{
+					id: 'telegram',
+					name: 'Telegram',
+					instructions: '',
+					allowMarkdown: false,
+					fields: [],
+					instances: [
+						makeInstance({ id: 't1', providerId: 'telegram', label: 'Telegram', default: false, priority: 1 }),
+					],
+				},
+			])
+			.mockResolvedValueOnce([
+				{
+					id: 'signal',
+					name: 'Signal',
+					instructions: '',
+					allowMarkdown: false,
+					fields: [],
+					instances: [makeInstance({ id: 's1', label: 'Signal', priority: 1 })],
+				},
+				{
+					id: 'telegram',
+					name: 'Telegram',
+					instructions: '',
+					allowMarkdown: false,
+					fields: [],
+					instances: [makeInstance({ id: 't1', providerId: 'telegram', label: 'Telegram', default: false, priority: 2 })],
+				},
+			])
+
+		const wrapper = mount(AdminSettings)
+		await flushPromises()
+
+		const vm = wrapper.vm as unknown as {
+			orderedInstances: Array<{
+				gatewayId: string
+				instance: {
+					id: string
+					label: string
+					config: Record<string, string>
+					groupIds: string[]
+					priority: number
+				}
+			}>
+			onInstancesReordered: (payload: { oldIndex: number; newIndex: number }) => Promise<void>
+		}
+
+		const [first, second] = vm.orderedInstances
+		vm.orderedInstances = [second, first]
+		await vm.onInstancesReordered({ oldIndex: 1, newIndex: 0 })
+
+		expect(api.updateInstance).toHaveBeenCalledWith('telegram', 't1', 'Telegram', {}, [], 2)
+		expect(api.updateInstance).toHaveBeenCalledWith('signal', 's1', 'Signal', {}, [], 1)
 	})
 })

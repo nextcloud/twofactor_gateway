@@ -103,8 +103,8 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 	}
 
 	#[\Override]
-	public function enrichTestResult(array $instanceConfig): array {
-		return $this->goWhatsAppGateway->enrichTestResult($instanceConfig);
+	public function enrichTestResult(array $instanceConfig, string $identifier = ''): array {
+		return $this->goWhatsAppGateway->enrichTestResult($instanceConfig, $identifier);
 	}
 
 	private function delegateDriver(): GoWhatsAppGateway {

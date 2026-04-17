@@ -25,7 +25,8 @@ interface ITestResultEnricher {
 	 * forwarded to the frontend as-is.
 	 *
 	 * @param array<string, string> $instanceConfig Field values for the specific instance under test
+	 * @param string $identifier Identifier used for the test message when available
 	 * @return array<string, string>
 	 */
-	public function enrichTestResult(array $instanceConfig): array;
+	public function enrichTestResult(array $instanceConfig, string $identifier = ''): array;
 }

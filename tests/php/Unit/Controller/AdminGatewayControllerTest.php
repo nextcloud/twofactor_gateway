@@ -139,7 +139,7 @@ class AdminGatewayControllerTest extends TestCase {
 		$gateway = $this->makeGatewayMock('telegram');
 		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);
 		$this->configService->method('createInstance')
-			->with($gateway, 'Prod', ['url' => 'https://example.com'])
+			->with($gateway, 'Prod', ['url' => 'https://example.com'], [], 0)
 			->willReturn(['id' => 'abc123', 'label' => 'Prod', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00', 'config' => ['url' => 'https://example.com'], 'isComplete' => true]);
 
 		$response = $this->controller->createInstance('telegram', 'Prod', ['url' => 'https://example.com']);
@@ -164,7 +164,7 @@ class AdminGatewayControllerTest extends TestCase {
 			['gowhatsapp', $goGateway],
 		]);
 		$this->configService->method('createInstance')
-			->with($goGateway, 'Prod', ['provider' => 'gowhatsapp', 'base_url' => 'https://wa.example.com'])
+			->with($goGateway, 'Prod', ['provider' => 'gowhatsapp', 'base_url' => 'https://wa.example.com'], [], 0)
 			->willReturn([
 				'id' => 'abc123',
 				'label' => 'Prod',
@@ -188,7 +188,7 @@ class AdminGatewayControllerTest extends TestCase {
 			['gowhatsapp', $goGateway],
 		]);
 		$this->configService->method('createInstance')
-			->with($goGateway, 'Prod', ['base_url' => 'https://wa.example.com'])
+			->with($goGateway, 'Prod', ['base_url' => 'https://wa.example.com'], [], 0)
 			->willReturn([
 				'id' => 'abc123',
 				'label' => 'Prod',
@@ -248,7 +248,7 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->gatewayFactory->method('get')->with('signal')->willReturn($gateway);
 		$record = ['id' => 'abc', 'label' => 'New', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00', 'config' => ['url' => 'https://signal.example.com'], 'isComplete' => true];
 		$this->configService->method('updateInstance')
-			->with($gateway, 'abc', 'New', ['url' => 'https://signal.example.com'])
+			->with($gateway, 'abc', 'New', ['url' => 'https://signal.example.com'], [], 0)
 			->willReturn($record);
 
 		$response = $this->controller->updateInstance('signal', 'abc', 'New', ['url' => 'https://signal.example.com']);
@@ -342,7 +342,7 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->configService->method('getInstance')->with($gateway, 'def')->willReturn($record);
 		$gateway->expects($this->once())->method('send');
 		$gateway->expects($this->once())->method('enrichTestResult')
-			->with($instanceConfig)
+			->with($instanceConfig, '+5511999990000')
 			->willReturn(['account_name' => 'Acme Corp']);
 
 		$response = $this->controller->testInstance('gowhatsapp', 'def', '+5511999990000');
@@ -366,7 +366,7 @@ class AdminGatewayControllerTest extends TestCase {
 		];
 		$this->configService->method('getInstance')->with($gateway, 'ghi')->willReturn($record);
 		$gateway->method('send');
-		$gateway->expects($this->once())->method('enrichTestResult')->willReturn([]);
+		$gateway->expects($this->once())->method('enrichTestResult')->with(['base_url' => 'http://wa.example.com'], '+5511999990000')->willReturn([]);
 
 		$response = $this->controller->testInstance('gowhatsapp', 'ghi', '+5511999990000');
 
