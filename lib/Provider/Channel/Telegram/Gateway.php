@@ -12,7 +12,9 @@ namespace OCA\TwoFactorGateway\Provider\Channel\Telegram;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IAppConfig;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -20,7 +22,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
-class Gateway extends AGateway {
+class Gateway extends AGateway implements IProviderCatalogGateway {
 
 	public function __construct(
 		public IAppConfig $appConfig,
@@ -32,6 +34,34 @@ class Gateway extends AGateway {
 	#[\Override]
 	public function send(string $identifier, string $message, array $extra = []): void {
 		$this->getProvider()->send($identifier, $message);
+	}
+
+	#[\Override]
+	public function getProviderSelectorField(): FieldDefinition {
+		return new FieldDefinition(
+			field: 'provider',
+			prompt: 'Telegram provider',
+			default: 'telegram_bot',
+			optional: false,
+			hidden: true,
+		);
+	}
+
+	#[\Override]
+	public function getProviderCatalog(): array {
+		$catalog = [];
+		foreach ($this->telegramProviderFactory->getFqcnList() as $fqcn) {
+			$provider = $this->telegramProviderFactory->get($fqcn);
+			$provider->setAppConfig($this->appConfig);
+			$settings = $provider->getSettings();
+			$catalog[] = [
+				'id' => (string)($settings->id ?? $provider->getProviderId()),
+				'name' => $settings->name,
+				'fields' => array_values($settings->fields),
+			];
+		}
+
+		return $catalog;
 	}
 
 	#[\Override]
@@ -113,9 +143,17 @@ class Gateway extends AGateway {
 	}
 
 	public function getProvider(string $providerName = ''): AProvider {
-		if ($providerName) {
-			$this->setProvider($providerName);
+		if ($providerName === '' && is_array($this->runtimeConfig)) {
+			$runtimeProvider = trim((string)($this->runtimeConfig['provider'] ?? ''));
+			if ($runtimeProvider !== '') {
+				$providerName = $runtimeProvider;
+			}
 		}
+
+		if ($providerName !== '') {
+			return $this->telegramProviderFactory->get($providerName);
+		}
+
 		$providerName = $this->appConfig->getValueString(Application::APP_ID, 'telegram_provider_name');
 		if ($providerName === '') {
 			throw new ConfigurationException();
