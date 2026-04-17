@@ -10,16 +10,19 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
 use OCA\TwoFactorGateway\BackgroundJob\GoWhatsAppSessionMonitorJob;
+use OCA\TwoFactorGateway\BackgroundJob\GoWhatsAppSessionMonitorReconcileJob;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
 use OCP\BackgroundJob\IJobList;
+use OCP\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 class GoWhatsAppSessionMonitorJobManagerTest extends TestCase {
 	private GatewayFactory&MockObject $gatewayFactory;
+	private IAppConfig&MockObject $appConfig;
 	private IJobList&MockObject $jobList;
 	private LoggerInterface&MockObject $logger;
 	private AGateway&MockObject $gateway;
@@ -30,18 +33,45 @@ class GoWhatsAppSessionMonitorJobManagerTest extends TestCase {
 		parent::setUp();
 
 		$this->gatewayFactory = $this->createMock(GatewayFactory::class);
+		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->jobList = $this->createMock(IJobList::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->gateway = $this->createMock(AGateway::class);
 
 		$this->manager = new GoWhatsAppSessionMonitorJobManager(
 			gatewayFactory: $this->gatewayFactory,
+			appConfig: $this->appConfig,
 			jobList: $this->jobList,
 			logger: $this->logger,
 		);
 	}
 
 	public function testAddsJobWhenGatewayConfiguredAndJobMissing(): void {
+		$this->appConfig->expects($this->once())
+			->method('getValueString')
+			->willReturn('0');
+		$this->jobList->expects($this->exactly(2))
+			->method('has')
+			->willReturnMap([
+				[GoWhatsAppSessionMonitorReconcileJob::class, null, false],
+				[GoWhatsAppSessionMonitorJob::class, null, false],
+			]);
+		$this->jobList->expects($this->exactly(2))
+			->method('add')
+			->willReturnCallback(function (string $jobClass, mixed $argument): void {
+				self::assertContains($jobClass, [
+					GoWhatsAppSessionMonitorReconcileJob::class,
+					GoWhatsAppSessionMonitorJob::class,
+				]);
+				self::assertNull($argument);
+			});
+		$this->logger->expects($this->exactly(2))
+			->method('info')
+			->with($this->logicalOr(
+				'Registered GoWhatsApp monitor reconcile background job.',
+				'Activated GoWhatsApp session monitor background job.',
+			));
+
 		$this->gatewayFactory->expects($this->once())
 			->method('get')
 			->with('gowhatsapp')
@@ -50,26 +80,22 @@ class GoWhatsAppSessionMonitorJobManagerTest extends TestCase {
 			->method('isComplete')
 			->willReturn(true);
 
-		$this->jobList->expects($this->once())
-			->method('has')
-			->with(GoWhatsAppSessionMonitorJob::class, null)
-			->willReturn(false);
-		$this->jobList->expects($this->once())
-			->method('add')
-			->with(GoWhatsAppSessionMonitorJob::class, null);
 		$this->jobList->expects($this->never())->method('remove');
 
 		$this->manager->sync();
 	}
 
 	public function testDoesNothingWhenGatewayConfiguredAndJobAlreadyActive(): void {
+		$this->appConfig->method('getValueString')->willReturn('0');
+		$this->jobList->expects($this->exactly(2))
+			->method('has')
+			->willReturnMap([
+				[GoWhatsAppSessionMonitorReconcileJob::class, null, true],
+				[GoWhatsAppSessionMonitorJob::class, null, true],
+			]);
 		$this->gatewayFactory->method('get')->with('gowhatsapp')->willReturn($this->gateway);
 		$this->gateway->method('isComplete')->willReturn(true);
 
-		$this->jobList->expects($this->once())
-			->method('has')
-			->with(GoWhatsAppSessionMonitorJob::class, null)
-			->willReturn(true);
 		$this->jobList->expects($this->never())->method('add');
 		$this->jobList->expects($this->never())->method('remove');
 
@@ -77,13 +103,16 @@ class GoWhatsAppSessionMonitorJobManagerTest extends TestCase {
 	}
 
 	public function testRemovesJobWhenGatewayNotConfiguredAndJobActive(): void {
+		$this->appConfig->method('getValueString')->willReturn('0');
+		$this->jobList->expects($this->exactly(2))
+			->method('has')
+			->willReturnMap([
+				[GoWhatsAppSessionMonitorReconcileJob::class, null, true],
+				[GoWhatsAppSessionMonitorJob::class, null, true],
+			]);
 		$this->gatewayFactory->method('get')->with('gowhatsapp')->willReturn($this->gateway);
 		$this->gateway->method('isComplete')->willReturn(false);
 
-		$this->jobList->expects($this->once())
-			->method('has')
-			->with(GoWhatsAppSessionMonitorJob::class, null)
-			->willReturn(true);
 		$this->jobList->expects($this->never())->method('add');
 		$this->jobList->expects($this->once())
 			->method('remove')
@@ -93,28 +122,58 @@ class GoWhatsAppSessionMonitorJobManagerTest extends TestCase {
 	}
 
 	public function testDoesNothingWhenGatewayNotConfiguredAndJobMissing(): void {
+		$this->appConfig->method('getValueString')->willReturn('0');
+		$this->jobList->expects($this->exactly(2))
+			->method('has')
+			->willReturnMap([
+				[GoWhatsAppSessionMonitorReconcileJob::class, null, true],
+				[GoWhatsAppSessionMonitorJob::class, null, false],
+			]);
 		$this->gatewayFactory->method('get')->with('gowhatsapp')->willReturn($this->gateway);
 		$this->gateway->method('isComplete')->willReturn(false);
 
-		$this->jobList->expects($this->once())
-			->method('has')
-			->with(GoWhatsAppSessionMonitorJob::class, null)
-			->willReturn(false);
 		$this->jobList->expects($this->never())->method('add');
 		$this->jobList->expects($this->never())->method('remove');
 
 		$this->manager->sync();
 	}
 
+	public function testDoesNotEnableSessionMonitorWhenReconfigurationIsRequired(): void {
+		$this->appConfig->expects($this->once())
+			->method('getValueString')
+			->willReturn('1');
+		$this->jobList->expects($this->exactly(2))
+			->method('has')
+			->willReturnMap([
+				[GoWhatsAppSessionMonitorReconcileJob::class, null, true],
+				[GoWhatsAppSessionMonitorJob::class, null, true],
+			]);
+		$this->gatewayFactory->expects($this->never())->method('get');
+		$this->jobList->expects($this->never())->method('add');
+		$this->jobList->expects($this->once())
+			->method('remove')
+			->with(GoWhatsAppSessionMonitorJob::class, null);
+
+		$this->manager->sync();
+	}
+
 	public function testLogsAndContinuesWhenGatewayFactoryFails(): void {
 		$exception = new \RuntimeException('gateway factory failure');
+		$this->appConfig->expects($this->once())
+			->method('getValueString')
+			->willReturn('0');
+		$this->jobList->expects($this->once())
+			->method('has')
+			->willReturnMap([
+				[GoWhatsAppSessionMonitorReconcileJob::class, null, true],
+				[GoWhatsAppSessionMonitorJob::class, null, false],
+			]);
 
 		$this->gatewayFactory->expects($this->once())
 			->method('get')
 			->with('gowhatsapp')
 			->willThrowException($exception);
 
-		$this->jobList->expects($this->never())->method('has');
 		$this->jobList->expects($this->never())->method('add');
 		$this->jobList->expects($this->never())->method('remove');
 
@@ -130,19 +189,14 @@ class GoWhatsAppSessionMonitorJobManagerTest extends TestCase {
 
 	public function testLogsAndContinuesWhenJobListFails(): void {
 		$exception = new \RuntimeException('job list failure');
-
-		$this->gatewayFactory->expects($this->once())
-			->method('get')
-			->with('gowhatsapp')
-			->willReturn($this->gateway);
-		$this->gateway->expects($this->once())
-			->method('isComplete')
-			->willReturn(true);
+		$this->appConfig->expects($this->never())->method('getValueString');
 
 		$this->jobList->expects($this->once())
 			->method('has')
-			->with(GoWhatsAppSessionMonitorJob::class, null)
+			->with(GoWhatsAppSessionMonitorReconcileJob::class, null)
 			->willThrowException($exception);
+		$this->gatewayFactory->expects($this->never())->method('get');
+		$this->gateway->expects($this->never())->method('isComplete');
 		$this->jobList->expects($this->never())->method('add');
 		$this->jobList->expects($this->never())->method('remove');
 
