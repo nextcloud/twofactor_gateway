@@ -12,6 +12,7 @@ namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Gateway as GoWhatsAppGateway;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IDefaultInstanceAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
@@ -21,7 +22,7 @@ use OCP\IAppConfig;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveSetupGateway, IDefaultInstanceAwareGateway, ITestResultEnricher {
+class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IProviderCatalogGateway, IInteractiveSetupGateway, IDefaultInstanceAwareGateway, ITestResultEnricher {
 	public function __construct(
 		public IAppConfig $appConfig,
 		private GoWhatsAppGateway $goWhatsAppGateway,
@@ -105,6 +106,11 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 	#[\Override]
 	public function enrichTestResult(array $instanceConfig, string $identifier = ''): array {
 		return $this->goWhatsAppGateway->enrichTestResult($instanceConfig, $identifier);
+	}
+
+	#[\Override]
+	public function syncAfterConfigurationChange(): void {
+		$this->delegateDriver()->syncAfterConfigurationChange();
 	}
 
 	private function delegateDriver(): GoWhatsAppGateway {
