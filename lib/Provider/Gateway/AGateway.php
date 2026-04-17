@@ -81,6 +81,17 @@ abstract class AGateway implements IGateway {
 	#[\Override]
 	abstract public function cliConfigure(InputInterface $input, OutputInterface $output): int;
 
+	/**
+	 * Clone the gateway with an ephemeral runtime configuration.
+	 *
+	 * @param array<string, string> $config
+	 */
+	public function withRuntimeConfig(array $config): static {
+		$clone = clone $this;
+		$clone->runtimeConfig = $config;
+		return $clone;
+	}
+
 	#[\Override]
 	public function remove(?Settings $settings = null): void {
 		if (!is_object($settings)) {

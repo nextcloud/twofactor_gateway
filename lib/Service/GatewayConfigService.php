@@ -13,6 +13,7 @@ use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\GatewayInstanceNotFoundException;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IAppConfig;
 
@@ -50,7 +51,7 @@ class GatewayConfigService {
 		foreach ($this->gatewayFactory->getFqcnList() as $fqcn) {
 			$gateway = $this->gatewayFactory->get($fqcn);
 			$settings = $gateway->getSettings();
-			$result[] = [
+			$gatewayEntry = [
 				'id' => $settings->id ?? $gateway->getProviderId(),
 				'name' => $settings->name,
 				'instructions' => $settings->instructions,
@@ -58,6 +59,23 @@ class GatewayConfigService {
 				'fields' => array_map(fn ($f) => $f->jsonSerialize(), $settings->fields),
 				'instances' => $this->listInstances($gateway),
 			];
+
+			if ($gateway instanceof IProviderCatalogGateway) {
+				$gatewayEntry['providerSelector'] = $gateway->getProviderSelectorField()->jsonSerialize();
+				$gatewayEntry['providerCatalog'] = array_map(
+					static fn (array $provider): array => [
+						'id' => (string)($provider['id'] ?? ''),
+						'name' => (string)($provider['name'] ?? ''),
+						'fields' => array_map(
+							static fn ($field): array => $field->jsonSerialize(),
+							$provider['fields'] ?? [],
+						),
+					],
+					$gateway->getProviderCatalog(),
+				);
+			}
+
+			$result[] = $gatewayEntry;
 		}
 		return $result;
 	}

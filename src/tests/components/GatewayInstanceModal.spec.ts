@@ -107,7 +107,7 @@ vi.mock('../../components/providers/registry', () => ({
 		if (providerId === 'gowhatsapp') {
 			return defineComponent({
 				name: 'MockGatewaySetupPanel',
-				props: ['providerId', 'config', 'canStart'],
+				props: ['gatewayId', 'providerId', 'config', 'canStart'],
 				emits: ['merge-config', 'setup-completed', 'update:wizardActive'],
 				template: '<div class="mock-gateway-setup-panel" />',
 			})
@@ -150,20 +150,26 @@ const smsLikeGatewayWithCatalog: GatewayInfo = {
 }
 
 const goWhatsAppGateway: GatewayInfo = {
-	id: 'gowhatsapp',
+	id: 'whatsapp',
 	name: 'WhatsApp',
 	instructions: '',
 	allowMarkdown: false,
-	fields: [
-		{ field: 'base_url', prompt: 'Base URL to your WhatsApp API endpoint:', default: '', optional: false },
-		{ field: 'phone', prompt: 'Phone number for WhatsApp Web access:', default: '', optional: false },
-		{ field: 'device_name', prompt: 'Device name shown in WhatsApp linked devices:', default: 'TwoFactor Gateway', optional: true },
-		{ field: 'username', prompt: 'API Username:', default: '', optional: true },
-		{ field: 'password', prompt: 'API Password:', default: '', optional: true, type: 'secret' },
-		{ field: 'webhook_hybrid_enabled', prompt: 'Enable hybrid monitoring webhook:', default: '0', optional: true, type: 'boolean' },
-		{ field: 'webhook_secret', prompt: 'Webhook HMAC secret for X-Hub-Signature-256:', default: '', optional: true, type: 'secret' },
-		{ field: 'webhook_min_check_interval', prompt: 'Minimum seconds between webhook-triggered checks:', default: '30', optional: true, type: 'integer' },
-	],
+	fields: [],
+	providerSelector: { field: 'provider', prompt: 'WhatsApp provider', default: 'gowhatsapp', optional: false },
+	providerCatalog: [{
+		id: 'gowhatsapp',
+		name: 'WhatsApp',
+		fields: [
+			{ field: 'base_url', prompt: 'Base URL to your WhatsApp API endpoint:', default: '', optional: false },
+			{ field: 'phone', prompt: 'Phone number for WhatsApp Web access:', default: '', optional: false },
+			{ field: 'device_name', prompt: 'Device name shown in WhatsApp linked devices:', default: 'TwoFactor Gateway', optional: true },
+			{ field: 'username', prompt: 'API Username:', default: '', optional: true },
+			{ field: 'password', prompt: 'API Password:', default: '', optional: true, type: 'secret' },
+			{ field: 'webhook_hybrid_enabled', prompt: 'Enable hybrid monitoring webhook:', default: '0', optional: true, type: 'boolean' },
+			{ field: 'webhook_secret', prompt: 'Webhook HMAC secret for X-Hub-Signature-256:', default: '', optional: true, type: 'secret' },
+			{ field: 'webhook_min_check_interval', prompt: 'Minimum seconds between webhook-triggered checks:', default: '30', optional: true, type: 'integer' },
+		],
+	}],
 	instances: [],
 }
 
@@ -255,7 +261,7 @@ describe('GatewayInstanceModal (create mode)', () => {
 			},
 		})
 
-		await wrapper.find('select').setValue('gowhatsapp')
+		await wrapper.find('select').setValue('whatsapp')
 		await flushPromises()
 
 		// Wizard panel is rendered
@@ -288,7 +294,7 @@ describe('GatewayInstanceModal (create mode)', () => {
 			},
 		})
 
-		await wrapper.find('select').setValue('gowhatsapp')
+		await wrapper.find('select').setValue('whatsapp')
 		await flushPromises()
 
 		const fields = (wrapper.vm as unknown as { fieldsToValidate: Array<{ field: string }> }).fieldsToValidate
@@ -307,7 +313,7 @@ describe('GatewayInstanceModal (create mode)', () => {
 			},
 		})
 
-		await wrapper.find('select').setValue('gowhatsapp')
+		await wrapper.find('select').setValue('whatsapp')
 		await flushPromises()
 
 		// Before session: select (provider) and label input are present
@@ -342,7 +348,7 @@ describe('GatewayInstanceModal (create mode)', () => {
 			},
 		})
 
-		await wrapper.find('select').setValue('gowhatsapp')
+		await wrapper.find('select').setValue('whatsapp')
 		await flushPromises()
 
 		const setupPanel = wrapper.findComponent({ name: 'MockGatewaySetupPanel' })
@@ -372,12 +378,32 @@ describe('GatewayInstanceModal (create mode)', () => {
 			},
 		})
 
-		await wrapper.find('select').setValue('gowhatsapp')
+		await wrapper.find('select').setValue('whatsapp')
 		await flushPromises()
 
 		const setupPanel = wrapper.findComponent({ name: 'MockGatewaySetupPanel' })
 		expect(setupPanel.exists()).toBe(true)
 		expect(setupPanel.props('canStart')).toBe(false)
+	})
+
+	it('passes parent gatewayId and selected providerId to guided setup panels', async () => {
+		const wrapper = mount(GatewayInstanceModal, {
+			props: {
+				show: true,
+				gateways: [goWhatsAppGateway],
+				gatewayId: '',
+				instanceId: '',
+				initialLabel: '',
+				initialConfig: {},
+			},
+		})
+
+		await wrapper.find('select').setValue('whatsapp')
+		await flushPromises()
+
+		const setupPanel = wrapper.findComponent({ name: 'MockGatewaySetupPanel' })
+		expect(setupPanel.props('gatewayId')).toBe('whatsapp')
+		expect(setupPanel.props('providerId')).toBe('gowhatsapp')
 	})
 
 	it('auto-saves when guided setup emits setup-completed', async () => {
@@ -392,7 +418,7 @@ describe('GatewayInstanceModal (create mode)', () => {
 			},
 		})
 
-		await wrapper.find('select').setValue('gowhatsapp')
+		await wrapper.find('select').setValue('whatsapp')
 		await flushPromises()
 
 		// First text input in create mode is label.
@@ -409,7 +435,7 @@ describe('GatewayInstanceModal (create mode)', () => {
 
 		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { gatewayId: string; label: string; config: Record<string, string> } | undefined
 		expect(savedPayload).toBeDefined()
-		expect(savedPayload?.gatewayId).toBe('gowhatsapp')
+		expect(savedPayload?.gatewayId).toBe('whatsapp')
 		expect(savedPayload?.label).toBe('Primary WhatsApp')
 		expect(savedPayload?.config.base_url).toBe('https://wa.example.com')
 	})
@@ -684,7 +710,17 @@ describe('GatewayInstanceModal (edit mode)', () => {
 		const inputValues = wrapper.findAll('input').map((input) => (input.element as HTMLInputElement).value)
 		expect(inputValues).toContain('https://wa.example.com')
 		expect(wrapper.text()).not.toContain('Session ID')
-		expect(inputValues).toContain('abc123')
+		expect(inputValues).not.toContain('abc123')
+	})
+
+	it('does not show the internal instance reference in edit mode', async () => {
+		const wrapper = mount(GatewayInstanceModal, { props: editProps })
+
+		await flushPromises()
+
+		expect(wrapper.text()).not.toContain('tr:Instance reference')
+		const inputValues = wrapper.findAll('input').map((input) => (input.element as HTMLInputElement).value)
+		expect(inputValues).not.toContain('abc123')
 	})
 
 	it('renders boolean fields as switch and emits 0/1 values', async () => {

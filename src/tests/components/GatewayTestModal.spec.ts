@@ -53,8 +53,15 @@ vi.mock('@nextcloud/vue/components/NcLoadingIcon', () => ({
 
 vi.mock('@nextcloud/vue/components/NcAvatar', () => ({
 	default: defineComponent({
-		props: ['displayName', 'size', 'isNoUser'],
-		template: '<span class="nc-avatar" :data-display-name="displayName" />',
+		props: ['displayName', 'url', 'size', 'isNoUser'],
+		template: `<span class="nc-avatar" :data-display-name="displayName" :data-url="url || ''" />`,
+	}),
+}))
+
+vi.mock('@nextcloud/vue/components/NcNoteCard', () => ({
+	default: defineComponent({
+		props: ['type'],
+		template: '<div class="nc-note-card" :data-type="type"><slot /></div>',
 	}),
 }))
 
@@ -124,7 +131,7 @@ describe('GatewayTestModal', () => {
 		await wrapper.findAll('button').at(-1)?.trigger('click')
 		await flushPromises()
 
-		expect(wrapper.find('.test-result--success').exists()).toBe(true)
+		expect(wrapper.find('.nc-note-card[data-type="success"]').exists()).toBe(true)
 		expect(wrapper.text()).toContain('Message sent successfully.')
 	})
 
@@ -137,7 +144,7 @@ describe('GatewayTestModal', () => {
 		await wrapper.findAll('button').at(-1)?.trigger('click')
 		await flushPromises()
 
-		expect(wrapper.find('.test-result--error').exists()).toBe(true)
+		expect(wrapper.find('.nc-note-card[data-type="error"]').exists()).toBe(true)
 		expect(wrapper.text()).toContain('Connection refused.')
 	})
 
@@ -152,7 +159,7 @@ describe('GatewayTestModal', () => {
 		vi.mocked(testInstance).mockResolvedValueOnce({
 			success: true,
 			message: 'Message sent successfully.',
-			accountInfo: { account_name: 'Acme Corp' },
+			accountInfo: { account_name: 'Acme Corp', account_avatar_url: 'https://wa.example/avatar.png' },
 		})
 
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
@@ -163,6 +170,7 @@ describe('GatewayTestModal', () => {
 		const avatar = wrapper.find('.nc-avatar')
 		expect(avatar.exists()).toBe(true)
 		expect(avatar.attributes('data-display-name')).toBe('Acme Corp')
+		expect(avatar.attributes('data-url')).toBe('https://wa.example/avatar.png')
 		expect(wrapper.find('.test-account-name').text()).toBe('Acme Corp')
 	})
 
