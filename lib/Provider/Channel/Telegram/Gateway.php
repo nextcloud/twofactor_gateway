@@ -151,6 +151,7 @@ class Gateway extends AGateway implements IProviderCatalogGateway {
 	}
 
 	public function getProvider(string $providerName = ''): AProvider {
+		$runtimeConfig = is_array($this->runtimeConfig) ? $this->runtimeConfig : null;
 		if ($providerName === '' && is_array($this->runtimeConfig)) {
 			$runtimeProvider = trim((string)($this->runtimeConfig['provider'] ?? ''));
 			if ($runtimeProvider !== '') {
@@ -159,7 +160,12 @@ class Gateway extends AGateway implements IProviderCatalogGateway {
 		}
 
 		if ($providerName !== '') {
-			return $this->telegramProviderFactory->get($providerName);
+			$provider = $this->telegramProviderFactory->get($providerName);
+			if ($runtimeConfig !== null) {
+				return $provider->withRuntimeConfig($runtimeConfig);
+			}
+
+			return $provider;
 		}
 
 		$providerName = $this->appConfig->getValueString(Application::APP_ID, 'telegram_provider_name');
@@ -167,7 +173,12 @@ class Gateway extends AGateway implements IProviderCatalogGateway {
 			throw new ConfigurationException();
 		}
 
-		return $this->telegramProviderFactory->get($providerName);
+		$provider = $this->telegramProviderFactory->get($providerName);
+		if ($runtimeConfig !== null) {
+			return $provider->withRuntimeConfig($runtimeConfig);
+		}
+
+		return $provider;
 	}
 
 	public function setProvider(string $provider): void {
