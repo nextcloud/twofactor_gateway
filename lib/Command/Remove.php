@@ -63,7 +63,7 @@ class Remove extends Command {
 		}
 
 		$gateway->remove();
-		$this->gatewayConfigurationSyncService->syncAfterConfigurationChange();
+		$this->gatewayConfigurationSyncService->syncAfterConfigurationChange($gateway);
 		$output->writeln("Removed configuration for gateway $gatewayName");
 		return 0;
 	}
