@@ -19,13 +19,17 @@
 				:placeholder="identifierPlaceholder"
 				:required="true" />
 
-			<div v-if="result" class="test-result" :class="result.success ? 'test-result--success' : 'test-result--error'">
-				<span>{{ result.message }}</span>
-			</div>
+			<NcNoteCard
+				v-if="result"
+				:type="result.success ? 'success' : 'error'"
+				class="test-result-note-card">
+				<p class="test-result-note-card__message">{{ result.message }}</p>
+			</NcNoteCard>
 
 			<div v-if="result?.accountInfo?.account_name" class="test-account-info">
 				<NcAvatar
 					:display-name="result.accountInfo.account_name"
+					:url="result.accountInfo.account_avatar_url || undefined"
 					:size="44"
 					:is-no-user="true" />
 				<span class="test-account-name">{{ result.accountInfo.account_name }}</span>
@@ -55,13 +59,14 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcModal from '@nextcloud/vue/components/NcModal'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
 import { testInstance } from '../services/adminGatewayApi.ts'
 
 export default defineComponent({
 	name: 'GatewayTestModal',
-	components: { NcAvatar, NcButton, NcLoadingIcon, NcModal, NcTextField },
+	components: { NcAvatar, NcButton, NcLoadingIcon, NcModal, NcNoteCard, NcTextField },
 
 	props: {
 		show: { type: Boolean, default: false },
@@ -142,18 +147,17 @@ export default defineComponent({
 		margin-top: 0;
 	}
 
-	.test-result {
-		padding: 0.75rem;
-		border-radius: var(--border-radius);
+	.test-result-note-card {
+		margin: 0;
 
-		&--success {
-			background: var(--color-success-bg, #d5f5d5);
-			color: var(--color-success, #1a7c1a);
+		:deep(.notecard__content) {
+			overflow-wrap: anywhere;
+			word-break: break-word;
 		}
 
-		&--error {
-			background: var(--color-error-bg, #f5d5d5);
-			color: var(--color-error, #cc0000);
+		.test-result-note-card__message {
+			margin: 0;
+			white-space: pre-wrap;
 		}
 	}
 

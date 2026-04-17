@@ -6,7 +6,24 @@
 	<div ref="wizardRoot" class="modal-wizard" tabindex="-1">
 		<h3>{{ t('twofactor_gateway', 'Guided WhatsApp Setup') }}</h3>
 		<NcNoteCard :type="wizardMessageType" class="wizard-note-card">
-			{{ wizardMessage }}
+			<p class="wizard-note-card__message">{{ wizardMessage }}</p>
+		</NcNoteCard>
+
+		<NcNoteCard
+			v-if="wizardMessageType === 'success' && wizardAccountName"
+			type="success"
+			class="wizard-account-card">
+			<div class="wizard-account-summary">
+				<NcAvatar
+					:display-name="wizardAccountName"
+					:url="wizardAccountAvatarUrl || undefined"
+					:is-no-user="true"
+					:size="36" />
+				<div class="wizard-account-summary__text">
+					<strong>{{ t('twofactor_gateway', 'Connected account') }}</strong>
+					<span>{{ wizardAccountName }}</span>
+				</div>
+			</div>
 		</NcNoteCard>
 
 		<!-- Bootstrap fields: collected before the wizard session starts -->
@@ -101,15 +118,23 @@
 		<div class="wizard-actions-inline">
 			<NcButton
 				v-if="!wizardSessionId"
-				type="secondary"
+				variant="secondary"
 				:disabled="wizardLoading || !canStart || !bootstrapBaseUrl.trim()"
 				@click="startWizard">
 				{{ t('twofactor_gateway', 'Start guided setup') }}
 			</NcButton>
 
 			<NcButton
+				v-if="wizardSessionId"
+				variant="tertiary"
+				:disabled="wizardLoading"
+				@click="cancelWizard">
+				{{ t('twofactor_gateway', 'Back') }}
+			</NcButton>
+
+			<NcButton
 				v-if="wizardStep === 'device_choice'"
-				type="primary"
+				variant="primary"
 				:disabled="wizardLoading"
 				@click="runWizardStep('choose_device', { strategy: wizardDeviceStrategy, device_id: wizardDeviceId })">
 				{{ t('twofactor_gateway', 'Continue') }}
@@ -117,20 +142,10 @@
 
 			<NcButton
 				v-if="wizardStep === 'phone'"
-				type="primary"
+				variant="primary"
 				:disabled="wizardLoading"
 				@click="runWizardStep('submit_phone', { phone: wizardPhone })">
 				{{ t('twofactor_gateway', 'Request pairing code') }}
-			</NcButton>
-
-
-
-			<NcButton
-				v-if="wizardSessionId"
-				type="tertiary"
-				:disabled="wizardLoading"
-				@click="cancelWizard">
-				{{ t('twofactor_gateway', 'Back') }}
 			</NcButton>
 		</div>
 	</div>
@@ -138,6 +153,7 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
+import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
@@ -161,6 +177,7 @@ type WizardDevice = {
 export default defineComponent({
 	name: 'GoWhatsAppSetupPanel',
 	components: {
+		NcAvatar,
 		NcButton,
 		NcNoteCard,
 		NcPasswordField,
@@ -168,6 +185,7 @@ export default defineComponent({
 		NcTextField,
 	},
 	props: {
+		gatewayId: { type: String, required: true },
 		providerId: { type: String, required: true },
 		config: { type: Object as PropType<Record<string, string>>, required: true },
 		canStart: { type: Boolean, default: true },
@@ -184,6 +202,8 @@ export default defineComponent({
 			wizardMessage: t('twofactor_gateway', 'Use the guided setup to validate API, choose device strategy, and complete pairing.'),
 			wizardMessageType: 'info' as 'info' | 'success' | 'warning' | 'error',
 			wizardPairCode: '',
+			wizardAccountName: '',
+			wizardAccountAvatarUrl: '',
 			wizardDeviceStrategy: 'use_existing',
 			wizardDeviceId: '',
 			wizardPhone: '',
@@ -243,7 +263,7 @@ export default defineComponent({
 			}
 			this.pairingAttempt++
 			try {
-				const response = await interactiveSetupStep(this.providerId, this.wizardSessionId, 'poll_pairing')
+				const response = await interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'poll_pairing')
 				this.applyWizardResponse(response)
 				if (this.wizardStep === 'pairing' && response.status !== 'error') {
 					this.schedulePairingPoll()
@@ -263,6 +283,8 @@ export default defineComponent({
 			this.wizardSessionId = ''
 			this.wizardStep = ''
 			this.wizardPairCode = ''
+			this.wizardAccountName = ''
+			this.wizardAccountAvatarUrl = ''
 			this.wizardDeviceStrategy = 'use_existing'
 			this.wizardDeviceId = ''
 			this.wizardPhone = ''
@@ -321,6 +343,14 @@ export default defineComponent({
 				}
 			}
 
+			const account = response.data?.account
+			if (account && typeof account === 'object') {
+				const accountName = (account as Record<string, unknown>).account_name
+				const accountAvatarUrl = (account as Record<string, unknown>).account_avatar_url
+				this.wizardAccountName = typeof accountName === 'string' ? accountName : ''
+				this.wizardAccountAvatarUrl = typeof accountAvatarUrl === 'string' ? accountAvatarUrl : ''
+			}
+
 			if (response.status === 'done') {
 				this.stopPairingPolling()
 				this.wizardStep = ''
@@ -356,8 +386,9 @@ export default defineComponent({
 			try {
 				this.wizardMessage = t('twofactor_gateway', 'Starting guided setup…')
 				this.wizardMessageType = 'info'
-				const response = await startInteractiveSetup(this.providerId, {
+				const response = await startInteractiveSetup(this.gatewayId, {
 					base_url: this.bootstrapBaseUrl,
+					provider: this.providerId,
 					username: this.bootstrapUsername,
 					password: this.bootstrapPassword,
 					device_name: this.bootstrapDeviceName,
@@ -381,7 +412,7 @@ export default defineComponent({
 			try {
 				this.wizardMessage = t('twofactor_gateway', 'Processing guided setup step…')
 				this.wizardMessageType = 'info'
-				const response = await interactiveSetupStep(this.providerId, this.wizardSessionId, action, input)
+				const response = await interactiveSetupStep(this.gatewayId, this.wizardSessionId, action, input)
 				this.applyWizardResponse(response)
 			} catch (error) {
 				this.wizardMessage = this.normalizeErrorMessage(error)
@@ -401,7 +432,7 @@ export default defineComponent({
 
 			this.wizardLoading = true
 			try {
-				await cancelInteractiveSetup(this.providerId, this.wizardSessionId)
+				await cancelInteractiveSetup(this.gatewayId, this.wizardSessionId)
 				this.resetWizardState()
 			} catch (error) {
 				this.wizardMessage = this.normalizeErrorMessage(error)
@@ -434,6 +465,20 @@ export default defineComponent({
 
 	.wizard-note-card {
 		margin: 0;
+
+		:deep(.notecard__content) {
+			overflow-wrap: anywhere;
+			word-break: break-word;
+		}
+
+		.wizard-note-card__message {
+			margin: 0;
+			white-space: pre-wrap;
+		}
+	}
+
+	.wizard-account-card {
+		margin: 0;
 	}
 
 	select {
@@ -463,6 +508,26 @@ export default defineComponent({
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
+}
+
+.wizard-account-summary {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.wizard-account-summary__text {
+	display: flex;
+	flex-direction: column;
+	gap: 0.125rem;
+
+	strong {
+		font-size: 0.875rem;
+	}
+
+	span {
+		font-size: 0.95rem;
+	}
 }
 
 .wizard-pairing-phone,

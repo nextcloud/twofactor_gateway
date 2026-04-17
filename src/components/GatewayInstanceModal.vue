@@ -54,13 +54,6 @@
 					:helper-text="errors.label ?? ''" />
 			</div>
 
-			<div v-if="instanceId && !wizardPanelActive" class="modal-field modal-field--readonly">
-				<NcTextField
-					:model-value="instanceId"
-					:label="t('twofactor_gateway', 'Instance reference')"
-					:readonly="true" />
-			</div>
-
 			<!-- Dynamic gateway fields (hidden in wizard-first create mode; collected inside the wizard panel) -->
 			<template v-if="canRenderProviderFields && !showWizardFirstFlow">
 				<div
@@ -107,6 +100,7 @@
 			<component
 				:is="gatewaySetupPanel"
 				v-if="gatewaySetupPanel"
+				:gateway-id="resolvedGatewayId"
 				:provider-id="selectedProviderId"
 				:config="form.config"
 				:can-start="canStartGuidedSetup"

@@ -218,7 +218,7 @@ describe('GatewayInstanceCard', () => {
 		]
 		const wrapper = mount(GatewayInstanceCard, { props: { instance, fields: fieldsWithHidden } })
 		expect(wrapper.text()).toContain('http://example.com')
-		expect(wrapper.text()).toContain('tr:Reference: abc123')
+		expect(wrapper.text()).not.toContain('abc123')
 		expect(wrapper.text()).not.toContain('Session ID')
 	})
 
@@ -235,7 +235,6 @@ describe('GatewayInstanceCard', () => {
 			},
 		})
 
-		expect(wrapper.text()).toContain('tr:Reference: abc123')
 		expect(wrapper.text()).toContain('tr:Priority: 20')
 		expect(wrapper.text()).toContain('tr:Groups: Client A, Admins')
 	})
@@ -246,5 +245,20 @@ describe('GatewayInstanceCard', () => {
 		})
 		// The t() mock interpolates the formatted date, so we check the prefix is present
 		expect(wrapper.text()).toContain('tr:Created:')
+	})
+
+	it('handles missing config and groupIds without throwing', () => {
+		const instance = {
+			...makeInstance(),
+			config: undefined,
+			groupIds: undefined,
+		} as unknown as GatewayInstance
+
+		const wrapper = mount(GatewayInstanceCard, {
+			props: { instance, fields },
+		})
+
+		expect(wrapper.text()).toContain('Test instance')
+		expect(wrapper.text()).not.toContain('tr:Groups:')
 	})
 })
