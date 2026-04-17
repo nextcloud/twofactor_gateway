@@ -66,6 +66,7 @@ class GatewayTest extends TestCase {
 	}
 
 	public function testSendUsesRuntimeConfiguredProviderWithoutPersistingGlobalSelection(): void {
+		TelegramGatewayProviderTestDouble::$allSentMessages = [];
 		$botProvider = new TelegramGatewayProviderTestDouble(new Settings(
 			id: 'telegram_bot',
 			name: 'Telegram Bot',
@@ -92,11 +93,13 @@ class GatewayTest extends TestCase {
 
 		$gateway->send('@alice', 'code 123');
 
-		$this->assertSame([], $botProvider->sentMessages);
-		$this->assertSame([['@alice', 'code 123']], $clientProvider->sentMessages);
+		$this->assertSame([
+			['telegram_client', '@alice', 'code 123'],
+		], TelegramGatewayProviderTestDouble::$allSentMessages);
 	}
 
 	public function testSendFallsBackToPersistedProviderSelectionWhenRuntimeConfigMissing(): void {
+		TelegramGatewayProviderTestDouble::$allSentMessages = [];
 		$botProvider = new TelegramGatewayProviderTestDouble(new Settings(
 			id: 'telegram_bot',
 			name: 'Telegram Bot',
@@ -115,7 +118,9 @@ class GatewayTest extends TestCase {
 		$gateway = new Gateway($this->appConfig, $this->telegramProviderFactory);
 		$gateway->send('@bob', 'code 456');
 
-		$this->assertSame([['@bob', 'code 456']], $botProvider->sentMessages);
+		$this->assertSame([
+			['telegram_bot', '@bob', 'code 456'],
+		], TelegramGatewayProviderTestDouble::$allSentMessages);
 	}
 
 	public function testCreateSettingsIncludesProviderSelectorAndSelectedProviderFields(): void {
@@ -138,11 +143,39 @@ class GatewayTest extends TestCase {
 		$this->assertSame('provider', $settings->fields[0]->field);
 		$this->assertSame('api_id', $settings->fields[1]->field);
 	}
+
+	public function testSendPassesRuntimeTokenToProvider(): void {
+		TelegramGatewayProviderTestDouble::$usedTokensByProvider = [];
+		$botProvider = new TelegramGatewayProviderTestDouble(new Settings(
+			id: 'telegram_bot',
+			name: 'Telegram Bot',
+			fields: [new FieldDefinition(field: 'token', prompt: 'Token')],
+		));
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_bot', $botProvider],
+		]);
+
+		$gateway = (new Gateway($this->appConfig, $this->telegramProviderFactory))
+			->withRuntimeConfig(['provider' => 'telegram_bot', 'token' => 'abc123']);
+
+		$gateway->send('@alice', 'code 789');
+
+		$this->assertSame([
+			['telegram_bot', 'abc123'],
+		], TelegramGatewayProviderTestDouble::$usedTokensByProvider);
+	}
 }
 
 class TelegramGatewayProviderTestDouble extends AProvider {
+	/** @var list<array{0: string, 1: string, 2: string}> */
+	public static array $allSentMessages = [];
+	/** @var list<array{0: string, 1: string}> */
+	public static array $usedTokensByProvider = [];
 	/** @var list<array{0: string, 1: string}> */
 	public array $sentMessages = [];
+	/** @var list<string> */
+	public array $usedTokens = [];
 	private Settings $settingsForTest;
 
 	public function __construct(Settings $settings) {
@@ -157,7 +190,14 @@ class TelegramGatewayProviderTestDouble extends AProvider {
 	 * @throws ConfigurationException
 	 */
 	public function send(string $identifier, string $message): void {
+		$providerId = (string)($this->settingsForTest->id ?? $this->getProviderId());
+		if (is_array($this->runtimeConfig) && array_key_exists('token', $this->runtimeConfig)) {
+			$token = $this->getToken();
+			$this->usedTokens[] = $token;
+			self::$usedTokensByProvider[] = [$providerId, $token];
+		}
 		$this->sentMessages[] = [$identifier, $message];
+		self::$allSentMessages[] = [$providerId, $identifier, $message];
 	}
 
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
