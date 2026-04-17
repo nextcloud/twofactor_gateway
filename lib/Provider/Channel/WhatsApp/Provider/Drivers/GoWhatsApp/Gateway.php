@@ -13,10 +13,12 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\FieldType;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IDefaultInstanceAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
+use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
@@ -44,7 +46,7 @@ use Symfony\Component\Console\Question\Question;
  * @method string getPassword()
  * @method static setPassword(string $password)
  */
-class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInstanceAwareGateway, ITestResultEnricher {
+class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInteractiveSetupGateway, IDefaultInstanceAwareGateway, ITestResultEnricher {
 	use GatewayCliSetupTrait;
 
 	private const CODE_NOT_ON_WHATSAPP = 1001;
@@ -73,11 +75,17 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInst
 		private IL10N $l10n,
 		private LoggerInterface $logger,
 		private IEventDispatcher $eventDispatcher,
+		private GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager,
 		?InteractiveSetupStateStore $interactiveSetupStateStore = null,
 	) {
 		parent::__construct($appConfig);
 		$this->client = $this->clientService->newClient();
 		$this->interactiveSetupStateStore = $interactiveSetupStateStore ?? new InteractiveSetupStateStore($this->appConfig);
+	}
+
+	#[\Override]
+	public function syncAfterConfigurationChange(): void {
+		$this->goWhatsAppSessionMonitorJobManager->sync();
 	}
 
 	#[\Override]
