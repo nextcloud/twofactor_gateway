@@ -63,7 +63,8 @@ class Gateway extends AGateway {
 				),
 				new FieldDefinition(
 					field: 'username',
-					prompt: '',
+					prompt: 'XMPP username (derived from sender JID)',
+					optional: true,
 				),
 				new FieldDefinition(
 					field: 'method',
