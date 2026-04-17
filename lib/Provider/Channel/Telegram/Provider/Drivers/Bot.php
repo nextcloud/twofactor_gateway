@@ -64,7 +64,6 @@ class Bot extends AProvider {
 		}
 		$this->logger->debug("sending telegram message to $identifier, message: $message");
 		$token = $this->getToken();
-		$this->logger->debug("telegram bot token: $token");
 
 		$url = self::TELEGRAM_API_URL . $token . '/sendMessage';
 		$params = [
@@ -92,12 +91,29 @@ class Bot extends AProvider {
 
 			$this->logger->debug("telegram message to chat $identifier sent");
 		} catch (RuntimeException $e) {
+			$telegramErrorDescription = $this->extractTelegramErrorDescription($e->getMessage());
+			$safeMessage = $telegramErrorDescription !== null
+				? 'Failed to send Telegram message: ' . $telegramErrorDescription
+				: 'Failed to send Telegram message.';
+
 			$this->logger->error('Failed to send Telegram message', [
 				'exception' => $e,
 				'chat_id' => $identifier,
 			]);
-			throw new MessageTransmissionException('Failed to send Telegram message: ' . $e->getMessage(), 0, $e);
+			throw new MessageTransmissionException($safeMessage, 0, $e);
 		}
+	}
+
+	private function extractTelegramErrorDescription(string $errorMessage): ?string {
+		if (preg_match('/"description"\s*:\s*"([^\"]+)"/', $errorMessage, $matches) === 1) {
+			return stripcslashes($matches[1]);
+		}
+
+		if (preg_match('/Telegram API error:\s*(.+)$/', $errorMessage, $matches) === 1) {
+			return trim($matches[1]);
+		}
+
+		return null;
 	}
 
 	#[\Override]
