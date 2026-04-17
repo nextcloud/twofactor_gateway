@@ -39,7 +39,7 @@ class AdminGatewayController extends OCSController {
 	/**
 	 * List all available gateways with current configuration instances.
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array<int, array<string, mixed>>, array{}>
+	 * @return DataResponse<Http::STATUS_OK, list<array<string, mixed>>, array{}>
 	 *
 	 * 200: OK
 	 */
