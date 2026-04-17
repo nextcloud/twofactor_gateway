@@ -36,10 +36,6 @@ class GatewayConfigService {
 	) {
 	}
 
-	// ──────────────────────────────────────────────────────────────────────────
-	//  Public API
-	// ──────────────────────────────────────────────────────────────────────────
-
 	/**
 	 * Return the full list of available gateways together with their configured
 	 * instances, ready to be serialised to the admin frontend.
@@ -83,7 +79,7 @@ class GatewayConfigService {
 	/**
 	 * List all configured instances for a gateway.
 	 *
-	 * @return list<array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool}>
+	 * @return list<array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}>
 	 */
 	public function listInstances(IGateway $gateway): array {
 		$registry = $this->loadRegistry($gateway->getProviderId());
@@ -93,7 +89,7 @@ class GatewayConfigService {
 	/**
 	 * Return a single named instance.
 	 *
-	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool}
+	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}
 	 * @throws GatewayInstanceNotFoundException
 	 */
 	public function getInstance(IGateway $gateway, string $instanceId): array {
@@ -108,9 +104,11 @@ class GatewayConfigService {
 	 * (and its values are mirrored to the legacy primary keys).
 	 *
 	 * @param array<string, string> $config
-	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool}
+	 * @param list<string> $groupIds
+	 * @param int $priority
+	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}
 	 */
-	public function createInstance(IGateway $gateway, string $label, array $config): array {
+	public function createInstance(IGateway $gateway, string $label, array $config, array $groupIds = [], int $priority = 0): array {
 		$gatewayId = $gateway->getProviderId();
 		$registry = $this->loadRegistry($gatewayId);
 
@@ -123,6 +121,8 @@ class GatewayConfigService {
 			'label' => $label,
 			'default' => $isFirst,
 			'createdAt' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
+			'groupIds' => $this->normalizeGroupIds($groupIds),
+			'priority' => $this->normalizePriority($priority),
 		];
 		$registry[] = $meta;
 		$this->saveRegistry($gatewayId, $registry);
@@ -138,10 +138,12 @@ class GatewayConfigService {
 	 * Update an existing instance's label and/or configuration.
 	 *
 	 * @param array<string, string> $config
-	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool}
+	 * @param list<string> $groupIds
+	 * @param int $priority
+	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}
 	 * @throws GatewayInstanceNotFoundException
 	 */
-	public function updateInstance(IGateway $gateway, string $instanceId, string $label, array $config): array {
+	public function updateInstance(IGateway $gateway, string $instanceId, string $label, array $config, array $groupIds = [], int $priority = 0): array {
 		$gatewayId = $gateway->getProviderId();
 		$registry = $this->loadRegistry($gatewayId);
 
@@ -149,6 +151,8 @@ class GatewayConfigService {
 		foreach ($registry as &$meta) {
 			if ($meta['id'] === $instanceId) {
 				$meta['label'] = $label;
+				$meta['groupIds'] = $this->normalizeGroupIds($groupIds);
+				$meta['priority'] = $this->normalizePriority($priority);
 				$this->storeFieldValues($gatewayId, $instanceId, $gateway->getSettings(), $config);
 				if ($meta['default']) {
 					$this->mirrorToPrimaryKeys($gateway, $instanceId);
@@ -195,7 +199,6 @@ class GatewayConfigService {
 			throw new GatewayInstanceNotFoundException($gatewayId, $instanceId);
 		}
 
-		// Remove per-instance field keys
 		$this->deleteFieldValues($gatewayId, $instanceId, $gateway->getSettings());
 
 		if ($wasDefault) {
@@ -235,16 +238,12 @@ class GatewayConfigService {
 		$this->mirrorToPrimaryKeys($gateway, $instanceId);
 	}
 
-	// ──────────────────────────────────────────────────────────────────────────
-	//  Internal helpers
-	// ──────────────────────────────────────────────────────────────────────────
-
 	private function registryKey(string $gatewayId): string {
 		return 'instances:' . $gatewayId;
 	}
 
 	/**
-	 * @return list<array{id: string, label: string, default: bool, createdAt: string}>
+	 * @return list<array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int}>
 	 */
 	private function loadRegistry(string $gatewayId): array {
 		$raw = $this->appConfig->getValueString(Application::APP_ID, $this->registryKey($gatewayId), '[]');
@@ -258,7 +257,7 @@ class GatewayConfigService {
 	}
 
 	/**
-	 * @param list<array{id: string, label: string, default: bool, createdAt: string}> $registry
+	 * @param list<array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int}> $registry
 	 */
 	private function saveRegistry(string $gatewayId, array $registry): void {
 		$this->appConfig->setValueString(Application::APP_ID, $this->registryKey($gatewayId), json_encode(array_values($registry), JSON_THROW_ON_ERROR));
@@ -317,7 +316,7 @@ class GatewayConfigService {
 
 	/**
 	 * Mirror an instance's values to the legacy primary keys used by TConfigurable and the CLI.
-	 * Format: "{gatewayId}_{fieldName}"
+	 * Format: "{gatewayId}_{fieldName}".
 	 */
 	private function mirrorToPrimaryKeys(IGateway $gateway, string $instanceId): void {
 		$gatewayId = $gateway->getProviderId();
@@ -351,13 +350,15 @@ class GatewayConfigService {
 	}
 
 	/**
-	 * @param array{id: string, label: string, default: bool, createdAt: string} $meta
-	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool}
+	 * @param array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int} $meta
+	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}
 	 */
 	private function buildInstanceRecord(IGateway $gateway, array $meta): array {
 		$settings = $gateway->getSettings();
 		$config = $this->loadFieldValues($gateway->getProviderId(), $meta['id'], $settings);
 		$isComplete = $this->isInstanceComplete($settings, $config);
+		$groupIds = is_array($meta['groupIds'] ?? null) ? $this->normalizeGroupIds($meta['groupIds']) : [];
+		$priority = $this->normalizePriority($meta['priority'] ?? 0);
 		return [
 			'id' => $meta['id'],
 			'label' => $meta['label'],
@@ -365,7 +366,29 @@ class GatewayConfigService {
 			'createdAt' => $meta['createdAt'],
 			'config' => $config,
 			'isComplete' => $isComplete,
+			'groupIds' => $groupIds,
+			'priority' => $priority,
 		];
+	}
+
+	/** @param list<string> $groupIds
+	 * @return list<string>
+	 */
+	private function normalizeGroupIds(array $groupIds): array {
+		$normalized = array_values(array_unique(array_filter(array_map(
+			static fn ($groupId): string => trim((string)$groupId),
+			$groupIds,
+		), static fn (string $groupId): bool => $groupId !== '')));
+		sort($normalized);
+		return $normalized;
+	}
+
+	private function normalizePriority(mixed $priority): int {
+		if (!is_numeric($priority)) {
+			return 0;
+		}
+
+		return (int)$priority;
 	}
 
 	/** @param array<string, string> $config */

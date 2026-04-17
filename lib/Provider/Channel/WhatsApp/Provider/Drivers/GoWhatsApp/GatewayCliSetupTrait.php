@@ -103,16 +103,35 @@ trait GatewayCliSetupTrait {
 
 	private function fetchUserInfo(string $deviceJid): ?array {
 		try {
-			$response = $this->client->get($this->getBaseUrl() . '/user/info', [
+			$options = [
 				'query' => ['phone' => $deviceJid],
 				'auth' => $this->getBasicAuth(),
-			]);
+				'timeout' => 5,
+			];
+
+			$deviceId = $this->getDeviceId();
+			if ($deviceId !== '') {
+				$options['headers'] = ['X-Device-Id' => $deviceId];
+			}
+
+			$response = $this->client->get($this->getBaseUrl() . '/user/info', $options);
 
 			$body = (string)$response->getBody();
 			$data = json_decode($body, true);
 
 			if (($data['code'] ?? '') === 'SUCCESS') {
-				return $data['results'] ?? [];
+				$results = $data['results'] ?? [];
+				if (!is_array($results)) {
+					return null;
+				}
+
+				$dataArray = $results['data'] ?? null;
+				if (is_array($dataArray)) {
+					$firstResult = reset($dataArray);
+					return is_array($firstResult) ? $firstResult : null;
+				}
+
+				return $results;
 			}
 
 			return null;

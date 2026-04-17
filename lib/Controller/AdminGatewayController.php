@@ -79,6 +79,8 @@ class AdminGatewayController extends OCSController {
 	 * @param string $gateway The gateway id (e.g. "sms", "telegram")
 	 * @param string $label Human-readable name for this instance
 	 * @param array<string, string> $config Field values
+	 * @param list<string> $groupIds Optional group restrictions for routing
+	 * @param int $priority Optional routing priority (higher runs first)
 	 *
 	 * @return DataResponse<Http::STATUS_CREATED, array<string, mixed>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
@@ -87,14 +89,14 @@ class AdminGatewayController extends OCSController {
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/instances')]
-	public function createInstance(string $gateway, string $label, array $config = []): DataResponse {
+	public function createInstance(string $gateway, string $label, array $config = [], array $groupIds = [], int $priority = 0): DataResponse {
 		try {
 			$gw = $this->resolveGatewayForPayload($gateway, $config);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
-		$instance = $this->configService->createInstance($gw, $label, $config);
+		$instance = $this->configService->createInstance($gw, $label, $config, $groupIds, $priority);
 		$this->goWhatsAppSessionMonitorJobManager->sync();
 		return new DataResponse($instance, Http::STATUS_CREATED);
 	}
@@ -134,6 +136,8 @@ class AdminGatewayController extends OCSController {
 	 * @param string $instanceId The instance id
 	 * @param string $label Updated label
 	 * @param array<string, string> $config Updated field values
+	 * @param list<string> $groupIds Updated group restrictions for routing
+	 * @param int $priority Updated routing priority
 	 *
 	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
@@ -143,7 +147,7 @@ class AdminGatewayController extends OCSController {
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'PUT', url: '/admin/gateways/{gateway}/instances/{instanceId}')]
-	public function updateInstance(string $gateway, string $instanceId, string $label, array $config = []): DataResponse {
+	public function updateInstance(string $gateway, string $instanceId, string $label, array $config = [], array $groupIds = [], int $priority = 0): DataResponse {
 		try {
 			$gw = $this->resolveGatewayForUpdate($gateway, $instanceId, $config);
 		} catch (\InvalidArgumentException $e) {
@@ -151,7 +155,7 @@ class AdminGatewayController extends OCSController {
 		}
 
 		try {
-			$record = $this->configService->updateInstance($gw, $instanceId, $label, $config);
+			$record = $this->configService->updateInstance($gw, $instanceId, $label, $config, $groupIds, $priority);
 			$this->goWhatsAppSessionMonitorJobManager->sync();
 			return new DataResponse($record);
 		} catch (GatewayInstanceNotFoundException $e) {
@@ -261,7 +265,7 @@ class AdminGatewayController extends OCSController {
 			$gw->send($identifier, 'Test');
 			$data = ['success' => true, 'message' => 'Test message sent successfully.'];
 			if ($gw instanceof ITestResultEnricher) {
-				$accountInfo = $gw->enrichTestResult($instance['config'] ?? []);
+				$accountInfo = $gw->enrichTestResult($instance['config'] ?? [], $identifier);
 				if ($accountInfo !== []) {
 					$data['accountInfo'] = $accountInfo;
 				}

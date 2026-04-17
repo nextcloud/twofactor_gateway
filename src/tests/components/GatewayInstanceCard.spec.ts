@@ -236,7 +236,11 @@ describe('GatewayInstanceCard', () => {
 		})
 
 		expect(wrapper.text()).toContain('tr:Priority: 20')
-		expect(wrapper.text()).toContain('tr:Groups: Client A, Admins')
+		expect(wrapper.text()).toContain('tr:Groups')
+		const groupChips = wrapper.findAll('.routing-group-chip')
+		expect(groupChips).toHaveLength(2)
+		expect(groupChips[0].text()).toBe('Client A')
+		expect(groupChips[1].text()).toBe('Admins')
 	})
 
 	it('displays the creation date', () => {
