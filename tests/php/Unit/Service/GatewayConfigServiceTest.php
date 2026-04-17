@@ -123,18 +123,6 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->assertFalse($second['default']);
 	}
 
-	public function testFirstInstanceActivatesSyncsToPrimaryKeys(): void {
-		$gateway = $this->makeGatewayMock('telegram', 'Telegram', [
-			['field' => 'token', 'prompt' => 'Token'],
-		]);
-
-		$this->service->createInstance($gateway, 'Main', ['token' => 'mytoken123']);
-
-		$primaryKey = 'telegram_token';
-		$this->assertArrayHasKey($primaryKey, self::$store[Application::APP_ID] ?? [], 'Primary key not synced when first instance created');
-		$this->assertSame('mytoken123', self::$store[Application::APP_ID][$primaryKey]);
-	}
-
 	public function testListInstancesReturnsAllInstances(): void {
 		$gateway = $this->makeGatewayMock('sms', 'SMS', [
 			['field' => 'url', 'prompt' => 'URL'],
@@ -217,17 +205,6 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->assertSame(30, $fetched['priority']);
 	}
 
-	public function testUpdateDefaultInstanceSyncsToPrimaryKeys(): void {
-		$gateway = $this->makeGatewayMock('sms', 'SMS', [
-			['field' => 'url', 'prompt' => 'URL'],
-		]);
-		$created = $this->service->createInstance($gateway, 'Main', ['url' => 'https://old.example.com']);
-
-		$this->service->updateInstance($gateway, $created['id'], 'Main', ['url' => 'https://new.example.com']);
-
-		$this->assertSame('https://new.example.com', self::$store[Application::APP_ID]['sms_url'] ?? '');
-	}
-
 	public function testDeleteInstanceRemovesItFromList(): void {
 		$gateway = $this->makeGatewayMock('signal', 'Signal', [
 			['field' => 'number', 'prompt' => 'Number'],
@@ -238,18 +215,6 @@ class GatewayConfigServiceTest extends AppTestCase {
 
 		$instances = $this->service->listInstances($gateway);
 		$this->assertCount(0, $instances);
-	}
-
-	public function testDeleteDefaultInstanceClearsPrimaryKeys(): void {
-		$gateway = $this->makeGatewayMock('telegram', 'Telegram', [
-			['field' => 'token', 'prompt' => 'Token'],
-		]);
-		$created = $this->service->createInstance($gateway, 'Main', ['token' => 'mytoken']);
-		$this->assertTrue($created['default']);
-
-		$this->service->deleteInstance($gateway, $created['id']);
-
-		$this->assertArrayNotHasKey('telegram_token', self::$store[Application::APP_ID] ?? []);
 	}
 
 	public function testSetDefaultInstanceUpdatesDefaultFlag(): void {
@@ -265,18 +230,6 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$instancesByLabel = array_column($instances, null, 'label');
 		$this->assertFalse($instancesByLabel['First']['default']);
 		$this->assertTrue($instancesByLabel['Second']['default']);
-	}
-
-	public function testSetDefaultInstanceSyncsToPrimaryKeys(): void {
-		$gateway = $this->makeGatewayMock('sms', 'SMS', [
-			['field' => 'url', 'prompt' => 'URL'],
-		]);
-		$first = $this->service->createInstance($gateway, 'First', ['url' => 'https://first.example.com']);
-		$second = $this->service->createInstance($gateway, 'Second', ['url' => 'https://second.example.com']);
-
-		$this->service->setDefaultInstance($gateway, $second['id']);
-
-		$this->assertSame('https://second.example.com', self::$store[Application::APP_ID]['sms_url'] ?? '');
 	}
 
 	public function testSetDefaultInstanceThrowsWhenNotFound(): void {

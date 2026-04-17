@@ -23,11 +23,6 @@ use OCP\IAppConfig;
  * Storage key patterns:
  *   Registry : "instances:{gatewayId}"             → JSON array of InstanceRecord
  *   Fields   : "{gatewayId}:{instanceId}:{field}"  → string value
- *
- * Backward-compat:
- *   When an instance is set as default its field values are also mirrored to
- *   the legacy keys "{gatewayId}_{field}" so that the existing 2-FA flow and
- *   CLI commands keep working without any changes.
  */
 class GatewayConfigService {
 	public function __construct(
@@ -100,8 +95,7 @@ class GatewayConfigService {
 	/**
 	 * Create a new named configuration instance.
 	 *
-	 * The very first instance for a gateway automatically becomes the default
-	 * (and its values are mirrored to the legacy primary keys).
+	 * The very first instance for a gateway automatically becomes the default.
 	 *
 	 * @param array<string, string> $config
 	 * @param list<string> $groupIds
@@ -127,10 +121,6 @@ class GatewayConfigService {
 		$registry[] = $meta;
 		$this->saveRegistry($gatewayId, $registry);
 
-		if ($isFirst) {
-			$this->mirrorToPrimaryKeys($gateway, $instanceId);
-		}
-
 		return $this->buildInstanceRecord($gateway, $meta);
 	}
 
@@ -154,9 +144,6 @@ class GatewayConfigService {
 				$meta['groupIds'] = $this->normalizeGroupIds($groupIds);
 				$meta['priority'] = $this->normalizePriority($priority);
 				$this->storeFieldValues($gatewayId, $instanceId, $gateway->getSettings(), $config);
-				if ($meta['default']) {
-					$this->mirrorToPrimaryKeys($gateway, $instanceId);
-				}
 				$updated = true;
 				break;
 			}
@@ -175,8 +162,6 @@ class GatewayConfigService {
 	/**
 	 * Delete an instance.
 	 *
-	 * When the deleted instance was the default, primary keys are cleared so the
-	 * legacy 2-FA flow does not use stale configuration.
 	 * If another instance exists, it does NOT automatically become default;
 	 * the administrator must choose one explicitly.
 	 *
@@ -200,18 +185,11 @@ class GatewayConfigService {
 		}
 
 		$this->deleteFieldValues($gatewayId, $instanceId, $gateway->getSettings());
-
-		if ($wasDefault) {
-			$this->clearPrimaryKeys($gateway);
-		}
-
 		$this->saveRegistry($gatewayId, $registry);
 	}
 
 	/**
 	 * Promote an instance to the default.
-	 *
-	 * Mirrors its values to the legacy primary keys so the 2-FA flow picks them up.
 	 *
 	 * @throws GatewayInstanceNotFoundException
 	 */
@@ -235,7 +213,6 @@ class GatewayConfigService {
 		}
 
 		$this->saveRegistry($gatewayId, $registry);
-		$this->mirrorToPrimaryKeys($gateway, $instanceId);
 	}
 
 	private function registryKey(string $gatewayId): string {
@@ -312,37 +289,6 @@ class GatewayConfigService {
 			);
 		}
 		return $config;
-	}
-
-	/**
-	 * Mirror an instance's values to the legacy primary keys used by TConfigurable and the CLI.
-	 * Format: "{gatewayId}_{fieldName}".
-	 */
-	private function mirrorToPrimaryKeys(IGateway $gateway, string $instanceId): void {
-		$gatewayId = $gateway->getProviderId();
-		$settings = $gateway->getSettings();
-		foreach ($settings->fields as $field) {
-			$value = $this->appConfig->getValueString(
-				Application::APP_ID,
-				$this->instanceFieldKey($gatewayId, $instanceId, $field->field),
-				$field->default,
-			);
-			$this->appConfig->setValueString(
-				Application::APP_ID,
-				$gatewayId . '_' . $field->field,
-				$value,
-			);
-		}
-	}
-
-	/**
-	 * Remove the legacy primary keys when no default instance exists.
-	 */
-	private function clearPrimaryKeys(IGateway $gateway): void {
-		$gatewayId = $gateway->getProviderId();
-		foreach ($gateway->getSettings()->fields as $field) {
-			$this->appConfig->deleteKey(Application::APP_ID, $gatewayId . '_' . $field->field);
-		}
 	}
 
 	private function generateId(): string {
