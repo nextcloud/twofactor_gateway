@@ -10,8 +10,11 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Service;
 
 use OCA\TwoFactorGateway\BackgroundJob\GoWhatsAppSessionMonitorJob;
+use OCA\TwoFactorGateway\BackgroundJob\GoWhatsAppSessionMonitorReconcileJob;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\ReconfigurationState;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCP\BackgroundJob\IJobList;
+use OCP\IAppConfig;
 use Psr\Log\LoggerInterface;
 
 class GoWhatsAppSessionMonitorJobManager {
@@ -19,6 +22,7 @@ class GoWhatsAppSessionMonitorJobManager {
 
 	public function __construct(
 		private GatewayFactory $gatewayFactory,
+		private IAppConfig $appConfig,
 		private IJobList $jobList,
 		private LoggerInterface $logger,
 	) {
@@ -26,6 +30,8 @@ class GoWhatsAppSessionMonitorJobManager {
 
 	public function sync(): void {
 		try {
+			$this->ensureReconcileJobRegistered();
+
 			$shouldBeActive = $this->isGoWhatsAppConfigured();
 			$isActive = $this->jobList->has(GoWhatsAppSessionMonitorJob::class, null);
 
@@ -46,7 +52,20 @@ class GoWhatsAppSessionMonitorJobManager {
 		}
 	}
 
+	private function ensureReconcileJobRegistered(): void {
+		if ($this->jobList->has(GoWhatsAppSessionMonitorReconcileJob::class, null)) {
+			return;
+		}
+
+		$this->jobList->add(GoWhatsAppSessionMonitorReconcileJob::class, null);
+		$this->logger->info('Registered GoWhatsApp monitor reconcile background job.');
+	}
+
 	private function isGoWhatsAppConfigured(): bool {
+		if (ReconfigurationState::isRequired($this->appConfig)) {
+			return false;
+		}
+
 		try {
 			$gateway = $this->gatewayFactory->get(self::GATEWAY_ID);
 			return $gateway->isComplete();
