@@ -86,14 +86,22 @@ class Gateway extends AGateway implements IProviderCatalogGateway {
 
 	#[\Override]
 	public function createSettings(): Settings {
+		$fields = [$this->getProviderSelectorField()];
 		try {
-			$settings = $this->getProvider()->getSettings();
+			$providerSettings = $this->getProvider()->getSettings();
+			foreach ($providerSettings->fields as $field) {
+				if ($field->field === $this->getProviderSelectorField()->field) {
+					continue;
+				}
+				$fields[] = $field;
+			}
 		} catch (ConfigurationException) {
-			$settings = new Settings(
-				name: 'Telegram',
-			);
 		}
-		return $settings;
+
+		return new Settings(
+			name: 'Telegram',
+			fields: $fields,
+		);
 	}
 
 	#[\Override]
