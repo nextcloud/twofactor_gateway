@@ -65,11 +65,16 @@ class NotificationListener implements IEventListener {
 					$notification = $this->notificationManager->createNotification();
 					$notification
 						->setApp(Application::APP_ID)
-						->setDateTime($this->timeFactory->getDateTime())
 						->setObject('whatsapp_error', $objectId)
 						->setSubject($subject, $parameters)
 						->setUser($user->getUID());
 
+					if ($this->notificationManager->getCount($notification) > 0) {
+						$this->logger->info('Skipping duplicate WhatsApp notification for ' . $user->getUID());
+						continue;
+					}
+
+					$notification->setDateTime($this->timeFactory->getDateTime());
 					$this->logger->info('About to notify user: ' . $user->getUID());
 					$this->notificationManager->notify($notification);
 					$this->logger->info('WhatsApp notification sent to ' . $user->getUID());
