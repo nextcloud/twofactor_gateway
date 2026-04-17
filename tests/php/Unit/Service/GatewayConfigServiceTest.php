@@ -298,6 +298,33 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->assertSame('device_name', $list[0]['providerCatalog'][0]['fields'][1]['field']);
 	}
 
+	public function testCatalogInstanceRecordLoadsSelectedProviderFields(): void {
+		$telegramGateway = $this->makeCatalogGatewayMock(
+			'telegram',
+			'Telegram',
+			[['field' => 'provider', 'prompt' => 'Provider', 'hidden' => true]],
+			'provider',
+			[[
+				'id' => 'telegram_bot',
+				'name' => 'Telegram Bot',
+				'fields' => [
+					['field' => 'token', 'prompt' => 'Bot Token'],
+				],
+			]],
+		);
+
+		$created = $this->service->createInstance($telegramGateway, 'Telegram', [
+			'provider' => 'telegram_bot',
+		]);
+		$this->appConfig->setValueString('twofactor_gateway', 'telegram:' . $created['id'] . ':token', 'abc123');
+
+		$instance = $this->service->getInstance($telegramGateway, $created['id']);
+
+		$this->assertSame('telegram_bot', $instance['config']['provider']);
+		$this->assertSame('abc123', $instance['config']['token']);
+		$this->assertTrue($instance['isComplete']);
+	}
+
 	public function testInstanceIsCompleteWhenAllRequiredFieldsSet(): void {
 		$gateway = $this->makeGatewayMock('sms', 'SMS', [
 			['field' => 'url', 'prompt' => 'URL', 'optional' => false],
