@@ -47,7 +47,6 @@ class AdminGatewayController extends OCSController {
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'GET', url: '/admin/gateways')]
 	public function listGateways(): DataResponse {
-		$this->syncSessionMonitorSafely();
 		return new DataResponse($this->configService->getGatewayList());
 	}
 
@@ -98,7 +97,7 @@ class AdminGatewayController extends OCSController {
 		}
 
 		$instance = $this->configService->createInstance($gw, $label, $config, $groupIds, $priority);
-		$this->syncSessionMonitorSafely();
+		$this->syncSessionMonitorSafely($gw);
 		return new DataResponse($instance, Http::STATUS_CREATED);
 	}
 
@@ -157,7 +156,7 @@ class AdminGatewayController extends OCSController {
 
 		try {
 			$record = $this->configService->updateInstance($gw, $instanceId, $label, $config, $groupIds, $priority);
-			$this->syncSessionMonitorSafely();
+			$this->syncSessionMonitorSafely($gw);
 			return new DataResponse($record);
 		} catch (GatewayInstanceNotFoundException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
@@ -187,7 +186,7 @@ class AdminGatewayController extends OCSController {
 
 		try {
 			$this->configService->deleteInstance($gw, $instanceId);
-			$this->syncSessionMonitorSafely();
+			$this->syncSessionMonitorSafely($gw);
 			return new DataResponse([]);
 		} catch (GatewayInstanceNotFoundException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
@@ -220,16 +219,16 @@ class AdminGatewayController extends OCSController {
 
 		try {
 			$this->configService->setDefaultInstance($gw, $instanceId);
-			$this->syncSessionMonitorSafely();
+			$this->syncSessionMonitorSafely($gw);
 			return new DataResponse([]);
 		} catch (GatewayInstanceNotFoundException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
 		}
 	}
 
-	private function syncSessionMonitorSafely(): void {
+	private function syncSessionMonitorSafely(IGateway $gateway): void {
 		try {
-			$this->gatewayConfigurationSyncService->syncAfterConfigurationChange();
+			$this->gatewayConfigurationSyncService->syncAfterConfigurationChange($gateway);
 		} catch (\Throwable) {
 			// Sync failures must not break admin CRUD/test operations.
 		}
