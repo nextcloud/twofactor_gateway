@@ -10,10 +10,10 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Command;
 
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\GoWhatsAppSessionMonitorJobManager;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
+use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
