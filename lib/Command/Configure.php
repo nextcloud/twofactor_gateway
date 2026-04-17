@@ -77,7 +77,7 @@ class Configure extends Command {
 
 		try {
 			$result = $gateway->cliConfigure($input, $output);
-			$this->gatewayConfigurationSyncService->syncAfterConfigurationChange();
+			$this->gatewayConfigurationSyncService->syncAfterConfigurationChange($gateway);
 		} catch (InvalidProviderException $e) {
 			$output->writeln("<error>Invalid gateway $gatewayName</error>");
 			return 1;
