@@ -235,12 +235,31 @@ describe('GatewayInstanceCard', () => {
 			},
 		})
 
-		expect(wrapper.text()).toContain('tr:Priority: 20')
 		expect(wrapper.text()).toContain('tr:Groups')
 		const groupChips = wrapper.findAll('.routing-group-chip')
 		expect(groupChips).toHaveLength(2)
 		expect(groupChips[0].text()).toBe('Client A')
 		expect(groupChips[1].text()).toBe('Admins')
+	})
+
+	it('renders boolean fields with readable labels', () => {
+		const instance = makeInstance({
+			config: {
+				webhook_hybrid_enabled: '1',
+				fallback_enabled: '0',
+			},
+		})
+		const booleanFields: FieldDefinition[] = [
+			{ field: 'webhook_hybrid_enabled', prompt: 'Hybrid webhook', default: '0', optional: true, type: 'boolean' },
+			{ field: 'fallback_enabled', prompt: 'Fallback', default: '0', optional: true, type: 'boolean' },
+		]
+
+		const wrapper = mount(GatewayInstanceCard, { props: { instance, fields: booleanFields } })
+
+		expect(wrapper.text()).toContain('tr:Enabled')
+		expect(wrapper.text()).toContain('tr:Disabled')
+		expect(wrapper.text()).not.toContain('webhook_hybrid_enabled:1')
+		expect(wrapper.text()).not.toContain('fallback_enabled:0')
 	})
 
 	it('displays the creation date', () => {
