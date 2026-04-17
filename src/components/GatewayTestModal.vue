@@ -152,7 +152,6 @@ export default defineComponent({
 
 		:deep(.notecard__content) {
 			overflow-wrap: anywhere;
-			word-break: break-word;
 		}
 
 		.test-result-note-card__message {
