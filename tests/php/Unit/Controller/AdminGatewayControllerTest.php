@@ -20,7 +20,7 @@ use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
-use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
 use OCP\AppFramework\Http;
 use OCP\IAppConfig;
 use OCP\IGroup;
@@ -35,7 +35,7 @@ class AdminGatewayControllerTest extends TestCase {
 	private AdminGatewayController $controller;
 	private GatewayConfigService&MockObject $configService;
 	private GatewayFactory&MockObject $gatewayFactory;
-	private GoWhatsAppSessionMonitorJobManager&MockObject $goWhatsAppSessionMonitorJobManager;
+	private GatewayConfigurationSyncService&MockObject $gatewayConfigurationSyncService;
 	private IGroupManager&MockObject $groupManager;
 
 	protected function setUp(): void {
@@ -43,15 +43,15 @@ class AdminGatewayControllerTest extends TestCase {
 		$request = $this->createMock(IRequest::class);
 		$this->configService = $this->createMock(GatewayConfigService::class);
 		$this->gatewayFactory = $this->createMock(GatewayFactory::class);
-		$this->goWhatsAppSessionMonitorJobManager = $this->createMock(GoWhatsAppSessionMonitorJobManager::class);
+		$this->gatewayConfigurationSyncService = $this->createMock(GatewayConfigurationSyncService::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
-		$this->goWhatsAppSessionMonitorJobManager->method('sync');
+		$this->gatewayConfigurationSyncService->method('syncAfterConfigurationChange');
 
 		$this->controller = new AdminGatewayController(
 			$request,
 			$this->configService,
 			$this->gatewayFactory,
-			$this->goWhatsAppSessionMonitorJobManager,
+			$this->gatewayConfigurationSyncService,
 			$this->groupManager,
 		);
 	}
@@ -302,7 +302,7 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->configService->method('updateInstance')
 			->with($gateway, 'abc', 'New', ['url' => 'https://signal.example.com'], [], 0)
 			->willReturn($record);
-		$this->goWhatsAppSessionMonitorJobManager->method('sync')
+		$this->gatewayConfigurationSyncService->method('syncAfterConfigurationChange')
 			->willThrowException(new \InvalidArgumentException('Invalid type <gowhatsapp>'));
 
 		$response = $this->controller->updateInstance('signal', 'abc', 'New', ['url' => 'https://signal.example.com']);
