@@ -47,7 +47,7 @@ class AdminGatewayController extends OCSController {
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'GET', url: '/admin/gateways')]
 	public function listGateways(): DataResponse {
-		$this->goWhatsAppSessionMonitorJobManager->sync();
+		$this->syncSessionMonitorSafely();
 		return new DataResponse($this->configService->getGatewayList());
 	}
 
@@ -98,7 +98,7 @@ class AdminGatewayController extends OCSController {
 		}
 
 		$instance = $this->configService->createInstance($gw, $label, $config, $groupIds, $priority);
-		$this->goWhatsAppSessionMonitorJobManager->sync();
+		$this->syncSessionMonitorSafely();
 		return new DataResponse($instance, Http::STATUS_CREATED);
 	}
 
@@ -157,7 +157,7 @@ class AdminGatewayController extends OCSController {
 
 		try {
 			$record = $this->configService->updateInstance($gw, $instanceId, $label, $config, $groupIds, $priority);
-			$this->goWhatsAppSessionMonitorJobManager->sync();
+			$this->syncSessionMonitorSafely();
 			return new DataResponse($record);
 		} catch (GatewayInstanceNotFoundException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
@@ -187,7 +187,7 @@ class AdminGatewayController extends OCSController {
 
 		try {
 			$this->configService->deleteInstance($gw, $instanceId);
-			$this->goWhatsAppSessionMonitorJobManager->sync();
+			$this->syncSessionMonitorSafely();
 			return new DataResponse([]);
 		} catch (GatewayInstanceNotFoundException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
@@ -220,10 +220,18 @@ class AdminGatewayController extends OCSController {
 
 		try {
 			$this->configService->setDefaultInstance($gw, $instanceId);
-			$this->goWhatsAppSessionMonitorJobManager->sync();
+			$this->syncSessionMonitorSafely();
 			return new DataResponse([]);
 		} catch (GatewayInstanceNotFoundException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+		}
+	}
+
+	private function syncSessionMonitorSafely(): void {
+		try {
+			$this->goWhatsAppSessionMonitorJobManager->sync();
+		} catch (\Throwable) {
+			// Sync failures must not break admin CRUD/test operations.
 		}
 	}
 
