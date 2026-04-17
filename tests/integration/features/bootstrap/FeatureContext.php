@@ -7,9 +7,9 @@
 
 declare(strict_types=1);
 
+use Behat\Behat\Hook\Scope\BeforeSuiteScope;
 use Behat\Hook\BeforeScenario;
 use Behat\Hook\BeforeSuite;
-use Behat\Behat\Hook\Scope\BeforeSuiteScope;
 use Libresign\NextcloudBehat\NextcloudApiContext;
 
 class FeatureContext extends NextcloudApiContext {

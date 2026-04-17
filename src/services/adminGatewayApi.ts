@@ -56,6 +56,7 @@ export interface TestResult {
 	message: string
 	accountInfo?: {
 		account_name?: string
+		account_avatar_url?: string
 	}
 }
 
@@ -67,6 +68,29 @@ export interface InteractiveSetupResponse {
 	step?: string
 	data?: Record<string, unknown>
 	config?: Record<string, string>
+}
+
+type GatewayInstancePayload = Partial<GatewayInstance> & {
+	id: string
+	label: string
+	default: boolean
+	createdAt: string
+	config: Record<string, string>
+	isComplete: boolean
+}
+
+function normalizeInstance(instance: GatewayInstancePayload, fallbackProviderId: string): GatewayInstance {
+	return {
+		id: instance.id,
+		providerId: instance.providerId ?? fallbackProviderId,
+		label: instance.label,
+		default: instance.default,
+		createdAt: instance.createdAt,
+		config: instance.config,
+		isComplete: instance.isComplete,
+		groupIds: Array.isArray(instance.groupIds) ? instance.groupIds : [],
+		priority: typeof instance.priority === 'number' ? instance.priority : 0,
+	}
 }
 
 function ocsData<T>(response: any): T {
@@ -85,7 +109,11 @@ function ocsData<T>(response: any): T {
  */
 export async function listGateways(): Promise<GatewayInfo[]> {
 	const response = await axios.get(generateOcsUrl('/apps/twofactor_gateway/admin/gateways'))
-	return ocsData<GatewayInfo[]>(response)
+	const gateways = ocsData<GatewayInfo[]>(response)
+	return gateways.map((gateway) => ({
+		...gateway,
+		instances: gateway.instances.map((instance) => normalizeInstance(instance, gateway.id)),
+	}))
 }
 
 /**
@@ -110,7 +138,8 @@ export async function createInstance(
 		generateOcsUrl('/apps/twofactor_gateway/admin/gateways/{gateway}/instances', { gateway: gatewayId }),
 		{ label, config, groupIds, priority },
 	)
-	return ocsData<GatewayInstance>(response)
+	const instance = ocsData<GatewayInstancePayload>(response)
+	return normalizeInstance(instance, gatewayId)
 }
 
 /**
@@ -123,7 +152,8 @@ export async function getInstance(gatewayId: string, instanceId: string): Promis
 			instanceId,
 		}),
 	)
-	return ocsData<GatewayInstance>(response)
+	const instance = ocsData<GatewayInstancePayload>(response)
+	return normalizeInstance(instance, gatewayId)
 }
 
 /**
@@ -144,7 +174,8 @@ export async function updateInstance(
 		}),
 		{ label, config, groupIds, priority },
 	)
-	return ocsData<GatewayInstance>(response)
+	const instance = ocsData<GatewayInstancePayload>(response)
+	return normalizeInstance(instance, gatewayId)
 }
 
 /**

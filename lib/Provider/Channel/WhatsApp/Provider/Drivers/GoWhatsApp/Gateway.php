@@ -84,6 +84,7 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInst
 	public function createSettings(): Settings {
 		return new Settings(
 			name: 'WhatsApp web',
+			id: 'gowhatsapp',
 			allowMarkdown: true,
 			fields: [
 				new FieldDefinition(
@@ -141,6 +142,11 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInst
 				),
 			],
 		);
+	}
+
+	#[\Override]
+	public function getProviderId(): string {
+		return 'gowhatsapp';
 	}
 
 	#[\Override]
@@ -686,6 +692,7 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInst
 					'status' => 'done',
 					'message' => 'Configuration saved using an existing connected device.',
 					'config' => $this->buildCurrentConfigPayload(),
+					'data' => $this->buildCurrentAccountDataPayload(),
 				];
 			}
 
@@ -778,6 +785,7 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInst
 				'status' => 'done',
 				'message' => $pairingResult['message'],
 				'config' => $this->buildCurrentConfigPayload(),
+				'data' => $this->buildCurrentAccountDataPayload(),
 			];
 		}
 
@@ -823,6 +831,7 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInst
 				'status' => 'done',
 				'message' => 'Device paired successfully and configuration saved.',
 				'config' => $this->buildCurrentConfigPayload(),
+				'data' => $this->buildCurrentAccountDataPayload(),
 			];
 		}
 
@@ -1022,9 +1031,30 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInst
 
 			/** @var array<string, mixed> $results */
 			$results = $data['results'] ?? [];
-			$accountName = trim((string)($results['verified_name'] ?? ''));
+			/** @var array<mixed> $dataArray */
+			$dataArray = $results['data'] ?? [];
+			$firstResult = reset($dataArray);
+			if ($firstResult === false || !is_array($firstResult)) {
+				return [];
+			}
+			/** @var array<string, mixed> $firstResult */
 
-			return $accountName !== '' ? ['account_name' => $accountName] : [];
+			// Try to get account name from verified_name first, then fall back to name
+			$accountName = trim((string)($firstResult['verified_name'] ?? ''));
+			if ($accountName === '') {
+				$accountName = trim((string)($firstResult['name'] ?? ''));
+			}
+			if ($accountName === '') {
+				return [];
+			}
+
+			$account = ['account_name' => $accountName];
+			$avatarUrl = trim((string)($firstResult['avatar_url'] ?? $firstResult['profile_picture_url'] ?? $firstResult['picture_url'] ?? ''));
+			if ($avatarUrl !== '') {
+				$account['account_avatar_url'] = $avatarUrl;
+			}
+
+			return $account;
 		} catch (\Exception) {
 			return [];
 		}
@@ -1040,6 +1070,41 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInst
 			'device_name' => $this->getDeviceNameValue(),
 			'device_id' => $this->lazyDeviceId,
 		];
+	}
+
+	/** @return array<string, mixed> */
+	private function buildCurrentAccountDataPayload(): array {
+		$accountInfo = $this->fetchCurrentAccountInfo();
+		if ($accountInfo === []) {
+			return [];
+		}
+
+		return ['account' => $accountInfo];
+	}
+
+	/** @return array<string, string> */
+	private function fetchCurrentAccountInfo(): array {
+		if ($this->lazyPhone === '') {
+			return [];
+		}
+
+		$results = $this->fetchUserInfo($this->lazyPhone . '@s.whatsapp.net');
+		if (!is_array($results)) {
+			return [];
+		}
+
+		$accountName = trim((string)($results['verified_name'] ?? $results['push_name'] ?? ''));
+		if ($accountName === '') {
+			return [];
+		}
+
+		$account = ['account_name' => $accountName];
+		$avatarUrl = trim((string)($results['avatar_url'] ?? $results['profile_picture_url'] ?? $results['picture_url'] ?? ''));
+		if ($avatarUrl !== '') {
+			$account['account_avatar_url'] = $avatarUrl;
+		}
+
+		return $account;
 	}
 
 	/** @param array<string, mixed> $state */
