@@ -106,14 +106,14 @@ class GatewayDispatchService {
 	 *
 	 * @throws GatewayInstanceNotFoundException
 	 */
-	public function enrichTestResultForReference(string $gatewayId, string $instanceId): array {
+	public function enrichTestResultForReference(string $gatewayId, string $instanceId, string $identifier = ''): array {
 		$candidate = $this->resolveGatewayInstanceReference($gatewayId, $instanceId);
 		$gateway = $candidate['gateway'];
 		if (!($gateway instanceof ITestResultEnricher)) {
 			return [];
 		}
 
-		return $gateway->enrichTestResult($candidate['instance']['config']);
+		return $gateway->enrichTestResult($candidate['instance']['config'], $identifier);
 	}
 
 	/**

@@ -111,8 +111,18 @@
 			<div v-if="instance.priority > 0">
 				{{ t('twofactor_gateway', 'Priority: {priority}', { priority: instance.priority }) }}
 			</div>
-			<div v-if="routingGroupsLabel">
-				{{ t('twofactor_gateway', 'Groups: {groups}', { groups: routingGroupsLabel }) }}
+			<div v-if="routingGroupNames.length > 0" class="routing-groups">
+				<span class="routing-groups-label">{{ t('twofactor_gateway', 'Groups') }}</span>
+				<div class="routing-groups-chips">
+					<NcChip
+						v-for="groupName in routingGroupNames"
+						:key="groupName"
+						class="routing-group-chip"
+						variant="tertiary"
+						no-close>
+						{{ groupName }}
+					</NcChip>
+				</div>
 			</div>
 			<div>
 				{{ t('twofactor_gateway', 'Created: {date}', { date: formatDate(instance.createdAt) }) }}
@@ -180,15 +190,15 @@ export default defineComponent({
 			return result
 		},
 
-		routingGroupsLabel(): string {
+		routingGroupNames(): string[] {
 			const groupIds = Array.isArray(this.instance.groupIds) ? this.instance.groupIds : []
 			if (groupIds.length === 0) {
-				return ''
+				return []
 			}
 
 			return groupIds
 				.map((groupId) => this.groups.find((group) => group.id === groupId)?.displayName ?? groupId)
-				.join(', ')
+				.filter((groupName, index, groupNames) => groupName !== '' && groupNames.indexOf(groupName) === index)
 		},
 	},
 
@@ -273,6 +283,23 @@ export default defineComponent({
 		margin-top: 0.75rem;
 		font-size: 0.8rem;
 		color: var(--color-text-lighter);
+	}
+
+	.routing-groups {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		flex-wrap: wrap;
+	}
+
+	.routing-groups-label {
+		font-weight: 600;
+	}
+
+	.routing-groups-chips {
+		display: flex;
+		gap: 0.35rem;
+		flex-wrap: wrap;
 	}
 }
 </style>

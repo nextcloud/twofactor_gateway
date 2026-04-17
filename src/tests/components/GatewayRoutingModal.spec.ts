@@ -76,7 +76,7 @@ vi.mock('@nextcloud/vue/components/NcSelect', () => ({
 }))
 
 describe('GatewayRoutingModal', () => {
-	it('renders current label and reference as read-only fields', async () => {
+	it('renders current label and reference as static metadata', async () => {
 		const wrapper = mount(GatewayRoutingModal, {
 			props: {
 				show: true,
@@ -86,9 +86,10 @@ describe('GatewayRoutingModal', () => {
 		})
 
 		await flushPromises()
-		const values = wrapper.findAll('input').map((input) => (input.element as HTMLInputElement).value)
-		expect(values).toContain('WhatsApp Ops')
-		expect(values).toContain('gw-1')
+		expect(wrapper.find('.routing-meta-grid').exists()).toBe(true)
+		expect(wrapper.text()).toContain('WhatsApp Ops')
+		expect(wrapper.text()).toContain('gw-1')
+		expect(wrapper.findAll('input[type="text"]')).toHaveLength(1)
 	})
 
 	it('emits selected groups and priority on save', async () => {
@@ -108,7 +109,7 @@ describe('GatewayRoutingModal', () => {
 
 		await flushPromises()
 
-		const priorityInput = wrapper.findAll('input[type="text"]').find((input) => (input.element as HTMLInputElement).value === '15')
+		const priorityInput = wrapper.find('input[type="text"]')
 		await priorityInput?.setValue('30')
 
 		const groupSelect = wrapper.find('.nc-select-mock select')
@@ -133,7 +134,7 @@ describe('GatewayRoutingModal', () => {
 
 		await flushPromises()
 
-		const priorityInput = wrapper.findAll('input[type="text"]').at(2)
+		const priorityInput = wrapper.find('input[type="text"]')
 		await priorityInput?.setValue('abc')
 
 		const saveButton = wrapper.findAll('button').at(-1)

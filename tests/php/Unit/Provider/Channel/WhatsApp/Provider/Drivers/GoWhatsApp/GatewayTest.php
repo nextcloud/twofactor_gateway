@@ -124,14 +124,139 @@ class GatewayTest extends TestCase {
 			]));
 
 		$this->assertSame(
-			['success' => true, 'code' => 'ABC123', 'alreadyLoggedIn' => false],
+			['success' => true, 'code' => 'ABC123', 'alreadyLoggedIn' => false, 'errorMessage' => ''],
 			$this->invokePrivate('fetchPairingCode'),
+		);
+	}
+
+	public function testEnrichTestResultUsesTestIdentifierForLookup(): void {
+		$instanceConfig = [
+			'base_url' => 'http://gowa.local',
+			'username' => 'api-user',
+			'password' => 'api-pass',
+			'phone' => '5511999999999',
+			'device_id' => 'device-123',
+		];
+
+		$callIndex = 0;
+		$this->client->expects($this->exactly(3))
+			->method('get')
+			->willReturnCallback(function (string $url, array $options) use (&$callIndex) {
+				$callIndex++;
+
+				if ($callIndex === 1) {
+					self::assertSame('http://gowa.local/user/info', $url);
+					self::assertSame('552120422073@s.whatsapp.net', $options['query']['phone'] ?? null);
+					self::assertSame(['api-user', 'api-pass'], $options['auth'] ?? null);
+					self::assertSame('device-123', $options['headers']['X-Device-Id'] ?? null);
+					self::assertSame(5, $options['timeout'] ?? null);
+
+					return $this->createJsonResponse([
+						'code' => 'SUCCESS',
+						'results' => [
+							'data' => [[
+								'name' => '552120422073',
+								'verified_name' => '',
+							]],
+						],
+					]);
+				}
+
+				if ($callIndex === 2) {
+					self::assertSame('http://gowa.local/user/avatar', $url);
+					self::assertSame('552120422073@s.whatsapp.net', $options['query']['phone'] ?? null);
+					self::assertSame('true', $options['query']['is_preview'] ?? null);
+					self::assertSame(['api-user', 'api-pass'], $options['auth'] ?? null);
+					self::assertSame('device-123', $options['headers']['X-Device-Id'] ?? null);
+					self::assertSame(5, $options['timeout'] ?? null);
+
+					return $this->createJsonResponse([
+						'code' => 'SUCCESS',
+						'results' => [
+							'url' => 'https://wa.example/avatar.png',
+						],
+					]);
+				}
+
+				self::assertSame('https://wa.example/avatar.png', $url);
+				self::assertSame(['timeout' => 5], $options);
+
+				return $this->createBodyResponse('avatar-bytes');
+			});
+
+		$this->assertSame(
+			['account_name' => '552120422073', 'account_avatar_url' => 'data:image/png;base64,' . base64_encode('avatar-bytes')],
+			$this->gateway->enrichTestResult($instanceConfig, '552120422073'),
+		);
+	}
+
+	public function testEnrichTestResultFallsBackToInstancePhoneWhenIdentifierIsMissing(): void {
+		$instanceConfig = [
+			'base_url' => 'http://gowa.local',
+			'phone' => '5511999999999',
+		];
+
+		$callIndex = 0;
+		$this->client->expects($this->exactly(3))
+			->method('get')
+			->willReturnCallback(function (string $url, array $options) use (&$callIndex) {
+				$callIndex++;
+
+				if ($callIndex === 1) {
+					self::assertSame('http://gowa.local/user/info', $url);
+					self::assertSame('5511999999999@s.whatsapp.net', $options['query']['phone'] ?? null);
+					self::assertSame(5, $options['timeout'] ?? null);
+
+					return $this->createJsonResponse([
+						'code' => 'SUCCESS',
+						'results' => [
+							'data' => [[
+								'name' => 'Configured Account',
+								'verified_name' => '',
+							]],
+						],
+					]);
+				}
+
+				if ($callIndex === 2) {
+					self::assertSame('http://gowa.local/user/avatar', $url);
+					self::assertSame('5511999999999@s.whatsapp.net', $options['query']['phone'] ?? null);
+					self::assertSame('true', $options['query']['is_preview'] ?? null);
+					self::assertSame(5, $options['timeout'] ?? null);
+
+					return $this->createJsonResponse([
+						'code' => 'SUCCESS',
+						'results' => [
+							'url' => 'https://wa.example/configured-avatar.png',
+						],
+					]);
+				}
+
+				self::assertSame('https://wa.example/configured-avatar.png', $url);
+				self::assertSame(['timeout' => 5], $options);
+
+				return $this->createBodyResponse('configured-avatar-bytes');
+			});
+
+		$this->assertSame(
+			['account_name' => 'Configured Account', 'account_avatar_url' => 'data:image/png;base64,' . base64_encode('configured-avatar-bytes')],
+			$this->gateway->enrichTestResult($instanceConfig),
 		);
 	}
 
 	private function createJsonResponse(array $payload): IResponse {
 		$stream = $this->createStub(StreamInterface::class);
 		$stream->method('__toString')->willReturn((string)json_encode($payload));
+
+		$response = $this->createStub(IResponse::class);
+		$response->method('getBody')->willReturn($stream);
+
+		return $response;
+	}
+
+	private function createBodyResponse(string $body): IResponse {
+		$stream = $this->createStub(StreamInterface::class);
+		$stream->method('__toString')->willReturn($body);
 
 		$response = $this->createStub(IResponse::class);
 		$response->method('getBody')->willReturn($stream);

@@ -14,18 +14,15 @@
 				{{ t('twofactor_gateway', 'Choose when this instance should be used.') }}
 			</p>
 
-			<div class="modal-field modal-field--readonly">
-				<NcTextField
-					:model-value="label"
-					:label="t('twofactor_gateway', 'Instance')"
-					:readonly="true" />
-			</div>
-
-			<div class="modal-field modal-field--readonly">
-				<NcTextField
-					:model-value="instanceId"
-					:label="t('twofactor_gateway', 'Reference')"
-					:readonly="true" />
+			<div class="routing-meta-grid">
+				<div class="routing-meta-item">
+					<span class="routing-meta-label">{{ t('twofactor_gateway', 'Instance') }}</span>
+					<strong class="routing-meta-value">{{ label || '-' }}</strong>
+				</div>
+				<div class="routing-meta-item">
+					<span class="routing-meta-label">{{ t('twofactor_gateway', 'Reference') }}</span>
+					<code class="routing-meta-value routing-meta-value--code">{{ instanceId || '-' }}</code>
+				</div>
 			</div>
 
 			<div class="modal-field">
@@ -47,6 +44,7 @@
 					:placeholder="t('twofactor_gateway', 'Restrict to groups\u00A0\u2026')"
 					label="displayName"
 					track-by="id"
+					:no-wrap="false"
 					:multiple="true"
 					:keep-open="true"
 					:deselect-from-dropdown="true"
@@ -191,8 +189,40 @@ export default defineComponent({
 		}
 	}
 
-	.modal-field--readonly :deep(input) {
-		opacity: 0.8;
+	.routing-meta-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+		gap: 0.75rem;
+	}
+
+	.routing-meta-item {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		padding: 0.65rem 0.75rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--border-radius-large);
+		background: var(--color-background-dark);
+	}
+
+	.routing-meta-label {
+		font-weight: 600;
+		color: var(--color-text-lighter);
+		font-size: 0.82rem;
+	}
+
+	.routing-meta-value {
+		color: var(--color-main-text);
+		font-size: 0.95rem;
+		line-height: 1.3;
+		font-family: var(--font-face, sans-serif);
+	}
+
+	.routing-meta-value--code {
+		font-family: var(--font-face-monospace, monospace);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.modal-help-text {

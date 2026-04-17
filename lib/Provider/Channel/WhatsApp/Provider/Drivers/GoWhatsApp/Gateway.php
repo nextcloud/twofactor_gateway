@@ -992,35 +992,28 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInst
 	 * an empty array so the controller degrades gracefully.
 	 *
 	 * @param array<string, string> $instanceConfig
+	 * @param string $identifier
 	 * @return array<string, string>
 	 */
 	#[\Override]
-	public function enrichTestResult(array $instanceConfig): array {
-		$phone = trim((string)($instanceConfig['phone'] ?? ''));
+	public function enrichTestResult(array $instanceConfig, string $identifier = ''): array {
 		$baseUrl = rtrim((string)($instanceConfig['base_url'] ?? ''), '/');
+		$username = (string)($instanceConfig['username'] ?? '');
+		$password = (string)($instanceConfig['password'] ?? '');
+		$deviceId = (string)($instanceConfig['device_id'] ?? '');
+		$lookupIdentifier = $this->buildUserInfoLookupIdentifier(
+			$identifier !== '' ? $identifier : (string)($instanceConfig['phone'] ?? ''),
+		);
 
-		if ($phone === '' || $baseUrl === '') {
+		if ($baseUrl === '' || $lookupIdentifier === '') {
 			return [];
 		}
 
 		try {
-			$options = [
-				'query' => ['phone' => $phone . '@s.whatsapp.net'],
-				'timeout' => 5,
-			];
-
-			$username = (string)($instanceConfig['username'] ?? '');
-			$password = (string)($instanceConfig['password'] ?? '');
-			if ($username !== '' || $password !== '') {
-				$options['auth'] = [$username, $password];
-			}
-
-			$deviceId = (string)($instanceConfig['device_id'] ?? '');
-			if ($deviceId !== '') {
-				$options['headers'] = ['X-Device-Id' => $deviceId];
-			}
-
-			$response = $this->client->get($baseUrl . '/user/info', $options);
+			$response = $this->client->get(
+				$baseUrl . '/user/info',
+				$this->buildUserLookupRequestOptions($lookupIdentifier, $username, $password, $deviceId),
+			);
 			$body = (string)$response->getBody();
 			/** @var array<string, mixed>|null $data */
 			$data = json_decode($body, true);
@@ -1031,30 +1024,18 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInst
 
 			/** @var array<string, mixed> $results */
 			$results = $data['results'] ?? [];
-			/** @var array<mixed> $dataArray */
-			$dataArray = $results['data'] ?? [];
-			$firstResult = reset($dataArray);
-			if ($firstResult === false || !is_array($firstResult)) {
-				return [];
-			}
-			/** @var array<string, mixed> $firstResult */
-
-			// Try to get account name from verified_name first, then fall back to name
-			$accountName = trim((string)($firstResult['verified_name'] ?? ''));
-			if ($accountName === '') {
-				$accountName = trim((string)($firstResult['name'] ?? ''));
-			}
-			if ($accountName === '') {
+			if (!is_array($results)) {
 				return [];
 			}
 
-			$account = ['account_name' => $accountName];
-			$avatarUrl = trim((string)($firstResult['avatar_url'] ?? $firstResult['profile_picture_url'] ?? $firstResult['picture_url'] ?? ''));
-			if ($avatarUrl !== '') {
-				$account['account_avatar_url'] = $avatarUrl;
+			$firstUserInfo = $this->extractFirstUserInfoResult($results);
+			if (!is_array($firstUserInfo)) {
+				return [];
 			}
 
-			return $account;
+			$avatarUrl = $this->fetchAvatarDataUri($baseUrl, $lookupIdentifier, $username, $password, $deviceId);
+
+			return $this->extractAccountInfoFromUserInfo($firstUserInfo, $avatarUrl);
 		} catch (\Exception) {
 			return [];
 		}
@@ -1088,23 +1069,135 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, IDefaultInst
 			return [];
 		}
 
-		$results = $this->fetchUserInfo($this->lazyPhone . '@s.whatsapp.net');
+		$results = $this->fetchUserInfo($this->buildUserInfoLookupIdentifier($this->lazyPhone));
 		if (!is_array($results)) {
 			return [];
 		}
 
-		$accountName = trim((string)($results['verified_name'] ?? $results['push_name'] ?? ''));
+		$avatarUrl = $this->fetchAvatarDataUri(
+			$this->getBaseUrl(),
+			$this->buildUserInfoLookupIdentifier($this->lazyPhone),
+			$this->getBasicAuth()[0] ?? '',
+			$this->getBasicAuth()[1] ?? '',
+			$this->getDeviceId(),
+		);
+
+		return $this->extractAccountInfoFromUserInfo($results, $avatarUrl);
+	}
+
+	/** @param array<string, mixed> $results */
+	private function extractFirstUserInfoResult(array $results): ?array {
+		$dataArray = $results['data'] ?? null;
+		if (is_array($dataArray)) {
+			$firstResult = reset($dataArray);
+			return is_array($firstResult) ? $firstResult : null;
+		}
+
+		return $results;
+	}
+
+	/** @param array<string, mixed> $userInfo */
+	private function extractAccountInfoFromUserInfo(array $userInfo, string $avatarUrlOverride = ''): array {
+		$accountName = trim((string)($userInfo['verified_name'] ?? $userInfo['push_name'] ?? ''));
+		if ($accountName === '') {
+			$accountName = trim((string)($userInfo['name'] ?? ''));
+		}
 		if ($accountName === '') {
 			return [];
 		}
 
 		$account = ['account_name' => $accountName];
-		$avatarUrl = trim((string)($results['avatar_url'] ?? $results['profile_picture_url'] ?? $results['picture_url'] ?? ''));
+		$avatarUrl = trim($avatarUrlOverride);
+		if ($avatarUrl === '') {
+			$avatarUrl = trim((string)($userInfo['avatar_url'] ?? $userInfo['profile_picture_url'] ?? $userInfo['picture_url'] ?? ''));
+		}
 		if ($avatarUrl !== '') {
 			$account['account_avatar_url'] = $avatarUrl;
 		}
 
 		return $account;
+	}
+
+	/** @return array<string, mixed> */
+	private function buildUserLookupRequestOptions(string $lookupIdentifier, string $username = '', string $password = '', string $deviceId = '', bool $previewAvatar = false): array {
+		$options = [
+			'query' => ['phone' => $lookupIdentifier],
+			'timeout' => 5,
+		];
+		if ($previewAvatar) {
+			$options['query']['is_preview'] = 'true';
+		}
+
+		if ($username !== '' || $password !== '') {
+			$options['auth'] = [$username, $password];
+		}
+
+		if ($deviceId !== '') {
+			$options['headers'] = ['X-Device-Id' => $deviceId];
+		}
+
+		return $options;
+	}
+
+	private function fetchAvatarDataUri(string $baseUrl, string $lookupIdentifier, string $username = '', string $password = '', string $deviceId = ''): string {
+		try {
+			$response = $this->client->get(
+				$baseUrl . '/user/avatar',
+				$this->buildUserLookupRequestOptions($lookupIdentifier, $username, $password, $deviceId, true),
+			);
+			$body = (string)$response->getBody();
+			/** @var array<string, mixed>|null $data */
+			$data = json_decode($body, true);
+			if (($data['code'] ?? '') !== 'SUCCESS') {
+				return '';
+			}
+
+			$results = $data['results'] ?? [];
+			if (!is_array($results)) {
+				return '';
+			}
+
+			$avatarUrl = trim((string)($results['url'] ?? ''));
+			if ($avatarUrl === '') {
+				return '';
+			}
+
+			$avatarResponse = $this->client->get($avatarUrl, ['timeout' => 5]);
+			$avatarBody = (string)$avatarResponse->getBody();
+			if ($avatarBody === '') {
+				return '';
+			}
+
+			return sprintf(
+				'data:%s;base64,%s',
+				$this->detectAvatarMimeType($avatarUrl),
+				base64_encode($avatarBody),
+			);
+		} catch (\Exception) {
+			return '';
+		}
+	}
+
+	private function detectAvatarMimeType(string $avatarUrl): string {
+		$path = parse_url($avatarUrl, PHP_URL_PATH);
+		$extension = is_string($path) ? strtolower(pathinfo($path, PATHINFO_EXTENSION)) : '';
+
+		return match ($extension) {
+			'png' => 'image/png',
+			'gif' => 'image/gif',
+			'webp' => 'image/webp',
+			'jpg', 'jpeg' => 'image/jpeg',
+			default => 'image/jpeg',
+		};
+	}
+
+	private function buildUserInfoLookupIdentifier(string $identifier): string {
+		$normalizedIdentifier = trim($identifier);
+		if ($normalizedIdentifier === '') {
+			return '';
+		}
+
+		return str_contains($normalizedIdentifier, '@') ? $normalizedIdentifier : $normalizedIdentifier . '@s.whatsapp.net';
 	}
 
 	/** @param array<string, mixed> $state */
