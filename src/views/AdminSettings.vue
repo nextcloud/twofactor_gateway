@@ -95,7 +95,6 @@
 			:instance-id="routingItem.instance.id"
 			:groups="groups"
 			:initial-group-ids="routingItem.instance.groupIds"
-			:initial-priority="routingItem.instance.priority"
 			@close="closeRoutingModal"
 			@saved="onRoutingSaved" />
 
@@ -415,7 +414,7 @@ export default defineComponent({
 			}
 		},
 
-		async onRoutingSaved(payload: { groupIds: string[]; priority: number }) {
+		async onRoutingSaved(payload: { groupIds: string[] }) {
 			if (!this.routingItem) {
 				return
 			}
@@ -427,7 +426,7 @@ export default defineComponent({
 					this.routingItem.instance.label,
 					this.routingItem.instance.config,
 					payload.groupIds,
-					payload.priority,
+					this.routingItem.instance.priority,
 				)
 				this.closeRoutingModal()
 				await this.loadGateways()
@@ -455,7 +454,7 @@ export default defineComponent({
 					}))
 					.filter(({ item, priority }) => item.instance.priority !== priority)
 
-				await Promise.all(updates.map(async ({ item, priority }) => {
+				for (const { item, priority } of updates) {
 					await updateInstance(
 						item.gatewayId,
 						item.instance.id,
@@ -464,7 +463,7 @@ export default defineComponent({
 						item.instance.groupIds,
 						priority,
 					)
-				}))
+				}
 
 				await this.loadGateways()
 			} catch (err) {
