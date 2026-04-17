@@ -262,11 +262,20 @@ class AdminGatewayController extends OCSController {
 			);
 		}
 
+		$gatewayForTest = $gw;
+		$instanceConfig = is_array($instance['config'] ?? null) ? $instance['config'] : [];
+		if ($instanceConfig !== [] && method_exists($gw, 'withRuntimeConfig')) {
+			$runtimeGateway = $gw->withRuntimeConfig($instanceConfig);
+			if ($runtimeGateway instanceof IGateway) {
+				$gatewayForTest = $runtimeGateway;
+			}
+		}
+
 		try {
-			$gw->send($identifier, 'Test');
+			$gatewayForTest->send($identifier, 'Test');
 			$data = ['success' => true, 'message' => 'Test message sent successfully.'];
-			if ($gw instanceof ITestResultEnricher) {
-				$accountInfo = $gw->enrichTestResult($instance['config'] ?? [], $identifier);
+			if ($gatewayForTest instanceof ITestResultEnricher) {
+				$accountInfo = $gatewayForTest->enrichTestResult($instanceConfig, $identifier);
 				if ($accountInfo !== []) {
 					$data['accountInfo'] = $accountInfo;
 				}
