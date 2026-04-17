@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Service;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\GatewayInstanceNotFoundException;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
@@ -323,7 +324,46 @@ class GatewayConfigService {
 	private function buildInstanceRecord(IGateway $gateway, array $meta): array {
 		$settings = $gateway->getSettings();
 		$config = $this->loadFieldValues($gateway->getProviderId(), $meta['id'], $settings);
-		$isComplete = $this->isInstanceComplete($settings, $config);
+		$completenessSettings = $settings;
+
+		if ($gateway instanceof IProviderCatalogGateway) {
+			$selector = $gateway->getProviderSelectorField();
+			$selectedProvider = trim((string)($config[$selector->field] ?? $selector->default));
+
+			if ($selectedProvider !== '') {
+				foreach ($gateway->getProviderCatalog() as $provider) {
+					if ((string)($provider['id'] ?? '') !== $selectedProvider) {
+						continue;
+					}
+
+					$providerFields = array_values(array_filter(
+						$provider['fields'] ?? [],
+						static fn ($field): bool => $field instanceof FieldDefinition,
+					));
+
+					foreach ($providerFields as $field) {
+						if (!array_key_exists($field->field, $config)) {
+							$config[$field->field] = $this->appConfig->getValueString(
+								Application::APP_ID,
+								$this->instanceFieldKey($gateway->getProviderId(), $meta['id'], $field->field),
+								$field->default,
+							);
+						}
+					}
+
+					$completenessSettings = new Settings(
+						name: $settings->name,
+						id: $settings->id,
+						allowMarkdown: $settings->allowMarkdown,
+						instructions: $settings->instructions,
+						fields: array_values(array_merge([$selector], $providerFields)),
+					);
+					break;
+				}
+			}
+		}
+
+		$isComplete = $this->isInstanceComplete($completenessSettings, $config);
 		$groupIds = is_array($meta['groupIds'] ?? null) ? $this->normalizeGroupIds($meta['groupIds']) : [];
 		$priority = $this->normalizePriority($meta['priority'] ?? 0);
 		return [
