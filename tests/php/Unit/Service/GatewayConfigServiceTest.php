@@ -14,6 +14,7 @@ use OCA\TwoFactorGateway\Exception\GatewayInstanceNotFoundException;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
@@ -34,13 +35,49 @@ class GatewayConfigServiceTest extends AppTestCase {
 
 	private function makeGatewayMock(string $id, string $name, array $fieldDefs): IGateway&MockObject {
 		$fields = array_map(
-			fn (array $f) => new FieldDefinition($f['field'], $f['prompt'], $f['default'] ?? '', $f['optional'] ?? false),
+			fn (array $f) => new FieldDefinition($f['field'], $f['prompt'], $f['default'] ?? '', $f['optional'] ?? false, $f['type'] ?? null, $f['hidden'] ?? false, $f['min'] ?? null, $f['max'] ?? null),
 			$fieldDefs,
 		);
 		$settings = new Settings(name: $name, id: $id, fields: $fields);
 		$gateway = $this->createMock(IGateway::class);
 		$gateway->method('getProviderId')->willReturn($id);
 		$gateway->method('getSettings')->willReturn($settings);
+		return $gateway;
+	}
+
+	private function makeCatalogGatewayMock(string $id, string $name, array $fieldDefs, string $selectorField, array $catalog): IGateway&IProviderCatalogGateway&MockObject {
+		$fields = array_map(
+			fn (array $f) => new FieldDefinition($f['field'], $f['prompt'], $f['default'] ?? '', $f['optional'] ?? false, $f['type'] ?? null, $f['hidden'] ?? false, $f['min'] ?? null, $f['max'] ?? null),
+			$fieldDefs,
+		);
+		$settings = new Settings(name: $name, id: $id, fields: $fields);
+		/** @var IGateway&IProviderCatalogGateway&MockObject $gateway */
+		$gateway = $this->createMockForIntersectionOfInterfaces([IGateway::class, IProviderCatalogGateway::class]);
+		$gateway->method('getProviderId')->willReturn($id);
+		$gateway->method('getSettings')->willReturn($settings);
+		$gateway->method('getProviderSelectorField')->willReturn(new FieldDefinition($selectorField, 'Provider', 'gowhatsapp', false, null, true));
+		$gateway->method('getProviderCatalog')->willReturn(array_map(
+			static function (array $provider): array {
+				return [
+					'id' => $provider['id'],
+					'name' => $provider['name'],
+					'fields' => array_map(
+						static fn (array $field): FieldDefinition => new FieldDefinition(
+							$field['field'],
+							$field['prompt'],
+							$field['default'] ?? '',
+							$field['optional'] ?? false,
+							$field['type'] ?? null,
+							$field['hidden'] ?? false,
+							$field['min'] ?? null,
+							$field['max'] ?? null,
+						),
+						$provider['fields'],
+					),
+				];
+			},
+			$catalog,
+		));
 		return $gateway;
 	}
 
@@ -242,6 +279,38 @@ class GatewayConfigServiceTest extends AppTestCase {
 
 		$smsByKey = array_values(array_filter($list, fn ($g) => $g['id'] === 'sms'))[0];
 		$this->assertCount(1, $smsByKey['instances']);
+	}
+
+	public function testGetGatewayListIncludesProviderCatalogMetadata(): void {
+		$whatsAppGateway = $this->makeCatalogGatewayMock(
+			'whatsapp',
+			'WhatsApp',
+			[['field' => 'base_url', 'prompt' => 'Base URL']],
+			'provider',
+			[[
+				'id' => 'gowhatsapp',
+				'name' => 'WhatsApp',
+				'fields' => [
+					['field' => 'base_url', 'prompt' => 'Base URL'],
+					['field' => 'device_name', 'prompt' => 'Device name', 'optional' => true],
+				],
+			]],
+		);
+
+		$this->gatewayFactory->method('getFqcnList')->willReturn([
+			'OCA\\TwoFactorGateway\\Provider\\Channel\\WhatsApp\\Gateway',
+		]);
+		$this->gatewayFactory->method('get')
+			->willReturnMap([
+				['OCA\\TwoFactorGateway\\Provider\\Channel\\WhatsApp\\Gateway', $whatsAppGateway],
+			]);
+
+		$list = $this->service->getGatewayList();
+
+		$this->assertCount(1, $list);
+		$this->assertSame('provider', $list[0]['providerSelector']['field']);
+		$this->assertSame('gowhatsapp', $list[0]['providerCatalog'][0]['id']);
+		$this->assertSame('device_name', $list[0]['providerCatalog'][0]['fields'][1]['field']);
 	}
 
 	public function testInstanceIsCompleteWhenAllRequiredFieldsSet(): void {

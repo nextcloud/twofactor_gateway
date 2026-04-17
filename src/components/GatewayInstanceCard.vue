@@ -108,9 +108,6 @@
 		</div>
 
 		<div class="card-meta">
-			<div>
-				{{ t('twofactor_gateway', 'Reference: {reference}', { reference: instance.id }) }}
-			</div>
 			<div v-if="instance.priority > 0">
 				{{ t('twofactor_gateway', 'Priority: {priority}', { priority: instance.priority }) }}
 			</div>
@@ -160,6 +157,9 @@ export default defineComponent({
 	computed: {
 		maskedConfig(): Record<string, string> {
 			const result: Record<string, string> = {}
+			const config = this.instance.config && typeof this.instance.config === 'object'
+				? this.instance.config
+				: {}
 			const secretFields = new Set(
 				this.fields
 					.filter((field) => field.type === 'secret')
@@ -170,7 +170,7 @@ export default defineComponent({
 					.filter((field) => field.hidden)
 					.map((field) => field.field),
 			)
-			for (const [key, value] of Object.entries(this.instance.config)) {
+			for (const [key, value] of Object.entries(config)) {
 				if (key === 'provider' || hiddenFields.has(key)) {
 					continue
 				}
@@ -181,11 +181,12 @@ export default defineComponent({
 		},
 
 		routingGroupsLabel(): string {
-			if (this.instance.groupIds.length === 0) {
+			const groupIds = Array.isArray(this.instance.groupIds) ? this.instance.groupIds : []
+			if (groupIds.length === 0) {
 				return ''
 			}
 
-			return this.instance.groupIds
+			return groupIds
 				.map((groupId) => this.groups.find((group) => group.id === groupId)?.displayName ?? groupId)
 				.join(', ')
 		},

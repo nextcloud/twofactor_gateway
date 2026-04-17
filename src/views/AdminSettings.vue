@@ -186,8 +186,11 @@ export default defineComponent({
 		allInstances(): FlatInstanceEntry[] {
 			const rows: FlatInstanceEntry[] = []
 			for (const gateway of this.gateways) {
-				const routingRelevantForGateway = gateway.instances.length > 1
-				for (const instance of gateway.instances) {
+				const instances = Array.isArray(gateway.instances) ? gateway.instances : []
+				const routingRelevantForGateway = instances.length > 1
+				for (const instance of instances) {
+					const groupIds = Array.isArray(instance.groupIds) ? instance.groupIds : []
+					const priority = typeof instance.priority === 'number' ? instance.priority : 0
 					const selectedProviderId = gateway.providerSelector
 						? instance.config[gateway.providerSelector.field]
 						: undefined
@@ -196,8 +199,12 @@ export default defineComponent({
 						gatewayId: gateway.id,
 						providerName: selectedProvider?.name ?? gateway.name,
 						fields: selectedProvider?.fields ?? gateway.fields,
-						instance,
-						showRoutingAction: routingRelevantForGateway || instance.groupIds.length > 0 || instance.priority > 0,
+						instance: {
+							...instance,
+							groupIds,
+							priority,
+						},
+						showRoutingAction: routingRelevantForGateway || groupIds.length > 0 || priority > 0,
 					})
 				}
 			}
