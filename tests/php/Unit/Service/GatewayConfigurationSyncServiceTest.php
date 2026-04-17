@@ -9,35 +9,46 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
+use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
-use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class GatewayConfigurationSyncServiceTest extends TestCase {
-	private GoWhatsAppSessionMonitorJobManager&MockObject $goWhatsAppSessionMonitorJobManager;
 	private GatewayConfigurationSyncService $service;
 
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->goWhatsAppSessionMonitorJobManager = $this->createMock(GoWhatsAppSessionMonitorJobManager::class);
-		$this->service = new GatewayConfigurationSyncService($this->goWhatsAppSessionMonitorJobManager);
+		$this->service = new GatewayConfigurationSyncService();
 	}
 
-	public function testSyncAfterConfigurationChangeDelegatesToMonitorManager(): void {
-		$this->goWhatsAppSessionMonitorJobManager->expects($this->once())
-			->method('sync');
+	public function testSyncAfterConfigurationChangeDelegatesToAwareGateway(): void {
+		/** @var IGateway&IConfigurationChangeAwareGateway&MockObject $gateway */
+		$gateway = $this->createMockForIntersectionOfInterfaces([IGateway::class, IConfigurationChangeAwareGateway::class]);
+		$gateway->expects($this->once())
+			->method('syncAfterConfigurationChange');
 
-		$this->service->syncAfterConfigurationChange();
+		$this->service->syncAfterConfigurationChange($gateway);
 	}
 
-	public function testSyncAfterConfigurationChangeSwallowsMonitorFailures(): void {
-		$this->goWhatsAppSessionMonitorJobManager->expects($this->once())
-			->method('sync')
+	public function testSyncAfterConfigurationChangeDoesNothingForGatewayWithoutCapability(): void {
+		$gateway = $this->createMock(IGateway::class);
+
+		$this->service->syncAfterConfigurationChange($gateway);
+
+		$this->addToAssertionCount(1);
+	}
+
+	public function testSyncAfterConfigurationChangeSwallowsAwareGatewayFailures(): void {
+		/** @var IGateway&IConfigurationChangeAwareGateway&MockObject $gateway */
+		$gateway = $this->createMockForIntersectionOfInterfaces([IGateway::class, IConfigurationChangeAwareGateway::class]);
+		$gateway->expects($this->once())
+			->method('syncAfterConfigurationChange')
 			->willThrowException(new \RuntimeException('sync failed'));
 
-		$this->service->syncAfterConfigurationChange();
+		$this->service->syncAfterConfigurationChange($gateway);
 
 		$this->addToAssertionCount(1);
 	}
