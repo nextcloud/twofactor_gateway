@@ -117,6 +117,27 @@ class GatewayTest extends TestCase {
 
 		$this->assertSame([['@bob', 'code 456']], $botProvider->sentMessages);
 	}
+
+	public function testCreateSettingsIncludesProviderSelectorAndSelectedProviderFields(): void {
+		$clientProvider = new TelegramGatewayProviderTestDouble(new Settings(
+			id: 'telegram_client',
+			name: 'Telegram Client API',
+			fields: [new FieldDefinition(field: 'api_id', prompt: 'API ID')],
+		));
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_client', $clientProvider],
+		]);
+
+		$gateway = (new Gateway($this->appConfig, $this->telegramProviderFactory))
+			->withRuntimeConfig(['provider' => 'telegram_client']);
+
+		$settings = $gateway->getSettings();
+
+		$this->assertSame('Telegram', $settings->name);
+		$this->assertSame('provider', $settings->fields[0]->field);
+		$this->assertSame('api_id', $settings->fields[1]->field);
+	}
 }
 
 class TelegramGatewayProviderTestDouble extends AProvider {
