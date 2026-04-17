@@ -54,7 +54,7 @@ vi.mock('@nextcloud/vue/components/NcLoadingIcon', () => ({
 vi.mock('@nextcloud/vue/components/NcAvatar', () => ({
 	default: defineComponent({
 		props: ['displayName', 'url', 'size', 'isNoUser'],
-		template: `<span class="nc-avatar" :data-display-name="displayName" :data-url="url || ''" />`,
+		template: '<span class="nc-avatar" :data-display-name="displayName" :data-url="url || \'\'" />',
 	}),
 }))
 
