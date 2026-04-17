@@ -13,7 +13,7 @@ use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
-use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,7 +27,7 @@ class Configure extends Command {
 
 	public function __construct(
 		private Factory $gatewayFactory,
-		private GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager,
+		private GatewayConfigurationSyncService $gatewayConfigurationSyncService,
 		private GatewayConfigService $configService,
 	) {
 		parent::__construct('twofactorauth:gateway:configure');
@@ -76,7 +76,7 @@ class Configure extends Command {
 
 		try {
 			$result = $gateway->cliConfigure($input, $output);
-			$this->goWhatsAppSessionMonitorJobManager->sync();
+			$this->gatewayConfigurationSyncService->syncAfterConfigurationChange();
 		} catch (InvalidProviderException $e) {
 			$output->writeln("<error>Invalid gateway $gatewayName</error>");
 			return 1;
