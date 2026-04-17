@@ -108,9 +108,6 @@
 		</div>
 
 		<div class="card-meta">
-			<div v-if="instance.priority > 0">
-				{{ t('twofactor_gateway', 'Priority: {priority}', { priority: instance.priority }) }}
-			</div>
 			<div v-if="routingGroupNames.length > 0" class="routing-groups">
 				<span class="routing-groups-label">{{ t('twofactor_gateway', 'Groups') }}</span>
 				<div class="routing-groups-chips">
@@ -170,6 +167,11 @@ export default defineComponent({
 			const config = this.instance.config && typeof this.instance.config === 'object'
 				? this.instance.config
 				: {}
+			const booleanFields = new Set(
+				this.fields
+					.filter((field) => String(field.type ?? '').toLowerCase() === 'boolean')
+					.map((field) => field.field),
+			)
 			const secretFields = new Set(
 				this.fields
 					.filter((field) => field.type === 'secret')
@@ -184,6 +186,20 @@ export default defineComponent({
 				if (key === 'provider' || hiddenFields.has(key)) {
 					continue
 				}
+
+				if (booleanFields.has(key)) {
+					const normalizedValue = String(value ?? '').trim().toLowerCase()
+					if (['1', 'true', 'yes', 'on'].includes(normalizedValue)) {
+						result[key] = t('twofactor_gateway', 'Enabled')
+						continue
+					}
+
+					if (['0', 'false', 'no', 'off', ''].includes(normalizedValue)) {
+						result[key] = t('twofactor_gateway', 'Disabled')
+						continue
+					}
+				}
+
 				const isSensitive = secretFields.has(key) || MASKED_FIELDS.some((f) => key.toLowerCase().includes(f))
 				result[key] = isSensitive && value ? '••••••••' : (value || '—')
 			}
