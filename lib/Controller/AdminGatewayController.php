@@ -17,7 +17,7 @@ use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
-use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -31,7 +31,7 @@ class AdminGatewayController extends OCSController {
 		IRequest $request,
 		private GatewayConfigService $configService,
 		private GatewayFactory $gatewayFactory,
-		private GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager,
+		private GatewayConfigurationSyncService $gatewayConfigurationSyncService,
 		private IGroupManager $groupManager,
 	) {
 		parent::__construct('twofactor_gateway', $request);
@@ -229,7 +229,7 @@ class AdminGatewayController extends OCSController {
 
 	private function syncSessionMonitorSafely(): void {
 		try {
-			$this->goWhatsAppSessionMonitorJobManager->sync();
+			$this->gatewayConfigurationSyncService->syncAfterConfigurationChange();
 		} catch (\Throwable) {
 			// Sync failures must not break admin CRUD/test operations.
 		}
