@@ -74,114 +74,6 @@
         }
     },
     "paths": {
-        "/index.php/apps/twofactor_gateway/gowhatsapp/webhook": {
-            "post": {
-                "operationId": "go_whats_app_webhook-ingest",
-                "summary": "Ingest a signed GoWhatsApp webhook event for hybrid monitoring",
-                "tags": [
-                    "go_whats_app_webhook"
-                ],
-                "security": [
-                    {},
-                    {
-                        "bearer_auth": []
-                    },
-                    {
-                        "basic_auth": []
-                    }
-                ],
-                "responses": {
-                    "202": {
-                        "description": "Event accepted (processed or intentionally skipped)",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "processed",
-                                        "message"
-                                    ],
-                                    "properties": {
-                                        "processed": {
-                                            "type": "boolean"
-                                        },
-                                        "message": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Malformed request body",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "processed",
-                                        "message"
-                                    ],
-                                    "properties": {
-                                        "processed": {
-                                            "type": "boolean"
-                                        },
-                                        "message": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Invalid or missing HMAC signature",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "processed",
-                                        "message"
-                                    ],
-                                    "properties": {
-                                        "processed": {
-                                            "type": "boolean"
-                                        },
-                                        "message": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "503": {
-                        "description": "Webhook ingestion is disabled",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "required": [
-                                        "processed",
-                                        "message"
-                                    ],
-                                    "properties": {
-                                        "processed": {
-                                            "type": "boolean"
-                                        },
-                                        "message": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/ocs/v2.php/apps/twofactor_gateway/settings/{gateway}/verification": {
             "get": {
                 "operationId": "settings-get-verification-state",
@@ -498,6 +390,114 @@
                                         "message"
                                     ],
                                     "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/index.php/apps/twofactor_gateway/gowhatsapp/webhook": {
+            "post": {
+                "operationId": "go_whats_app_webhook-ingest",
+                "summary": "Ingest a signed GoWhatsApp webhook event for hybrid monitoring",
+                "tags": [
+                    "go_whats_app_webhook"
+                ],
+                "security": [
+                    {},
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Event accepted (processed or intentionally skipped)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "processed",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "processed": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Malformed request body",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "processed",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "processed": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid or missing HMAC signature",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "processed",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "processed": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Webhook ingestion is disabled",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "processed",
+                                        "message"
+                                    ],
+                                    "properties": {
+                                        "processed": {
+                                            "type": "boolean"
+                                        },
                                         "message": {
                                             "type": "string"
                                         }
