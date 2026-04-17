@@ -22,11 +22,14 @@ use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCP\AppFramework\Http;
+use OCP\IAppConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IRequest;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class AdminGatewayControllerTest extends TestCase {
 	private AdminGatewayController $controller;
@@ -429,6 +432,21 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->assertFalse($response->getData()['success']);
 	}
 
+	public function testTestInstanceUsesInstanceRuntimeConfigWhenGatewaySupportsIt(): void {
+		$gateway = new RuntimeConfigAwareGatewayTestDouble($this->createMock(IAppConfig::class));
+		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);
+		$record = [
+			'id' => 'abc', 'label' => 'Prod', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00',
+			'config' => ['provider' => 'telegram_bot'], 'isComplete' => true,
+		];
+		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn($record);
+
+		$response = $this->controller->testInstance('telegram', 'abc', 'vitormattos');
+
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
+		$this->assertTrue($response->getData()['success']);
+	}
+
 	public function testTestInstanceReturns404WhenNotFound(): void {
 		$gateway = $this->makeGatewayMock('telegram');
 		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);
@@ -492,5 +510,29 @@ class AdminGatewayControllerTest extends TestCase {
 
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 		$this->assertSame('cancelled', $response->getData()['status']);
+	}
+}
+
+class RuntimeConfigAwareGatewayTestDouble extends \OCA\TwoFactorGateway\Provider\Gateway\AGateway {
+	#[\Override]
+	public function send(string $identifier, string $message, array $extra = []): void {
+		$provider = $this->runtimeConfig['provider'] ?? '';
+		if ($provider !== 'telegram_bot') {
+			throw new ConfigurationException('Invalid gateway/provider configuration set');
+		}
+	}
+
+	#[\Override]
+	public function createSettings(): Settings {
+		return new Settings(
+			name: 'Telegram',
+			id: 'telegram',
+			fields: [new FieldDefinition('provider', 'Provider')],
+		);
+	}
+
+	#[\Override]
+	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
+		return 0;
 	}
 }
