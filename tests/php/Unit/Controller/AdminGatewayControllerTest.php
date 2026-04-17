@@ -295,6 +295,22 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
 	}
 
+	public function testUpdateInstanceReturns200EvenIfSessionMonitorSyncFails(): void {
+		$gateway = $this->makeGatewayMock('signal');
+		$this->gatewayFactory->method('get')->with('signal')->willReturn($gateway);
+		$record = ['id' => 'abc', 'label' => 'New', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00', 'config' => ['url' => 'https://signal.example.com'], 'isComplete' => true];
+		$this->configService->method('updateInstance')
+			->with($gateway, 'abc', 'New', ['url' => 'https://signal.example.com'], [], 0)
+			->willReturn($record);
+		$this->goWhatsAppSessionMonitorJobManager->method('sync')
+			->willThrowException(new \InvalidArgumentException('Invalid type <gowhatsapp>'));
+
+		$response = $this->controller->updateInstance('signal', 'abc', 'New', ['url' => 'https://signal.example.com']);
+
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
+		$this->assertSame('abc', $response->getData()['id']);
+	}
+
 	public function testDeleteInstanceReturns200OnSuccess(): void {
 		$gateway = $this->makeGatewayMock('xmpp');
 		$this->gatewayFactory->method('get')->with('xmpp')->willReturn($gateway);
