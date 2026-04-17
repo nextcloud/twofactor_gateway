@@ -9,15 +9,17 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service;
 
-class GatewayConfigurationSyncService {
-	public function __construct(
-		private GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager,
-	) {
-	}
+use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 
-	public function syncAfterConfigurationChange(): void {
+class GatewayConfigurationSyncService {
+	public function syncAfterConfigurationChange(IGateway $gateway): void {
+		if (!($gateway instanceof IConfigurationChangeAwareGateway)) {
+			return;
+		}
+
 		try {
-			$this->goWhatsAppSessionMonitorJobManager->sync();
+			$gateway->syncAfterConfigurationChange();
 		} catch (\Throwable) {
 			// Sync failures must not break gateway configuration workflows.
 		}
