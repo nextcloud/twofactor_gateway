@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Controller;
 
 use OCA\TwoFactorGateway\Controller\AdminGatewayController;
+use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Exception\GatewayInstanceNotFoundException;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\GoWhatsAppSessionMonitorJobManager;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
@@ -410,6 +411,22 @@ class AdminGatewayControllerTest extends TestCase {
 		$response = $this->controller->testInstance('telegram', 'abc', '+1234567890');
 
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+	}
+
+	public function testTestInstanceReturns400WhenGatewayConfigurationIsInvalid(): void {
+		$gateway = $this->makeGatewayMock('telegram');
+		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);
+		$record = [
+			'id' => 'abc', 'label' => 'Prod', 'default' => false, 'createdAt' => '2026-01-01T00:00:00+00:00',
+			'config' => ['provider' => 'telegram_bot'], 'isComplete' => true,
+		];
+		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn($record);
+		$gateway->method('send')->willThrowException(new ConfigurationException('Invalid gateway/provider configuration set'));
+
+		$response = $this->controller->testInstance('telegram', 'abc', '+1234567890');
+
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		$this->assertFalse($response->getData()['success']);
 	}
 
 	public function testTestInstanceReturns404WhenNotFound(): void {
