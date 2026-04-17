@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Controller;
 
+use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Exception\GatewayInstanceNotFoundException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\GoWhatsAppSessionMonitorJobManager;
@@ -271,7 +272,7 @@ class AdminGatewayController extends OCSController {
 				}
 			}
 			return new DataResponse($data);
-		} catch (MessageTransmissionException $e) {
+		} catch (MessageTransmissionException|ConfigurationException $e) {
 			return new DataResponse(
 				['success' => false, 'message' => $e->getMessage()],
 				Http::STATUS_BAD_REQUEST,
@@ -362,6 +363,13 @@ class AdminGatewayController extends OCSController {
 	private function resolveGatewayForPayload(string $gateway, array $config): IGateway {
 		$resolvedGateway = $this->gatewayFactory->get($gateway);
 		if (!($resolvedGateway instanceof \OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway)) {
+			if (method_exists($resolvedGateway, 'withRuntimeConfig')) {
+				$runtimeGateway = $resolvedGateway->withRuntimeConfig($config);
+				if ($runtimeGateway instanceof IGateway) {
+					return $runtimeGateway;
+				}
+			}
+
 			return $resolvedGateway;
 		}
 
@@ -379,7 +387,15 @@ class AdminGatewayController extends OCSController {
 			}
 		}
 
-		return $this->resolveCatalogGatewayByProvider($resolvedGateway, $selectedProvider);
+		$providerGateway = $this->resolveCatalogGatewayByProvider($resolvedGateway, $selectedProvider);
+		if (method_exists($providerGateway, 'withRuntimeConfig')) {
+			$runtimeGateway = $providerGateway->withRuntimeConfig($config);
+			if ($runtimeGateway instanceof IGateway) {
+				return $runtimeGateway;
+			}
+		}
+
+		return $providerGateway;
 	}
 
 	private function resolveGatewayForInstance(string $gateway, string &$instanceId): IGateway {
