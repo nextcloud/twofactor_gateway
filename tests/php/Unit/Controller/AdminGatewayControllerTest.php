@@ -204,6 +204,30 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->assertSame('abc123', $response->getData()['id']);
 	}
 
+	public function testCreateInstanceKeepsCatalogGatewayWhenProviderResolvesToNonGatewayObject(): void {
+		$telegramGateway = $this->makeCatalogGatewayMock('telegram', 'provider', ['telegram_bot', 'telegram_client']);
+		$providerDriver = new \stdClass();
+		$this->gatewayFactory->method('get')->willReturnMap([
+			['telegram', $telegramGateway],
+			['telegram_bot', $providerDriver],
+		]);
+		$this->configService->method('createInstance')
+			->with($telegramGateway, 'Prod', ['provider' => 'telegram_bot', 'bot_token' => 'secret'], [], 0)
+			->willReturn([
+				'id' => 'tg123',
+				'label' => 'Prod',
+				'default' => true,
+				'createdAt' => '2026-01-01T00:00:00+00:00',
+				'config' => ['provider' => 'telegram_bot', 'bot_token' => 'secret'],
+				'isComplete' => true,
+			]);
+
+		$response = $this->controller->createInstance('telegram', 'Prod', ['provider' => 'telegram_bot', 'bot_token' => 'secret']);
+
+		$this->assertSame(Http::STATUS_CREATED, $response->getStatus());
+		$this->assertSame('tg123', $response->getData()['id']);
+	}
+
 	public function testGetInstanceReturns200WithInstanceData(): void {
 		$gateway = $this->makeGatewayMock('sms');
 		$this->gatewayFactory->method('get')->with('sms')->willReturn($gateway);
