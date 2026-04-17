@@ -31,8 +31,6 @@ path = [
 	"openapi.json",
 	"src/types/openapi/openapi.ts",
 	"vendor-bin/**/composer.json",
-	"vendor-bin/**/composer.lock"
-	"vendor-bin/**/composer.json",
 	"vendor-bin/**/composer.lock",
 	"tsconfig.json",
 	"tests/integration/composer.json",
