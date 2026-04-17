@@ -11,7 +11,7 @@ namespace OCA\TwoFactorGateway\Command;
 
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory;
-use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -25,7 +25,7 @@ class Remove extends Command {
 
 	public function __construct(
 		private Factory $gatewayFactory,
-		private GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager,
+		private GatewayConfigurationSyncService $gatewayConfigurationSyncService,
 	) {
 		parent::__construct('twofactorauth:gateway:remove');
 		$this->setDescription('Remove a gateway configuration');
@@ -63,7 +63,7 @@ class Remove extends Command {
 		}
 
 		$gateway->remove();
-		$this->goWhatsAppSessionMonitorJobManager->sync();
+		$this->gatewayConfigurationSyncService->syncAfterConfigurationChange();
 		$output->writeln("Removed configuration for gateway $gatewayName");
 		return 0;
 	}
