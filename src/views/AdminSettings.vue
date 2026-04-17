@@ -36,21 +36,46 @@
 				</NcButton>
 			</div>
 
-			<div v-if="allInstances.length > 0" class="admin-settings__instances">
-				<GatewayInstanceCard
-					v-for="item in allInstances"
-					:key="item.gatewayId + ':' + item.instance.id"
-					:instance="item.instance"
-					:fields="item.fields"
-					:provider-name="item.providerName"
-					:groups="groups"
-					:show-routing-action="item.showRoutingAction"
-					@edit="openEditById(item.gatewayId, $event)"
-					@routing="openRoutingById(item.gatewayId, $event)"
-					@delete="confirmDelete(item)"
-					@set-default="onSetDefault(item)"
-					@test="openTest(item)" />
-			</div>
+			<p v-if="allInstances.length > 1" class="admin-settings__hint">
+				{{ t('twofactor_gateway', 'Drag and drop instances to define routing priority across providers. Higher items run first.') }}
+			</p>
+
+			<draggable
+				v-if="orderedInstances.length > 0"
+				v-model="orderedInstances"
+				class="admin-settings__instances"
+				tag="div"
+				item-key="orderKey"
+				handle=".drag-handle"
+				ghost-class="admin-settings__drag-ghost"
+				:disabled="savingOrder"
+				@end="onInstancesReordered">
+				<template #item="{ element: item }">
+					<div class="admin-settings__instance-row">
+						<NcButton
+							class="drag-handle"
+							type="tertiary"
+							:title="t('twofactor_gateway', 'Drag to reorder priority')"
+							:aria-label="t('twofactor_gateway', 'Drag to reorder priority')"
+							:disabled="savingOrder">
+							<template #icon>
+								<DragVerticalIcon :size="20" />
+							</template>
+						</NcButton>
+						<GatewayInstanceCard
+							:instance="item.instance"
+							:fields="item.fields"
+							:provider-name="item.providerName"
+							:groups="groups"
+							:show-routing-action="item.showRoutingAction"
+							@edit="openEditById(item.gatewayId, $event)"
+							@routing="openRoutingById(item.gatewayId, $event)"
+							@delete="confirmDelete(item)"
+							@set-default="onSetDefault(item)"
+							@test="openTest(item)" />
+					</div>
+				</template>
+			</draggable>
 		</div>
 
 		<GatewayInstanceModal
@@ -111,6 +136,8 @@ import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
 import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
+import DragVerticalIcon from 'vue-material-design-icons/DragVertical.vue'
+import draggable from 'vuedraggable'
 import { t } from '@nextcloud/l10n'
 import GatewayInstanceCard from '../components/GatewayInstanceCard.vue'
 import GatewayInstanceModal from '../components/GatewayInstanceModal.vue'
@@ -130,6 +157,7 @@ import {
 } from '../services/adminGatewayApi.ts'
 
 interface FlatInstanceEntry {
+	orderKey: string
 	gatewayId: string
 	providerName: string
 	fields: FieldDefinition[]
@@ -146,10 +174,12 @@ export default defineComponent({
 		NcLoadingIcon,
 		NcSettingsSection,
 		AlertCircleIcon,
+		DragVerticalIcon,
 		GatewayInstanceCard,
 		GatewayInstanceModal,
 		GatewayRoutingModal,
 		GatewayTestModal,
+		draggable,
 	},
 
 	setup() {
@@ -170,6 +200,8 @@ export default defineComponent({
 			editingConfig: {} as Record<string, string>,
 			showRoutingModal: false,
 			routingItem: null as FlatInstanceEntry | null,
+			orderKeys: [] as string[],
+			savingOrder: false,
 
 			showTestModal: false,
 			testingGatewayId: '',
@@ -196,6 +228,7 @@ export default defineComponent({
 						: undefined
 					const selectedProvider = gateway.providerCatalog?.find((provider) => provider.id === selectedProviderId)
 					rows.push({
+						orderKey: `${gateway.id}:${instance.id}`,
 						gatewayId: gateway.id,
 						providerName: selectedProvider?.name ?? gateway.name,
 						fields: selectedProvider?.fields ?? gateway.fields,
@@ -209,6 +242,22 @@ export default defineComponent({
 				}
 			}
 			return rows
+		},
+
+		orderedInstances: {
+			get(): FlatInstanceEntry[] {
+				const fallbackOrder = this.allInstances.map((item) => item.orderKey)
+				const knownOrder = this.orderKeys.length > 0 ? this.orderKeys : fallbackOrder
+				const position = new Map(knownOrder.map((key, index) => [key, index]))
+				return [...this.allInstances].sort((left, right) => {
+					const leftIndex = position.get(left.orderKey) ?? Number.MAX_SAFE_INTEGER
+					const rightIndex = position.get(right.orderKey) ?? Number.MAX_SAFE_INTEGER
+					return leftIndex - rightIndex
+				})
+			},
+			set(value: FlatInstanceEntry[]) {
+				this.orderKeys = value.map((item) => item.orderKey)
+			},
 		},
 
 		deleteConfirmMessage(): string {
@@ -226,6 +275,19 @@ export default defineComponent({
 			}
 
 			return t('twofactor_gateway', 'Delete')
+		},
+	},
+
+	watch: {
+		allInstances: {
+			handler(items: FlatInstanceEntry[]) {
+				const nextKeys = items.map((item) => item.orderKey)
+				const nextKeysSet = new Set(nextKeys)
+				const keptKeys = this.orderKeys.filter((key) => nextKeysSet.has(key))
+				const appendedKeys = nextKeys.filter((key) => !keptKeys.includes(key))
+				this.orderKeys = [...keptKeys, ...appendedKeys]
+			},
+			immediate: true,
 		},
 	},
 
@@ -374,6 +436,44 @@ export default defineComponent({
 			}
 		},
 
+		async onInstancesReordered(evt: { oldIndex?: number; newIndex?: number }) {
+			if (this.savingOrder || evt.oldIndex === undefined || evt.newIndex === undefined || evt.oldIndex === evt.newIndex) {
+				return
+			}
+
+			const orderedItems = this.orderedInstances
+			if (orderedItems.length <= 1) {
+				return
+			}
+
+			this.savingOrder = true
+			try {
+				const updates = orderedItems
+					.map((item, index) => ({
+						item,
+						priority: orderedItems.length - index,
+					}))
+					.filter(({ item, priority }) => item.instance.priority !== priority)
+
+				await Promise.all(updates.map(async ({ item, priority }) => {
+					await updateInstance(
+						item.gatewayId,
+						item.instance.id,
+						item.instance.label,
+						item.instance.config,
+						item.instance.groupIds,
+						priority,
+					)
+				}))
+
+				await this.loadGateways()
+			} catch (err) {
+				console.error('Failed to reorder routing priorities', err)
+			} finally {
+				this.savingOrder = false
+			}
+		},
+
 		async loadGateways() {
 			this.loading = true
 			this.error = ''
@@ -414,10 +514,39 @@ export default defineComponent({
 		justify-content: flex-start;
 	}
 
+	&__hint {
+		color: var(--color-text-lighter);
+		font-size: 0.9rem;
+		margin: 0;
+	}
+
 	&__instances {
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+	}
+
+	&__instance-row {
+		display: flex;
+		align-items: stretch;
+		gap: 0.35rem;
+	}
+
+	&__drag-ghost {
+		opacity: 0.6;
+	}
+
+	:deep(.drag-handle) {
+		cursor: grab;
+		align-self: flex-start;
+	}
+
+	:deep(.drag-handle:active) {
+		cursor: grabbing;
+	}
+
+	:deep(.admin-settings__instance-row > .gateway-instance-card) {
+		flex: 1;
 	}
 }
 </style>

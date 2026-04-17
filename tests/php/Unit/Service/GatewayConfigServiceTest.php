@@ -184,6 +184,39 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->assertSame(['token' => 'new-token'], $updated['config']);
 	}
 
+	public function testCreateAndUpdateInstancePersistRoutingMetadata(): void {
+		$gateway = $this->makeGatewayMock('sms', 'SMS', [
+			['field' => 'url', 'prompt' => 'URL'],
+		]);
+
+		$created = $this->service->createInstance(
+			$gateway,
+			'Routed',
+			['url' => 'https://sms.example.com'],
+			['ops', ' admins ', 'ops'],
+			15,
+		);
+
+		$this->assertSame(['admins', 'ops'], $created['groupIds']);
+		$this->assertSame(15, $created['priority']);
+
+		$updated = $this->service->updateInstance(
+			$gateway,
+			$created['id'],
+			'Routed',
+			['url' => 'https://sms2.example.com'],
+			['staff'],
+			30,
+		);
+
+		$this->assertSame(['staff'], $updated['groupIds']);
+		$this->assertSame(30, $updated['priority']);
+
+		$fetched = $this->service->getInstance($gateway, $created['id']);
+		$this->assertSame(['staff'], $fetched['groupIds']);
+		$this->assertSame(30, $fetched['priority']);
+	}
+
 	public function testUpdateDefaultInstanceSyncsToPrimaryKeys(): void {
 		$gateway = $this->makeGatewayMock('sms', 'SMS', [
 			['field' => 'url', 'prompt' => 'URL'],
