@@ -673,7 +673,7 @@ export default defineComponent({
 
 		onGuidedSetupCompleted(configPatch: Record<string, string>) {
 			this.mergeConfigFromSetup(configPatch)
-			void this.save()
+			this.save()
 		},
 	},
 })
