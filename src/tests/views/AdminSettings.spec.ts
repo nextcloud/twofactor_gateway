@@ -106,7 +106,6 @@ vi.mock('@nextcloud/vue/components/NcSettingsSection', () => ({
 	}),
 }))
 
-
 vi.mock('vue-material-design-icons/AlertCircle.vue', () => ({
 	default: defineComponent({ template: '<span class="alert-circle-icon" />' }),
 }))
