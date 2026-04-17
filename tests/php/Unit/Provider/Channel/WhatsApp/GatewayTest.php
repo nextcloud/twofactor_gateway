@@ -100,6 +100,14 @@ class GatewayTest extends TestCase {
 		$this->assertSame(0, $gateway->cliConfigure($input, $output));
 	}
 
+	public function testSyncAfterConfigurationChangeDelegatesToGoWhatsAppGateway(): void {
+		$this->goWhatsAppGateway->expects($this->once())
+			->method('syncAfterConfigurationChange');
+
+		$gateway = $this->newGateway();
+		$gateway->syncAfterConfigurationChange();
+	}
+
 	private function newGateway(): Gateway {
 		return new Gateway(
 			$this->appConfig,
