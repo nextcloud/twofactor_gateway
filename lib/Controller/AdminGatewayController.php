@@ -429,7 +429,12 @@ class AdminGatewayController extends OCSController {
 		}
 
 		try {
-			return $this->gatewayFactory->get($providerId);
+			$resolvedProvider = $this->gatewayFactory->get($providerId);
+			if ($resolvedProvider instanceof IGateway) {
+				return $resolvedProvider;
+			}
+
+			return $gateway;
 		} catch (\InvalidArgumentException) {
 			return $gateway;
 		}
