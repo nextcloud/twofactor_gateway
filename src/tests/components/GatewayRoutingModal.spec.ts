@@ -47,14 +47,6 @@ vi.mock('@nextcloud/vue/components/NcLoadingIcon', () => ({
 	default: defineComponent({ template: '<span class="nc-loading-icon" />' }),
 }))
 
-vi.mock('@nextcloud/vue/components/NcTextField', () => ({
-	default: defineComponent({
-		props: ['modelValue', 'label', 'placeholder', 'required', 'error', 'helperText', 'readonly'],
-		emits: ['update:modelValue'],
-		template: '<input type="text" :value="modelValue" :placeholder="placeholder" :readonly="readonly" @input="$emit(\'update:modelValue\', $event.target.value)" />',
-	}),
-}))
-
 vi.mock('@nextcloud/vue/components/NcSelect', () => ({
 	default: defineComponent({
 		props: ['modelValue', 'options', 'placeholder', 'label', 'trackBy', 'multiple', 'keepOpen', 'closeOnSelect', 'deselectFromDropdown', 'inputId'],
@@ -89,10 +81,10 @@ describe('GatewayRoutingModal', () => {
 		expect(wrapper.find('.routing-meta-grid').exists()).toBe(true)
 		expect(wrapper.text()).toContain('WhatsApp Ops')
 		expect(wrapper.text()).toContain('gw-1')
-		expect(wrapper.findAll('input[type="text"]')).toHaveLength(1)
+		expect(wrapper.findAll('input[type="text"]')).toHaveLength(0)
 	})
 
-	it('emits selected groups and priority on save', async () => {
+	it('emits selected groups on save', async () => {
 		const wrapper = mount(GatewayRoutingModal, {
 			props: {
 				show: true,
@@ -103,14 +95,10 @@ describe('GatewayRoutingModal', () => {
 					{ id: 'client-a', displayName: 'Client A' },
 				],
 				initialGroupIds: ['admins'],
-				initialPriority: 15,
 			},
 		})
 
 		await flushPromises()
-
-		const priorityInput = wrapper.find('input[type="text"]')
-		await priorityInput?.setValue('30')
 
 		const groupSelect = wrapper.find('.nc-select-mock select')
 		await groupSelect.setValue(['admins', 'client-a'])
@@ -118,29 +106,7 @@ describe('GatewayRoutingModal', () => {
 		const saveButton = wrapper.findAll('button').at(-1)
 		await saveButton?.trigger('click')
 
-		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { groupIds: string[]; priority: number } | undefined
-		expect(savedPayload?.priority).toBe(30)
+		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { groupIds: string[] } | undefined
 		expect(savedPayload?.groupIds).toEqual(['admins', 'client-a'])
-	})
-
-	it('shows validation error for non-integer priority', async () => {
-		const wrapper = mount(GatewayRoutingModal, {
-			props: {
-				show: true,
-				label: 'WhatsApp Ops',
-				instanceId: 'gw-1',
-			},
-		})
-
-		await flushPromises()
-
-		const priorityInput = wrapper.find('input[type="text"]')
-		await priorityInput?.setValue('abc')
-
-		const saveButton = wrapper.findAll('button').at(-1)
-		await saveButton?.trigger('click')
-
-		expect(wrapper.emitted('saved')).toBeUndefined()
-		expect((wrapper.vm as { errors: Record<string, string> }).errors.priority).toBe('tr:Priority must be an integer.')
 	})
 })
