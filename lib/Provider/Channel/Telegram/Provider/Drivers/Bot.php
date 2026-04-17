@@ -92,9 +92,7 @@ class Bot extends AProvider {
 			$this->logger->debug("telegram message to chat $identifier sent");
 		} catch (RuntimeException $e) {
 			$telegramErrorDescription = $this->extractTelegramErrorDescription($e->getMessage());
-			$safeMessage = $telegramErrorDescription !== null
-				? 'Failed to send Telegram message: ' . $telegramErrorDescription
-				: 'Failed to send Telegram message.';
+			$safeMessage = $this->buildUserFacingErrorMessage($telegramErrorDescription);
 
 			$this->logger->error('Failed to send Telegram message', [
 				'exception' => $e,
@@ -102,6 +100,18 @@ class Bot extends AProvider {
 			]);
 			throw new MessageTransmissionException($safeMessage, 0, $e);
 		}
+	}
+
+	private function buildUserFacingErrorMessage(?string $telegramErrorDescription): string {
+		if ($telegramErrorDescription === null || trim($telegramErrorDescription) === '') {
+			return 'Failed to send Telegram message.';
+		}
+
+		if (stripos($telegramErrorDescription, 'chat not found') !== false) {
+			return 'Failed to send Telegram message: chat not found. Use your numeric Telegram ID and start a conversation with the bot first.';
+		}
+
+		return 'Failed to send Telegram message: ' . $telegramErrorDescription;
 	}
 
 	private function extractTelegramErrorDescription(string $errorMessage): ?string {
