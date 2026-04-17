@@ -2,6 +2,11 @@ OC.L10N.register(
     "twofactor_gateway",
     {
     "Two-Factor Gateway" : "Geata Dhá-Fachtóir",
+    "Two-Factor Gateway: WhatsApp authentication failed" : "Geata Dhá Fhachtóir: Theip ar fhíordheimhniú WhatsApp",
+    "Two-Factor Gateway cannot send WhatsApp verification codes until this is fixed. Reconfigure the GoWhatsApp gateway from the command line using: occ twofactorauth:gateway:configure gowhatsapp" : "Ní féidir le Geata Two-Factor cóid fíoraithe WhatsApp a sheoladh go dtí go mbeidh sé seo socraithe. Athchumraigh geata GoWhatsApp ón líne ordaithe ag baint úsáide as: occ twofactorauth:gateway:configure gowhatsapp",
+    "Two-Factor Gateway: WhatsApp session is unstable" : "Geata Dhá Fhachtóir: Tá seisiún WhatsApp éagobhsaí",
+    "WhatsApp session warning: %s" : "Rabhadh seisiúin WhatsApp: %s",
+    "The WhatsApp session is unstable and may require re-authentication soon. Monitor the session and reconfigure the GoWhatsApp gateway if needed." : "Tá an seisiún WhatsApp éagobhsaí agus d’fhéadfadh go mbeadh gá le hath-fhíordheimhniú go luath. Déan monatóireacht ar an seisiún agus athchumraigh geata GoWhatsApp más gá.",
     "`%s` is your Nextcloud authentication code" : "Is é `%s` do chód fíordheimhnithe Nextcloud",
     "%s is your Nextcloud authentication code" : "%s is é do chód fíordheimhnithe Nextcloud",
     "The phone number is not registered on WhatsApp." : "Níl an uimhir theileafóin cláraithe ar WhatsApp.",
