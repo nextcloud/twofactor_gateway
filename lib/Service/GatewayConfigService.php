@@ -35,7 +35,7 @@ class GatewayConfigService {
 	 * Return the full list of available gateways together with their configured
 	 * instances, ready to be serialised to the admin frontend.
 	 *
-	 * @return array<int, array<string, mixed>>
+	 * @return list<array<string, mixed>>
 	 */
 	public function getGatewayList(): array {
 		$result = [];
@@ -213,6 +213,27 @@ class GatewayConfigService {
 		}
 
 		$this->saveRegistry($gatewayId, $registry);
+	}
+
+	/**
+	 * Create a default instance from a gateway's legacy primary configuration.
+	 *
+	 * Returns true if a new instance was created, false if the gateway was not
+	 * fully configured (isComplete() returns false) or already has instances.
+	 */
+	public function createDefaultInstanceFromPrimaryConfiguration(IGateway $gateway): bool {
+		if (!$gateway->isComplete()) {
+			return false;
+		}
+
+		$gatewayId = $gateway->getProviderId();
+		if (!empty($this->loadRegistry($gatewayId))) {
+			return false;
+		}
+
+		$config = $gateway->getConfiguration();
+		$this->createInstance($gateway, 'Default', $config);
+		return true;
 	}
 
 	private function registryKey(string $gatewayId): string {
