@@ -93,13 +93,14 @@ function normalizeInstance(instance: GatewayInstancePayload, fallbackProviderId:
 	}
 }
 
-function ocsData<T>(response: any): T {
-	if (response.data?.ocs?.data) {
-		return response.data.ocs.data
+function ocsData<T>(response: { data: unknown }): T {
+	const d = response.data as Record<string, Record<string, T>>
+	if (d?.ocs?.data) {
+		return d.ocs.data
 	}
 	// Fallback for OCSController DataResponse that returns raw array
 	if (Array.isArray(response.data)) {
-		return response.data as T
+		return response.data as unknown as T
 	}
 	throw new Error(`Unexpected OCS response structure: ${JSON.stringify(response.data)}`)
 }
