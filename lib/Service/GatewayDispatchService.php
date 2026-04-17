@@ -117,7 +117,7 @@ class GatewayDispatchService {
 	}
 
 	/**
-	 * @return array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, providerId: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}}
+	 * @return array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}}
 	 * @throws GatewayInstanceNotFoundException
 	 */
 	private function resolveProviderInstance(string $providerId, string $instanceId): array {
@@ -132,7 +132,7 @@ class GatewayDispatchService {
 	}
 
 	/**
-	 * @return array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, providerId: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}}
+	 * @return array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}}
 	 * @throws GatewayInstanceNotFoundException
 	 */
 	private function resolveGatewayInstanceReference(string $gatewayId, string $instanceId): array {
@@ -146,7 +146,7 @@ class GatewayDispatchService {
 	}
 
 	/**
-	 * @return list<array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, providerId: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}}>
+	 * @return list<array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}}>
 	 */
 	private function listResolvedInstances(string $gatewayId): array {
 		$gateway = $this->gatewayFactory->get($gatewayId);
@@ -175,7 +175,7 @@ class GatewayDispatchService {
 	}
 
 	/**
-	 * @return list<array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, providerId: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}}>
+	 * @return list<array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}}>
 	 */
 	private function buildGatewayCandidates(IGateway $gateway, bool $prefixPublicId): array {
 		$candidates = [];
@@ -196,7 +196,7 @@ class GatewayDispatchService {
 	}
 
 	/**
-	 * @return list<array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, providerId: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}}>
+	 * @return list<array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}}>
 	 */
 	private function resolveUserCandidates(IUser $user, string $gatewayId): array {
 		$allCandidates = array_values(array_filter(
@@ -270,7 +270,7 @@ class GatewayDispatchService {
 	}
 
 	/**
-	 * @param array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, providerId: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}} $candidate
+	 * @param array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}} $candidate
 	 * @param array<string, mixed> $extra
 	 * @return array{providerId: string, instanceId: string, publicInstanceId: string, label: string}
 	 *
