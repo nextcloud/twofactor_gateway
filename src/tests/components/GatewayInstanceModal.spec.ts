@@ -58,7 +58,7 @@ vi.mock('@nextcloud/vue/components/NcTextField', () => ({
 	default: defineComponent({
 		props: ['modelValue', 'label', 'placeholder', 'required', 'error', 'helperText'],
 		emits: ['update:modelValue'],
-		template: '<input type="text" :value="modelValue" :placeholder="placeholder" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+		template: '<label class="nc-text-field"><span class="field-label">{{ label }}</span><input type="text" :value="modelValue" :placeholder="placeholder" @input="$emit(\'update:modelValue\', $event.target.value)" /><small v-if="helperText" class="field-helper">{{ helperText }}</small></label>',
 	}),
 }))
 
@@ -66,7 +66,7 @@ vi.mock('@nextcloud/vue/components/NcPasswordField', () => ({
 	default: defineComponent({
 		props: ['modelValue', 'label', 'placeholder', 'required', 'error', 'helperText'],
 		emits: ['update:modelValue'],
-		template: '<input type="password" :value="modelValue" :placeholder="placeholder" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+		template: '<label class="nc-password-field"><span class="field-label">{{ label }}</span><input type="password" :value="modelValue" :placeholder="placeholder" @input="$emit(\'update:modelValue\', $event.target.value)" /><small v-if="helperText" class="field-helper">{{ helperText }}</small></label>',
 	}),
 }))
 
@@ -123,7 +123,7 @@ const signalGateway: GatewayInfo = {
 	instructions: 'Configure the Signal gateway here.',
 	allowMarkdown: false,
 	fields: [
-		{ field: 'url', prompt: 'Gateway URL', default: 'http://localhost:5000', optional: false },
+		{ field: 'url', prompt: 'Gateway URL', helper: 'Used for local relay access', default: 'http://localhost:5000', optional: false },
 		{ field: 'account', prompt: 'Account', default: '', optional: true },
 	],
 	instances: [],
@@ -222,6 +222,17 @@ describe('GatewayInstanceModal (create mode)', () => {
 
 		// Label + URL + Account fields should appear
 		expect(wrapper.findAll('input').length).toBeGreaterThan(inputsBefore)
+	})
+
+	it('renders field helper text separately from the main label', async () => {
+		const wrapper = mount(GatewayInstanceModal, { props: defaultProps })
+
+		await wrapper.find('select').setValue('signal')
+		await flushPromises()
+
+		expect(wrapper.text()).toContain('Gateway URL')
+		expect(wrapper.text()).toContain('Used for local relay access')
+		expect(wrapper.text()).not.toContain('Gateway URL Used for local relay access:')
 	})
 
 	it('shows provider/channel options first for catalog gateways, then renders provider fields', async () => {

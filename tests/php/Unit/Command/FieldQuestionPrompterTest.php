@@ -69,4 +69,22 @@ class FieldQuestionPrompterTest extends TestCase {
 		$value = $prompter->askValue($field, $input, $output, $helper);
 		$this->assertSame('1', $value);
 	}
+
+	public function testAskValuePrintsHelperBeforePrompt(): void {
+		$prompter = new FieldQuestionPrompter();
+		$field = new FieldDefinition(field: 'api_id', prompt: 'API ID:', optional: false, helper: 'Get one at https://my.telegram.org/apps');
+		$helper = new QuestionHelper();
+		$output = new BufferedOutput();
+
+		$input = new StringInput('');
+		$stream = fopen('php://memory', 'r+');
+		fwrite($stream, "12345\n");
+		rewind($stream);
+		$input->setStream($stream);
+
+		$value = $prompter->askValue($field, $input, $output, $helper);
+
+		$this->assertSame('12345', $value);
+		$this->assertStringContainsString('Get one at https://my.telegram.org/apps', $output->fetch());
+	}
 }

@@ -12,6 +12,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\Telegram;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Factory;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Gateway;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\InteractiveSetupStateStore;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Settings;
@@ -123,6 +124,64 @@ class GatewayTest extends TestCase {
 		], TelegramGatewayProviderTestDouble::$allSentMessages);
 	}
 
+	public function testSendFallsBackToDefaultInstanceWhenLegacyProviderSelectionIsMissing(): void {
+		TelegramGatewayProviderTestDouble::$allSentMessages = [];
+		TelegramGatewayProviderTestDouble::$usedTokensByProvider = [];
+		$clientProvider = new TelegramGatewayProviderTestDouble(new Settings(
+			id: 'telegram_client',
+			name: 'Telegram Client API',
+			fields: [new FieldDefinition(field: 'api_id', prompt: 'API ID')],
+		));
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_client', $clientProvider],
+		]);
+
+		$this->appConfig
+			->method('getValueString')
+			->willReturnMap([
+				['twofactor_gateway', 'telegram_provider_name', '', ''],
+				['twofactor_gateway', 'instances:telegram', '[]', json_encode([
+					['id' => 'inst1', 'label' => 'Default', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00'],
+				], JSON_THROW_ON_ERROR)],
+				['twofactor_gateway', 'telegram:inst1:provider', 'telegram_bot', 'telegram_client'],
+				['twofactor_gateway', 'telegram:inst1:api_id', '', '12345'],
+			]);
+
+		$gateway = new Gateway($this->appConfig, $this->telegramProviderFactory);
+		$gateway->send('@carol', 'code 999');
+
+		$this->assertSame([
+			['telegram_client', '@carol', 'code 999'],
+		], TelegramGatewayProviderTestDouble::$allSentMessages);
+	}
+
+	public function testIsCompleteUsesDefaultInstanceConfigurationWhenLegacyProviderSelectionIsMissing(): void {
+		$clientProvider = new TelegramGatewayProviderTestDouble(new Settings(
+			id: 'telegram_client',
+			name: 'Telegram Client API',
+			fields: [new FieldDefinition(field: 'api_id', prompt: 'API ID')],
+		));
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_client', $clientProvider],
+		]);
+
+		$this->appConfig
+			->method('getValueString')
+			->willReturnMap([
+				['twofactor_gateway', 'telegram_provider_name', '', ''],
+				['twofactor_gateway', 'instances:telegram', '[]', json_encode([
+					['id' => 'inst1', 'label' => 'Default', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00'],
+				], JSON_THROW_ON_ERROR)],
+				['twofactor_gateway', 'telegram:inst1:provider', 'telegram_bot', 'telegram_client'],
+				['twofactor_gateway', 'telegram:inst1:api_id', '', '12345'],
+			]);
+
+		$gateway = new Gateway($this->appConfig, $this->telegramProviderFactory);
+		$this->assertTrue($gateway->isComplete($gateway->getSettings()));
+	}
+
 	public function testCreateSettingsIncludesProviderSelectorAndSelectedProviderFields(): void {
 		$clientProvider = new TelegramGatewayProviderTestDouble(new Settings(
 			id: 'telegram_client',
@@ -165,6 +224,160 @@ class GatewayTest extends TestCase {
 			['telegram_bot', 'abc123'],
 		], TelegramGatewayProviderTestDouble::$usedTokensByProvider);
 	}
+
+	public function testEnrichTestResultDelegatesToSelectedProvider(): void {
+		$botProvider = new TelegramGatewayProviderTestDouble(new Settings(
+			id: 'telegram_bot',
+			name: 'Telegram Bot',
+			fields: [new FieldDefinition(field: 'token', prompt: 'Token')],
+		));
+		$botProvider->enrichmentResult = ['account_name' => 'Alice', 'account_avatar_url' => 'data:image/png;base64,Zm9v'];
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_bot', $botProvider],
+		]);
+
+		$gateway = new Gateway($this->appConfig, $this->telegramProviderFactory);
+
+		$this->assertSame(
+			['account_name' => 'Alice', 'account_avatar_url' => 'data:image/png;base64,Zm9v'],
+			$gateway->enrichTestResult(['provider' => 'telegram_bot', 'token' => 'abc123'], '@alice'),
+		);
+	}
+
+	public function testEnrichTestResultReturnsEmptyArrayWhenProviderDoesNotSupportEnrichment(): void {
+		$provider = $this->createMock(AProvider::class);
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_client', $provider],
+		]);
+
+		$gateway = new Gateway($this->appConfig, $this->telegramProviderFactory);
+
+		$this->assertSame([], $gateway->enrichTestResult(['provider' => 'telegram_client'], '@alice'));
+	}
+
+	public function testInteractiveSetupStartReturnsQrPayloadForTelegramClient(): void {
+		$clientProvider = new TelegramGatewayProviderTestDouble(new Settings(
+			id: 'telegram_client',
+			name: 'Telegram Client API',
+			fields: [
+				new FieldDefinition(field: 'api_id', prompt: 'API ID'),
+				new FieldDefinition(field: 'api_hash', prompt: 'API Hash'),
+			],
+		));
+		$clientProvider->qrPayload = [
+			'status' => 'pending',
+			'link' => 'tg://login?token=abc',
+			'qr_svg' => '<svg/>',
+			'expires_in' => 30,
+		];
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_client', $clientProvider],
+		]);
+
+		$gateway = new Gateway(
+			$this->appConfig,
+			$this->telegramProviderFactory,
+			new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+		);
+		$response = $gateway->interactiveSetupStart([
+			'provider' => 'telegram_client',
+			'api_id' => '12345',
+			'api_hash' => 'hash',
+		]);
+
+		$this->assertSame('pending', $response['status']);
+		$this->assertSame('scan_qr', $response['step']);
+		$this->assertArrayHasKey('sessionId', $response);
+		$this->assertSame('tg://login?token=abc', $response['data']['link']);
+		$this->assertSame('<svg/>', $response['data']['qr_svg']);
+	}
+
+	public function testInteractiveSetupPollLoginReturnsDoneWhenAccountIsLoggedIn(): void {
+		$clientProvider = new TelegramGatewayProviderTestDouble(new Settings(
+			id: 'telegram_client',
+			name: 'Telegram Client API',
+			fields: [
+				new FieldDefinition(field: 'api_id', prompt: 'API ID'),
+				new FieldDefinition(field: 'api_hash', prompt: 'API Hash'),
+			],
+		));
+		$clientProvider->qrPayload = [
+			'status' => 'pending',
+			'link' => 'tg://login?token=abc',
+			'qr_svg' => '<svg/>',
+			'expires_in' => 30,
+		];
+		$clientProvider->accountInfoPayload = [
+			'account_name' => 'Alice Example',
+			'account_avatar_url' => 'data:image/png;base64,Zm9v',
+		];
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_client', $clientProvider],
+		]);
+
+		$gateway = new Gateway(
+			$this->appConfig,
+			$this->telegramProviderFactory,
+			new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+		);
+		$start = $gateway->interactiveSetupStart([
+			'provider' => 'telegram_client',
+			'api_id' => '12345',
+			'api_hash' => 'hash',
+		]);
+
+		$sessionId = (string)($start['sessionId'] ?? '');
+		$this->assertNotSame('', $sessionId);
+
+		$response = $gateway->interactiveSetupStep($sessionId, 'poll_login');
+
+		$this->assertSame('done', $response['status']);
+		$this->assertSame('telegram_client', $response['config']['provider']);
+		$this->assertSame('12345', $response['config']['api_id']);
+		$this->assertSame('hash', $response['config']['api_hash']);
+		$this->assertSame('Alice Example', $response['data']['account']['account_name']);
+	}
+
+	public function testInteractiveSetupCancelReturnsCancelled(): void {
+		$clientProvider = new TelegramGatewayProviderTestDouble(new Settings(
+			id: 'telegram_client',
+			name: 'Telegram Client API',
+			fields: [
+				new FieldDefinition(field: 'api_id', prompt: 'API ID'),
+				new FieldDefinition(field: 'api_hash', prompt: 'API Hash'),
+			],
+		));
+		$clientProvider->qrPayload = [
+			'status' => 'pending',
+			'link' => 'tg://login?token=abc',
+			'qr_svg' => '<svg/>',
+			'expires_in' => 30,
+		];
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_client', $clientProvider],
+		]);
+
+		$gateway = new Gateway(
+			$this->appConfig,
+			$this->telegramProviderFactory,
+			new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+		);
+		$start = $gateway->interactiveSetupStart([
+			'provider' => 'telegram_client',
+			'api_id' => '12345',
+			'api_hash' => 'hash',
+		]);
+
+		$sessionId = (string)($start['sessionId'] ?? '');
+		$response = $gateway->interactiveSetupCancel($sessionId);
+
+		$this->assertSame('cancelled', $response['status']);
+	}
 }
 
 class TelegramGatewayProviderTestDouble extends AProvider {
@@ -172,6 +385,12 @@ class TelegramGatewayProviderTestDouble extends AProvider {
 	public static array $allSentMessages = [];
 	/** @var list<array{0: string, 1: string}> */
 	public static array $usedTokensByProvider = [];
+	/** @var array<string, string> */
+	public array $enrichmentResult = [];
+	/** @var array<string, mixed> */
+	public array $qrPayload = [];
+	/** @var array<string, string> */
+	public array $accountInfoPayload = [];
 	/** @var list<array{0: string, 1: string}> */
 	public array $sentMessages = [];
 	/** @var list<string> */
@@ -202,5 +421,44 @@ class TelegramGatewayProviderTestDouble extends AProvider {
 
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
 		return 0;
+	}
+
+	/**
+	 * @param array<string, string> $instanceConfig
+	 * @return array<string, string>
+	 */
+	public function enrichTestResult(array $instanceConfig, string $identifier = ''): array {
+		return $this->enrichmentResult;
+	}
+
+	/** @return array<string, mixed> */
+	public function fetchLoginQrCode(): array {
+		return $this->qrPayload;
+	}
+
+	/** @return array<string, string> */
+	public function fetchLoggedInAccountInfo(): array {
+		return $this->accountInfoPayload;
+	}
+}
+
+class TelegramGatewayInteractiveSetupStateStoreTestDouble extends InteractiveSetupStateStore {
+	/** @var array<string, array<string, mixed>> */
+	private array $state = [];
+
+	public function __construct(IAppConfig $appConfig) {
+		parent::__construct($appConfig);
+	}
+
+	public function save(string $sessionId, array $state): void {
+		$this->state[$sessionId] = $state;
+	}
+
+	public function load(string $sessionId): ?array {
+		return $this->state[$sessionId] ?? null;
+	}
+
+	public function delete(string $sessionId): void {
+		unset($this->state[$sessionId]);
 	}
 }

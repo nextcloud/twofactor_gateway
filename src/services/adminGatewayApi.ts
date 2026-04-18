@@ -9,6 +9,7 @@ import { generateOcsUrl } from '@nextcloud/router'
 export interface FieldDefinition {
 	field: string
 	prompt: string
+	helper?: string
 	default: string
 	optional: boolean
 	type?: string

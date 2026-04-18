@@ -4,7 +4,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -20,21 +20,22 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(name: 'telegram:login', description: 'Login into Telegram using the Client API')]
-class Login extends Command {
-
+/** @psalm-suppress UndefinedClass */
+#[AsCommand(name: 'telegram:get-login-qr', description: 'Get Telegram login QR data for client authentication')]
+class GetLoginQr extends Command {
+	#[\Override]
 	protected function configure(): void {
-		$this
-			->addOption(
-				'session-directory',
-				's',
-				InputOption::VALUE_REQUIRED,
-				'Directory to store the session files',
-			);
+		$this->addOption(
+			'session-directory',
+			's',
+			InputOption::VALUE_REQUIRED,
+			'Directory to store the session files',
+		);
 	}
 
+	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$sessionDirectory = $input->getOption('session-directory');
+		$sessionDirectory = (string)$input->getOption('session-directory');
 
 		$appInfo = new AppInfo();
 		$appInfo->setDeviceModel('Nextcloud-TwoFactor-Gateway');
@@ -51,20 +52,31 @@ class Login extends Command {
 				->setLogger((new Logger())->setExtra($sessionDirectory . '/MadelineProto.log'));
 
 			$api = new API($sessionDirectory, $settings);
-			/** @psalm-suppress UndefinedClass */
 			if ($api->getAuthorization() === API::LOGGED_IN) {
-				$output->writeln('<info>Telegram login already completed for this session.</info>');
+				$output->writeln('{"status":"done"}');
 				return Command::SUCCESS;
 			}
 
-			$api->start();
-			$output->writeln(<<<MESSAGE
+			$qrLogin = $api->qrLogin();
+			if ($qrLogin === null) {
+				$output->writeln('<error>Error: Unable to generate Telegram login QR code for the current session.</error>');
+				return Command::FAILURE;
+			}
 
-				<info>Telegram login successful! Run again the twofactor setup command to finish configuration.</info>
+			$payload = [
+				'status' => 'pending',
+				'link' => $qrLogin->link,
+				'qr_svg' => $qrLogin->getQRSvg(280, 1),
+				'expires_in' => $qrLogin->expiresIn(),
+			];
 
-				MESSAGE);
+			$json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+			if (!is_string($json)) {
+				$output->writeln('<error>Error: Unable to serialize Telegram login QR data.</error>');
+				return Command::FAILURE;
+			}
 
-
+			$output->writeln($json);
 			return Command::SUCCESS;
 		} catch (\Throwable $e) {
 			$output->writeln('<error>Error: ' . $e->getMessage() . '</error>');

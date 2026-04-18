@@ -46,6 +46,10 @@ class FieldDefinition implements JsonSerializable {
 		 * Optional maximum numeric value constraint.
 		 */
 		public ?int $max = null,
+		/**
+		 * Optional helper text displayed separately from the main prompt.
+		 */
+		public string $helper = '',
 	) {
 	}
 
@@ -68,6 +72,7 @@ class FieldDefinition implements JsonSerializable {
 			'hidden' => $this->hidden,
 			'min' => $this->min,
 			'max' => $this->max,
+			'helper' => $this->helper,
 		];
 	}
 }

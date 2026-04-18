@@ -418,6 +418,25 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->assertArrayNotHasKey('accountInfo', $response->getData());
 	}
 
+	public function testTestInstanceReturnsSafeMessageForUnexpectedProviderFailures(): void {
+		$gateway = $this->makeGatewayMock('telegram');
+		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);
+		$record = [
+			'id' => 'abc', 'label' => 'Prod', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00',
+			'config' => ['url' => 'https://t.example.com'], 'isComplete' => true,
+		];
+		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn($record);
+		$gateway->expects($this->once())->method('send')->willThrowException(new \RuntimeException('boom'));
+
+		$response = $this->controller->testInstance('telegram', 'abc', '+1234567890');
+
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		$this->assertSame([
+			'success' => false,
+			'message' => 'Gateway test failed unexpectedly.',
+		], $response->getData());
+	}
+
 	public function testTestInstanceReturns400WhenNotComplete(): void {
 		$gateway = $this->makeGatewayMock('telegram');
 		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);

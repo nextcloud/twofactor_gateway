@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\BackgroundJob;
 
-use OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\SessionHealthService;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\SessionHealthService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\TimedJob;
 
