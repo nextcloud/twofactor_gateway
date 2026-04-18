@@ -12,6 +12,7 @@ namespace OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\FieldType;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClientService;
 use OCP\IL10N;
@@ -28,6 +29,7 @@ use Symfony\Component\Console\Question\Question;
  */
 class Bot extends AProvider {
 	private const TELEGRAM_API_URL = 'https://api.telegram.org/bot';
+	private const TELEGRAM_FILE_API_URL = 'https://api.telegram.org/file/bot';
 
 	public function __construct(
 		private LoggerInterface $logger,
@@ -52,6 +54,7 @@ class Bot extends AProvider {
 				new FieldDefinition(
 					field: 'token',
 					prompt: 'Please enter your Telegram bot token:',
+					type: FieldType::SECRET,
 				),
 			]
 		);
@@ -124,6 +127,136 @@ class Bot extends AProvider {
 		}
 
 		return null;
+	}
+
+	/**
+	 * @param array<string, string> $instanceConfig
+	 * @return array<string, string>
+	 */
+	public function enrichTestResult(array $instanceConfig, string $identifier = ''): array {
+		$chatId = trim($identifier);
+		if ($chatId === '') {
+			return [];
+		}
+
+		$token = trim((string)($instanceConfig['token'] ?? ''));
+		if ($token === '') {
+			$token = trim($this->getToken());
+		}
+		if ($token === '') {
+			return [];
+		}
+
+		$chatData = $this->callTelegramApi($token, 'getChat', ['chat_id' => $chatId]);
+		if ($chatData === null) {
+			return [];
+		}
+
+		$accountName = $this->extractAccountName($chatData);
+		if ($accountName === '') {
+			return [];
+		}
+
+		$account = ['account_name' => $accountName];
+		$avatarDataUri = $this->fetchAvatarDataUri($token, $chatData);
+		if ($avatarDataUri !== '') {
+			$account['account_avatar_url'] = $avatarDataUri;
+		}
+
+		return $account;
+	}
+
+	/**
+	 * @param array<string, mixed> $params
+	 * @return array<string, mixed>|null
+	 */
+	private function callTelegramApi(string $token, string $method, array $params): ?array {
+		try {
+			$client = $this->clientService->newClient();
+			$response = $client->get(self::TELEGRAM_API_URL . $token . '/' . $method, [
+				'query' => $params,
+				'timeout' => 10,
+			]);
+
+			/** @var array<string, mixed>|null $data */
+			$data = json_decode((string)$response->getBody(), true);
+			if (!is_array($data) || ($data['ok'] ?? false) !== true || !isset($data['result']) || !is_array($data['result'])) {
+				return null;
+			}
+
+			return $data['result'];
+		} catch (\Throwable) {
+			return null;
+		}
+	}
+
+	/** @param array<string, mixed> $chatData */
+	private function extractAccountName(array $chatData): string {
+		$title = trim((string)($chatData['title'] ?? ''));
+		if ($title !== '') {
+			return $title;
+		}
+
+		$firstName = trim((string)($chatData['first_name'] ?? ''));
+		$lastName = trim((string)($chatData['last_name'] ?? ''));
+		$fullName = trim($firstName . ' ' . $lastName);
+		if ($fullName !== '') {
+			return $fullName;
+		}
+
+		$username = trim((string)($chatData['username'] ?? ''));
+		if ($username !== '') {
+			return '@' . ltrim($username, '@');
+		}
+
+		$id = trim((string)($chatData['id'] ?? ''));
+		return $id;
+	}
+
+	/** @param array<string, mixed> $chatData */
+	private function fetchAvatarDataUri(string $token, array $chatData): string {
+		$photo = $chatData['photo'] ?? null;
+		if (!is_array($photo)) {
+			return '';
+		}
+
+		$fileId = trim((string)($photo['big_file_id'] ?? $photo['small_file_id'] ?? ''));
+		if ($fileId === '') {
+			return '';
+		}
+
+		$fileInfo = $this->callTelegramApi($token, 'getFile', ['file_id' => $fileId]);
+		if ($fileInfo === null) {
+			return '';
+		}
+
+		$filePath = trim((string)($fileInfo['file_path'] ?? ''));
+		if ($filePath === '') {
+			return '';
+		}
+
+		try {
+			$client = $this->clientService->newClient();
+			$response = $client->get(self::TELEGRAM_FILE_API_URL . $token . '/' . $filePath, ['timeout' => 10]);
+			$avatarBody = (string)$response->getBody();
+			if ($avatarBody === '') {
+				return '';
+			}
+
+			return sprintf('data:%s;base64,%s', $this->detectAvatarMimeType($filePath), base64_encode($avatarBody));
+		} catch (\Throwable) {
+			return '';
+		}
+	}
+
+	private function detectAvatarMimeType(string $filePath): string {
+		$extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+		return match ($extension) {
+			'jpg', 'jpeg' => 'image/jpeg',
+			'png' => 'image/png',
+			'webp' => 'image/webp',
+			default => 'image/jpeg',
+		};
 	}
 
 	#[\Override]

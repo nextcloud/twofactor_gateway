@@ -11,11 +11,12 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\GoWhatsApp;
 
 use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Events\WhatsAppSessionWarningEvent;
-use OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\DeviceStateFetcher;
-use OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\HealthRiskScorer;
-use OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\SessionHealthService;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\DeviceStateFetcher;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\HealthRiskScorer;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\SessionHealthService;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJobList;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -26,6 +27,7 @@ class SessionHealthServiceTest extends AppTestCase {
 	private DeviceStateFetcher&MockObject $fetcher;
 	private HealthRiskScorer&MockObject $riskScorer;
 	private IEventDispatcher&MockObject $eventDispatcher;
+	private IJobList&MockObject $jobList;
 	private ITimeFactory&MockObject $timeFactory;
 	private LoggerInterface&MockObject $logger;
 
@@ -40,6 +42,7 @@ class SessionHealthServiceTest extends AppTestCase {
 		$this->riskScorer = $this->createMock(HealthRiskScorer::class);
 
 		$this->eventDispatcher = $this->createMock(IEventDispatcher::class);
+		$this->jobList = $this->createMock(IJobList::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 
@@ -48,6 +51,7 @@ class SessionHealthServiceTest extends AppTestCase {
 			deviceStateFetcher: $this->fetcher,
 			riskScorer: $this->riskScorer,
 			eventDispatcher: $this->eventDispatcher,
+			jobList: $this->jobList,
 			timeFactory: $this->timeFactory,
 			logger: $this->logger,
 		);
@@ -127,6 +131,9 @@ class SessionHealthServiceTest extends AppTestCase {
 		$this->configureBaseUrl('http://whatsapp.local');
 		$this->timeFactory->method('getTime')->willReturn(1_000_000);
 		$this->fetcher->method('fetch')->willReturn('logged_out');
+		$this->jobList->expects($this->once())
+			->method('remove')
+			->with(\OCA\TwoFactorGateway\BackgroundJob\GoWhatsAppSessionMonitorJob::class, null);
 
 		$this->eventDispatcher->expects($this->once())
 			->method('dispatchTyped')

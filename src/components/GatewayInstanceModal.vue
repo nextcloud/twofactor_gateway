@@ -60,40 +60,49 @@
 					v-for="field in visibleFields"
 					:key="field.field"
 					class="modal-field">
-					<NcPasswordField
-						v-if="field.type === 'secret'"
-						v-model="form.config[field.field]"
-						:label="field.prompt + (field.optional ? ' (' + t('twofactor_gateway', 'optional') + ')' : '')"
-						:placeholder="fieldPlaceholder(field)"
-						:required="!field.optional"
-						:error="!!errors[field.field]"
-						:helper-text="errors[field.field] ?? ''" />
-					<div v-else-if="field.type === 'boolean'" class="modal-switch-field">
-						<NcCheckboxRadioSwitch
-							type="switch"
-							:model-value="booleanFieldValue(field)"
-							@update:modelValue="onBooleanFieldChange(field, $event)">
-							{{ field.prompt + (field.optional ? ' (' + t('twofactor_gateway', 'optional') + ')' : '') }}
-						</NcCheckboxRadioSwitch>
-						<small v-if="errors[field.field]" class="modal-switch-error">{{ errors[field.field] }}</small>
-					</div>
-					<NcTextField
-						v-else-if="field.type === 'integer'"
-						:model-value="integerFieldValue(field)"
-						:label="field.prompt + (field.optional ? ' (' + t('twofactor_gateway', 'optional') + ')' : '')"
-						:placeholder="fieldPlaceholder(field)"
-						:required="!field.optional"
-						:error="!!errors[field.field]"
-						:helper-text="errors[field.field] ?? ''"
-						@update:modelValue="onIntegerFieldChange(field, $event)" />
-					<NcTextField
-						v-else
-						v-model="form.config[field.field]"
-						:label="field.prompt + (field.optional ? ' (' + t('twofactor_gateway', 'optional') + ')' : '')"
-						:placeholder="fieldPlaceholder(field)"
-						:required="!field.optional"
-						:error="!!errors[field.field]"
-						:helper-text="errors[field.field] ?? ''" />
+					<template v-if="field.type === 'secret'">
+						<NcPasswordField
+							v-model="form.config[field.field]"
+							:label="field.prompt + (field.optional ? ' (' + t('twofactor_gateway', 'optional') + ')' : '')"
+							:placeholder="fieldPlaceholder(field)"
+							:required="!field.optional"
+							:error="!!errors[field.field]"
+							:helper-text="errors[field.field] ?? ''" />
+						<small v-if="!errors[field.field] && field.helper" class="modal-field-helper">{{ field.helper }}</small>
+					</template>
+					<template v-else-if="field.type === 'boolean'">
+						<div class="modal-switch-field">
+							<NcCheckboxRadioSwitch
+								type="switch"
+								:model-value="booleanFieldValue(field)"
+								@update:modelValue="onBooleanFieldChange(field, $event)">
+								{{ field.prompt + (field.optional ? ' (' + t('twofactor_gateway', 'optional') + ')' : '') }}
+							</NcCheckboxRadioSwitch>
+							<small v-if="errors[field.field]" class="modal-switch-error">{{ errors[field.field] }}</small>
+							<small v-else-if="field.helper" class="modal-switch-helper">{{ field.helper }}</small>
+						</div>
+					</template>
+					<template v-else-if="field.type === 'integer'">
+						<NcTextField
+							:model-value="integerFieldValue(field)"
+							:label="field.prompt + (field.optional ? ' (' + t('twofactor_gateway', 'optional') + ')' : '')"
+							:placeholder="fieldPlaceholder(field)"
+							:required="!field.optional"
+							:error="!!errors[field.field]"
+							:helper-text="errors[field.field] ?? ''"
+							@update:modelValue="onIntegerFieldChange(field, $event)" />
+						<small v-if="!errors[field.field] && field.helper" class="modal-field-helper">{{ field.helper }}</small>
+					</template>
+					<template v-else>
+						<NcTextField
+							v-model="form.config[field.field]"
+							:label="field.prompt + (field.optional ? ' (' + t('twofactor_gateway', 'optional') + ')' : '')"
+							:placeholder="fieldPlaceholder(field)"
+							:required="!field.optional"
+							:error="!!errors[field.field]"
+							:helper-text="errors[field.field] ?? ''" />
+						<small v-if="!errors[field.field] && field.helper" class="modal-field-helper">{{ field.helper }}</small>
+					</template>
 				</div>
 			</template>
 
@@ -713,6 +722,12 @@ export default defineComponent({
 		font-size: 0.85rem;
 	}
 
+	.modal-field-helper {
+		color: var(--color-text-lighter);
+		font-size: 0.85rem;
+		line-height: 1.4;
+	}
+
 	.modal-instructions {
 		padding: 0.75rem;
 		background: var(--color-background-dark);
@@ -735,6 +750,11 @@ export default defineComponent({
 
 	.modal-switch-error {
 		color: var(--color-error);
+		font-size: 0.85rem;
+	}
+
+	.modal-switch-helper {
+		color: var(--color-text-lighter);
 		font-size: 0.85rem;
 	}
 
