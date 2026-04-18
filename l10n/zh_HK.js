@@ -2,6 +2,11 @@ OC.L10N.register(
     "twofactor_gateway",
     {
     "Two-Factor Gateway" : "雙重認證通訊閘",
+    "Two-Factor Gateway: WhatsApp authentication failed" : "雙重驗證閘道：WhatsApp 驗證失敗",
+    "Two-Factor Gateway cannot send WhatsApp verification codes until this is fixed. Reconfigure the GoWhatsApp gateway from the command line using: occ twofactorauth:gateway:configure gowhatsapp" : "在問題修復前，雙重驗證閘道無法傳送 WhatsApp 驗證碼。請使用以下命令列重新設定 GoWhatsApp 閘道：occ twofactorauth:gateway:configure gowhatsapp",
+    "Two-Factor Gateway: WhatsApp session is unstable" : "雙重驗證閘道：WhatsApp 工作階段不穩定",
+    "WhatsApp session warning: %s" : "WhatsApp 工作階段警告：%s",
+    "The WhatsApp session is unstable and may require re-authentication soon. Monitor the session and reconfigure the GoWhatsApp gateway if needed." : "WhatsApp 工作階段不穩定，可能很快需要重新進行驗證。請監視工作階段狀態，並在需要時重新設定 GoWhatsApp 閘道。",
     "`%s` is your Nextcloud authentication code" : "`%s` 是您的 Nextcloud 驗證碼",
     "%s is your Nextcloud authentication code" : "%s 是你的 Nextcloud 驗證碼",
     "The phone number is not registered on WhatsApp." : "此電話號碼未在 WhatsApp 註冊。",
