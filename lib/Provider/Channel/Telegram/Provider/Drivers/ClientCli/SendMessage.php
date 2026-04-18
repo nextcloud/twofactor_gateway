@@ -56,6 +56,11 @@ class SendMessage extends Command {
 			$peer = $input->getOption('to');
 
 			$api = new API($sessionDirectory, $settings);
+			/** @psalm-suppress UndefinedClass */
+			if ($api->getAuthorization() !== API::LOGGED_IN) {
+				$output->writeln('<error>Error: Telegram Client session is not logged in. Complete the Telegram login flow first.</error>');
+				return Command::FAILURE;
+			}
 
 			$api->start();
 

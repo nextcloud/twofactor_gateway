@@ -16,18 +16,20 @@ use Symfony\Component\Console\Input\ArrayInput;
 
 class TestTest extends AppTestCase {
 
-	private function createGoWhatsAppGateway(\OCP\IAppConfig $appConfig): \OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\Gateway {
+	private function createGoWhatsAppGateway(\OCP\IAppConfig $appConfig): \OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Gateway {
 		$clientService = $this->createMock(\OCP\Http\Client\IClientService::class);
 		$l10n = $this->createMock(\OCP\IL10N::class);
 		$logger = $this->createMock(\Psr\Log\LoggerInterface::class);
 		$eventDispatcher = $this->createMock(\OCP\EventDispatcher\IEventDispatcher::class);
+		$jobManager = $this->createMock(\OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager::class);
 
-		return new \OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\Gateway(
+		return new \OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Gateway(
 			$appConfig,
 			$clientService,
 			$l10n,
 			$logger,
 			$eventDispatcher,
+			$jobManager,
 		);
 	}
 

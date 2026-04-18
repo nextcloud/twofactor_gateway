@@ -13,6 +13,7 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\Bot;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
+use OCP\Http\Client\IResponse;
 use OCP\IL10N;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -66,5 +67,75 @@ class BotTest extends TestCase {
 		$this->expectException(MessageTransmissionException::class);
 		$this->expectExceptionMessage('Failed to send Telegram message.');
 		$provider->send('vitormattos', 'Test');
+	}
+
+	public function testEnrichTestResultReturnsAccountNameAndAvatarWhenAvailable(): void {
+		$token = '123456:ABCDEF_SECRET_TOKEN';
+		$calls = 0;
+		$this->client->expects($this->exactly(3))
+			->method('get')
+			->willReturnCallback(function (string $url, array $options) use (&$calls, $token) {
+				$calls++;
+				if ($calls === 1) {
+					$this->assertSame('https://api.telegram.org/bot' . $token . '/getChat', $url);
+					$this->assertSame([
+						'query' => ['chat_id' => '12345'],
+						'timeout' => 10,
+					], $options);
+					return $this->createResponse('{"ok":true,"result":{"first_name":"Alice","last_name":"Cooper","photo":{"big_file_id":"file-1"}}}');
+				}
+
+				if ($calls === 2) {
+					$this->assertSame('https://api.telegram.org/bot' . $token . '/getFile', $url);
+					$this->assertSame([
+						'query' => ['file_id' => 'file-1'],
+						'timeout' => 10,
+					], $options);
+					return $this->createResponse('{"ok":true,"result":{"file_path":"photos/avatar.png"}}');
+				}
+
+				$this->assertSame('https://api.telegram.org/file/bot' . $token . '/photos/avatar.png', $url);
+				$this->assertSame(['timeout' => 10], $options);
+				return $this->createResponse('avatar-bytes');
+			});
+
+		$provider = (new Bot($this->logger, $this->l10n, $this->clientService))
+			->withRuntimeConfig(['token' => $token]);
+
+		$this->assertSame(
+			[
+				'account_name' => 'Alice Cooper',
+				'account_avatar_url' => 'data:image/png;base64,' . base64_encode('avatar-bytes'),
+			],
+			$provider->enrichTestResult(['token' => $token], '12345'),
+		);
+	}
+
+	public function testEnrichTestResultReturnsOnlyNameWhenChatHasNoAvatar(): void {
+		$token = '123456:ABCDEF_SECRET_TOKEN';
+		$this->client->expects($this->once())
+			->method('get')
+			->with(
+				'https://api.telegram.org/bot' . $token . '/getChat',
+				[
+					'query' => ['chat_id' => '12345'],
+					'timeout' => 10,
+				],
+			)
+			->willReturn($this->createResponse('{"ok":true,"result":{"title":"Team Chat"}}'));
+
+		$provider = (new Bot($this->logger, $this->l10n, $this->clientService))
+			->withRuntimeConfig(['token' => $token]);
+
+		$this->assertSame(
+			['account_name' => 'Team Chat'],
+			$provider->enrichTestResult(['token' => $token], '12345'),
+		);
+	}
+
+	private function createResponse(string $body): IResponse&MockObject {
+		$response = $this->createMock(IResponse::class);
+		$response->method('getBody')->willReturn($body);
+		return $response;
 	}
 }

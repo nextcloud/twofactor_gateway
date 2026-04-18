@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Command;
 
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\FieldType;
+use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,6 +25,7 @@ class FieldQuestionPrompter {
 		OutputInterface $output,
 		QuestionHelper $helper,
 	): string {
+		$this->renderHelper($field, $output);
 		$question = $this->buildQuestion($field);
 		$answer = $helper->ask($input, $output, $question);
 
@@ -88,5 +90,14 @@ class FieldQuestionPrompter {
 	private function toBooleanDefault(string $default): bool {
 		$normalized = strtolower(trim($default));
 		return in_array($normalized, ['1', 'true', 'yes', 'y', 'on'], true);
+	}
+
+	private function renderHelper(FieldDefinition $field, OutputInterface $output): void {
+		$helperText = trim($field->helper);
+		if ($helperText === '') {
+			return;
+		}
+
+		$output->writeln('<comment>' . OutputFormatter::escape($helperText) . '</comment>');
 	}
 }

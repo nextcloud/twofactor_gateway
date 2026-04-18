@@ -293,6 +293,11 @@ class AdminGatewayController extends OCSController {
 				['success' => false, 'message' => $e->getMessage()],
 				Http::STATUS_BAD_REQUEST,
 			);
+		} catch (\Throwable) {
+			return new DataResponse(
+				['success' => false, 'message' => 'Gateway test failed unexpectedly.'],
+				Http::STATUS_BAD_REQUEST,
+			);
 		}
 	}
 
