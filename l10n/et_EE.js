@@ -2,6 +2,11 @@ OC.L10N.register(
     "twofactor_gateway",
     {
     "Two-Factor Gateway" : " Kaheastmelise autentimise lüüs",
+    "Two-Factor Gateway: WhatsApp authentication failed" : "Kaheastmelise autentimise lüüs: Autentimine WhatsAppi abil ei õnnestunud",
+    "Two-Factor Gateway cannot send WhatsApp verification codes until this is fixed. Reconfigure the GoWhatsApp gateway from the command line using: occ twofactorauth:gateway:configure gowhatsapp" : "Kaheastmelise autentimise lüüs ei suuda saata WhatsAppi kinnituskoode enne, kui see olukord pole parandatud. Seadista uuesti GoWhatsAppi lüüs käsurealt: occ twofactorauth:gateway:configure gowhatsapp",
+    "Two-Factor Gateway: WhatsApp session is unstable" : "Kaheastmelise autentimise lüüs: WhatsAppi sessioon on ebastabiilne",
+    "WhatsApp session warning: %s" : "WhatsAppi sessiooni hoiatus: %s",
+    "The WhatsApp session is unstable and may require re-authentication soon. Monitor the session and reconfigure the GoWhatsApp gateway if needed." : "WhatsAppi sessioon on ebastabiilne ja ilmselt vajab õige pea uuesti autentimist. Jälgi sessiooni ja vajadusel seadista uuesti GoWhatsAppi lüüsi.",
     "`%s` is your Nextcloud authentication code" : "„%s“ on sinu Nextcloudi autentimiskood",
     "%s is your Nextcloud authentication code" : "%son sinu Nextcloudi autentimiskood",
     "The phone number is not registered on WhatsApp." : "See telefoninumber pole WhatsAppis registreeritud.",
@@ -38,7 +43,7 @@ OC.L10N.register(
     "Authentication code" : "Autentimiskood",
     "Submit" : "Saada",
     "An access code has been sent to %s" : "Autentimiskood saadeti %s",
-    "Error while sending the Message. Please try again later or contact the administrator." : "Viga sõnumi saatmisel. Palun proovige hiljem uuesti või võtke ühendust administraatoriga.",
+    "Error while sending the Message. Please try again later or contact the administrator." : "Viga sõnumi saatmisel. Palun proovi hiljem uuesti või võta ühendust peakasutajaga.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Sinu telefoninumber on muutunud ja pole uuesti verifitseeritud. Kasuta mõnda muud kaheastmelise autentimise meetodit või võta ühendust oma peakasutajaga."
 },
 "nplurals=2; plural=(n != 1);");
