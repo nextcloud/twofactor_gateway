@@ -250,6 +250,8 @@ class AdminGatewayController extends OCSController {
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/instances/{instanceId}/test')]
 	public function testInstance(string $gateway, string $instanceId, string $identifier): DataResponse {
+		$identifier = $this->normalizeTestIdentifier($gateway, trim($identifier));
+
 		try {
 			$gw = $this->resolveGatewayForInstance($gateway, $instanceId);
 		} catch (\InvalidArgumentException $e) {
@@ -281,8 +283,22 @@ class AdminGatewayController extends OCSController {
 		try {
 			$gatewayForTest->send($identifier, 'Test');
 			$data = ['success' => true, 'message' => 'Test message sent successfully.'];
+
+			$gatewayForEnrichment = null;
 			if ($gatewayForTest instanceof ITestResultEnricher) {
-				$accountInfo = $gatewayForTest->enrichTestResult($instanceConfig, $identifier);
+				$gatewayForEnrichment = $gatewayForTest;
+			} elseif ($gw instanceof ITestResultEnricher) {
+				$gatewayForEnrichment = $gw;
+				if ($instanceConfig !== [] && method_exists($gw, 'withRuntimeConfig')) {
+					$runtimeEnricher = $gw->withRuntimeConfig($instanceConfig);
+					if ($runtimeEnricher instanceof ITestResultEnricher) {
+						$gatewayForEnrichment = $runtimeEnricher;
+					}
+				}
+			}
+
+			if ($gatewayForEnrichment instanceof ITestResultEnricher) {
+				$accountInfo = $gatewayForEnrichment->enrichTestResult($instanceConfig, $identifier);
 				if ($accountInfo !== []) {
 					$data['accountInfo'] = $accountInfo;
 				}
@@ -299,6 +315,26 @@ class AdminGatewayController extends OCSController {
 				Http::STATUS_BAD_REQUEST,
 			);
 		}
+	}
+
+	private function normalizeTestIdentifier(string $gateway, string $identifier): string {
+		if ($gateway !== 'telegram') {
+			return $identifier;
+		}
+
+		if ($identifier === '' || str_starts_with($identifier, '@') || str_starts_with($identifier, '+')) {
+			return $identifier;
+		}
+
+		if (preg_match('/^-?\d+$/', $identifier) === 1) {
+			return $identifier;
+		}
+
+		if (preg_match('/^[A-Za-z][A-Za-z0-9_]{2,}$/', $identifier) === 1) {
+			return '@' . $identifier;
+		}
+
+		return $identifier;
 	}
 
 	/**

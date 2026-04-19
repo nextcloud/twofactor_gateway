@@ -21,8 +21,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /** @psalm-suppress UndefinedClass */
-#[AsCommand(name: 'telegram:get-login-qr', description: 'Get Telegram login QR data for client authentication')]
-class GetLoginQr extends Command {
+#[AsCommand(name: 'telegram:reset-login', description: 'Reset Telegram login state for current session directory')]
+class ResetLogin extends Command {
 	#[\Override]
 	protected function configure(): void {
 		$this->addOption(
@@ -52,47 +52,13 @@ class GetLoginQr extends Command {
 				->setLogger((new Logger())->setExtra($sessionDirectory . '/MadelineProto.log'));
 
 			$api = new API($sessionDirectory, $settings);
-			$authorization = $api->getAuthorization();
-			if ($authorization === API::LOGGED_IN) {
-				$output->writeln('{"status":"done"}');
-				return Command::SUCCESS;
-			}
-			if ($authorization === API::WAITING_PASSWORD) {
-				$payload = [
-					'status' => 'needs_input',
-					'step' => 'enter_password',
-					'hint' => $api->getHint(),
-				];
-				$json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-				if (!is_string($json)) {
-					$output->writeln('<error>Error: Unable to serialize Telegram 2FA login state.</error>');
-					return Command::FAILURE;
-				}
-
-				$output->writeln($json);
-				return Command::SUCCESS;
+			try {
+				$api->logout();
+			} catch (\Throwable) {
+				// Best effort cleanup; continue with success payload.
 			}
 
-			$qrLogin = $api->qrLogin();
-			if ($qrLogin === null) {
-				$output->writeln('<error>Error: Unable to generate Telegram login QR code for the current session.</error>');
-				return Command::FAILURE;
-			}
-
-			$payload = [
-				'status' => 'pending',
-				'link' => $qrLogin->link,
-				'qr_svg' => $qrLogin->getQRSvg(280, 1),
-				'expires_in' => $qrLogin->expiresIn(),
-			];
-
-			$json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-			if (!is_string($json)) {
-				$output->writeln('<error>Error: Unable to serialize Telegram login QR data.</error>');
-				return Command::FAILURE;
-			}
-
-			$output->writeln($json);
+			$output->writeln('{"status":"done"}');
 			return Command::SUCCESS;
 		} catch (\Throwable $e) {
 			$output->writeln('<error>Error: ' . $e->getMessage() . '</error>');

@@ -482,6 +482,38 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->assertTrue($response->getData()['success']);
 	}
 
+	public function testTestInstanceAutoPrefixesTelegramUsernameWithoutAtSign(): void {
+		$gateway = $this->makeGatewayMock('telegram');
+		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);
+		$record = [
+			'id' => 'abc', 'label' => 'Prod', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00',
+			'config' => ['provider' => 'telegram_client'], 'isComplete' => true,
+		];
+		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn($record);
+		$gateway->expects($this->once())->method('send')->with('@vitormattos', 'Test');
+
+		$response = $this->controller->testInstance('telegram', 'abc', 'vitormattos');
+
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
+		$this->assertTrue($response->getData()['success']);
+	}
+
+	public function testTestInstanceKeepsTelegramNumericIdentifierUnchanged(): void {
+		$gateway = $this->makeGatewayMock('telegram');
+		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);
+		$record = [
+			'id' => 'abc', 'label' => 'Prod', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00',
+			'config' => ['provider' => 'telegram_client'], 'isComplete' => true,
+		];
+		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn($record);
+		$gateway->expects($this->once())->method('send')->with('-1001234567890', 'Test');
+
+		$response = $this->controller->testInstance('telegram', 'abc', '-1001234567890');
+
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
+		$this->assertTrue($response->getData()['success']);
+	}
+
 	public function testTestInstanceReturns404WhenNotFound(): void {
 		$gateway = $this->makeGatewayMock('telegram');
 		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);

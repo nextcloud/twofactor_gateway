@@ -62,6 +62,14 @@
 			</div>
 		</div>
 
+		<div v-if="wizardStep === 'enter_password'" class="modal-field">
+			<NcPasswordField
+				v-model="wizardPassword"
+				:label="t('twofactor_gateway', 'Telegram 2FA password:')"
+				:required="true"
+				:placeholder="t('twofactor_gateway', 'Your Telegram password')" />
+		</div>
+
 		<div class="wizard-actions-inline">
 			<NcButton
 				v-if="!wizardSessionId"
@@ -80,11 +88,19 @@
 			</NcButton>
 
 			<NcButton
-				v-if="wizardSessionId"
+				v-if="wizardSessionId && wizardStep === 'scan_qr'"
 				variant="primary"
 				:disabled="wizardLoading"
 				@click="runWizardStep('poll_login')">
 				{{ t('twofactor_gateway', 'Check login status') }}
+			</NcButton>
+
+			<NcButton
+				v-if="wizardSessionId && wizardStep === 'enter_password'"
+				variant="primary"
+				:disabled="wizardLoading || wizardPassword === ''"
+				@click="runWizardStep('submit_password', { password: wizardPassword })">
+				{{ t('twofactor_gateway', 'Submit password') }}
 			</NcButton>
 		</div>
 	</div>
@@ -131,7 +147,7 @@ export default defineComponent({
 			wizardLoading: false,
 			wizardSessionId: '' as string,
 			wizardStep: '',
-			wizardMessage: t('twofactor_gateway', 'Provide Telegram API credentials, scan the QR code, and wait for login confirmation.'),
+			wizardMessage: t('twofactor_gateway', 'Provide Telegram API credentials from my.telegram.org/apps, scan the QR code, and wait for login confirmation.'),
 			wizardMessageType: 'info' as 'info' | 'success' | 'warning' | 'error',
 			wizardQrSvg: '',
 			wizardQrLink: '',
@@ -141,6 +157,7 @@ export default defineComponent({
 			pollAttempt: 0,
 			pollMaxAttempts: 120,
 			qrPolling: false,
+			wizardPassword: '',
 			bootstrapApiId: this.config.api_id ?? '',
 			bootstrapApiHash: this.config.api_hash ?? '',
 		}
@@ -186,6 +203,10 @@ export default defineComponent({
 				return error.message
 			}
 			return fallback
+		},
+
+		sanitizeCredential(value: string): string {
+			return value.replace(/\s+/g, '')
 		},
 
 		startPolling() {
@@ -244,6 +265,12 @@ export default defineComponent({
 			if (response.step) {
 				this.wizardStep = response.step
 			}
+			if (this.wizardStep === 'scan_qr') {
+				this.wizardPassword = ''
+			}
+			if (this.wizardStep !== 'scan_qr') {
+				this.stopPolling()
+			}
 
 			const qrSvg = response.data?.qr_svg
 			if (typeof qrSvg === 'string') {
@@ -266,6 +293,7 @@ export default defineComponent({
 				this.stopPolling()
 				this.wizardSessionId = ''
 				this.wizardStep = ''
+				this.wizardPassword = ''
 				if (response.config) {
 					this.$emit('merge-config', response.config)
 					this.$emit('setup-completed', response.config)
@@ -284,9 +312,14 @@ export default defineComponent({
 		},
 
 		async startWizard() {
+			const sanitizedApiId = this.sanitizeCredential(this.bootstrapApiId)
+			const sanitizedApiHash = this.sanitizeCredential(this.bootstrapApiHash)
+			this.bootstrapApiId = sanitizedApiId
+			this.bootstrapApiHash = sanitizedApiHash
+
 			this.$emit('merge-config', {
-				api_id: this.bootstrapApiId,
-				api_hash: this.bootstrapApiHash,
+				api_id: sanitizedApiId,
+				api_hash: sanitizedApiHash,
 				provider: this.providerId,
 			})
 			this.wizardLoading = true
@@ -295,8 +328,8 @@ export default defineComponent({
 				this.wizardMessageType = 'info'
 				const response = await startInteractiveSetup(this.gatewayId, {
 					provider: this.providerId,
-					api_id: this.bootstrapApiId,
-					api_hash: this.bootstrapApiHash,
+					api_id: sanitizedApiId,
+					api_hash: sanitizedApiHash,
 				})
 				this.applyWizardResponse(response)
 			} catch (error) {
@@ -341,7 +374,8 @@ export default defineComponent({
 				this.wizardStep = ''
 				this.wizardQrSvg = ''
 				this.wizardQrLink = ''
-				this.wizardMessage = t('twofactor_gateway', 'Provide Telegram API credentials, scan the QR code, and wait for login confirmation.')
+				this.wizardPassword = ''
+				this.wizardMessage = t('twofactor_gateway', 'Provide Telegram API credentials from my.telegram.org/apps, scan the QR code, and wait for login confirmation.')
 				this.wizardMessageType = 'info'
 				this.focusWizardRoot()
 			} catch (error) {

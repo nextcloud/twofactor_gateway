@@ -30,6 +30,7 @@ class GatewayTest extends TestCase {
 		parent::setUp();
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->telegramProviderFactory = $this->createMock(Factory::class);
+		TelegramGatewayProviderTestDouble::$submittedPasswords = [];
 	}
 
 	public function testProviderCatalogExposesTelegramBotAndClientImplementations(): void {
@@ -378,6 +379,128 @@ class GatewayTest extends TestCase {
 
 		$this->assertSame('cancelled', $response['status']);
 	}
+
+	public function testInteractiveSetupPollLoginRequestsPasswordWhen2faIsRequired(): void {
+		$clientProvider = new TelegramGatewayProviderTestDouble(new Settings(
+			id: 'telegram_client',
+			name: 'Telegram Client API',
+			fields: [
+				new FieldDefinition(field: 'api_id', prompt: 'API ID'),
+				new FieldDefinition(field: 'api_hash', prompt: 'API Hash'),
+			],
+		));
+		$clientProvider->qrPayload = [
+			'status' => 'needs_input',
+			'step' => 'enter_password',
+			'hint' => 'birthday',
+		];
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_client', $clientProvider],
+		]);
+
+		$gateway = new Gateway(
+			$this->appConfig,
+			$this->telegramProviderFactory,
+			new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+		);
+
+		$start = $gateway->interactiveSetupStart([
+			'provider' => 'telegram_client',
+			'api_id' => '12345',
+			'api_hash' => 'hash',
+		]);
+
+		$this->assertSame('needs_input', $start['status']);
+		$this->assertSame('enter_password', $start['step']);
+		$this->assertSame('birthday', $start['data']['hint']);
+	}
+
+	public function testInteractiveSetupSubmitPasswordCompletesLogin(): void {
+		$clientProvider = new TelegramGatewayProviderTestDouble(new Settings(
+			id: 'telegram_client',
+			name: 'Telegram Client API',
+			fields: [
+				new FieldDefinition(field: 'api_id', prompt: 'API ID'),
+				new FieldDefinition(field: 'api_hash', prompt: 'API Hash'),
+			],
+		));
+		$clientProvider->qrPayload = [
+			'status' => 'needs_input',
+			'step' => 'enter_password',
+		];
+		$clientProvider->completeTwoFactorPayload = ['status' => 'done'];
+		$clientProvider->accountInfoPayload = [
+			'account_name' => 'Alice Example',
+			'account_avatar_url' => 'data:image/png;base64,Zm9v',
+		];
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_client', $clientProvider],
+		]);
+
+		$gateway = new Gateway(
+			$this->appConfig,
+			$this->telegramProviderFactory,
+			new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+		);
+
+		$start = $gateway->interactiveSetupStart([
+			'provider' => 'telegram_client',
+			'api_id' => '12345',
+			'api_hash' => 'hash',
+		]);
+		$sessionId = (string)($start['sessionId'] ?? '');
+
+		$response = $gateway->interactiveSetupStep($sessionId, 'submit_password', ['password' => 'super-secret']);
+
+		$this->assertSame('done', $response['status']);
+		$this->assertContains('super-secret', TelegramGatewayProviderTestDouble::$submittedPasswords);
+	}
+
+	public function testInteractiveSetupSubmitPasswordRecoversToQrWhenAuthKeyExpired(): void {
+		$clientProvider = new TelegramGatewayProviderTestDouble(new Settings(
+			id: 'telegram_client',
+			name: 'Telegram Client API',
+			fields: [
+				new FieldDefinition(field: 'api_id', prompt: 'API ID'),
+				new FieldDefinition(field: 'api_hash', prompt: 'API Hash'),
+			],
+		));
+		$clientProvider->qrPayload = [
+			'status' => 'pending',
+			'link' => 'tg://login?token=refresh',
+			'qr_svg' => '<svg/>',
+			'expires_in' => 30,
+		];
+		$clientProvider->completeTwoFactorPayload = [
+			'status' => 'error',
+			'message' => 'AUTH_KEY_UNREGISTERED',
+		];
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_client', $clientProvider],
+		]);
+
+		$gateway = new Gateway(
+			$this->appConfig,
+			$this->telegramProviderFactory,
+			new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+		);
+
+		$start = $gateway->interactiveSetupStart([
+			'provider' => 'telegram_client',
+			'api_id' => '12345',
+			'api_hash' => 'hash',
+		]);
+		$sessionId = (string)($start['sessionId'] ?? '');
+
+		$response = $gateway->interactiveSetupStep($sessionId, 'submit_password', ['password' => 'super-secret']);
+
+		$this->assertSame('pending', $response['status']);
+		$this->assertSame('scan_qr', $response['step']);
+		$this->assertSame('tg://login?token=refresh', $response['data']['link']);
+	}
 }
 
 class TelegramGatewayProviderTestDouble extends AProvider {
@@ -385,12 +508,17 @@ class TelegramGatewayProviderTestDouble extends AProvider {
 	public static array $allSentMessages = [];
 	/** @var list<array{0: string, 1: string}> */
 	public static array $usedTokensByProvider = [];
+	/** @var list<string> */
+	public static array $submittedPasswords = [];
 	/** @var array<string, string> */
 	public array $enrichmentResult = [];
 	/** @var array<string, mixed> */
 	public array $qrPayload = [];
 	/** @var array<string, string> */
 	public array $accountInfoPayload = [];
+	/** @var array<string, mixed> */
+	public array $completeTwoFactorPayload = ['status' => 'done'];
+	public string $lastSubmittedPassword = '';
 	/** @var list<array{0: string, 1: string}> */
 	public array $sentMessages = [];
 	/** @var list<string> */
@@ -439,6 +567,13 @@ class TelegramGatewayProviderTestDouble extends AProvider {
 	/** @return array<string, string> */
 	public function fetchLoggedInAccountInfo(): array {
 		return $this->accountInfoPayload;
+	}
+
+	/** @return array<string, mixed> */
+	public function completeTwoFactorLogin(string $password): array {
+		$this->lastSubmittedPassword = $password;
+		self::$submittedPasswords[] = $password;
+		return $this->completeTwoFactorPayload;
 	}
 }
 

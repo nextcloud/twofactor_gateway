@@ -106,7 +106,7 @@ class GetAccountInfo extends Command {
 	 * @param array<string, mixed> $self
 	 */
 	private function fetchAvatarDataUri(object $api, array $self): string {
-		$photo = $self['photo'] ?? null;
+		$photo = $this->fetchLatestUserPhoto($api, $self);
 		if (!is_array($photo)) {
 			return '';
 		}
@@ -118,17 +118,39 @@ class GetAccountInfo extends Command {
 
 		try {
 			$downloadedFile = $api->downloadToFile($photo, $tempFile);
-			$avatarBytes = @file_get_contents($downloadedFile);
+			$avatarPath = is_string($downloadedFile) && $downloadedFile !== '' ? $downloadedFile : $tempFile;
+			$avatarBytes = @file_get_contents($avatarPath);
 			if (!is_string($avatarBytes) || $avatarBytes === '') {
 				return '';
 			}
 
-			return sprintf('data:%s;base64,%s', $this->detectMimeType($downloadedFile, $avatarBytes), base64_encode($avatarBytes));
+			return sprintf('data:%s;base64,%s', $this->detectMimeType($avatarPath, $avatarBytes), base64_encode($avatarBytes));
 		} catch (\Throwable) {
 			return '';
 		} finally {
 			@unlink($tempFile);
 		}
+	}
+
+	/**
+	 * @param object $api
+	 * @param array<string, mixed> $self
+	 * @return array<string, mixed>|null
+	 */
+	private function fetchLatestUserPhoto(object $api, array $self): ?array {
+		$userId = $self['id'] ?? 'me';
+		try {
+			/** @var array<string, mixed> $photos */
+			$photos = $api->photos->getUserPhotos(user_id: $userId, offset: 0, max_id: 0, limit: 1);
+			$firstPhoto = $photos['photos'][0] ?? null;
+			if (is_array($firstPhoto)) {
+				return $firstPhoto;
+			}
+		} catch (\Throwable) {
+			// Fall back to no avatar when the API does not return photo objects.
+		}
+
+		return null;
 	}
 
 	private function detectMimeType(string $filePath, string $contents): string {
