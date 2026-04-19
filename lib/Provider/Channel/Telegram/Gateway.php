@@ -210,6 +210,7 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 			'api_id' => $apiId,
 			'api_hash' => $apiHash,
 		];
+		$this->resetInteractiveClientLogin($state);
 		$this->interactiveSetupStateStore->save($sessionId, $state);
 
 		return $this->buildQrSetupResponse($sessionId, $state, 'Scan this QR code in Telegram to link the client session.');
@@ -231,6 +232,7 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 
 		return $this->withMessageType(match ($action) {
 			'poll_login' => $this->interactiveSetupPollLogin($sessionId, $state),
+			'submit_password' => $this->interactiveSetupSubmitPassword($sessionId, $state, $input),
 			'cancel' => $this->interactiveSetupCancel($sessionId),
 			default => [
 				'status' => 'error',
@@ -242,6 +244,10 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 	/** @return array<string, mixed> */
 	#[\Override]
 	public function interactiveSetupCancel(string $sessionId): array {
+		$state = $this->interactiveSetupStateStore->load($sessionId);
+		if ($state !== null) {
+			$this->resetInteractiveClientLogin($state);
+		}
 		$this->interactiveSetupStateStore->delete($sessionId);
 		return $this->withMessageType([
 			'status' => 'cancelled',
@@ -398,6 +404,53 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 
 	/**
 	 * @param array<string, mixed> $state
+	 * @param array<string, mixed> $input
+	 * @return array<string, mixed>
+	 */
+	private function interactiveSetupSubmitPassword(string $sessionId, array $state, array $input): array {
+		$password = (string)($input['password'] ?? '');
+		if ($password === '') {
+			return [
+				'status' => 'error',
+				'message' => 'Telegram 2FA password is required.',
+			];
+		}
+
+		$clientProvider = $this->resolveInteractiveClientProvider($state);
+		if ($clientProvider === null || !is_callable([$clientProvider, 'completeTwoFactorLogin'])) {
+			return [
+				'status' => 'error',
+				'message' => 'Unable to initialize Telegram Client provider for interactive setup.',
+			];
+		}
+
+		/** @var callable(string): array<string, mixed> $completeTwoFactorLogin */
+		$completeTwoFactorLogin = [$clientProvider, 'completeTwoFactorLogin'];
+		$result = $completeTwoFactorLogin($password);
+		if ((string)($result['status'] ?? '') === 'error') {
+			$errorMessage = trim((string)($result['message'] ?? ''));
+			if (stripos($errorMessage, 'AUTH_KEY_UNREGISTERED') !== false) {
+				$this->resetInteractiveClientLogin($state);
+				return $this->buildQrSetupResponse(
+					$sessionId,
+					$state,
+					'Telegram login session expired while submitting 2FA password. Please scan the new QR code.',
+				);
+			}
+
+			return [
+				'status' => 'error',
+				'message' => $errorMessage !== ''
+					? $errorMessage
+					: 'Unable to complete Telegram 2FA login. Verify your password and try again.',
+			];
+		}
+
+		return $this->interactiveSetupPollLogin($sessionId, $state);
+	}
+
+	/**
+	 * @param array<string, mixed> $state
 	 * @return array<string, mixed>
 	 */
 	private function buildQrSetupResponse(string $sessionId, array $state, string $message): array {
@@ -415,6 +468,29 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 		$status = (string)($qrPayload['status'] ?? '');
 		if ($status === 'done') {
 			return $this->interactiveSetupPollLogin($sessionId, $state);
+		}
+		if ($status === 'needs_input') {
+			$hint = trim((string)($qrPayload['hint'] ?? ''));
+			return $this->withMessageType([
+				'status' => 'needs_input',
+				'sessionId' => $sessionId,
+				'step' => 'enter_password',
+				'message' => $hint !== ''
+					? 'Telegram account requires 2FA password. Hint: ' . $hint
+					: 'Telegram account requires 2FA password to complete login.',
+				'data' => [
+					'hint' => $hint,
+				],
+			]);
+		}
+		if ($status === 'error') {
+			$errorMessage = trim((string)($qrPayload['message'] ?? ''));
+			return $this->withMessageType([
+				'status' => 'error',
+				'message' => $errorMessage !== ''
+					? $errorMessage
+					: 'Unable to generate Telegram login QR code. Verify api_id/api_hash and try again.',
+			]);
 		}
 
 		$link = trim((string)($qrPayload['link'] ?? ''));
@@ -453,6 +529,18 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 		} catch (\Throwable) {
 			return null;
 		}
+	}
+
+	/** @param array<string, mixed> $state */
+	private function resetInteractiveClientLogin(array $state): void {
+		$clientProvider = $this->resolveInteractiveClientProvider($state);
+		if ($clientProvider === null || !method_exists($clientProvider, 'resetLoginSession')) {
+			return;
+		}
+
+		/** @var callable(): void $resetLoginSession */
+		$resetLoginSession = [$clientProvider, 'resetLoginSession'];
+		$resetLoginSession();
 	}
 
 	/**

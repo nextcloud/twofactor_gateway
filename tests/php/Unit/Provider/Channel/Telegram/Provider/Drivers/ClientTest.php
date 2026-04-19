@@ -84,7 +84,6 @@ class ClientTest extends TestCase {
 
 		$this->assertSame([
 			'account_name' => 'Alice Cooper',
-			'account_avatar_url' => 'data:image/png;base64,YXZhdGFy',
 		], $provider->enrichTestResult([], 'vitormattos'));
 	}
 
@@ -115,7 +114,7 @@ class ClientTest extends TestCase {
 			public string $sessionDirectory = '/tmp/session.madeline';
 			public string $interactiveCommand = '';
 
-			protected function executeCliCommand(string $command, array &$output, ?int &$returnVar = null): void {
+			protected function executeCliCommand(string $command, array &$output, ?int &$returnVar = null, int $timeoutSeconds = 8): void {
 				$output = $this->cliOutput;
 				$returnVar = $this->cliExitCode;
 			}

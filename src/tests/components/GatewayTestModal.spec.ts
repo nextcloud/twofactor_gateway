@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent } from 'vue'
 import GatewayTestModal from '../../components/GatewayTestModal.vue'
@@ -51,13 +51,6 @@ vi.mock('@nextcloud/vue/components/NcLoadingIcon', () => ({
 	default: defineComponent({ template: '<span class="nc-loading-icon" />' }),
 }))
 
-vi.mock('@nextcloud/vue/components/NcAvatar', () => ({
-	default: defineComponent({
-		props: ['displayName', 'url', 'size', 'isNoUser'],
-		template: '<span class="nc-avatar" :data-display-name="displayName" :data-url="url || \'\'" />',
-	}),
-}))
-
 vi.mock('@nextcloud/vue/components/NcNoteCard', () => ({
 	default: defineComponent({
 		props: ['type'],
@@ -69,7 +62,7 @@ vi.mock('@nextcloud/vue/components/NcTextField', () => ({
 	default: defineComponent({
 		props: ['modelValue', 'label', 'placeholder', 'required'],
 		emits: ['update:modelValue'],
-		template: '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+		template: '<input v-bind="$attrs" :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
 	}),
 }))
 
@@ -81,6 +74,14 @@ const defaultProps = {
 }
 
 describe('GatewayTestModal', () => {
+	beforeEach(() => {
+		vi.resetAllMocks()
+	})
+
+	const findSendButton = (wrapper: ReturnType<typeof mount>) => {
+		return wrapper.findAll('button').find((button) => button.text().includes('Send'))
+	}
+
 	it('renders when show is true', () => {
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
 		expect(wrapper.find('.nc-modal').exists()).toBe(true)
@@ -99,14 +100,14 @@ describe('GatewayTestModal', () => {
 	it('disables the Send Test button when identifier is empty', () => {
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
 		// No text entered → disabled
-		const sendButton = wrapper.findAll('button').at(-1)
+		const sendButton = findSendButton(wrapper)
 		expect(sendButton?.attributes('disabled')).not.toBeUndefined()
 	})
 
 	it('enables the Send Test button when identifier is filled', async () => {
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
 		await wrapper.find('input').setValue('+1234567890')
-		const sendButton = wrapper.findAll('button').at(-1)
+		const sendButton = findSendButton(wrapper)
 		expect(sendButton?.attributes('disabled')).toBeUndefined()
 	})
 
@@ -116,10 +117,70 @@ describe('GatewayTestModal', () => {
 
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
 		await wrapper.find('input').setValue('+1234567890')
-		await wrapper.findAll('button').at(-1)?.trigger('click')
+		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
 
 		expect(testInstance).toHaveBeenCalledWith('signal', 'abc123', '+1234567890')
+	})
+
+	it('sends test when pressing Enter in identifier field', async () => {
+		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
+
+		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		await wrapper.find('input').setValue('+1234567890')
+		await wrapper.find('input').trigger('keydown.enter')
+		await flushPromises()
+
+		expect(testInstance).toHaveBeenCalledWith('signal', 'abc123', '+1234567890')
+	})
+
+	it('does not close modal when pressing Enter in identifier field', async () => {
+		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
+
+		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		await wrapper.find('input').setValue('+1234567890')
+		await wrapper.find('input').trigger('keydown.enter')
+		await flushPromises()
+
+		expect(testInstance).toHaveBeenCalledTimes(1)
+		expect(wrapper.emitted('close')).toBeUndefined()
+	})
+
+	it('auto-prefixes @ when Telegram identifier looks like a username', async () => {
+		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
+
+		const wrapper = mount(GatewayTestModal, {
+			props: {
+				...defaultProps,
+				gatewayId: 'telegram',
+			},
+		})
+		await wrapper.find('input').setValue('vitormattos')
+		await findSendButton(wrapper)?.trigger('click')
+		await flushPromises()
+
+		expect(testInstance).toHaveBeenCalledWith('telegram', 'abc123', '@vitormattos')
+		expect(wrapper.find('input').element).toHaveProperty('value', '@vitormattos')
+	})
+
+	it('keeps @ prefix when Telegram username already has it', async () => {
+		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
+
+		const wrapper = mount(GatewayTestModal, {
+			props: {
+				...defaultProps,
+				gatewayId: 'telegram',
+			},
+		})
+		await wrapper.find('input').setValue('@vitormattos')
+		await findSendButton(wrapper)?.trigger('click')
+		await flushPromises()
+
+		expect(testInstance).toHaveBeenCalledWith('telegram', 'abc123', '@vitormattos')
 	})
 
 	it('shows a success result after a successful test', async () => {
@@ -128,7 +189,7 @@ describe('GatewayTestModal', () => {
 
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
 		await wrapper.find('input').setValue('+1234567890')
-		await wrapper.findAll('button').at(-1)?.trigger('click')
+		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
 
 		expect(wrapper.find('.nc-note-card[data-type="success"]').exists()).toBe(true)
@@ -141,7 +202,7 @@ describe('GatewayTestModal', () => {
 
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
 		await wrapper.find('input').setValue('+1234567890')
-		await wrapper.findAll('button').at(-1)?.trigger('click')
+		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
 
 		expect(wrapper.find('.nc-note-card[data-type="error"]').exists()).toBe(true)
@@ -154,7 +215,7 @@ describe('GatewayTestModal', () => {
 		expect(wrapper.emitted('close')).toBeDefined()
 	})
 
-	it('shows account info with NcAvatar when accountInfo is returned', async () => {
+	it('shows account info with avatar image when accountInfo includes avatar URL', async () => {
 		const { testInstance } = await import('../../services/adminGatewayApi.ts')
 		vi.mocked(testInstance).mockResolvedValueOnce({
 			success: true,
@@ -164,13 +225,49 @@ describe('GatewayTestModal', () => {
 
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
 		await wrapper.find('input').setValue('+1234567890')
-		await wrapper.findAll('button').at(-1)?.trigger('click')
+		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
 
-		const avatar = wrapper.find('.nc-avatar')
+		const avatar = wrapper.find('.test-account-avatar')
 		expect(avatar.exists()).toBe(true)
-		expect(avatar.attributes('data-display-name')).toBe('Acme Corp')
-		expect(avatar.attributes('data-url')).toBe('https://wa.example/avatar.png')
+		expect(avatar.attributes('src')).toBe('https://wa.example/avatar.png')
+		expect(avatar.attributes('alt')).toBe('Acme Corp')
+		expect(wrapper.find('.test-account-name').text()).toBe('Acme Corp')
+	})
+
+	it('shows initials fallback when accountInfo has no avatar URL', async () => {
+		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(testInstance).mockResolvedValueOnce({
+			success: true,
+			message: 'Message sent successfully.',
+			accountInfo: { account_name: 'Acme Corp', account_avatar_url: '' },
+		})
+
+		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		await wrapper.find('input').setValue('+1234567890')
+		await findSendButton(wrapper)?.trigger('click')
+		await flushPromises()
+
+		expect(wrapper.find('.test-account-avatar').exists()).toBe(false)
+		expect(wrapper.find('.test-account-avatar-fallback').text()).toBe('AC')
+		expect(wrapper.find('.test-account-name').text()).toBe('Acme Corp')
+	})
+
+	it('shows initials fallback when accountInfo avatar data URI is truncated', async () => {
+		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(testInstance).mockResolvedValueOnce({
+			success: true,
+			message: 'Message sent successfully.',
+			accountInfo: { account_name: 'Acme Corp', account_avatar_url: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ' },
+		})
+
+		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		await wrapper.find('input').setValue('+1234567890')
+		await findSendButton(wrapper)?.trigger('click')
+		await flushPromises()
+
+		expect(wrapper.find('.test-account-avatar').exists()).toBe(false)
+		expect(wrapper.find('.test-account-avatar-fallback').text()).toBe('AC')
 		expect(wrapper.find('.test-account-name').text()).toBe('Acme Corp')
 	})
 
@@ -180,7 +277,7 @@ describe('GatewayTestModal', () => {
 
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
 		await wrapper.find('input').setValue('+1234567890')
-		await wrapper.findAll('button').at(-1)?.trigger('click')
+		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
 
 		expect(wrapper.find('.test-account-info').exists()).toBe(false)
