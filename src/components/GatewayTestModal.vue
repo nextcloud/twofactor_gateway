@@ -25,7 +25,9 @@
 				v-if="result"
 				:type="result.success ? 'success' : 'error'"
 				class="test-result-note-card">
-				<p class="test-result-note-card__message">{{ result.message }}</p>
+				<p class="test-result-note-card__message">
+					{{ result.message }}
+				</p>
 			</NcNoteCard>
 
 			<div v-if="result?.accountInfo?.account_name" class="test-account-info">
@@ -106,16 +108,6 @@ export default defineComponent({
 		}
 	},
 
-	watch: {
-		show(val: boolean) {
-			if (val) {
-				this.identifier = ''
-				this.avatarLoadFailed = false
-				this.result = null
-			}
-		},
-	},
-
 	computed: {
 		identifierPlaceholder(): string {
 			// TRANSLATORS "\u00A0" keeps the ellipsis attached to the previous word and avoids awkward line breaks.
@@ -158,6 +150,16 @@ export default defineComponent({
 				.toUpperCase()
 
 			return initials || '?'
+		},
+	},
+
+	watch: {
+		show(val: boolean) {
+			if (val) {
+				this.identifier = ''
+				this.avatarLoadFailed = false
+				this.result = null
+			}
 		},
 	},
 
@@ -251,18 +253,18 @@ export default defineComponent({
 
 				if (imageType === 'png') {
 					return (
-						binary.charCodeAt(0) === 0x89 &&
-						binary.charCodeAt(1) === 0x50 &&
-						binary.charCodeAt(2) === 0x4E &&
-						binary.charCodeAt(3) === 0x47 &&
-						binary.charCodeAt(binary.length - 8) === 0x49 &&
-						binary.charCodeAt(binary.length - 7) === 0x45 &&
-						binary.charCodeAt(binary.length - 6) === 0x4E &&
-						binary.charCodeAt(binary.length - 5) === 0x44 &&
-						binary.charCodeAt(binary.length - 4) === 0xAE &&
-						binary.charCodeAt(binary.length - 3) === 0x42 &&
-						binary.charCodeAt(binary.length - 2) === 0x60 &&
-						binary.charCodeAt(binary.length - 1) === 0x82
+						binary.charCodeAt(0) === 0x89
+						&& binary.charCodeAt(1) === 0x50
+						&& binary.charCodeAt(2) === 0x4E
+						&& binary.charCodeAt(3) === 0x47
+						&& binary.charCodeAt(binary.length - 8) === 0x49
+						&& binary.charCodeAt(binary.length - 7) === 0x45
+						&& binary.charCodeAt(binary.length - 6) === 0x4E
+						&& binary.charCodeAt(binary.length - 5) === 0x44
+						&& binary.charCodeAt(binary.length - 4) === 0xAE
+						&& binary.charCodeAt(binary.length - 3) === 0x42
+						&& binary.charCodeAt(binary.length - 2) === 0x60
+						&& binary.charCodeAt(binary.length - 1) === 0x82
 					)
 				}
 
