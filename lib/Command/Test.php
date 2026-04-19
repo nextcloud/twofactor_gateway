@@ -46,7 +46,7 @@ class Test extends Command {
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$gatewayName = $input->getArgument('gateway');
-		$identifier = $input->getArgument('identifier');
+		$identifier = $this->normalizeIdentifier((string)$gatewayName, (string)$input->getArgument('identifier'));
 
 		try {
 			$gateway = $this->gatewayFactory->get($gatewayName);
@@ -79,5 +79,26 @@ class Test extends Command {
 		$output->writeln('');
 
 		return 0;
+	}
+
+	private function normalizeIdentifier(string $gatewayName, string $identifier): string {
+		$identifier = trim($identifier);
+		if ($gatewayName !== 'telegram') {
+			return $identifier;
+		}
+
+		if ($identifier === '' || str_starts_with($identifier, '@') || str_starts_with($identifier, '+')) {
+			return $identifier;
+		}
+
+		if (preg_match('/^-?\d+$/', $identifier) === 1) {
+			return $identifier;
+		}
+
+		if (preg_match('/^[A-Za-z][A-Za-z0-9_]{2,}$/', $identifier) === 1) {
+			return '@' . $identifier;
+		}
+
+		return $identifier;
 	}
 }

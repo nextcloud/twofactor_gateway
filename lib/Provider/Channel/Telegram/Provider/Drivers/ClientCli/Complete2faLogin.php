@@ -21,21 +21,33 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /** @psalm-suppress UndefinedClass */
-#[AsCommand(name: 'telegram:get-login-qr', description: 'Get Telegram login QR data for client authentication')]
-class GetLoginQr extends Command {
+#[AsCommand(name: 'telegram:complete-2fa', description: 'Complete Telegram 2FA for a pending login session')]
+class Complete2faLogin extends Command {
 	#[\Override]
 	protected function configure(): void {
-		$this->addOption(
-			'session-directory',
-			's',
-			InputOption::VALUE_REQUIRED,
-			'Directory to store the session files',
-		);
+		$this
+			->addOption(
+				'session-directory',
+				's',
+				InputOption::VALUE_REQUIRED,
+				'Directory to store the session files',
+			)
+			->addOption(
+				'password',
+				'p',
+				InputOption::VALUE_REQUIRED,
+				'Telegram 2FA password',
+			);
 	}
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$sessionDirectory = (string)$input->getOption('session-directory');
+		$password = (string)$input->getOption('password');
+		if ($password === '') {
+			$output->writeln('<error>Error: Telegram 2FA password is required.</error>');
+			return Command::FAILURE;
+		}
 
 		$appInfo = new AppInfo();
 		$appInfo->setDeviceModel('Nextcloud-TwoFactor-Gateway');
@@ -52,47 +64,23 @@ class GetLoginQr extends Command {
 				->setLogger((new Logger())->setExtra($sessionDirectory . '/MadelineProto.log'));
 
 			$api = new API($sessionDirectory, $settings);
-			$authorization = $api->getAuthorization();
-			if ($authorization === API::LOGGED_IN) {
+			if ($api->getAuthorization() === API::LOGGED_IN) {
 				$output->writeln('{"status":"done"}');
 				return Command::SUCCESS;
 			}
-			if ($authorization === API::WAITING_PASSWORD) {
-				$payload = [
-					'status' => 'needs_input',
-					'step' => 'enter_password',
-					'hint' => $api->getHint(),
-				];
-				$json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-				if (!is_string($json)) {
-					$output->writeln('<error>Error: Unable to serialize Telegram 2FA login state.</error>');
-					return Command::FAILURE;
-				}
 
-				$output->writeln($json);
-				return Command::SUCCESS;
-			}
-
-			$qrLogin = $api->qrLogin();
-			if ($qrLogin === null) {
-				$output->writeln('<error>Error: Unable to generate Telegram login QR code for the current session.</error>');
+			if ($api->getAuthorization() !== API::WAITING_PASSWORD) {
+				$output->writeln('<error>Error: Telegram account is not currently waiting for a 2FA password.</error>');
 				return Command::FAILURE;
 			}
 
-			$payload = [
-				'status' => 'pending',
-				'link' => $qrLogin->link,
-				'qr_svg' => $qrLogin->getQRSvg(280, 1),
-				'expires_in' => $qrLogin->expiresIn(),
-			];
-
-			$json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-			if (!is_string($json)) {
-				$output->writeln('<error>Error: Unable to serialize Telegram login QR data.</error>');
+			$api->complete2faLogin($password);
+			if ($api->getAuthorization() !== API::LOGGED_IN) {
+				$output->writeln('<error>Error: Telegram 2FA password was accepted but login is still pending.</error>');
 				return Command::FAILURE;
 			}
 
-			$output->writeln($json);
+			$output->writeln('{"status":"done"}');
 			return Command::SUCCESS;
 		} catch (\Throwable $e) {
 			$output->writeln('<error>Error: ' . $e->getMessage() . '</error>');
