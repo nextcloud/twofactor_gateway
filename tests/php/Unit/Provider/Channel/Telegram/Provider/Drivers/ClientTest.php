@@ -70,6 +70,8 @@ class ClientTest extends TestCase {
 	}
 
 	public function testEnrichTestResultReturnsAccountInfoFromCliJsonOutput(): void {
+		$validPngAvatarDataUri = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO5x9mQAAAAASUVORK5CYII=';
+
 		/** @var Client&object{cliOutput:list<string>, cliExitCode:int} $provider */
 		$provider = $this->createTestableClient()
 			->withRuntimeConfig([
@@ -78,12 +80,13 @@ class ClientTest extends TestCase {
 			]);
 		$provider->cliOutput = [
 			'Logger: MadelineProto 8.6.2',
-			'{"account_name":"Alice Cooper","account_avatar_url":"data:image/png;base64,YXZhdGFy"}',
+			'{"account_name":"Alice Cooper","account_avatar_url":"' . $validPngAvatarDataUri . '"}',
 		];
 		$provider->cliExitCode = 0;
 
 		$this->assertSame([
 			'account_name' => 'Alice Cooper',
+			'account_avatar_url' => $validPngAvatarDataUri,
 		], $provider->enrichTestResult([], 'vitormattos'));
 	}
 
