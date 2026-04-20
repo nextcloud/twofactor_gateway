@@ -14,25 +14,33 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
+use OCA\TwoFactorGateway\Service\TelegramClientSessionMonitorJobManager;
 use OCP\IAppConfig;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
-class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveSetupGateway, ITestResultEnricher {
+class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveSetupGateway, ITestResultEnricher, IConfigurationChangeAwareGateway {
 
 	public function __construct(
 		public IAppConfig $appConfig,
 		private Factory $telegramProviderFactory,
+		private ?TelegramClientSessionMonitorJobManager $telegramClientSessionMonitorJobManager = null,
 		private ?InteractiveSetupStateStore $interactiveSetupStateStore = null,
 	) {
 		parent::__construct($appConfig);
 		$this->interactiveSetupStateStore ??= new InteractiveSetupStateStore($appConfig);
+	}
+
+	#[\Override]
+	public function syncAfterConfigurationChange(): void {
+		$this->telegramClientSessionMonitorJobManager?->sync();
 	}
 
 	#[\Override]

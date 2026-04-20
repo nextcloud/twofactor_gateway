@@ -279,9 +279,9 @@ class GatewayTest extends TestCase {
 		]);
 
 		$gateway = new Gateway(
-			$this->appConfig,
-			$this->telegramProviderFactory,
-			new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+			appConfig: $this->appConfig,
+			telegramProviderFactory: $this->telegramProviderFactory,
+			interactiveSetupStateStore: new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
 		);
 		$response = $gateway->interactiveSetupStart([
 			'provider' => 'telegram_client',
@@ -321,9 +321,9 @@ class GatewayTest extends TestCase {
 		]);
 
 		$gateway = new Gateway(
-			$this->appConfig,
-			$this->telegramProviderFactory,
-			new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+			appConfig: $this->appConfig,
+			telegramProviderFactory: $this->telegramProviderFactory,
+			interactiveSetupStateStore: new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
 		);
 		$start = $gateway->interactiveSetupStart([
 			'provider' => 'telegram_client',
@@ -364,9 +364,9 @@ class GatewayTest extends TestCase {
 		]);
 
 		$gateway = new Gateway(
-			$this->appConfig,
-			$this->telegramProviderFactory,
-			new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+			appConfig: $this->appConfig,
+			telegramProviderFactory: $this->telegramProviderFactory,
+			interactiveSetupStateStore: new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
 		);
 		$start = $gateway->interactiveSetupStart([
 			'provider' => 'telegram_client',
@@ -400,9 +400,9 @@ class GatewayTest extends TestCase {
 		]);
 
 		$gateway = new Gateway(
-			$this->appConfig,
-			$this->telegramProviderFactory,
-			new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+			appConfig: $this->appConfig,
+			telegramProviderFactory: $this->telegramProviderFactory,
+			interactiveSetupStateStore: new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
 		);
 
 		$start = $gateway->interactiveSetupStart([
@@ -440,9 +440,9 @@ class GatewayTest extends TestCase {
 		]);
 
 		$gateway = new Gateway(
-			$this->appConfig,
-			$this->telegramProviderFactory,
-			new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+			appConfig: $this->appConfig,
+			telegramProviderFactory: $this->telegramProviderFactory,
+			interactiveSetupStateStore: new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
 		);
 
 		$start = $gateway->interactiveSetupStart([
@@ -483,9 +483,9 @@ class GatewayTest extends TestCase {
 		]);
 
 		$gateway = new Gateway(
-			$this->appConfig,
-			$this->telegramProviderFactory,
-			new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+			appConfig: $this->appConfig,
+			telegramProviderFactory: $this->telegramProviderFactory,
+			interactiveSetupStateStore: new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
 		);
 
 		$start = $gateway->interactiveSetupStart([
