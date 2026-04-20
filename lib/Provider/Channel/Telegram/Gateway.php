@@ -17,6 +17,7 @@ use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\ITestIdentifierNormalizer;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCA\TwoFactorGateway\Service\TelegramClientSessionMonitorJobManager;
@@ -26,7 +27,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
-class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveSetupGateway, ITestResultEnricher, IConfigurationChangeAwareGateway {
+class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveSetupGateway, ITestResultEnricher, IConfigurationChangeAwareGateway, ITestIdentifierNormalizer {
 
 	public function __construct(
 		public IAppConfig $appConfig,
@@ -46,6 +47,23 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 	#[\Override]
 	public function send(string $identifier, string $message, array $extra = []): void {
 		$this->getProvider()->send($identifier, $message);
+	}
+
+	#[\Override]
+	public function normalizeTestIdentifier(string $identifier): string {
+		if ($identifier === '' || str_starts_with($identifier, '@') || str_starts_with($identifier, '+')) {
+			return $identifier;
+		}
+
+		if (preg_match('/^-?\d+$/', $identifier) === 1) {
+			return $identifier;
+		}
+
+		if (preg_match('/^[A-Za-z][A-Za-z0-9_]{2,}$/', $identifier) === 1) {
+			return '@' . $identifier;
+		}
+
+		return $identifier;
 	}
 
 	#[\Override]
@@ -205,6 +223,11 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 
 		$apiId = trim((string)($input['api_id'] ?? ''));
 		$apiHash = trim((string)($input['api_hash'] ?? ''));
+		$forceRelinkRaw = strtolower(trim((string)($input['force_relink'] ?? '0')));
+		$forceRelink = in_array($forceRelinkRaw, ['1', 'true', 'yes', 'on'], true);
+		$madelineLogEnabledRaw = strtolower(trim((string)($input['madeline_log_enabled'] ?? '0')));
+		$madelineLogEnabled = in_array($madelineLogEnabledRaw, ['1', 'true', 'yes', 'on'], true);
+		$madelineLogPath = trim((string)($input['madeline_log_path'] ?? ''));
 		if ($apiId === '' || $apiHash === '') {
 			return $this->withMessageType([
 				'status' => 'error',
@@ -217,8 +240,13 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 			'provider' => $provider,
 			'api_id' => $apiId,
 			'api_hash' => $apiHash,
+			'madeline_log_enabled' => $madelineLogEnabled ? '1' : '0',
+			'madeline_log_path' => $madelineLogPath,
 		];
-		$this->resetInteractiveClientLogin($state);
+
+		if ($forceRelink) {
+			$this->resetInteractiveClientLogin($state);
+		}
 		$this->interactiveSetupStateStore->save($sessionId, $state);
 
 		return $this->buildQrSetupResponse($sessionId, $state, 'Scan this QR code in Telegram to link the client session.');
@@ -380,6 +408,17 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 	 * @return array<string, mixed>
 	 */
 	private function interactiveSetupPollLogin(string $sessionId, array $state): array {
+		// Grace period: give background password submission time to start before polling session
+		$passwordSubmittedAt = (int)($state['passwordSubmittedAt'] ?? 0);
+		if ($passwordSubmittedAt > 0 && (time() - $passwordSubmittedAt) < 5) {
+			return $this->withMessageType([
+				'status' => 'pending',
+				'sessionId' => $sessionId,
+				'step' => 'password_polling',
+				'message' => 'Submitting password to Telegram…',
+			]);
+		}
+
 		$clientProvider = $this->resolveInteractiveClientProvider($state);
 		if ($clientProvider === null || !is_callable([$clientProvider, 'fetchLoggedInAccountInfo'])) {
 			return [
@@ -400,6 +439,8 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 					'provider' => 'telegram_client',
 					'api_id' => (string)($state['api_id'] ?? ''),
 					'api_hash' => (string)($state['api_hash'] ?? ''),
+					'madeline_log_enabled' => (string)($state['madeline_log_enabled'] ?? '0'),
+					'madeline_log_path' => (string)($state['madeline_log_path'] ?? ''),
 				],
 				'data' => [
 					'account' => $accountInfo,
@@ -425,7 +466,31 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 		}
 
 		$clientProvider = $this->resolveInteractiveClientProvider($state);
-		if ($clientProvider === null || !is_callable([$clientProvider, 'completeTwoFactorLogin'])) {
+		if ($clientProvider === null) {
+			return [
+				'status' => 'error',
+				'message' => 'Unable to initialize Telegram Client provider for interactive setup.',
+			];
+		}
+
+		// Async path: run CLI in background and poll for result
+		if (method_exists($clientProvider, 'startCompleteTwoFactorLoginBackground')) {
+			/** @var callable(string): void $startBackground */
+			$startBackground = [$clientProvider, 'startCompleteTwoFactorLoginBackground'];
+			$startBackground($password);
+			$state['passwordSubmittedAt'] = time();
+			unset($state['passwordPollAttempts']);
+			$this->interactiveSetupStateStore->save($sessionId, $state);
+			return $this->withMessageType([
+				'status' => 'pending',
+				'sessionId' => $sessionId,
+				'step' => 'password_polling',
+				'message' => 'Password submitted. Verifying with Telegram…',
+			]);
+		}
+
+		// Fallback: synchronous (for providers without background support)
+		if (!method_exists($clientProvider, 'completeTwoFactorLogin')) {
 			return [
 				'status' => 'error',
 				'message' => 'Unable to initialize Telegram Client provider for interactive setup.',
@@ -475,7 +540,18 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 		$qrPayload = $fetchLoginQr();
 		$status = (string)($qrPayload['status'] ?? '');
 		if ($status === 'done') {
-			return $this->interactiveSetupPollLogin($sessionId, $state);
+			$this->interactiveSetupStateStore->delete($sessionId);
+			return $this->withMessageType([
+				'status' => 'done',
+				'message' => 'Telegram Client session is already logged in.',
+				'config' => [
+					'provider' => 'telegram_client',
+					'api_id' => (string)($state['api_id'] ?? ''),
+					'api_hash' => (string)($state['api_hash'] ?? ''),
+					'madeline_log_enabled' => (string)($state['madeline_log_enabled'] ?? '0'),
+					'madeline_log_path' => (string)($state['madeline_log_path'] ?? ''),
+				],
+			]);
 		}
 		if ($status === 'needs_input') {
 			$hint = trim((string)($qrPayload['hint'] ?? ''));
@@ -533,6 +609,8 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 				'provider' => 'telegram_client',
 				'api_id' => (string)($state['api_id'] ?? ''),
 				'api_hash' => (string)($state['api_hash'] ?? ''),
+				'madeline_log_enabled' => (string)($state['madeline_log_enabled'] ?? '0'),
+				'madeline_log_path' => (string)($state['madeline_log_path'] ?? ''),
 			]);
 		} catch (\Throwable) {
 			return null;

@@ -16,6 +16,7 @@ use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\ITestIdentifierNormalizer;
 use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
@@ -160,15 +161,13 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
 	}
 
-	public function testCreateInstanceResolvesGoWhatsAppDriverInsideWhatsAppCatalog(): void {
+	public function testCreateInstanceKeepsWhatsAppCatalogGatewayWhenProviderIsGoWhatsApp(): void {
 		$whatsAppGateway = $this->makeCatalogGatewayMock('whatsapp', 'provider', ['whatsapp', 'gowhatsapp']);
-		$goGateway = $this->makeGatewayMock('gowhatsapp');
 		$this->gatewayFactory->method('get')->willReturnMap([
 			['whatsapp', $whatsAppGateway],
-			['gowhatsapp', $goGateway],
 		]);
 		$this->configService->method('createInstance')
-			->with($goGateway, 'Prod', ['provider' => 'gowhatsapp', 'base_url' => 'https://wa.example.com'], [], 0)
+			->with($whatsAppGateway, 'Prod', ['provider' => 'gowhatsapp', 'base_url' => 'https://wa.example.com'], [], 0)
 			->willReturn([
 				'id' => 'abc123',
 				'label' => 'Prod',
@@ -184,15 +183,13 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->assertSame('abc123', $response->getData()['id']);
 	}
 
-	public function testCreateInstanceResolvesSingleCatalogProviderWhenPayloadOmitsProvider(): void {
+	public function testCreateInstanceKeepsSingleCatalogGatewayWhenPayloadOmitsProvider(): void {
 		$whatsAppGateway = $this->makeCatalogGatewayMock('whatsapp', 'provider', ['gowhatsapp']);
-		$goGateway = $this->makeGatewayMock('gowhatsapp');
 		$this->gatewayFactory->method('get')->willReturnMap([
 			['whatsapp', $whatsAppGateway],
-			['gowhatsapp', $goGateway],
 		]);
 		$this->configService->method('createInstance')
-			->with($goGateway, 'Prod', ['base_url' => 'https://wa.example.com'], [], 0)
+			->with($whatsAppGateway, 'Prod', ['base_url' => 'https://wa.example.com'], [], 0)
 			->willReturn([
 				'id' => 'abc123',
 				'label' => 'Prod',
@@ -482,14 +479,23 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->assertTrue($response->getData()['success']);
 	}
 
-	public function testTestInstanceAutoPrefixesTelegramUsernameWithoutAtSign(): void {
-		$gateway = $this->makeGatewayMock('telegram');
+	public function testTestInstanceUsesGatewayIdentifierNormalizerWhenAvailable(): void {
+		/** @var IGateway&ITestIdentifierNormalizer&MockObject $gateway */
+		$gateway = $this->createMockForIntersectionOfInterfaces([IGateway::class, ITestIdentifierNormalizer::class]);
+		$settings = new Settings(
+			name: 'Telegram',
+			id: 'telegram',
+			fields: [new FieldDefinition('url', 'API URL')],
+		);
+		$gateway->method('getProviderId')->willReturn('telegram');
+		$gateway->method('getSettings')->willReturn($settings);
 		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);
 		$record = [
 			'id' => 'abc', 'label' => 'Prod', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00',
 			'config' => ['provider' => 'telegram_client'], 'isComplete' => true,
 		];
 		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn($record);
+		$gateway->expects($this->once())->method('normalizeTestIdentifier')->with('vitormattos')->willReturn('@vitormattos');
 		$gateway->expects($this->once())->method('send')->with('@vitormattos', 'Test');
 
 		$response = $this->controller->testInstance('telegram', 'abc', 'vitormattos');
@@ -499,13 +505,22 @@ class AdminGatewayControllerTest extends TestCase {
 	}
 
 	public function testTestInstanceKeepsTelegramNumericIdentifierUnchanged(): void {
-		$gateway = $this->makeGatewayMock('telegram');
+		/** @var IGateway&ITestIdentifierNormalizer&MockObject $gateway */
+		$gateway = $this->createMockForIntersectionOfInterfaces([IGateway::class, ITestIdentifierNormalizer::class]);
+		$settings = new Settings(
+			name: 'Telegram',
+			id: 'telegram',
+			fields: [new FieldDefinition('url', 'API URL')],
+		);
+		$gateway->method('getProviderId')->willReturn('telegram');
+		$gateway->method('getSettings')->willReturn($settings);
 		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);
 		$record = [
 			'id' => 'abc', 'label' => 'Prod', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00',
 			'config' => ['provider' => 'telegram_client'], 'isComplete' => true,
 		];
 		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn($record);
+		$gateway->expects($this->once())->method('normalizeTestIdentifier')->with('-1001234567890')->willReturn('-1001234567890');
 		$gateway->expects($this->once())->method('send')->with('-1001234567890', 'Test');
 
 		$response = $this->controller->testInstance('telegram', 'abc', '-1001234567890');

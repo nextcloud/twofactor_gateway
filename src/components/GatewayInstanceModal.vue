@@ -189,6 +189,7 @@ export default defineComponent({
 			selectedGatewayId: this.gatewayId || '',
 			selectedCatalogProviderId: '',
 			wizardPanelActive: false,
+			guidedSetupReadyToSave: false,
 			form: {
 				label: this.initialLabel,
 				config: { ...this.initialConfig } as Record<string, string>,
@@ -462,7 +463,7 @@ export default defineComponent({
 
 		shouldShowSaveButton(): boolean {
 			if (this.showWizardFirstFlow) {
-				return false
+				return this.guidedSetupReadyToSave && !this.wizardPanelActive
 			}
 
 			return true
@@ -474,6 +475,11 @@ export default defineComponent({
 	},
 
 	watch: {
+		show(val: boolean) {
+			if (!val) {
+				this.guidedSetupReadyToSave = false
+			}
+		},
 		initialLabel(val: string) {
 			this.form.label = val
 		},
@@ -578,12 +584,14 @@ export default defineComponent({
 		onGatewayChange() {
 			// Reset config when gateway changes while creating
 			this.selectedCatalogProviderId = ''
+			this.guidedSetupReadyToSave = false
 			this.form.config = {}
 			this.errors = {}
 		},
 
 		onProviderCatalogChange() {
 			const selectorFieldName = this.providerSelectorFieldName
+			this.guidedSetupReadyToSave = false
 			this.form.config = {
 				[selectorFieldName]: this.selectedCatalogProviderId,
 			}
@@ -682,6 +690,7 @@ export default defineComponent({
 
 		onGuidedSetupCompleted(configPatch: Record<string, string>) {
 			this.mergeConfigFromSetup(configPatch)
+			this.guidedSetupReadyToSave = true
 			this.save()
 		},
 	},

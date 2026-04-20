@@ -31,6 +31,8 @@ class GatewayTest extends TestCase {
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->telegramProviderFactory = $this->createMock(Factory::class);
 		TelegramGatewayProviderTestDouble::$submittedPasswords = [];
+		TelegramGatewayProviderTestDouble::$allSentMessages = [];
+		TelegramGatewayProviderTestDouble::$usedTokensByProvider = [];
 	}
 
 	public function testProviderCatalogExposesTelegramBotAndClientImplementations(): void {
@@ -296,7 +298,7 @@ class GatewayTest extends TestCase {
 		$this->assertSame('<svg/>', $response['data']['qr_svg']);
 	}
 
-	public function testInteractiveSetupPollLoginReturnsDoneWhenAccountIsLoggedIn(): void {
+	public function testInteractiveSetupStartForceRelinkResetsSessionAndReturnsQr(): void {
 		$clientProvider = new TelegramGatewayProviderTestDouble(new Settings(
 			id: 'telegram_client',
 			name: 'Telegram Client API',
@@ -310,6 +312,40 @@ class GatewayTest extends TestCase {
 			'link' => 'tg://login?token=abc',
 			'qr_svg' => '<svg/>',
 			'expires_in' => 30,
+		];
+
+		$this->telegramProviderFactory->method('get')->willReturnMap([
+			['telegram_client', $clientProvider],
+		]);
+
+		$gateway = new Gateway(
+			appConfig: $this->appConfig,
+			telegramProviderFactory: $this->telegramProviderFactory,
+			interactiveSetupStateStore: new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
+		);
+		$response = $gateway->interactiveSetupStart([
+			'provider' => 'telegram_client',
+			'api_id' => '12345',
+			'api_hash' => 'hash',
+			'force_relink' => '1',
+		]);
+
+		$this->assertSame('pending', $response['status']);
+		$this->assertSame('scan_qr', $response['step']);
+		$this->assertArrayHasKey('sessionId', $response);
+	}
+
+	public function testInteractiveSetupPollLoginReturnsDoneWhenAccountIsLoggedIn(): void {
+		$clientProvider = new TelegramGatewayProviderTestDouble(new Settings(
+			id: 'telegram_client',
+			name: 'Telegram Client API',
+			fields: [
+				new FieldDefinition(field: 'api_id', prompt: 'API ID'),
+				new FieldDefinition(field: 'api_hash', prompt: 'API Hash'),
+			],
+		));
+		$clientProvider->qrPayload = [
+			'status' => 'done',
 		];
 		$clientProvider->accountInfoPayload = [
 			'account_name' => 'Alice Example',
@@ -325,22 +361,19 @@ class GatewayTest extends TestCase {
 			telegramProviderFactory: $this->telegramProviderFactory,
 			interactiveSetupStateStore: new TelegramGatewayInteractiveSetupStateStoreTestDouble($this->appConfig),
 		);
-		$start = $gateway->interactiveSetupStart([
+		$response = $gateway->interactiveSetupStart([
 			'provider' => 'telegram_client',
 			'api_id' => '12345',
 			'api_hash' => 'hash',
 		]);
 
-		$sessionId = (string)($start['sessionId'] ?? '');
-		$this->assertNotSame('', $sessionId);
-
-		$response = $gateway->interactiveSetupStep($sessionId, 'poll_login');
-
 		$this->assertSame('done', $response['status']);
 		$this->assertSame('telegram_client', $response['config']['provider']);
 		$this->assertSame('12345', $response['config']['api_id']);
 		$this->assertSame('hash', $response['config']['api_hash']);
-		$this->assertSame('Alice Example', $response['data']['account']['account_name']);
+		$this->assertArrayNotHasKey('data', $response);
+		$this->assertArrayNotHasKey('sessionId', $response);
+		$this->assertSame(0, $clientProvider->resetLoginSessionCalls);
 	}
 
 	public function testInteractiveSetupCancelReturnsCancelled(): void {
@@ -430,10 +463,7 @@ class GatewayTest extends TestCase {
 			'step' => 'enter_password',
 		];
 		$clientProvider->completeTwoFactorPayload = ['status' => 'done'];
-		$clientProvider->accountInfoPayload = [
-			'account_name' => 'Alice Example',
-			'account_avatar_url' => 'data:image/png;base64,Zm9v',
-		];
+		$clientProvider->accountInfoPayload = [];
 
 		$this->telegramProviderFactory->method('get')->willReturnMap([
 			['telegram_client', $clientProvider],
@@ -451,6 +481,10 @@ class GatewayTest extends TestCase {
 			'api_hash' => 'hash',
 		]);
 		$sessionId = (string)($start['sessionId'] ?? '');
+		$clientProvider->accountInfoPayload = [
+			'account_name' => 'Alice Example',
+			'account_avatar_url' => 'data:image/png;base64,Zm9v',
+		];
 
 		$response = $gateway->interactiveSetupStep($sessionId, 'submit_password', ['password' => 'super-secret']);
 
@@ -519,6 +553,7 @@ class TelegramGatewayProviderTestDouble extends AProvider {
 	/** @var array<string, mixed> */
 	public array $completeTwoFactorPayload = ['status' => 'done'];
 	public string $lastSubmittedPassword = '';
+	public int $resetLoginSessionCalls = 0;
 	/** @var list<array{0: string, 1: string}> */
 	public array $sentMessages = [];
 	/** @var list<string> */
@@ -574,6 +609,10 @@ class TelegramGatewayProviderTestDouble extends AProvider {
 		$this->lastSubmittedPassword = $password;
 		self::$submittedPasswords[] = $password;
 		return $this->completeTwoFactorPayload;
+	}
+
+	public function resetLoginSession(): void {
+		$this->resetLoginSessionCalls++;
 	}
 }
 

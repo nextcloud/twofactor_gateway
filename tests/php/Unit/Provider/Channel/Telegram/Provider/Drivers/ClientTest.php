@@ -117,7 +117,7 @@ class ClientTest extends TestCase {
 			public string $sessionDirectory = '/tmp/session.madeline';
 			public string $interactiveCommand = '';
 
-			protected function executeCliCommand(string $command, array &$output, ?int &$returnVar = null, int $timeoutSeconds = 8): void {
+			protected function executeCliCommand(string $command, array &$output, ?int &$returnVar = null, int $timeoutSeconds = 30): void {
 				$output = $this->cliOutput;
 				$returnVar = $this->cliExitCode;
 			}

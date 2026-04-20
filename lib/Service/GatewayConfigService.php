@@ -252,7 +252,51 @@ class GatewayConfigService {
 		}
 		/** @var list<array{id: string, label: string, default: bool, createdAt: string}> */
 		$result = array_values($data);
-		return $result;
+		[$normalized, $changed] = $this->normalizeRegistryDefaults($result);
+		if ($changed) {
+			$this->saveRegistry($gatewayId, $normalized);
+		}
+		return $normalized;
+	}
+
+	/**
+	 * @param list<array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int}> $registry
+	 * @return array{0: list<array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int}>, 1: bool}
+	 */
+	private function normalizeRegistryDefaults(array $registry): array {
+		if ($registry === []) {
+			return [$registry, false];
+		}
+
+		$normalized = [];
+		$changed = false;
+		$hasDefault = false;
+
+		foreach ($registry as $meta) {
+			$isDefault = (bool)($meta['default'] ?? false);
+			if ($isDefault) {
+				if ($hasDefault) {
+					$isDefault = false;
+					$changed = true;
+				} else {
+					$hasDefault = true;
+				}
+			}
+
+			if (($meta['default'] ?? false) !== $isDefault) {
+				$changed = true;
+			}
+
+			$meta['default'] = $isDefault;
+			$normalized[] = $meta;
+		}
+
+		if (!$hasDefault) {
+			$normalized[0]['default'] = true;
+			$changed = true;
+		}
+
+		return [$normalized, $changed];
 	}
 
 	/**
@@ -329,6 +373,9 @@ class GatewayConfigService {
 		if ($gateway instanceof IProviderCatalogGateway) {
 			$selector = $gateway->getProviderSelectorField();
 			$selectedProvider = trim((string)($config[$selector->field] ?? $selector->default));
+			if ($selectedProvider !== '' && !isset($config[$selector->field])) {
+				$config[$selector->field] = $selectedProvider;
+			}
 
 			if ($selectedProvider !== '') {
 				foreach ($gateway->getProviderCatalog() as $provider) {
