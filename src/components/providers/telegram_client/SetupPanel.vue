@@ -41,6 +41,20 @@
 					:required="true"
 					:placeholder="t('twofactor_gateway', 'From my.telegram.org/apps')" />
 			</div>
+			<div class="modal-field">
+				<NcCheckboxRadioSwitch
+					:model-value="bootstrapLogEnabled"
+					@update:modelValue="bootstrapLogEnabled = !!$event">
+					{{ t('twofactor_gateway', 'Save Madeline diagnostic logs') }}
+				</NcCheckboxRadioSwitch>
+			</div>
+			<div class="modal-field">
+				<NcTextField
+					v-model="bootstrapLogPath"
+					:label="t('twofactor_gateway', 'Madeline log file path (optional):')"
+					:placeholder="t('twofactor_gateway', 'Default: session directory')"
+					:disabled="!bootstrapLogEnabled" />
+			</div>
 		</template>
 
 		<div v-if="wizardStep === 'scan_qr' && wizardQrSvg" class="wizard-qr-section">
@@ -70,13 +84,32 @@
 				:placeholder="t('twofactor_gateway', 'Your Telegram password')" />
 		</div>
 
+		<div v-if="wizardStep === 'password_polling'" class="wizard-password-polling">
+			<span>{{ t('twofactor_gateway', 'Verifying password with Telegram…') }}</span>
+			<NcProgressBar
+				:value="Math.round((pollAttempt / pollMaxAttempts) * 100)"
+				type="linear"
+				size="small" />
+		</div>
+
 		<div class="wizard-actions-inline">
+			<NcButton
+				v-if="showRelinkButton"
+				variant="tertiary"
+				:disabled="wizardLoading || !canStart"
+				@click="startWizard(true)">
+				{{ t('twofactor_gateway', 'Relink from scratch') }}
+			</NcButton>
+
 			<NcButton
 				v-if="!wizardSessionId"
 				variant="secondary"
 				:disabled="wizardLoading || !canStart || !bootstrapApiId.trim() || !bootstrapApiHash.trim()"
 				@click="startWizard">
-				{{ t('twofactor_gateway', 'Start guided setup') }}
+				<template #icon>
+					<NcLoadingIcon v-if="wizardLoading" :size="20" />
+				</template>
+				{{ wizardLoading ? t('twofactor_gateway', 'Starting guided setup…') : t('twofactor_gateway', 'Start guided setup') }}
 			</NcButton>
 
 			<NcButton
@@ -92,6 +125,9 @@
 				variant="primary"
 				:disabled="wizardLoading"
 				@click="runWizardStep('poll_login')">
+				<template #icon>
+					<NcLoadingIcon v-if="wizardLoading" :size="20" />
+				</template>
 				{{ t('twofactor_gateway', 'Check login status') }}
 			</NcButton>
 
@@ -100,7 +136,18 @@
 				variant="primary"
 				:disabled="wizardLoading || wizardPassword === ''"
 				@click="runWizardStep('submit_password', { password: wizardPassword })">
+				<template #icon>
+					<NcLoadingIcon v-if="wizardLoading" :size="20" />
+				</template>
 				{{ t('twofactor_gateway', 'Submit password') }}
+			</NcButton>
+
+			<NcButton
+				v-if="wizardSessionId && wizardStep === 'password_polling'"
+				variant="tertiary"
+				:disabled="wizardLoading"
+				@click="cancelWizard">
+				{{ t('twofactor_gateway', 'Cancel') }}
 			</NcButton>
 		</div>
 	</div>
@@ -110,6 +157,8 @@
 import { defineComponent, type PropType } from 'vue'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
@@ -127,6 +176,8 @@ export default defineComponent({
 	components: {
 		NcAvatar,
 		NcButton,
+		NcCheckboxRadioSwitch,
+		NcLoadingIcon,
 		NcNoteCard,
 		NcPasswordField,
 		NcProgressBar,
@@ -160,7 +211,18 @@ export default defineComponent({
 			wizardPassword: '',
 			bootstrapApiId: this.config.api_id ?? '',
 			bootstrapApiHash: this.config.api_hash ?? '',
+			bootstrapLogEnabled: ['1', 'true', 'yes', 'on'].includes(String(this.config.madeline_log_enabled ?? '').toLowerCase()),
+			bootstrapLogPath: this.config.madeline_log_path ?? '',
 		}
+	},
+	computed: {
+		showRelinkButton(): boolean {
+			if (this.wizardSessionId !== '' || this.wizardLoading) {
+				return false
+			}
+
+			return this.wizardMessageType === 'success' && this.wizardMessage.toLowerCase().includes('already logged in')
+		},
 	},
 	watch: {
 		wizardSessionId(val: string) {
@@ -235,7 +297,7 @@ export default defineComponent({
 		},
 
 		async pollOnce() {
-			if (!this.wizardSessionId || this.wizardStep !== 'scan_qr') {
+			if (!this.wizardSessionId || (this.wizardStep !== 'scan_qr' && this.wizardStep !== 'password_polling')) {
 				this.stopPolling()
 				return
 			}
@@ -243,7 +305,7 @@ export default defineComponent({
 			try {
 				const response = await interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'poll_login')
 				this.applyWizardResponse(response)
-				if (this.wizardSessionId && this.wizardStep === 'scan_qr' && response.status !== 'error') {
+				if (this.wizardSessionId && (this.wizardStep === 'scan_qr' || this.wizardStep === 'password_polling') && response.status !== 'error') {
 					this.schedulePoll()
 				} else {
 					this.stopPolling()
@@ -268,7 +330,7 @@ export default defineComponent({
 			if (this.wizardStep === 'scan_qr') {
 				this.wizardPassword = ''
 			}
-			if (this.wizardStep !== 'scan_qr') {
+			if (this.wizardStep !== 'scan_qr' && this.wizardStep !== 'password_polling') {
 				this.stopPolling()
 			}
 
@@ -300,7 +362,7 @@ export default defineComponent({
 				}
 			}
 
-			if (response.step === 'scan_qr' && response.status !== 'error' && response.status !== 'done' && !this.qrPolling) {
+			if ((response.step === 'scan_qr' || response.step === 'password_polling') && response.status !== 'error' && response.status !== 'done' && !this.qrPolling) {
 				this.startPolling()
 			}
 
@@ -311,16 +373,20 @@ export default defineComponent({
 			this.focusWizardRoot()
 		},
 
-		async startWizard() {
+		async startWizard(forceRelink = false) {
 			const sanitizedApiId = this.sanitizeCredential(this.bootstrapApiId)
 			const sanitizedApiHash = this.sanitizeCredential(this.bootstrapApiHash)
+			const normalizedLogPath = this.bootstrapLogEnabled ? this.bootstrapLogPath.trim() : ''
 			this.bootstrapApiId = sanitizedApiId
 			this.bootstrapApiHash = sanitizedApiHash
+			this.bootstrapLogPath = normalizedLogPath
 
 			this.$emit('merge-config', {
 				api_id: sanitizedApiId,
 				api_hash: sanitizedApiHash,
 				provider: this.providerId,
+				madeline_log_enabled: this.bootstrapLogEnabled ? '1' : '0',
+				madeline_log_path: normalizedLogPath,
 			})
 			this.wizardLoading = true
 			try {
@@ -330,6 +396,9 @@ export default defineComponent({
 					provider: this.providerId,
 					api_id: sanitizedApiId,
 					api_hash: sanitizedApiHash,
+					madeline_log_enabled: this.bootstrapLogEnabled ? '1' : '0',
+					madeline_log_path: normalizedLogPath,
+					force_relink: forceRelink ? '1' : '0',
 				})
 				this.applyWizardResponse(response)
 			} catch (error) {

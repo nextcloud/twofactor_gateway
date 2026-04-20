@@ -16,6 +16,7 @@ use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
+use OCA\TwoFactorGateway\Provider\Gateway\ITestIdentifierNormalizer;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
 use OCP\AppFramework\Http;
@@ -91,7 +92,7 @@ class AdminGatewayController extends OCSController {
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/instances')]
 	public function createInstance(string $gateway, string $label, array $config = [], array $groupIds = [], int $priority = 0): DataResponse {
 		try {
-			$gw = $this->resolveGatewayForPayload($gateway, $config);
+			$gw = $this->resolveGatewayForConfigurationPayload($gateway, $config);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
@@ -250,7 +251,7 @@ class AdminGatewayController extends OCSController {
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/instances/{instanceId}/test')]
 	public function testInstance(string $gateway, string $instanceId, string $identifier): DataResponse {
-		$identifier = $this->normalizeTestIdentifier($gateway, trim($identifier));
+		$identifier = trim($identifier);
 
 		try {
 			$gw = $this->resolveGatewayForInstance($gateway, $instanceId);
@@ -278,6 +279,10 @@ class AdminGatewayController extends OCSController {
 			if ($runtimeGateway instanceof IGateway) {
 				$gatewayForTest = $runtimeGateway;
 			}
+		}
+
+		if ($gatewayForTest instanceof ITestIdentifierNormalizer) {
+			$identifier = $gatewayForTest->normalizeTestIdentifier($identifier);
 		}
 
 		try {
@@ -315,26 +320,6 @@ class AdminGatewayController extends OCSController {
 				Http::STATUS_BAD_REQUEST,
 			);
 		}
-	}
-
-	private function normalizeTestIdentifier(string $gateway, string $identifier): string {
-		if ($gateway !== 'telegram') {
-			return $identifier;
-		}
-
-		if ($identifier === '' || str_starts_with($identifier, '@') || str_starts_with($identifier, '+')) {
-			return $identifier;
-		}
-
-		if (preg_match('/^-?\d+$/', $identifier) === 1) {
-			return $identifier;
-		}
-
-		if (preg_match('/^[A-Za-z][A-Za-z0-9_]{2,}$/', $identifier) === 1) {
-			return '@' . $identifier;
-		}
-
-		return $identifier;
 	}
 
 	/**
@@ -481,7 +466,19 @@ class AdminGatewayController extends OCSController {
 			return $instanceGateway;
 		}
 
-		return $this->resolveGatewayForPayload($gateway, $config);
+		return $this->resolveGatewayForConfigurationPayload($gateway, $config);
+	}
+
+	private function resolveGatewayForConfigurationPayload(string $gateway, array $config): IGateway {
+		$resolvedGateway = $this->gatewayFactory->get($gateway);
+		if (method_exists($resolvedGateway, 'withRuntimeConfig')) {
+			$runtimeGateway = $resolvedGateway->withRuntimeConfig($config);
+			if ($runtimeGateway instanceof IGateway) {
+				return $runtimeGateway;
+			}
+		}
+
+		return $resolvedGateway;
 	}
 
 	private function resolveCatalogGatewayByProvider(IGateway $gateway, string $providerId): IGateway {

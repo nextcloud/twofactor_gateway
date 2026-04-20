@@ -35,7 +35,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Client extends AProvider {
 	private const LOGIN_REQUIRED_MESSAGE = 'Telegram Client session is not logged in. Complete the Telegram login flow for this gateway before testing or sending messages.';
-	private const CLI_COMMAND_TIMEOUT_SECONDS = 8;
+	private const CLI_COMMAND_TIMEOUT_SECONDS = 30;
 	private const CLI_TIMEOUT_EXIT_CODE = 124;
 
 	public function __construct(
@@ -65,6 +65,22 @@ class Client extends AProvider {
 					prompt: 'Please enter your Telegram api_hash:',
 					helper: 'Get one at https://my.telegram.org/apps',
 					type: FieldType::SECRET,
+				),
+				new FieldDefinition(
+					field: 'madeline_log_enabled',
+					prompt: 'Save MadelineProto diagnostics log file?',
+					default: '0',
+					optional: true,
+					type: FieldType::BOOLEAN,
+					helper: 'Disabled by default. Enable only when debugging Telegram Client issues.',
+				),
+				new FieldDefinition(
+					field: 'madeline_log_path',
+					prompt: 'MadelineProto log path (optional):',
+					default: '',
+					optional: true,
+					type: FieldType::TEXT,
+					helper: 'When empty, uses session directory inside Nextcloud data/appdata. Relative paths are resolved inside the session directory.',
 				),
 			]
 		);
@@ -223,6 +239,19 @@ class Client extends AProvider {
 		return ['status' => 'done'];
 	}
 
+	/**
+	 * Starts the Telegram 2FA login completion in the background without blocking.
+	 * Use interactiveSetupPollLogin to check for completion.
+	 */
+	public function startCompleteTwoFactorLoginBackground(string $password): void {
+		$this->exportApiCredentials();
+		$command = $this->buildCliCommand('telegram:complete-2fa', [
+			'session-directory' => $this->getSessionDirectory(),
+			'password' => $password,
+		]);
+		exec('nohup /bin/sh -c ' . escapeshellarg($command) . ' </dev/null >/dev/null 2>/dev/null &');
+	}
+
 	#[\Override]
 	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
 		$settings = $this->getSettings();
@@ -283,6 +312,7 @@ class Client extends AProvider {
 		$stderr = '';
 		$timedOut = false;
 		$deadline = microtime(true) + max(1, $timeoutSeconds);
+		$lastStatus = null;
 
 		if (isset($pipes[1]) && is_resource($pipes[1])) {
 			stream_set_blocking($pipes[1], false);
@@ -307,6 +337,7 @@ class Client extends AProvider {
 			}
 
 			$status = proc_get_status($process);
+			$lastStatus = $status;
 			if (!is_array($status) || ($status['running'] ?? false) !== true) {
 				break;
 			}
@@ -348,19 +379,45 @@ class Client extends AProvider {
 			fclose($pipes[2]);
 		}
 
+		$finalStatus = proc_get_status($process);
 		$exitCode = proc_close($process);
 		if ($timedOut) {
 			$returnVar = self::CLI_TIMEOUT_EXIT_CODE;
 		} else {
-			$returnVar = is_int($exitCode) ? $exitCode : 1;
+			$resolvedExitCode = null;
+
+			if (is_array($finalStatus)) {
+				$finalExitCode = $finalStatus['exitcode'] ?? null;
+				if (is_int($finalExitCode) && $finalExitCode >= 0) {
+					$resolvedExitCode = $finalExitCode;
+				}
+			}
+
+			if ($resolvedExitCode === null && is_array($lastStatus)) {
+				$lastExitCode = $lastStatus['exitcode'] ?? null;
+				if (is_int($lastExitCode) && $lastExitCode >= 0) {
+					$resolvedExitCode = $lastExitCode;
+				}
+			}
+
+			if ($resolvedExitCode === null && is_int($exitCode) && $exitCode >= 0) {
+				$resolvedExitCode = $exitCode;
+			}
+
+			$returnVar = $resolvedExitCode ?? 1;
 		}
 
 		$combined = '';
-		if (is_string($stdout) && $stdout !== '') {
-			$combined .= $stdout;
-		}
-		if (is_string($stderr) && $stderr !== '') {
-			$combined .= ($combined !== '' ? "\n" : '') . $stderr;
+		if ($returnVar === 0 && is_string($stdout) && $stdout !== '') {
+			// Successful command responses are expected in stdout (typically JSON payloads).
+			$combined = $stdout;
+		} else {
+			if (is_string($stdout) && $stdout !== '') {
+				$combined .= $stdout;
+			}
+			if (is_string($stderr) && $stderr !== '') {
+				$combined .= ($combined !== '' ? "\n" : '') . $stderr;
+			}
 		}
 
 		if ($combined === '') {
@@ -412,6 +469,9 @@ class Client extends AProvider {
 		if ($path === false) {
 			throw new \RuntimeException('Telegram Client CLI entrypoint not found.');
 		}
+
+		$options['log-enabled'] = $this->isMadelineLogEnabled() ? '1' : '0';
+		$options['log-file'] = $this->resolveMadelineLogPath();
 
 		$cmd = 'php ' . escapeshellarg($path) . ' ' . $command;
 		foreach ($options as $name => $value) {
@@ -490,6 +550,20 @@ class Client extends AProvider {
 		return trim($line);
 	}
 
+	/**
+	 * @param list<string> $output
+	 */
+	private function extractLastNonEmptyOutputLine(array $output): ?string {
+		for ($index = count($output) - 1; $index >= 0; $index--) {
+			$line = trim($output[$index]);
+			if ($line !== '') {
+				return $line;
+			}
+		}
+
+		return null;
+	}
+
 	private function clearSessionDirectoryContents(string $directory): void {
 		if (!is_dir($directory)) {
 			return;
@@ -521,89 +595,18 @@ class Client extends AProvider {
 	 * @return array<string, mixed>
 	 */
 	private function extractCliJsonPayloadRaw(array $output): array {
-		for ($index = count($output) - 1; $index >= 0; $index--) {
-			$line = trim($output[$index]);
-			if ($line === '') {
-				continue;
-			}
-
-			$decoded = $this->decodeCliJsonLine($line);
-			if ($decoded !== []) {
-				return $decoded;
-			}
-		}
-
-		return [];
+		$lastLine = $this->extractLastNonEmptyOutputLine($output);
+		return is_string($lastLine) && $lastLine !== ''
+			? $this->decodeCliJsonLine($lastLine)
+			: [];
 	}
 
 	/**
-	 * MadelineProto may append shutdown logs to the JSON line; extract the JSON object safely.
-	 *
 	 * @return array<string, mixed>
 	 */
 	private function decodeCliJsonLine(string $line): array {
 		$decoded = json_decode($line, true);
-		if (is_array($decoded)) {
-			return $this->sanitizeCliPayload($decoded);
-		}
-
-		$jsonCandidate = $this->extractFirstJsonObjectCandidate($line);
-		if ($jsonCandidate === null || $jsonCandidate === '') {
-			return [];
-		}
-
-		$decoded = json_decode($jsonCandidate, true);
 		return is_array($decoded) ? $this->sanitizeCliPayload($decoded) : [];
-	}
-
-	private function extractFirstJsonObjectCandidate(string $line): ?string {
-		$start = strpos($line, '{');
-		if ($start === false) {
-			return null;
-		}
-
-		$depth = 0;
-		$inString = false;
-		$escaped = false;
-		$length = strlen($line);
-
-		for ($i = $start; $i < $length; $i++) {
-			$char = $line[$i];
-
-			if ($inString) {
-				if ($escaped) {
-					$escaped = false;
-					continue;
-				}
-				if ($char === '\\') {
-					$escaped = true;
-					continue;
-				}
-				if ($char === '"') {
-					$inString = false;
-				}
-				continue;
-			}
-
-			if ($char === '"') {
-				$inString = true;
-				continue;
-			}
-
-			if ($char === '{') {
-				$depth++;
-				continue;
-			}
-
-			if ($char === '}') {
-				$depth--;
-				if ($depth === 0) {
-					return substr($line, $start, $i - $start + 1);
-				}
-			}
-		}
-
-		return null;
 	}
 
 	/**
@@ -658,65 +661,58 @@ class Client extends AProvider {
 		return $payload;
 	}
 
+	private function isMadelineLogEnabled(): bool {
+		try {
+			$raw = strtolower(trim($this->getMadelineLogEnabled()));
+		} catch (\Throwable) {
+			return false;
+		}
+
+		return in_array($raw, ['1', 'true', 'yes', 'on'], true);
+	}
+
+	private function resolveMadelineLogPath(): string {
+		$defaultPath = $this->getSessionDirectory() . '/MadelineProto.log';
+
+		try {
+			$configured = trim($this->getMadelineLogPath());
+		} catch (\Throwable) {
+			return $defaultPath;
+		}
+
+		if ($configured === '') {
+			return $defaultPath;
+		}
+
+		if (str_starts_with($configured, '/')) {
+			return $configured;
+		}
+
+		return $this->getSessionDirectory() . '/' . ltrim($configured, '/');
+	}
+
 	/**
 	 * @param list<string> $output
 	 * @return array<string, string>
 	 */
 	private function extractCliJsonPayload(array $output): array {
-		$firstValidPayload = [];
-		for ($index = count($output) - 1; $index >= 0; $index--) {
-			$line = trim($output[$index]);
-			if ($line === '') {
-				continue;
-			}
+		$lastLine = $this->extractLastNonEmptyOutputLine($output);
+		if (!is_string($lastLine) || $lastLine === '') {
+			return [];
+		}
 
-			$decoded = $this->decodeCliJsonLine($line);
-			if ($decoded === []) {
-				continue;
-			}
+		$decoded = $this->decodeCliJsonLine($lastLine);
+		if ($decoded === []) {
+			return [];
+		}
 
-			$stringMap = [];
-			foreach ($decoded as $key => $value) {
-				if (is_string($key) && is_string($value)) {
-					$stringMap[$key] = $value;
-				}
-			}
-
-			if ($stringMap === []) {
-				continue;
-			}
-
-			if ($firstValidPayload === []) {
-				$firstValidPayload = $stringMap;
-			}
-
-			if (($stringMap['account_name'] ?? '') !== '' || ($stringMap['account_avatar_url'] ?? '') !== '') {
-				return $stringMap;
+		$stringMap = [];
+		foreach ($decoded as $key => $value) {
+			if (is_string($key) && is_string($value)) {
+				$stringMap[$key] = $value;
 			}
 		}
 
-		$combinedOutput = implode("\n", $output);
-		$accountStart = strpos($combinedOutput, '{"account_name"');
-		if ($accountStart !== false) {
-			$accountCandidate = $this->extractFirstJsonObjectCandidate(substr($combinedOutput, $accountStart));
-			if (is_string($accountCandidate) && $accountCandidate !== '') {
-				$decoded = json_decode($accountCandidate, true);
-				if (is_array($decoded)) {
-					$decoded = $this->sanitizeCliPayload($decoded);
-					$stringMap = [];
-					foreach ($decoded as $key => $value) {
-						if (is_string($key) && is_string($value)) {
-							$stringMap[$key] = $value;
-						}
-					}
-
-					if (($stringMap['account_name'] ?? '') !== '' || ($stringMap['account_avatar_url'] ?? '') !== '') {
-						return $stringMap;
-					}
-				}
-			}
-		}
-
-		return $firstValidPayload;
+		return $stringMap;
 	}
 }

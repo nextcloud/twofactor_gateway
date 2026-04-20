@@ -239,6 +239,36 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->service->setDefaultInstance($gateway, 'nonexistent');
 	}
 
+	public function testListInstancesRepairsGatewayRegistryWhenNoDefaultExists(): void {
+		$gateway = $this->makeGatewayMock('telegram', 'Telegram', [
+			['field' => 'token', 'prompt' => 'Token'],
+		]);
+
+		$first = $this->service->createInstance($gateway, 'First', ['token' => 'tok-1']);
+		$second = $this->service->createInstance($gateway, 'Second', ['token' => 'tok-2']);
+
+		$registry = json_decode(
+			$this->appConfig->getValueString('twofactor_gateway', 'instances:telegram', '[]'),
+			true,
+			512,
+			JSON_THROW_ON_ERROR,
+		);
+		$this->assertIsArray($registry);
+
+		$registry = array_map(static function (array $meta): array {
+			$meta['default'] = false;
+			return $meta;
+		}, $registry);
+
+		$this->appConfig->setValueString('twofactor_gateway', 'instances:telegram', json_encode($registry, JSON_THROW_ON_ERROR));
+
+		$instances = $this->service->listInstances($gateway);
+		$instancesById = array_column($instances, null, 'id');
+
+		$this->assertTrue($instancesById[$first['id']]['default']);
+		$this->assertFalse($instancesById[$second['id']]['default']);
+	}
+
 	public function testGetGatewayListReturnsCombinedData(): void {
 		$smsGateway = $this->makeGatewayMock('sms', 'SMS', [['field' => 'url', 'prompt' => 'URL']]);
 		$telegramGateway = $this->makeGatewayMock('telegram', 'Telegram', [['field' => 'token', 'prompt' => 'Token']]);
@@ -323,6 +353,30 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->assertSame('telegram_bot', $instance['config']['provider']);
 		$this->assertSame('abc123', $instance['config']['token']);
 		$this->assertTrue($instance['isComplete']);
+	}
+
+	public function testSingleCatalogProviderDefaultsSelectorAndMarksInstanceComplete(): void {
+		$whatsAppGateway = $this->makeCatalogGatewayMock(
+			'whatsapp',
+			'WhatsApp',
+			[['field' => 'base_url', 'prompt' => 'Base URL']],
+			'provider',
+			[[
+				'id' => 'gowhatsapp',
+				'name' => 'WhatsApp',
+				'fields' => [
+					['field' => 'base_url', 'prompt' => 'Base URL', 'optional' => false],
+				],
+			]],
+		);
+
+		$created = $this->service->createInstance($whatsAppGateway, 'Prod', [
+			'base_url' => 'https://wa.example.com',
+		]);
+
+		$this->assertTrue($created['isComplete']);
+		$this->assertSame('gowhatsapp', $created['config']['provider']);
+		$this->assertSame('https://wa.example.com', $created['config']['base_url']);
 	}
 
 	public function testInstanceIsCompleteWhenAllRequiredFieldsSet(): void {

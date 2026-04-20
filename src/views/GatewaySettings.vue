@@ -26,7 +26,10 @@
 					:spellcheck="false"
 					:error="verificationError.length > 0"
 					:helper-text="verificationError" />
-				<NcButton @click="verify">
+				<NcButton :disabled="submitting" @click="verify">
+					<template #icon>
+						<NcLoadingIcon v-if="submitting" :size="20" />
+					</template>
 					{{ t('twofactor_gateway', 'Verify') }}
 				</NcButton>
 			</p>
@@ -35,13 +38,19 @@
 				<NcTextField v-model="confirmationCode"
 					class="input"
 					:spellcheck="false" />
-				<NcButton @click="confirm">
+				<NcButton :disabled="submitting" @click="confirm">
+					<template #icon>
+						<NcLoadingIcon v-if="submitting" :size="20" />
+					</template>
 					{{ t('twofactor_gateway', 'Confirm') }}
 				</NcButton>
 			</p>
 			<p v-if="state === 3">
 				{{ t('twofactor_gateway', 'Your account was successfully configured to receive messages via {displayName}.', {displayName: displayName}) }}
-				<NcButton @click="disable">
+				<NcButton :disabled="submitting" @click="disable">
+					<template #icon>
+						<NcLoadingIcon v-if="submitting" :size="20" />
+					</template>
 					{{ t('twofactor_gateway', 'Disable') }}
 				</NcButton>
 			</p>
@@ -88,6 +97,7 @@ export default {
 	data() {
 		return {
 			loading: false,
+			submitting: false,
 			state: 0,
 			isAvailable: false,
 			phoneNumber: '',
@@ -118,7 +128,7 @@ export default {
 			this.loading = false
 		},
 		verify() {
-			this.loading = true
+			this.submitting = true
 			this.verificationError = ''
 			axios.post(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification/start', { gateway: this.gatewayName }), {
 				identifier: this.identifier,
@@ -132,10 +142,10 @@ export default {
 					this.state = 1
 					this.verificationError = response?.data?.message ?? ''
 				})
-				.finally(() => { this.loading = false })
+				.finally(() => { this.submitting = false })
 		},
 		confirm() {
-			this.loading = true
+			this.submitting = true
 
 			axios.post(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification/finish', { gateway: this.gatewayName }), {
 				verificationCode: this.confirmationCode,
@@ -147,17 +157,17 @@ export default {
 					this.state = 1
 					this.verificationError = response?.data?.ocs?.data?.message ?? ''
 				})
-				.finally(() => { this.loading = false })
+				.finally(() => { this.submitting = false })
 		},
 		disable() {
-			this.loading = true
+			this.submitting = true
 			axios.delete(generateOcsUrl('/apps/twofactor_gateway/settings/{gateway}/verification', { gateway: this.gatewayName }))
 				.then(({ data }) => {
 					this.state = data.state
 					this.phoneNumber = data.phoneNumber
 				})
 				.catch(console.error.bind(this))
-				.finally(() => { this.loading = false })
+				.finally(() => { this.submitting = false })
 		},
 	},
 }
