@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp;
 
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Gateway;
+use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
@@ -39,6 +40,7 @@ class GatewayTest extends TestCase {
 		$l10n = $this->createMock(IL10N::class);
 		$logger = $this->createMock(LoggerInterface::class);
 		$eventDispatcher = $this->createMock(IEventDispatcher::class);
+		$jobManager = $this->createMock(GoWhatsAppSessionMonitorJobManager::class);
 
 		$this->gateway = new Gateway(
 			appConfig: $appConfig,
@@ -46,6 +48,7 @@ class GatewayTest extends TestCase {
 			l10n: $l10n,
 			logger: $logger,
 			eventDispatcher: $eventDispatcher,
+			goWhatsAppSessionMonitorJobManager: $jobManager,
 		);
 	}
 
