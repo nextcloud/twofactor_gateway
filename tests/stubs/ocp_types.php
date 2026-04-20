@@ -7,30 +7,30 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCP;
+namespace OCP {
+	interface IL10N {
+	}
 
-interface IL10N {
+	interface IConfig {
+		public function getSystemValueString(string $key, string $default = ''): string;
+
+		/**
+		 * @param mixed $default
+		 * @return mixed
+		 */
+		public function getSystemValue(string $key, mixed $default = null): mixed;
+	}
 }
 
-interface IConfig {
-	public function getSystemValueString(string $key, string $default = ''): string;
+namespace OCP\Files {
+	interface IAppData {
+		public function newFolder(string $name): mixed;
 
-	/**
-	 * @param mixed $default
-	 * @return mixed
-	 */
-	public function getSystemValue(string $key, mixed $default = null): mixed;
-}
+		public function getFolder(string $name): mixed;
+	}
 
-namespace OCP\Files;
-
-interface IAppData {
-	public function newFolder(string $name): mixed;
-
-	public function getFolder(string $name): mixed;
-}
-
-class NotFoundException extends \Exception {
+	class NotFoundException extends \Exception {
+	}
 }
 
 namespace {
