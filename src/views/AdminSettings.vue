@@ -4,6 +4,7 @@
 -->
 <template>
 	<NcSettingsSection
+		class="admin-settings"
 		:name="t('twofactor_gateway', 'Two-Factor Gateway')"
 		:description="t('twofactor_gateway', 'Configure messaging gateways used to send two-factor authentication codes. Each gateway can have multiple named configurations (instances), which enables multi-tenant setups.')">
 
@@ -52,16 +53,14 @@
 				@end="onInstancesReordered">
 				<template #item="{ element: item }">
 					<div class="admin-settings__instance-row">
-						<NcButton
+						<button
 							class="drag-handle"
-							type="tertiary"
+							type="button"
 							:title="t('twofactor_gateway', 'Drag to reorder priority')"
 							:aria-label="t('twofactor_gateway', 'Drag to reorder priority')"
 							:disabled="savingOrder">
-							<template #icon>
-								<DragVerticalIcon :size="20" />
-							</template>
-						</NcButton>
+							<DragIcon :size="20" />
+						</button>
 						<GatewayInstanceCard
 							:instance="item.instance"
 							:fields="item.fields"
@@ -135,7 +134,7 @@ import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcSettingsSection from '@nextcloud/vue/components/NcSettingsSection'
 import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
-import DragVerticalIcon from 'vue-material-design-icons/DragVertical.vue'
+import DragIcon from 'vue-material-design-icons/Drag.vue'
 import draggable from 'vuedraggable'
 import { t } from '@nextcloud/l10n'
 import GatewayInstanceCard from '../components/GatewayInstanceCard.vue'
@@ -173,7 +172,7 @@ export default defineComponent({
 		NcLoadingIcon,
 		NcSettingsSection,
 		AlertCircleIcon,
-		DragVerticalIcon,
+		DragIcon,
 		GatewayInstanceCard,
 		GatewayInstanceModal,
 		GatewayRoutingModal,
@@ -240,7 +239,22 @@ export default defineComponent({
 					})
 				}
 			}
-			return rows
+
+			// Default visual order follows effective routing priority (higher first)
+			// so cards don't appear randomly mixed before any drag interaction.
+			return rows.sort((left, right) => {
+				const priorityDiff = (right.instance.priority ?? 0) - (left.instance.priority ?? 0)
+				if (priorityDiff !== 0) {
+					return priorityDiff
+				}
+
+				const labelDiff = left.instance.label.localeCompare(right.instance.label)
+				if (labelDiff !== 0) {
+					return labelDiff
+				}
+
+				return left.orderKey.localeCompare(right.orderKey)
+			})
 		},
 
 		orderedInstances: {
@@ -492,60 +506,81 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.admin-settings {
-	&__loading {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 1rem;
-		padding: 3rem;
-		color: var(--color-text-lighter);
-	}
+.admin-settings__loading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	padding: 3rem;
+	color: var(--color-text-lighter);
+}
 
-	&__content {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
+.admin-settings__content {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
 
-	&__actions {
-		display: flex;
-		justify-content: flex-start;
-	}
+.admin-settings__actions {
+	display: flex;
+	justify-content: flex-start;
+}
 
-	&__hint {
-		color: var(--color-text-lighter);
-		font-size: 0.9rem;
-		margin: 0;
-	}
+.admin-settings__hint {
+	color: var(--color-text-lighter);
+	font-size: 0.9rem;
+	margin: 0;
+}
 
-	&__instances {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
+.admin-settings__instances {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: 100%;
+}
 
-	&__instance-row {
-		display: flex;
-		align-items: stretch;
-		gap: 0.35rem;
-	}
+.admin-settings__instance-row {
+	display: flex;
+	align-items: stretch;
+	gap: 0.35rem;
+	width: 100%;
+}
 
-	&__drag-ghost {
-		opacity: 0.6;
-	}
+.admin-settings__drag-ghost {
+	opacity: 0.6;
+}
 
-	:deep(.drag-handle) {
-		cursor: grab;
-		align-self: flex-start;
-	}
+.drag-handle {
+	cursor: grab;
+	align-self: stretch;
+	width: 2.25rem;
+	min-width: 2.25rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.25rem 0;
+	border: 1px solid var(--color-border-dark);
+	border-radius: var(--border-radius-element);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	opacity: 1;
+}
 
-	:deep(.drag-handle:active) {
-		cursor: grabbing;
-	}
+.drag-handle:hover:not(:disabled) {
+	background: var(--color-background-hover);
+}
 
-	:deep(.admin-settings__instance-row > .gateway-instance-card) {
-		flex: 1;
-	}
+.drag-handle:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.drag-handle:active {
+	cursor: grabbing;
+}
+
+:deep(.admin-settings__instance-row > .gateway-instance-card) {
+	flex: 1 1 auto;
+	min-width: 0;
 }
 </style>

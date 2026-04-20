@@ -14,12 +14,6 @@
 					{{ providerName }}
 				</NcChip>
 				<NcChip
-					v-if="instance.default"
-					variant="primary"
-					no-close>
-					{{ t('twofactor_gateway', 'Default') }}
-				</NcChip>
-				<NcChip
 					:variant="instance.isComplete ? 'success' : 'warning'"
 					no-close>
 					{{ instance.isComplete ? t('twofactor_gateway', 'Configured') : t('twofactor_gateway', 'Incomplete') }}
@@ -40,10 +34,11 @@
 				</NcButton>
 				<NcButton
 					v-else
+					class="card-action-default"
 					type="tertiary"
 					:title="t('twofactor_gateway', 'This is the default instance')"
 					:aria-label="t('twofactor_gateway', 'This is the default instance')"
-					:disabled="true">
+					@click.prevent>
 					<template #icon>
 						<StarIcon :size="20" />
 					</template>
@@ -51,6 +46,7 @@
 
 				<!-- Test -->
 				<NcButton
+					class="card-action-test"
 					type="tertiary"
 					:title="t('twofactor_gateway', 'Test this instance')"
 					:aria-label="t('twofactor_gateway', 'Test this instance')"
@@ -68,7 +64,7 @@
 					:aria-label="t('twofactor_gateway', 'Routing')"
 					@click="$emit('routing', instance.id)">
 					<template #icon>
-						<TuneIcon :size="20" />
+						<AccountMultipleIcon :size="20" />
 					</template>
 				</NcButton>
 
@@ -137,7 +133,7 @@ import PencilIcon from 'vue-material-design-icons/Pencil.vue'
 import StarIcon from 'vue-material-design-icons/Star.vue'
 import StarOutlineIcon from 'vue-material-design-icons/StarOutline.vue'
 import TestTubeIcon from 'vue-material-design-icons/TestTube.vue'
-import TuneIcon from 'vue-material-design-icons/Tune.vue'
+import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
 import { t } from '@nextcloud/l10n'
 import type { FieldDefinition, GatewayGroup, GatewayInstance } from '../services/adminGatewayApi.ts'
 
@@ -145,7 +141,7 @@ const MASKED_FIELDS = ['token', 'password', 'secret', 'api_key', 'key', 'pass', 
 
 export default defineComponent({
 	name: 'GatewayInstanceCard',
-	components: { NcButton, NcChip, DeleteIcon, PencilIcon, StarIcon, StarOutlineIcon, TestTubeIcon, TuneIcon },
+	components: { NcButton, NcChip, DeleteIcon, PencilIcon, StarIcon, StarOutlineIcon, TestTubeIcon, AccountMultipleIcon },
 
 	props: {
 		instance: { type: Object as PropType<GatewayInstance>, required: true },
@@ -239,6 +235,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .gateway-instance-card {
+	flex: 1 1 auto;
+	min-width: 0;
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius);
 	padding: 1rem;
@@ -274,6 +272,27 @@ export default defineComponent({
 		.card-actions {
 			display: flex;
 			gap: 0.25rem;
+
+			:deep(.card-action-test) {
+				color: var(--twofactor-gateway-test-action-color, #0f7a2a);
+			}
+
+			:deep(.card-action-test:hover:not([disabled])) {
+				color: var(--twofactor-gateway-test-action-color-hover, #0b6122);
+			}
+
+			:deep(.card-action-test[disabled]) {
+				color: var(--color-text-maxcontrast);
+				opacity: 0.6;
+			}
+
+			:deep(.card-action-default) {
+				color: #e0a400;
+			}
+
+			:deep(.card-action-default:hover) {
+				color: #c58c00;
+			}
 		}
 	}
 
@@ -316,6 +335,27 @@ export default defineComponent({
 		display: flex;
 		gap: 0.35rem;
 		flex-wrap: wrap;
+	}
+}
+
+
+:global(body) {
+	--twofactor-gateway-test-action-color: #0f7a2a;
+	--twofactor-gateway-test-action-color-hover: #0b6122;
+}
+
+:global(body[data-theme-dark]) .gateway-instance-card,
+:global(body[data-themes='dark']) .gateway-instance-card,
+:global(body[data-themes='dark-highcontrast']) .gateway-instance-card,
+:global(.theme--dark) .gateway-instance-card {
+	--twofactor-gateway-test-action-color: #75f59d;
+	--twofactor-gateway-test-action-color-hover: #9bffc0;
+}
+
+@media (prefers-color-scheme: dark) {
+	:global(body) {
+		--twofactor-gateway-test-action-color: #75f59d;
+		--twofactor-gateway-test-action-color-hover: #9bffc0;
 	}
 }
 </style>

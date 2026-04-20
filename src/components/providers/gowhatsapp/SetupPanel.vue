@@ -87,12 +87,18 @@
 				type="secondary"
 				:disabled="wizardLoading"
 				@click="runWizardStep('submit_phone', { phone: wizardPhone, continue_existing: true })">
+				<template #icon>
+					<NcLoadingIcon v-if="wizardLoading" :size="20" />
+				</template>
 				{{ t('twofactor_gateway', 'Continue existing session') }}
 			</NcButton>
 			<NcButton
 				type="warning"
 				:disabled="wizardLoading"
 				@click="runWizardStep('submit_phone', { phone: wizardPhone, continue_existing: false })">
+				<template #icon>
+					<NcLoadingIcon v-if="wizardLoading" :size="20" />
+				</template>
 				{{ t('twofactor_gateway', 'Logout and relink') }}
 			</NcButton>
 		</div>
@@ -121,7 +127,10 @@
 				variant="secondary"
 				:disabled="wizardLoading || !canStart || !bootstrapBaseUrl.trim()"
 				@click="startWizard">
-				{{ t('twofactor_gateway', 'Start guided setup') }}
+				<template #icon>
+					<NcLoadingIcon v-if="wizardLoading" :size="20" />
+				</template>
+				{{ wizardLoading ? t('twofactor_gateway', 'Starting guided setup…') : t('twofactor_gateway', 'Start guided setup') }}
 			</NcButton>
 
 			<NcButton
@@ -137,6 +146,9 @@
 				variant="primary"
 				:disabled="wizardLoading"
 				@click="runWizardStep('choose_device', { strategy: wizardDeviceStrategy, device_id: wizardDeviceId })">
+				<template #icon>
+					<NcLoadingIcon v-if="wizardLoading" :size="20" />
+				</template>
 				{{ t('twofactor_gateway', 'Continue') }}
 			</NcButton>
 
@@ -145,6 +157,9 @@
 				variant="primary"
 				:disabled="wizardLoading"
 				@click="runWizardStep('submit_phone', { phone: wizardPhone })">
+				<template #icon>
+					<NcLoadingIcon v-if="wizardLoading" :size="20" />
+				</template>
 				{{ t('twofactor_gateway', 'Request pairing code') }}
 			</NcButton>
 		</div>
@@ -155,6 +170,7 @@
 import { defineComponent, type PropType } from 'vue'
 import NcAvatar from '@nextcloud/vue/components/NcAvatar'
 import NcButton from '@nextcloud/vue/components/NcButton'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
@@ -179,6 +195,7 @@ export default defineComponent({
 	components: {
 		NcAvatar,
 		NcButton,
+		NcLoadingIcon,
 		NcNoteCard,
 		NcPasswordField,
 		NcProgressBar,
