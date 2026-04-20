@@ -147,7 +147,7 @@ class GatewayDispatchServiceTest extends AppTestCase {
 		$this->assertSame('inst-b', $result['instanceId']);
 	}
 
-	public function testSendForUserUsesDefaultThenFallbackWhenNoGroupMappingMatches(): void {
+	public function testSendForUserSingleInstanceNoGroupAllowsEveryone(): void {
 		RuntimeAwareGatewayDouble::$sentBaseUrls = [];
 		$gateway = new RuntimeAwareGatewayDouble($this->appConfig);
 		$user = $this->createMock(IUser::class);
@@ -155,34 +155,111 @@ class GatewayDispatchServiceTest extends AppTestCase {
 		$this->gatewayFactory->method('get')->with('runtimeaware')->willReturn($gateway);
 		$this->gatewayConfigService->method('listInstances')->with($gateway)->willReturn([
 			[
-				'id' => 'default-a',
+				'id' => 'signal-inst',
 				'providerId' => 'runtimeaware',
-				'label' => 'Default',
+				'label' => 'Signal',
 				'default' => true,
 				'createdAt' => '2026-01-01T00:00:00+00:00',
-				'config' => ['base_url' => 'https://fail.example.com'],
+				'config' => ['base_url' => 'https://signal.example.com'],
+				'isComplete' => true,
+				'groupIds' => [],
+				'priority' => 0,
+			],
+		]);
+		$this->groupManager->method('getUserGroupIds')->with($user)->willReturn([]);
+
+		$result = $this->service->sendForUser($user, 'runtimeaware', '+5511999990000', 'code');
+
+		$this->assertSame('signal-inst', $result['instanceId']);
+	}
+
+	public function testSendForUserSingleInstanceWithGroupAllowsGroupMember(): void {
+		RuntimeAwareGatewayDouble::$sentBaseUrls = [];
+		$gateway = new RuntimeAwareGatewayDouble($this->appConfig);
+		$user = $this->createMock(IUser::class);
+
+		$this->gatewayFactory->method('get')->with('runtimeaware')->willReturn($gateway);
+		$this->gatewayConfigService->method('listInstances')->with($gateway)->willReturn([
+			[
+				'id' => 'signal-inst',
+				'providerId' => 'runtimeaware',
+				'label' => 'Signal',
+				'default' => true,
+				'createdAt' => '2026-01-01T00:00:00+00:00',
+				'config' => ['base_url' => 'https://signal.example.com'],
+				'isComplete' => true,
+				'groupIds' => ['signal-users'],
+				'priority' => 0,
+			],
+		]);
+		$this->groupManager->method('getUserGroupIds')->with($user)->willReturn(['signal-users']);
+
+		$result = $this->service->sendForUser($user, 'runtimeaware', '+5511999990000', 'code');
+
+		$this->assertSame('signal-inst', $result['instanceId']);
+	}
+
+	public function testSendForUserSingleInstanceWithGroupBlocksNonMember(): void {
+		$gateway = new RuntimeAwareGatewayDouble($this->appConfig);
+		$user = $this->createMock(IUser::class);
+
+		$this->gatewayFactory->method('get')->with('runtimeaware')->willReturn($gateway);
+		$this->gatewayConfigService->method('listInstances')->with($gateway)->willReturn([
+			[
+				'id' => 'signal-inst',
+				'providerId' => 'runtimeaware',
+				'label' => 'Signal',
+				'default' => true,
+				'createdAt' => '2026-01-01T00:00:00+00:00',
+				'config' => ['base_url' => 'https://signal.example.com'],
+				'isComplete' => true,
+				'groupIds' => ['signal-users'],
+				'priority' => 0,
+			],
+		]);
+		$this->groupManager->method('getUserGroupIds')->with($user)->willReturn(['other-group']);
+
+		$this->expectException(MessageTransmissionException::class);
+
+		$this->service->sendForUser($user, 'runtimeaware', '+5511999990000', 'code');
+	}
+
+	public function testSendForUserUsesOpenInstanceAsFallbackWhenNoGroupMappingMatches(): void {
+		RuntimeAwareGatewayDouble::$sentBaseUrls = [];
+		$gateway = new RuntimeAwareGatewayDouble($this->appConfig);
+		$user = $this->createMock(IUser::class);
+
+		$this->gatewayFactory->method('get')->with('runtimeaware')->willReturn($gateway);
+		$this->gatewayConfigService->method('listInstances')->with($gateway)->willReturn([
+			[
+				'id' => 'group-a-inst',
+				'providerId' => 'runtimeaware',
+				'label' => 'Group A instance',
+				'default' => false,
+				'createdAt' => '2026-01-01T00:00:00+00:00',
+				'config' => ['base_url' => 'https://group-a.example.com'],
 				'isComplete' => true,
 				'groupIds' => ['group-a'],
-				'priority' => 100,
+				'priority' => 0,
 			],
 			[
-				'id' => 'fallback-b',
+				'id' => 'open-inst',
 				'providerId' => 'runtimeaware',
-				'label' => 'Fallback',
+				'label' => 'Open (no group)',
 				'default' => false,
 				'createdAt' => '2026-01-02T00:00:00+00:00',
 				'config' => ['base_url' => 'https://ok.example.com'],
 				'isComplete' => true,
-				'groupIds' => ['group-b'],
-				'priority' => 200,
+				'groupIds' => [],
+				'priority' => 0,
 			],
 		]);
 		$this->groupManager->method('getUserGroupIds')->with($user)->willReturn([]);
 
 		$result = $this->service->sendForUser($user, 'runtimeaware', '+5511999990000', 'Hello');
 
-		$this->assertSame(['https://fail.example.com', 'https://ok.example.com'], RuntimeAwareGatewayDouble::$sentBaseUrls);
-		$this->assertSame('fallback-b', $result['instanceId']);
+		$this->assertSame(['https://ok.example.com'], RuntimeAwareGatewayDouble::$sentBaseUrls);
+		$this->assertSame('open-inst', $result['instanceId']);
 	}
 }
 

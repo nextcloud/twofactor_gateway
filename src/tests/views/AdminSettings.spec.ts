@@ -362,7 +362,7 @@ describe('AdminSettings', () => {
 		expect((wrapper.vm as { routingItem: { instance: { id: string } } | null }).routingItem?.instance.id).toBe('gw-1')
 	})
 
-	it('hides routing action when a gateway has only one instance and no routing metadata', async () => {
+	it('shows routing action when a gateway has only one instance and no routing metadata', async () => {
 		const { listGateways } = await import('../../services/adminGatewayApi.ts')
 		vi.mocked(listGateways).mockResolvedValueOnce([
 			{
@@ -378,7 +378,7 @@ describe('AdminSettings', () => {
 		const wrapper = mount(AdminSettings)
 		await flushPromises()
 
-		expect(wrapper.find('.gateway-instance-card').attributes('data-routing')).toBe('false')
+		expect(wrapper.find('.gateway-instance-card').attributes('data-routing')).toBe('true')
 	})
 
 	it('keeps routing action visible when routing metadata already exists', async () => {
