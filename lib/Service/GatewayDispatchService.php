@@ -227,8 +227,19 @@ class GatewayDispatchService {
 			return $groupCandidates;
 		}
 
-		usort($allCandidates, [$this, 'compareFallbackCandidates']);
-		return $allCandidates;
+		// Only fall back to instances that have no group restriction (open to all users).
+		// Instances that list groups but none match this user are not accessible to them.
+		$openCandidates = array_values(array_filter(
+			$allCandidates,
+			static fn (array $candidate): bool => $candidate['instance']['groupIds'] === [],
+		));
+
+		if ($openCandidates !== []) {
+			usort($openCandidates, [$this, 'compareFallbackCandidates']);
+			return $openCandidates;
+		}
+
+		throw new MessageTransmissionException('No gateway instance is accessible for this user. Check group assignments in the gateway configuration.');
 	}
 
 	private function compareGroupCandidates(array $left, array $right): int {
