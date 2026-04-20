@@ -54,6 +54,11 @@ class Notifier implements INotifier {
 			return $this->parseWhatsAppSessionWarning($notification, $l);
 		}
 
+		if ($notification->getSubject() === 'telegram_auth_error') {
+			$this->logger->debug('Preparing Telegram auth error notification for user ' . $notification->getUser());
+			return $this->parseTelegramAuthError($notification, $l);
+		}
+
 		$this->logger->warning('Unknown notification subject: ' . $notification->getSubject());
 		throw new UnknownNotificationException();
 	}
@@ -84,7 +89,17 @@ class Notifier implements INotifier {
 					// TRANSLATORS Admin notification body for instability without detailed reason payload.
 					: $l->t('The WhatsApp session is unstable and may require re-authentication soon. Monitor the session and reconfigure the GoWhatsApp gateway if needed.')
 			)
-			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/warning.svg')))
+			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/alert-outline.svg')))
+			->setLink($this->url->linkToRouteAbsolute('settings.AdminSettings.index', ['section' => 'overview']));
+
+		return $notification;
+	}
+
+	private function parseTelegramAuthError(INotification $notification, \OCP\IL10N $l): INotification {
+		$notification
+			->setParsedSubject($l->t('Two-Factor Gateway: Telegram Client session disconnected'))
+			->setParsedMessage($l->t('Two-Factor Gateway cannot send Telegram verification codes through Telegram Client until login is restored. Open the Two-Factor Gateway admin settings and run Telegram Client interactive setup again.'))
+			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('core', 'actions/error.svg')))
 			->setLink($this->url->linkToRouteAbsolute('settings.AdminSettings.index', ['section' => 'overview']));
 
 		return $notification;
