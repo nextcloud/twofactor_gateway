@@ -217,7 +217,6 @@ export default defineComponent({
 			const rows: FlatInstanceEntry[] = []
 			for (const gateway of this.gateways) {
 				const instances = Array.isArray(gateway.instances) ? gateway.instances : []
-				const routingRelevantForGateway = instances.length > 1
 				for (const instance of instances) {
 					const groupIds = Array.isArray(instance.groupIds) ? instance.groupIds : []
 					const priority = typeof instance.priority === 'number' ? instance.priority : 0
@@ -235,7 +234,7 @@ export default defineComponent({
 							groupIds,
 							priority,
 						},
-						showRoutingAction: routingRelevantForGateway || groupIds.length > 0 || priority > 0,
+						showRoutingAction: true,
 					})
 				}
 			}
