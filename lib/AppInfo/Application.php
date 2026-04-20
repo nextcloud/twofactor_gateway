@@ -9,11 +9,14 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\AppInfo;
 
+use OCA\TwoFactorGateway\Events\TelegramAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Events\WhatsAppSessionWarningEvent;
 use OCA\TwoFactorGateway\Listener\NotificationListener;
 use OCA\TwoFactorGateway\Notification\Notifier;
 use OCA\TwoFactorGateway\Provider\Factory;
+use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Service\TelegramClientSessionMonitorJobManager;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -32,6 +35,10 @@ class Application extends App implements IBootstrap {
 		$context->registerNotifierService(Notifier::class);
 		$context->registerEventListener(WhatsAppAuthenticationErrorEvent::class, NotificationListener::class);
 		$context->registerEventListener(WhatsAppSessionWarningEvent::class, NotificationListener::class);
+		$context->registerEventListener(TelegramAuthenticationErrorEvent::class, NotificationListener::class);
+
+		Server::get(GoWhatsAppSessionMonitorJobManager::class)->ensureReconcileJobRegisteredSafely();
+		Server::get(TelegramClientSessionMonitorJobManager::class)->ensureReconcileJobRegisteredSafely();
 
 		$providerFactory = Server::get(Factory::class);
 		$fqcn = $providerFactory->getFqcnList();
@@ -42,8 +49,6 @@ class Application extends App implements IBootstrap {
 
 	#[\Override]
 	public function boot(IBootContext $context): void {
-		// Defer GoWhatsApp session monitor sync to avoid triggering lazy AppConfig loading during boot.
-		// In Nextcloud 34+, accessing AppConfig during boot phase is not allowed.
-		// The sync will happen via background job instead.
+		// No-op: runtime sync is executed by reconcile background jobs.
 	}
 }

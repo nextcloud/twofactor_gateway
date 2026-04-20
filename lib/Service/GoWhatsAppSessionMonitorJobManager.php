@@ -52,6 +52,16 @@ class GoWhatsAppSessionMonitorJobManager {
 		}
 	}
 
+	public function ensureReconcileJobRegisteredSafely(): void {
+		try {
+			$this->ensureReconcileJobRegistered();
+		} catch (\Throwable $e) {
+			$this->logger->warning('Failed to register GoWhatsApp monitor reconcile background job.', [
+				'exception' => $e,
+			]);
+		}
+	}
+
 	private function ensureReconcileJobRegistered(): void {
 		if ($this->jobList->has(GoWhatsAppSessionMonitorReconcileJob::class, null)) {
 			return;
