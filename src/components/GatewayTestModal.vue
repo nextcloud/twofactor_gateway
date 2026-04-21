@@ -215,7 +215,7 @@ export default defineComponent({
 			}
 
 			if (!url.startsWith('data:image/')) {
-				return true
+				return false
 			}
 
 			return this.hasCompleteDataUriImage(url)
@@ -228,6 +228,10 @@ export default defineComponent({
 			}
 
 			const imageType = matches[1].toLowerCase()
+			if (!['jpeg', 'jpg', 'png', 'webp'].includes(imageType)) {
+				return false
+			}
+
 			let payload = matches[2].replace(/\s+/g, '')
 
 			if (!payload) {
@@ -268,8 +272,15 @@ export default defineComponent({
 					)
 				}
 
-				// For other image types (e.g. webp), successful base64 decode is enough.
-				return true
+				if (imageType === 'webp') {
+					return (
+						binary.length >= 12
+						&& binary.slice(0, 4) === 'RIFF'
+						&& binary.slice(8, 12) === 'WEBP'
+					)
+				}
+
+				return false
 			} catch {
 				return false
 			}
