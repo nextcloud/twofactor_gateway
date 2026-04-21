@@ -133,7 +133,7 @@ class SessionHealthServiceTest extends AppTestCase {
 		$this->fetcher->method('fetch')->willReturn('logged_out');
 		$this->jobList->expects($this->once())
 			->method('remove')
-			->with(\OCA\TwoFactorGateway\BackgroundJob\GoWhatsAppSessionMonitorJob::class, null);
+			->with(\OCA\TwoFactorGateway\Provider\Channel\WhatsApp\BackgroundJob\GoWhatsAppSessionMonitorJob::class, null);
 
 		$this->eventDispatcher->expects($this->once())
 			->method('dispatchTyped')
