@@ -25,6 +25,16 @@ namespace OCA\TwoFactorGateway;
  *     prompt: string,
  *     default: string,
  *     optional: bool,
+ *     type: ?string,
+ *     hidden: bool,
+ *     min: ?int,
+ *     max: ?int,
+ *     helper: string,
+ * }
+ * @psalm-type TwoFactorGatewayProviderCatalogEntry = array{
+ *     id: string,
+ *     name: string,
+ *     fields: list<TwoFactorGatewayFieldDefinition>,
  * }
  * @psalm-type TwoFactorGatewayInstance = array{
  *     id: string,
@@ -33,6 +43,8 @@ namespace OCA\TwoFactorGateway;
  *     createdAt: string,
  *     config: array<string, string>,
  *     isComplete: bool,
+ *     groupIds: list<string>,
+ *     priority: int,
  * }
  * @psalm-type TwoFactorGatewayGatewayInfo = array{
  *     id: string,
@@ -41,6 +53,8 @@ namespace OCA\TwoFactorGateway;
  *     allowMarkdown: bool,
  *     fields: list<TwoFactorGatewayFieldDefinition>,
  *     instances: list<TwoFactorGatewayInstance>,
+ *     providerSelector?: TwoFactorGatewayFieldDefinition,
+ *     providerCatalog?: list<TwoFactorGatewayProviderCatalogEntry>,
  * }
  */
 final class ResponseDefinitions {
