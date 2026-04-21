@@ -338,7 +338,6 @@ export default defineComponent({
 	}
 }
 
-
 :global(body) {
 	--twofactor-gateway-test-action-color: #0f7a2a;
 	--twofactor-gateway-test-action-color-hover: #0b6122;
