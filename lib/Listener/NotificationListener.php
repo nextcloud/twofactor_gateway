@@ -10,9 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Listener;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Provider\Channel\Telegram\Events\TelegramAuthenticationErrorEvent;
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppAuthenticationErrorEvent;
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppSessionWarningEvent;
+use OCA\TwoFactorGateway\Events\AdminNotifiableEvent;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -34,26 +32,20 @@ class NotificationListener implements IEventListener {
 
 	#[\Override]
 	public function handle(Event $event): void {
-		if ($event instanceof WhatsAppAuthenticationErrorEvent) {
-			$this->notifyAdmins('whatsapp_auth_error');
-			return;
-		}
-
-		if ($event instanceof WhatsAppSessionWarningEvent) {
-			$this->notifyAdmins('whatsapp_session_warning', [
-				'risk_score' => (string)$event->getRiskScore(),
-				'reason' => $event->getReason(),
-			]);
-			return;
-		}
-
-		if ($event instanceof TelegramAuthenticationErrorEvent) {
-			$this->notifyAdmins('telegram_auth_error');
-			return;
+		if ($event instanceof AdminNotifiableEvent) {
+			$this->notifyAdmins(
+				$event->getNotificationSubject(),
+				$event->getNotificationObjectType(),
+				$event->getNotificationObjectId(),
+				$event->getNotificationParameters(),
+			);
 		}
 	}
 
-	private function notifyAdmins(string $subject, array $parameters = []): void {
+	/**
+	 * @param array<string, string> $parameters
+	 */
+	private function notifyAdmins(string $subject, string $objectType, string $objectId, array $parameters = []): void {
 		try {
 			$adminGroup = $this->groupManager->get('admin');
 			if ($adminGroup === null) {
@@ -63,13 +55,6 @@ class NotificationListener implements IEventListener {
 
 			$admins = $adminGroup->getUsers();
 			$this->logger->info('Found ' . count($admins) . ' admins to notify');
-
-			[$objectType, $objectId] = match ($subject) {
-				'whatsapp_auth_error' => ['whatsapp_error', 'authentication'],
-				'whatsapp_session_warning' => ['whatsapp_error', 'session_health'],
-				'telegram_auth_error' => ['telegram_error', 'authentication'],
-				default => ['gateway_error', 'generic'],
-			};
 
 			foreach ($admins as $user) {
 				try {
