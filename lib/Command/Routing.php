@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Command;
 
 use OCA\TwoFactorGateway\Provider\Gateway\Factory;
-use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCP\IGroupManager;
 use Symfony\Component\Console\Command\Command;
@@ -23,7 +22,7 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
 class Routing extends Command {
-	/** @var IGateway[] */
+	/** @var \OCA\TwoFactorGateway\Provider\Gateway\IGateway[] */
 	private array $gateways = [];
 
 	public function __construct(
@@ -59,6 +58,10 @@ class Routing extends Command {
 			}
 			if (count($this->gateways) === 1) {
 				$gateway = reset($this->gateways);
+				if ($gateway === false) {
+					$output->writeln('<error>No gateway available.</error>');
+					return Command::FAILURE;
+				}
 			} else {
 				$labelsById = GatewayChoiceFormatter::gatewayLabels($this->gateways);
 				$selectedLabel = $helper->ask($input, $output, new ChoiceQuestion('Gateway:', array_values($labelsById)));
@@ -108,7 +111,7 @@ class Routing extends Command {
 			);
 		}
 
-		if (!is_numeric($priorityRaw) || (int)$priorityRaw != $priorityRaw) {
+		if (filter_var((string)$priorityRaw, FILTER_VALIDATE_INT) === false) {
 			$output->writeln('<error>Priority must be an integer.</error>');
 			return Command::FAILURE;
 		}
