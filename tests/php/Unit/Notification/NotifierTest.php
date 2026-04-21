@@ -10,9 +10,9 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Notification;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Notification\AdminNotificationFormatter;
 use OCA\TwoFactorGateway\Notification\AdminNotificationFormatterRegistry;
 use OCA\TwoFactorGateway\Notification\Notifier;
-use OCA\TwoFactorGateway\Provider\Channel\Telegram\Notification\TelegramAdminNotificationFormatter;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\L10N\IFactory;
@@ -36,7 +36,6 @@ class NotifierTest extends TestCase {
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->registry = new AdminNotificationFormatterRegistry();
-		$this->registry->register(new TelegramAdminNotificationFormatter());
 		$this->notifier = new Notifier($this->factory, $this->url, $this->logger, $this->registry);
 	}
 
@@ -63,34 +62,39 @@ class NotifierTest extends TestCase {
 		$this->notifier->prepare($notification, 'en');
 	}
 
-	public function testPrepareParsesTelegramNotification(): void {
+	public function testPrepareDelegatesToFirstSupportingFormatter(): void {
 		$l10n = $this->createTranslator();
 		$this->factory->method('get')->with(Application::APP_ID, 'en')->willReturn($l10n);
 
-		$this->url->method('imagePath')->with('core', 'actions/error.svg')->willReturn('/core/actions/error.svg');
-		$this->url->method('getAbsoluteURL')->with('/core/actions/error.svg')->willReturn('https://example.test/core/actions/error.svg');
-		$this->url->method('linkToRouteAbsolute')->with('settings.AdminSettings.index', ['section' => 'overview'])->willReturn('https://example.test/settings/admin/overview');
+		$firstFormatter = $this->createMock(AdminNotificationFormatter::class);
+		$firstFormatter->expects($this->once())
+			->method('supports')
+			->with('telegram_auth_error')
+			->willReturn(false);
+		$firstFormatter->expects($this->never())
+			->method('parse');
+
+		$secondFormatter = $this->createMock(AdminNotificationFormatter::class);
+		$secondFormatter->expects($this->once())
+			->method('supports')
+			->with('telegram_auth_error')
+			->willReturn(true);
 
 		$notification = $this->createMock(INotification::class);
 		$notification->method('getApp')->willReturn(Application::APP_ID);
 		$notification->method('getSubject')->willReturn('telegram_auth_error');
 		$notification->method('getUser')->willReturn('admin');
-		$notification->expects($this->once())
-			->method('setParsedSubject')
-			->with('Two-Factor Gateway: Telegram Client session disconnected')
-			->willReturnSelf();
-		$notification->expects($this->once())
-			->method('setParsedMessage')
-			->with('Two-Factor Gateway cannot send Telegram verification codes through Telegram Client until login is restored. Open the Two-Factor Gateway admin settings and run Telegram Client interactive setup again.')
-			->willReturnSelf();
-		$notification->expects($this->once())
-			->method('setIcon')
-			->with('https://example.test/core/actions/error.svg')
-			->willReturnSelf();
-		$notification->expects($this->once())
-			->method('setLink')
-			->with('https://example.test/settings/admin/overview')
-			->willReturnSelf();
+
+		$secondFormatter->expects($this->once())
+			->method('parse')
+			->with($notification, $l10n, $this->url)
+			->willReturn($notification);
+
+		$this->registry->register($firstFormatter);
+		$this->registry->register($secondFormatter);
+
+		$this->logger->expects($this->once())
+			->method('debug');
 
 		$result = $this->notifier->prepare($notification, 'en');
 		$this->assertSame($notification, $result);
