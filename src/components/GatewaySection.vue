@@ -87,7 +87,7 @@
 					<template #icon>
 						<NcLoadingIcon v-if="deleting" :size="20" />
 					</template>
-					{{ deleting ? t('twofactor_gateway', 'Deleting…') : t('twofactor_gateway', 'Delete') }}
+					{{ deleteActionLabel() }}
 				</NcButton>
 			</template>
 		</NcDialog>
@@ -212,6 +212,15 @@ export default defineComponent({
 		closeTestModal() {
 			this.showTestModal = false
 			this.testingInstanceId = ''
+		},
+
+		deleteActionLabel(): string {
+			if (this.deleting) {
+				// TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide.
+				return t('twofactor_gateway', 'Deleting\u00A0…')
+			}
+
+			return t('twofactor_gateway', 'Delete')
 		},
 
 		// ── save (create or update) ───────────────────────────────────────────
