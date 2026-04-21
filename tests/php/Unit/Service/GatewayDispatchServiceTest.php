@@ -109,42 +109,91 @@ class GatewayDispatchServiceTest extends AppTestCase {
 		$this->assertSame(['https://catalog-child.example.com'], RuntimeAwareGatewayDouble::$sentBaseUrls);
 	}
 
-	public function testSendForUserFallsBackAcrossMatchedGroupInstances(): void {
+	/**
+	 * @dataProvider priorityOrderingProvider
+	 *
+	 * @param list<string> $userGroupIds
+	 * @param list<array{id: string, providerId: string, label: string, default: bool, createdAt: string, config: array{base_url: string}, isComplete: bool, groupIds: list<string>, priority: int}> $instances
+	 * @param list<string> $expectedSentBaseUrls
+	 */
+	public function testSendForUserOrdersCandidatesByPriority(array $userGroupIds, array $instances, array $expectedSentBaseUrls, string $expectedInstanceId): void {
 		RuntimeAwareGatewayDouble::$sentBaseUrls = [];
 		$gateway = new RuntimeAwareGatewayDouble($this->appConfig);
 		$user = $this->createMock(IUser::class);
 
 		$this->gatewayFactory->method('get')->with('runtimeaware')->willReturn($gateway);
-		$this->gatewayConfigService->method('listInstances')->with($gateway)->willReturn([
-			[
-				'id' => 'inst-a',
-				'providerId' => 'runtimeaware',
-				'label' => 'A',
-				'default' => false,
-				'createdAt' => '2026-01-01T00:00:00+00:00',
-				'config' => ['base_url' => 'https://fail.example.com'],
-				'isComplete' => true,
-				'groupIds' => ['group-a'],
-				'priority' => 10,
-			],
-			[
-				'id' => 'inst-b',
-				'providerId' => 'runtimeaware',
-				'label' => 'B',
-				'default' => false,
-				'createdAt' => '2026-01-02T00:00:00+00:00',
-				'config' => ['base_url' => 'https://ok.example.com'],
-				'isComplete' => true,
-				'groupIds' => ['group-b'],
-				'priority' => 20,
-			],
-		]);
-		$this->groupManager->method('getUserGroupIds')->with($user)->willReturn(['group-a', 'group-b']);
+		$this->gatewayConfigService->method('listInstances')->with($gateway)->willReturn($instances);
+		$this->groupManager->method('getUserGroupIds')->with($user)->willReturn($userGroupIds);
 
 		$result = $this->service->sendForUser($user, 'runtimeaware', '+5511999990000', 'Hello');
 
-		$this->assertSame(['https://fail.example.com', 'https://ok.example.com'], RuntimeAwareGatewayDouble::$sentBaseUrls);
-		$this->assertSame('inst-b', $result['instanceId']);
+		$this->assertSame($expectedSentBaseUrls, RuntimeAwareGatewayDouble::$sentBaseUrls);
+		$this->assertSame($expectedInstanceId, $result['instanceId']);
+	}
+
+	/**
+	 * @return iterable<string, array{0: list<string>, 1: list<array{id: string, providerId: string, label: string, default: bool, createdAt: string, config: array{base_url: string}, isComplete: bool, groupIds: list<string>, priority: int}>, 2: list<string>, 3: string}>
+	 */
+	public static function priorityOrderingProvider(): iterable {
+		yield 'group candidates prefer higher priority first' => [
+			['group-a', 'group-b'],
+			[
+				[
+					'id' => 'inst-low',
+					'providerId' => 'runtimeaware',
+					'label' => 'Low',
+					'default' => false,
+					'createdAt' => '2026-01-01T00:00:00+00:00',
+					'config' => ['base_url' => 'https://ok-low.example.com'],
+					'isComplete' => true,
+					'groupIds' => ['group-a'],
+					'priority' => 10,
+				],
+				[
+					'id' => 'inst-high',
+					'providerId' => 'runtimeaware',
+					'label' => 'High',
+					'default' => false,
+					'createdAt' => '2026-01-02T00:00:00+00:00',
+					'config' => ['base_url' => 'https://fail-high.example.com'],
+					'isComplete' => true,
+					'groupIds' => ['group-b'],
+					'priority' => 20,
+				],
+			],
+			['https://fail-high.example.com', 'https://ok-low.example.com'],
+			'inst-low',
+		];
+
+		yield 'fallback candidates prefer higher priority first' => [
+			[],
+			[
+				[
+					'id' => 'open-low',
+					'providerId' => 'runtimeaware',
+					'label' => 'Open Low',
+					'default' => false,
+					'createdAt' => '2026-01-01T00:00:00+00:00',
+					'config' => ['base_url' => 'https://ok-open-low.example.com'],
+					'isComplete' => true,
+					'groupIds' => [],
+					'priority' => 10,
+				],
+				[
+					'id' => 'open-high',
+					'providerId' => 'runtimeaware',
+					'label' => 'Open High',
+					'default' => false,
+					'createdAt' => '2026-01-02T00:00:00+00:00',
+					'config' => ['base_url' => 'https://fail-open-high.example.com'],
+					'isComplete' => true,
+					'groupIds' => [],
+					'priority' => 20,
+				],
+			],
+			['https://fail-open-high.example.com', 'https://ok-open-low.example.com'],
+			'open-low',
+		];
 	}
 
 	public function testSendForUserSingleInstanceNoGroupAllowsEveryone(): void {
