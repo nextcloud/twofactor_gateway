@@ -34,30 +34,37 @@ occ twofactorauth:gateway:configure sms
 URL: https://www.signal.org/
 Stability: Experimental
 
-This gateway allows you to send messages via the Signal protocol. By
-default it tries to use the native HTTP endpoint of
-[signal-cli](https://github.com/AsamK/signal-cli) which is available
-since [signal-cli 0.11.5](https://github.com/AsamK/signal-cli/blob/master/CHANGELOG.md#0115---2022-11-07).
-There may be packages for your Linux distribution or Docker images, please refer to the installation
-instructions provided by the [signal-cli](https://github.com/AsamK/signal-cli) project.
+This gateway allows you to send messages via the Signal protocol. It supports two backend styles:
 
-If the native HTTP endpoint of signal-cli is not available then it
-tries to use the REST service provided by either
-[stand-alone Python signal-cli REST API](https://morph027.gitlab.io/python-signal-cli-rest-api)
-or
-[Docker signal-cli REST API](https://github.com/bbernhard/signal-cli-rest-api)
+- **[signal-cli-rest-api](https://github.com/bbernhard/signal-cli-rest-api)** (recommended): exposes a REST API
+  with device-link support. When this style is detected, setup uses a guided QR-code flow — no manual account
+  configuration is needed.
+- **[signal-cli native HTTP endpoint](https://github.com/AsamK/signal-cli)**: available since signal-cli 0.11.5.
+  Requires manually providing the sender account (phone number).
+- **[stand-alone Python signal-cli REST API](https://morph027.gitlab.io/python-signal-cli-rest-api)**: legacy style,
+  also requires a manual account entry.
 
 *Note: Signal users are bound to phone numbers. If you already use Signal on your phone, you
 need a separate number for the gateway's registration.*
 
-Once you've set up the gateway, you can configure this app interactively:
+#### Configuration via admin UI
+
+The recommended way to configure Signal is through the Nextcloud admin interface:
+
+1. Go to **Settings → Administration → Security**.
+2. Find the Signal gateway instance and click **Set up**.
+3. Enter the URL of your signal-cli-rest-api service and follow the guided QR-link wizard.
+
+#### Configuration via command line
 
 ```bash
 occ twofactorauth:gateway:configure signal
 ```
 
-You need to specify the URL where the API provider is listening and
-the Signal-account of the sending Signal user.
+You will be prompted for the URL of the API provider. If the gateway is detected as a
+`signal-cli-rest-api` instance, the wizard will display a QR code in the terminal for
+device linking — no manual account entry is required. For other gateway styles, you will
+also be prompted for the sender's Signal account (phone number).
 
 ### WhatsApp
 URL: https://www.whatsapp.com
