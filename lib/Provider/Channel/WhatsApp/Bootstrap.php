@@ -10,8 +10,10 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp;
 
 use OCA\TwoFactorGateway\Listener\NotificationListener;
+use OCA\TwoFactorGateway\Notification\AdminNotificationFormatterRegistry;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppSessionWarningEvent;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Notification\WhatsAppAdminNotificationFormatter;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
 use OCA\TwoFactorGateway\Provider\Gateway\IGatewayBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
@@ -22,6 +24,7 @@ class Bootstrap implements IGatewayBootstrap {
 	public function register(IRegistrationContext $context): void {
 		$context->registerEventListener(WhatsAppAuthenticationErrorEvent::class, NotificationListener::class);
 		$context->registerEventListener(WhatsAppSessionWarningEvent::class, NotificationListener::class);
+		Server::get(AdminNotificationFormatterRegistry::class)->register(new WhatsAppAdminNotificationFormatter());
 
 		Server::get(GoWhatsAppSessionMonitorJobManager::class)->ensureReconcileJobRegisteredSafely();
 	}
