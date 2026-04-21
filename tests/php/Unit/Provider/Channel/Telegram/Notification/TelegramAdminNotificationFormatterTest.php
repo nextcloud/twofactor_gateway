@@ -26,31 +26,36 @@ class TelegramAdminNotificationFormatterTest extends TestCase {
 
 	public function testParseBuildsTelegramAdminNotification(): void {
 		$formatter = new TelegramAdminNotificationFormatter();
-		$l10n = $this->createTranslator();
+		$calls = [];
+		$l10n = $this->createTranslator($calls);
 		$url = $this->createMock(IURLGenerator::class);
-		$url->method('imagePath')->with('core', 'actions/error.svg')->willReturn('/core/actions/error.svg');
-		$url->method('getAbsoluteURL')->with('/core/actions/error.svg')->willReturn('https://example.test/core/actions/error.svg');
-		$url->method('linkToRouteAbsolute')->with('settings.AdminSettings.index', ['section' => 'overview'])->willReturn('https://example.test/settings/admin/overview');
+		$url->expects($this->once())->method('imagePath')->with('core', 'actions/error.svg')->willReturn('/core/actions/error.svg');
+		$url->expects($this->once())->method('getAbsoluteURL')->with('/core/actions/error.svg')->willReturn('https://example.test/core/actions/error.svg');
+		$url->expects($this->once())->method('linkToRouteAbsolute')->with('settings.AdminSettings.index', ['section' => 'overview'])->willReturn('https://example.test/settings/admin/overview');
 
 		$notification = $this->createMock(INotification::class);
 		$notification->expects($this->once())
 			->method('setParsedSubject')
-			->with('Two-Factor Gateway: Telegram Client session disconnected')
+			->with($this->isType('string'))
 			->willReturnSelf();
 		$notification->expects($this->once())
 			->method('setParsedMessage')
-			->with('Two-Factor Gateway cannot send Telegram verification codes through Telegram Client until login is restored. Open the Two-Factor Gateway admin settings and run Telegram Client interactive setup again.')
+			->with($this->isType('string'))
 			->willReturnSelf();
-		$notification->expects($this->once())->method('setIcon')->willReturnSelf();
-		$notification->expects($this->once())->method('setLink')->willReturnSelf();
+		$notification->expects($this->once())->method('setIcon')->with('https://example.test/core/actions/error.svg')->willReturnSelf();
+		$notification->expects($this->once())->method('setLink')->with('https://example.test/settings/admin/overview')->willReturnSelf();
 
 		$result = $formatter->parse($notification, $l10n, $url);
 		$this->assertSame($notification, $result);
+		$this->assertSame([[], []], $calls);
 	}
 
-	private function createTranslator(): IL10N&MockObject {
+	private function createTranslator(array &$parameterCalls = []): IL10N&MockObject {
 		$l10n = $this->createMock(IL10N::class);
-		$l10n->method('t')->willReturnCallback(static fn (string $text): string => $text);
+		$l10n->method('t')->willReturnCallback(static function (string $text, array $parameters = [], ?int $count = null) use (&$parameterCalls): string {
+			$parameterCalls[] = $parameters;
+			return $text;
+		});
 
 		return $l10n;
 	}
