@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.14.3@d0b040a91f280f071c1abcb1b77ce3822058725a">
+<files psalm-version="6.16.1@f1f5de594dc76faf8784e02d3dc4716c91c6f6ac">
   <file src="lib/Provider/Channel/Telegram/Provider/Drivers/ClientCli/Login.php">
     <MissingOverrideAttribute>
       <code><![CDATA[protected function configure(): void {]]></code>
@@ -9,6 +9,9 @@
       <code><![CDATA[API]]></code>
       <code><![CDATA[AppInfo]]></code>
       <code><![CDATA[Logger]]></code>
+      <code><![CDATA[MadelineLogger]]></code>
+      <code><![CDATA[MadelineLogger]]></code>
+      <code><![CDATA[MadelineLogger]]></code>
       <code><![CDATA[Settings]]></code>
     </UndefinedClass>
   </file>
@@ -24,6 +27,9 @@
       <code><![CDATA[$e]]></code>
       <code><![CDATA[API]]></code>
       <code><![CDATA[Logger]]></code>
+      <code><![CDATA[MadelineLogger]]></code>
+      <code><![CDATA[MadelineLogger]]></code>
+      <code><![CDATA[MadelineLogger]]></code>
       <code><![CDATA[RPCErrorException]]></code>
       <code><![CDATA[Settings]]></code>
     </UndefinedClass>
