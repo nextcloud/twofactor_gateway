@@ -216,6 +216,16 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->assertCount(0, $instances);
 	}
 
+	public function testDeleteInstanceThrowsWhenNotFound(): void {
+		$gateway = $this->makeGatewayMock('signal', 'Signal', [
+			['field' => 'number', 'prompt' => 'Number'],
+		]);
+
+		$this->expectException(GatewayInstanceNotFoundException::class);
+
+		$this->service->deleteInstance($gateway, 'nonexistent');
+	}
+
 	public function testSetDefaultInstanceUpdatesDefaultFlag(): void {
 		$gateway = $this->makeGatewayMock('sms', 'SMS', [
 			['field' => 'url', 'prompt' => 'URL'],

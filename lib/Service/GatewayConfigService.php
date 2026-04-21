@@ -172,16 +172,16 @@ class GatewayConfigService {
 		$gatewayId = $gateway->getProviderId();
 		$registry = $this->loadRegistry($gatewayId);
 
-		$wasDefault = false;
-		$registry = array_values(array_filter($registry, function (array $meta) use ($instanceId, &$wasDefault): bool {
+		$found = false;
+		$registry = array_values(array_filter($registry, function (array $meta) use ($instanceId, &$found): bool {
 			if ($meta['id'] === $instanceId) {
-				$wasDefault = $meta['default'];
+				$found = true;
 				return false;
 			}
 			return true;
 		}));
 
-		if (!isset($wasDefault)) {
+		if (!$found) {
 			throw new GatewayInstanceNotFoundException($gatewayId, $instanceId);
 		}
 
