@@ -163,8 +163,10 @@ class GatewayConfigService {
 	/**
 	 * Delete an instance.
 	 *
-	 * If another instance exists, it does NOT automatically become default;
-	 * the administrator must choose one explicitly.
+	 * If the deleted instance was the default and another instance exists, the
+	 * registry may temporarily have no default until it is loaded again.
+	 * During the next load, registry normalization assigns a default instance
+	 * when the registry is non-empty.
 	 *
 	 * @throws GatewayInstanceNotFoundException
 	 */
