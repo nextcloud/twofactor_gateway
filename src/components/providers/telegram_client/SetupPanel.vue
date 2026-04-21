@@ -68,7 +68,8 @@
 				{{ t('twofactor_gateway', 'Open login link') }}
 			</a>
 			<div v-if="qrPolling" class="wizard-qr-polling">
-				<span>{{ t('twofactor_gateway', 'Waiting for Telegram confirmation…') }}</span>
+				<!-- TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide. -->
+				<span>{{ t('twofactor_gateway', 'Waiting for Telegram confirmation\u00A0…') }}</span>
 				<NcProgressBar
 					:value="Math.round((pollAttempt / pollMaxAttempts) * 100)"
 					type="linear"
@@ -85,7 +86,7 @@
 		</div>
 
 		<div v-if="wizardStep === 'password_polling'" class="wizard-password-polling">
-			<span>{{ t('twofactor_gateway', 'Verifying password with Telegram…') }}</span>
+			<span>{{ t('twofactor_gateway', 'Verifying password with Telegram\u00A0…') }}</span>
 			<NcProgressBar
 				:value="Math.round((pollAttempt / pollMaxAttempts) * 100)"
 				type="linear"
@@ -109,7 +110,7 @@
 				<template #icon>
 					<NcLoadingIcon v-if="wizardLoading" :size="20" />
 				</template>
-				{{ wizardLoading ? t('twofactor_gateway', 'Starting guided setup…') : t('twofactor_gateway', 'Start guided setup') }}
+				{{ startWizardButtonLabel() }}
 			</NcButton>
 
 			<NcButton
@@ -233,6 +234,15 @@ export default defineComponent({
 		this.stopPolling()
 	},
 	methods: {
+		startWizardButtonLabel(): string {
+			if (this.wizardLoading) {
+				// TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide.
+				return t('twofactor_gateway', 'Starting guided setup\u00A0…')
+			}
+
+			return t('twofactor_gateway', 'Start guided setup')
+		},
+
 		focusWizardRoot() {
 			this.$nextTick(() => {
 				const wizardRoot = this.$refs.wizardRoot as HTMLElement | undefined
@@ -390,7 +400,8 @@ export default defineComponent({
 			})
 			this.wizardLoading = true
 			try {
-				this.wizardMessage = t('twofactor_gateway', 'Starting guided setup…')
+				// TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide.
+				this.wizardMessage = t('twofactor_gateway', 'Starting guided setup\u00A0…')
 				this.wizardMessageType = 'info'
 				const response = await startInteractiveSetup(this.gatewayId, {
 					provider: this.providerId,
@@ -417,7 +428,8 @@ export default defineComponent({
 
 			this.wizardLoading = true
 			try {
-				this.wizardMessage = t('twofactor_gateway', 'Processing guided setup step…')
+				// TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide.
+				this.wizardMessage = t('twofactor_gateway', 'Processing guided setup step\u00A0…')
 				this.wizardMessageType = 'info'
 				const response = await interactiveSetupStep(this.gatewayId, this.wizardSessionId, action, input)
 				this.applyWizardResponse(response)
