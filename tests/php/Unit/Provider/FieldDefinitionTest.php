@@ -13,13 +13,26 @@ use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use PHPUnit\Framework\TestCase;
 
 class FieldDefinitionTest extends TestCase {
-	public function testJsonSerializeIncludesHelperText(): void {
+	public function testJsonSerializeIncludesHelperKeyAndPreservesProvidedValue(): void {
 		$field = new FieldDefinition(
 			field: 'api_id',
 			prompt: 'API ID',
 			helper: 'Get one at https://my.telegram.org/apps',
 		);
 
-		$this->assertSame('Get one at https://my.telegram.org/apps', $field->jsonSerialize()['helper']);
+		$serialized = $field->jsonSerialize();
+		$this->assertArrayHasKey('helper', $serialized);
+		$this->assertSame('Get one at https://my.telegram.org/apps', $serialized['helper']);
+	}
+
+	public function testJsonSerializeDefaultsHelperToEmptyString(): void {
+		$field = new FieldDefinition(
+			field: 'token',
+			prompt: 'Token',
+		);
+
+		$serialized = $field->jsonSerialize();
+		$this->assertArrayHasKey('helper', $serialized);
+		$this->assertSame('', $serialized['helper']);
 	}
 }
