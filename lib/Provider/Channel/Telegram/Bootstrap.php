@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider\Channel\Telegram;
 
-use OCA\TwoFactorGateway\Events\TelegramAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Listener\NotificationListener;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Events\TelegramAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Service\TelegramClientSessionMonitorJobManager;
 use OCA\TwoFactorGateway\Provider\Gateway\IGatewayBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;

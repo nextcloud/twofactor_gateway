@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Events\TelegramAuthenticationErrorEvent;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Events\TelegramAuthenticationErrorEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IAppData;
 use OCP\IAppConfig;
