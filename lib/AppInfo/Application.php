@@ -24,12 +24,11 @@ class Application extends App implements IBootstrap {
 
 	public function __construct(array $urlParams = []) {
 		parent::__construct(self::APP_ID, $urlParams);
-		$container = $this->getContainer();
-		$container->registerService(AdminNotificationFormatterRegistry::class, fn () => new AdminNotificationFormatterRegistry());
 	}
 
 	#[\Override]
 	public function register(IRegistrationContext $context): void {
+		$context->registerService(AdminNotificationFormatterRegistry::class, fn () => new AdminNotificationFormatterRegistry());
 		$context->registerNotifierService(Notifier::class);
 
 		foreach (Server::get(BootstrapFactory::class)->getInstances() as $gatewayBootstrap) {
