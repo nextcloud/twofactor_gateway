@@ -9,7 +9,30 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider\Channel\Telegram\Events;
 
+use OCA\TwoFactorGateway\Events\AdminNotifiableEvent;
 use OCP\EventDispatcher\Event;
 
-class TelegramAuthenticationErrorEvent extends Event {
+class TelegramAuthenticationErrorEvent extends Event implements AdminNotifiableEvent {
+	#[\Override]
+	public function getNotificationSubject(): string {
+		return 'telegram_auth_error';
+	}
+
+	#[\Override]
+	public function getNotificationObjectType(): string {
+		return 'telegram_error';
+	}
+
+	#[\Override]
+	public function getNotificationObjectId(): string {
+		return 'authentication';
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	#[\Override]
+	public function getNotificationParameters(): array {
+		return [];
+	}
 }

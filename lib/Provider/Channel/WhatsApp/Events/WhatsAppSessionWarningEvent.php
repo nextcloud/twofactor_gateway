@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events;
 
+use OCA\TwoFactorGateway\Events\AdminNotifiableEvent;
 use OCP\EventDispatcher\Event;
 
 /**
@@ -19,7 +20,7 @@ use OCP\EventDispatcher\Event;
  * that describe why the warning was raised, so listeners can include that
  * context in notifications.
  */
-class WhatsAppSessionWarningEvent extends Event {
+class WhatsAppSessionWarningEvent extends Event implements AdminNotifiableEvent {
 	/**
 	 * @param int $riskScore Accumulated heuristic risk score that triggered the warning.
 	 * @param string $reason Human-readable description of the anomaly detected.
@@ -37,5 +38,31 @@ class WhatsAppSessionWarningEvent extends Event {
 
 	public function getReason(): string {
 		return $this->reason;
+	}
+
+	#[\Override]
+	public function getNotificationSubject(): string {
+		return 'whatsapp_session_warning';
+	}
+
+	#[\Override]
+	public function getNotificationObjectType(): string {
+		return 'whatsapp_error';
+	}
+
+	#[\Override]
+	public function getNotificationObjectId(): string {
+		return 'session_health';
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	#[\Override]
+	public function getNotificationParameters(): array {
+		return [
+			'risk_score' => (string)$this->getRiskScore(),
+			'reason' => $this->getReason(),
+		];
 	}
 }
