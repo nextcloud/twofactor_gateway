@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\FieldType;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
@@ -18,7 +19,6 @@ use OCA\TwoFactorGateway\Provider\Gateway\IDefaultInstanceAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
