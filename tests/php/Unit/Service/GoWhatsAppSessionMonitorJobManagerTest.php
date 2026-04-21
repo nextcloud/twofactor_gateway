@@ -9,11 +9,11 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
-use OCA\TwoFactorGateway\BackgroundJob\GoWhatsAppSessionMonitorJob;
-use OCA\TwoFactorGateway\BackgroundJob\GoWhatsAppSessionMonitorReconcileJob;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\BackgroundJob\GoWhatsAppSessionMonitorJob;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\BackgroundJob\GoWhatsAppSessionMonitorReconcileJob;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
-use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
 use OCP\BackgroundJob\IJobList;
 use OCP\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
