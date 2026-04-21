@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Listener;
 
-use OCA\TwoFactorGateway\Events\TelegramAuthenticationErrorEvent;
-use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Listener\NotificationListener;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Events\TelegramAuthenticationErrorEvent;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppAuthenticationErrorEvent;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
 use OCP\IGroup;

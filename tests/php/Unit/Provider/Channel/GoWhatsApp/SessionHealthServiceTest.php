@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\GoWhatsApp;
 
-use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
-use OCA\TwoFactorGateway\Events\WhatsAppSessionWarningEvent;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppAuthenticationErrorEvent;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppSessionWarningEvent;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\DeviceStateFetcher;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\HealthRiskScorer;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\SessionHealthService;

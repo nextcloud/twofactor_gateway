@@ -7,7 +7,7 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\TwoFactorGateway\Events;
+namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events;
 
 use OCP\EventDispatcher\Event;
 

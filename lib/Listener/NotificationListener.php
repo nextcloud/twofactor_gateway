@@ -10,9 +10,9 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Listener;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Events\TelegramAuthenticationErrorEvent;
-use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
-use OCA\TwoFactorGateway\Events\WhatsAppSessionWarningEvent;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Events\TelegramAuthenticationErrorEvent;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppAuthenticationErrorEvent;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppSessionWarningEvent;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
