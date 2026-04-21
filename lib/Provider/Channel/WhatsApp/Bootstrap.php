@@ -12,8 +12,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp;
 use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Events\WhatsAppSessionWarningEvent;
 use OCA\TwoFactorGateway\Listener\NotificationListener;
-use OCA\TwoFactorGateway\Provider\Gateway\IGatewayBootstrap;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Provider\Gateway\IGatewayBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\Server;
 
