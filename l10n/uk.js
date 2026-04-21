@@ -2,6 +2,9 @@ OC.L10N.register(
     "twofactor_gateway",
     {
     "Two-Factor Gateway" : "Двофакторна автентифікація",
+    "Two-Factor Gateway: WhatsApp authentication failed" : "Шлюз 2-факторної авторизації: не вдалося автентифікувати з WhatsApp",
+    "Two-Factor Gateway: WhatsApp session is unstable" : "Шлюз 2-факторної авторизації: нестабільна сесія WhatsApp",
+    "WhatsApp session warning: %s" : "Попередження сесії WhatsApp: %s",
     "`%s` is your Nextcloud authentication code" : "Одноразовий код входу до хмари Nextcloud: %s",
     "%s is your Nextcloud authentication code" : "Одноразовий код входу до хмари Nextcloud: %s",
     "The phone number is not registered on WhatsApp." : "Номер телефону не зареєстровано у WhatsApp.",
