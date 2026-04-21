@@ -13,8 +13,8 @@ use OCA\TwoFactorGateway\Provider\AFactory;
 
 /**
  * Auto-discovers all classes implementing IGatewayBootstrap from the composer
- * classmap.  Convention: one `Bootstrap` class per gateway channel folder,
- * e.g. `Provider/Channel/MyGateway/Bootstrap.php`.
+ * classmap. Convention: one Bootstrap class per gateway channel folder,
+ * e.g. Provider/Channel/MyGateway/Bootstrap.php.
  *
  * @extends AFactory<IGatewayBootstrap>
  */
@@ -40,6 +40,7 @@ class BootstrapFactory extends AFactory {
 		foreach ($this->getFqcnList() as $fqcn) {
 			$instances[] = \OCP\Server::get($fqcn);
 		}
+
 		return $instances;
 	}
 }
