@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\AppInfo;
 
+use OCA\TwoFactorGateway\Notification\AdminNotificationFormatterRegistry;
 use OCA\TwoFactorGateway\Notification\Notifier;
 use OCA\TwoFactorGateway\Provider\Factory;
 use OCA\TwoFactorGateway\Provider\Gateway\BootstrapFactory;
@@ -23,6 +24,8 @@ class Application extends App implements IBootstrap {
 
 	public function __construct(array $urlParams = []) {
 		parent::__construct(self::APP_ID, $urlParams);
+		$container = $this->getContainer();
+		$container->registerService(AdminNotificationFormatterRegistry::class, fn () => new AdminNotificationFormatterRegistry());
 	}
 
 	#[\Override]

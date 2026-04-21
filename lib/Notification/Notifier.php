@@ -10,8 +10,6 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Notification;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Provider\Channel\Telegram\Notification\TelegramAdminNotificationFormatter;
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Notification\WhatsAppAdminNotificationFormatter;
 use OCP\IURLGenerator;
 use OCP\L10N\IFactory;
 use OCP\Notification\INotification;
@@ -25,6 +23,7 @@ class Notifier implements INotifier {
 		private IFactory $factory,
 		private IURLGenerator $url,
 		private LoggerInterface $logger,
+		private AdminNotificationFormatterRegistry $formatterRegistry,
 	) {
 	}
 
@@ -47,7 +46,7 @@ class Notifier implements INotifier {
 		$l = $this->factory->get(Application::APP_ID, $languageCode);
 		$subject = $notification->getSubject();
 
-		foreach ($this->getFormatters() as $formatter) {
+		foreach ($this->formatterRegistry->getFormatters() as $formatter) {
 			if (!$formatter->supports($subject)) {
 				continue;
 			}
@@ -61,15 +60,5 @@ class Notifier implements INotifier {
 
 		$this->logger->warning('Unknown notification subject: ' . $subject);
 		throw new UnknownNotificationException();
-	}
-
-	/**
-	 * @return list<AdminNotificationFormatter>
-	 */
-	private function getFormatters(): array {
-		return [
-			new WhatsAppAdminNotificationFormatter(),
-			new TelegramAdminNotificationFormatter(),
-		];
 	}
 }

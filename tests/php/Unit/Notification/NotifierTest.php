@@ -10,7 +10,9 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Notification;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Notification\AdminNotificationFormatterRegistry;
 use OCA\TwoFactorGateway\Notification\Notifier;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Notification\TelegramAdminNotificationFormatter;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\L10N\IFactory;
@@ -24,6 +26,7 @@ class NotifierTest extends TestCase {
 	private IFactory&MockObject $factory;
 	private IURLGenerator&MockObject $url;
 	private LoggerInterface&MockObject $logger;
+	private AdminNotificationFormatterRegistry $registry;
 	private Notifier $notifier;
 
 	protected function setUp(): void {
@@ -32,7 +35,9 @@ class NotifierTest extends TestCase {
 		$this->factory = $this->createMock(IFactory::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
-		$this->notifier = new Notifier($this->factory, $this->url, $this->logger);
+		$this->registry = new AdminNotificationFormatterRegistry();
+		$this->registry->register(new TelegramAdminNotificationFormatter());
+		$this->notifier = new Notifier($this->factory, $this->url, $this->logger, $this->registry);
 	}
 
 	public function testPrepareThrowsForDifferentApp(): void {
