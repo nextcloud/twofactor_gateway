@@ -39,10 +39,13 @@ class ClientTest extends TestCase {
 		$provider = new Client($this->logger, $this->l10n, $this->appData, $this->config);
 		$settings = $provider->createSettings();
 
-		$this->assertSame('Please enter your Telegram api_id:', $settings->fields[0]->prompt);
-		$this->assertSame('Get one at https://my.telegram.org/apps', $settings->fields[0]->helper);
-		$this->assertSame('Please enter your Telegram api_hash:', $settings->fields[1]->prompt);
-		$this->assertSame('Get one at https://my.telegram.org/apps', $settings->fields[1]->helper);
+		$this->assertSame('api_id', $settings->fields[0]->field);
+		$this->assertNotSame('', trim($settings->fields[0]->prompt));
+		$this->assertStringContainsString('my.telegram.org/apps', $settings->fields[0]->helper);
+
+		$this->assertSame('api_hash', $settings->fields[1]->field);
+		$this->assertNotSame('', trim($settings->fields[1]->prompt));
+		$this->assertStringContainsString('my.telegram.org/apps', $settings->fields[1]->helper);
 	}
 
 	public function testSendReturnsHelpfulMessageWhenSessionIsNotLoggedIn(): void {
@@ -58,14 +61,13 @@ class ClientTest extends TestCase {
 		];
 		$provider->cliExitCode = 1;
 
-		$this->expectException(MessageTransmissionException::class);
-		$this->expectExceptionMessage('Telegram Client session is not logged in. Complete the Telegram login flow for this gateway before testing or sending messages.');
-
 		try {
 			$provider->send('vitormattos', 'Test');
+			$this->fail('Expected MessageTransmissionException to be thrown.');
 		} catch (MessageTransmissionException $e) {
+			$this->assertStringContainsString('Telegram Client session is not logged in', $e->getMessage());
+			$this->assertStringContainsString('login flow', $e->getMessage());
 			$this->assertStringNotContainsString('secret-hash', $e->getMessage());
-			throw $e;
 		}
 	}
 

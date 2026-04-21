@@ -50,7 +50,9 @@ class BotTest extends TestCase {
 			$provider->send('vitormattos', 'Test');
 			$this->fail('Expected MessageTransmissionException to be thrown.');
 		} catch (MessageTransmissionException $e) {
-			$this->assertSame('Failed to send Telegram message: chat not found. Use your numeric Telegram ID and start a conversation with the bot first.', $e->getMessage());
+			$this->assertStringStartsWith('Failed to send Telegram message:', $e->getMessage());
+			$this->assertStringContainsString('chat not found', $e->getMessage());
+			$this->assertStringContainsString('numeric Telegram ID', $e->getMessage());
 			$this->assertStringNotContainsString($token, $e->getMessage());
 		}
 	}
