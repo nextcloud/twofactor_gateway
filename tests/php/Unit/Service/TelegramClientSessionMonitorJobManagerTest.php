@@ -9,10 +9,10 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
-use OCA\TwoFactorGateway\BackgroundJob\TelegramClientSessionMonitorJob;
-use OCA\TwoFactorGateway\BackgroundJob\TelegramClientSessionMonitorReconcileJob;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\BackgroundJob\TelegramClientSessionMonitorJob;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\BackgroundJob\TelegramClientSessionMonitorReconcileJob;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\ClientSessionHealthService;
-use OCA\TwoFactorGateway\Service\TelegramClientSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Service\TelegramClientSessionMonitorJobManager;
 use OCP\BackgroundJob\IJobList;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
