@@ -12,6 +12,12 @@ test.beforeEach(async ({ page }) => {
 	await login(page.request, adminUser, adminPassword)
 })
 
+const openAdminSettings = async (page: Parameters<typeof test>[0]['page']) => {
+	await page.goto('./settings/admin/security')
+	await expect(page.locator('#twofactor-gateway-admin')).toBeVisible()
+	await expect(page.locator('.admin-settings__content')).toBeVisible()
+}
+
 test.afterEach(async ({ request }) => {
 	// Clean up all signal instances created during each test
 	const instances = await listGatewayInstances(request, adminUser, adminPassword, 'signal')
@@ -21,29 +27,22 @@ test.afterEach(async ({ request }) => {
 })
 
 test('admin settings page renders the gateway list', async ({ page }) => {
-	await page.goto('./settings/admin/security')
-	await expect(page.locator('#twofactor-gateway-admin')).toBeVisible()
-	// The Vue app should mount and show at least one gateway section
-	await expect(page.locator('.admin-settings__gateways')).toBeVisible()
+	await openAdminSettings(page)
+	await expect(page.locator('.admin-settings__actions')).toBeVisible()
 })
 
 test('admin can create a new gateway instance', async ({ page, request }) => {
-	await page.goto('./settings/admin/security')
-	await expect(page.locator('.admin-settings__gateways')).toBeVisible()
+	await openAdminSettings(page)
 
-	// Expand the Signal gateway section
-	await page.locator('[data-gateway-id="signal"] .section-header').click()
-	await expect(page.locator('[data-gateway-id="signal"] .section-body')).toBeVisible()
-
-	// Click Add Instance
-	await page.getByRole('button', { name: 'Add Instance' }).click()
+	// Click Add provider configuration
+	await page.getByRole('button', { name: 'Add provider configuration' }).click()
 	await expect(page.locator('.gateway-instance-modal')).toBeVisible()
 
-	// In create mode, a gateway selector is shown — select Signal
-	const gatewaySelect = page.locator('.gateway-instance-modal select, .gateway-instance-modal [data-testid="gateway-select"]').first()
-	if (await gatewaySelect.isVisible()) {
-		await gatewaySelect.selectOption('signal')
-	}
+	// Select Signal provider in NcSelect
+	const gatewaySelectInput = page.locator('#gateway-select input[type="search"], #gateway-select input').first()
+	await gatewaySelectInput.click()
+	await gatewaySelectInput.fill('Signal')
+	await gatewaySelectInput.press('Enter')
 
 	// Fill the label
 	await page.locator('.gateway-instance-modal').getByLabel('Label').fill('Playwright Test')
@@ -72,11 +71,11 @@ test('admin can edit an existing gateway instance', async ({ page, request }) =>
 		'signal', 'Original Label', { url: 'http://original.example.com' },
 	)
 
-	await page.goto('./settings/admin/security')
-	await expect(page.locator('[data-gateway-id="signal"] .gateway-instance-card', { hasText: 'Original Label' })).toBeVisible({ timeout: 15000 })
+	await openAdminSettings(page)
+	await expect(page.locator('.gateway-instance-card', { hasText: 'Original Label' })).toBeVisible({ timeout: 15000 })
 
 	// Click Edit button on the instance card
-	await page.locator('[data-gateway-id="signal"] .gateway-instance-card', { hasText: 'Original Label' })
+	await page.locator('.gateway-instance-card', { hasText: 'Original Label' })
 		.getByRole('button', { name: 'Edit' }).click()
 	await expect(page.locator('.gateway-instance-modal')).toBeVisible()
 
@@ -102,7 +101,7 @@ test('admin can delete a gateway instance', async ({ page, request }) => {
 		'signal', 'To Be Deleted', { url: 'http://todelete.example.com' },
 	)
 
-	await page.goto('./settings/admin/security')
+	await openAdminSettings(page)
 	await expect(page.locator('.gateway-instance-card', { hasText: 'To Be Deleted' })).toBeVisible({ timeout: 15000 })
 
 	// Click Delete button
@@ -130,18 +129,17 @@ test('admin can set an instance as the default', async ({ page, request }) => {
 		'signal', 'Second Instance', { url: 'http://second.example.com' },
 	)
 
-	await page.goto('./settings/admin/security')
+	await openAdminSettings(page)
 	await expect(page.locator('.gateway-instance-card', { hasText: 'Second Instance' })).toBeVisible({ timeout: 15000 })
 
 	// Click "Set as default" on Second Instance
 	await page.locator('.gateway-instance-card', { hasText: 'Second Instance' })
 		.getByRole('button', { name: 'Set as default' }).click()
 
-	// The Second Instance card should show the Default badge
+	// The Second Instance card should be marked as the default instance
 	await expect(
-		page.locator('.gateway-instance-card', { hasText: 'Second Instance' })
-			.locator('.badge--default'),
-	).toBeVisible()
+		page.locator('.gateway-instance-card', { hasText: 'Second Instance' }),
+	).toHaveClass(/(?:^|\s)gateway-instance-card--default(?:\s|$)/)
 
 	await deleteGatewayInstance(request, adminUser, adminPassword, 'signal', first.id)
 	await deleteGatewayInstance(request, adminUser, adminPassword, 'signal', second.id)
