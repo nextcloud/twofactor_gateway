@@ -109,7 +109,7 @@ class GatewayConfigService {
 
 		$isFirst = empty($registry);
 		$instanceId = $this->generateId();
-		$this->storeFieldValues($gatewayId, $instanceId, $gateway->getSettings(), $config);
+		$this->storeFieldValues($gatewayId, $instanceId, $gateway, $config);
 
 		$meta = [
 			'id' => $instanceId,
@@ -144,7 +144,7 @@ class GatewayConfigService {
 				$meta['label'] = $label;
 				$meta['groupIds'] = $this->normalizeGroupIds($groupIds);
 				$meta['priority'] = $this->normalizePriority($priority);
-				$this->storeFieldValues($gatewayId, $instanceId, $gateway->getSettings(), $config);
+				$this->storeFieldValues($gatewayId, $instanceId, $gateway, $config);
 				$updated = true;
 				break;
 			}
@@ -187,7 +187,7 @@ class GatewayConfigService {
 			throw new GatewayInstanceNotFoundException($gatewayId, $instanceId);
 		}
 
-		$this->deleteFieldValues($gatewayId, $instanceId, $gateway->getSettings());
+		$this->deleteFieldValues($gatewayId, $instanceId, $gateway);
 		$this->saveRegistry($gatewayId, $registry);
 	}
 
@@ -325,23 +325,73 @@ class GatewayConfigService {
 	/**
 	 * @param array<string, string> $config
 	 */
-	private function storeFieldValues(string $gatewayId, string $instanceId, Settings $settings, array $config): void {
-		foreach ($settings->fields as $field) {
-			if (isset($config[$field->field])) {
-				$this->appConfig->setValueString(
+	private function storeFieldValues(string $gatewayId, string $instanceId, IGateway $gateway, array $config): void {
+		$fieldNames = array_map(
+			static fn (FieldDefinition $field): string => $field->field,
+			$gateway->getSettings()->fields,
+		);
+
+		if ($gateway instanceof IProviderCatalogGateway) {
+			$selector = $gateway->getProviderSelectorField();
+			$fieldNames[] = $selector->field;
+
+			$selectedProvider = trim((string)($config[$selector->field]
+				?? $this->appConfig->getValueString(
 					Application::APP_ID,
-					$this->instanceFieldKey($gatewayId, $instanceId, $field->field),
-					(string)$config[$field->field],
-				);
+					$this->instanceFieldKey($gatewayId, $instanceId, $selector->field),
+					$selector->default,
+				)));
+			if ($selectedProvider !== '') {
+				$config[$selector->field] = $selectedProvider;
+				foreach ($gateway->getProviderCatalog() as $provider) {
+					if ((string)($provider['id'] ?? '') !== $selectedProvider) {
+						continue;
+					}
+
+					foreach ($provider['fields'] ?? [] as $providerField) {
+						if ($providerField instanceof FieldDefinition) {
+							$fieldNames[] = $providerField->field;
+						}
+					}
+					break;
+				}
 			}
+		}
+
+		foreach (array_values(array_unique($fieldNames)) as $fieldName) {
+			if (!array_key_exists($fieldName, $config)) {
+				continue;
+			}
+
+			$this->appConfig->setValueString(
+				Application::APP_ID,
+				$this->instanceFieldKey($gatewayId, $instanceId, $fieldName),
+				(string)$config[$fieldName],
+			);
 		}
 	}
 
-	private function deleteFieldValues(string $gatewayId, string $instanceId, Settings $settings): void {
-		foreach ($settings->fields as $field) {
+	private function deleteFieldValues(string $gatewayId, string $instanceId, IGateway $gateway): void {
+		$fieldNames = array_map(
+			static fn (FieldDefinition $field): string => $field->field,
+			$gateway->getSettings()->fields,
+		);
+
+		if ($gateway instanceof IProviderCatalogGateway) {
+			$fieldNames[] = $gateway->getProviderSelectorField()->field;
+			foreach ($gateway->getProviderCatalog() as $provider) {
+				foreach ($provider['fields'] ?? [] as $providerField) {
+					if ($providerField instanceof FieldDefinition) {
+						$fieldNames[] = $providerField->field;
+					}
+				}
+			}
+		}
+
+		foreach (array_values(array_unique($fieldNames)) as $fieldName) {
 			$this->appConfig->deleteKey(
 				Application::APP_ID,
-				$this->instanceFieldKey($gatewayId, $instanceId, $field->field),
+				$this->instanceFieldKey($gatewayId, $instanceId, $fieldName),
 			);
 		}
 	}
@@ -374,10 +424,15 @@ class GatewayConfigService {
 
 		if ($gateway instanceof IProviderCatalogGateway) {
 			$selector = $gateway->getProviderSelectorField();
-			$selectedProvider = trim((string)($config[$selector->field] ?? $selector->default));
-			if ($selectedProvider !== '' && !isset($config[$selector->field])) {
-				$config[$selector->field] = $selectedProvider;
+			if (!array_key_exists($selector->field, $config)) {
+				$config[$selector->field] = $this->appConfig->getValueString(
+					Application::APP_ID,
+					$this->instanceFieldKey($gateway->getProviderId(), $meta['id'], $selector->field),
+					$selector->default,
+				);
 			}
+
+			$selectedProvider = trim((string)$config[$selector->field]);
 
 			if ($selectedProvider !== '') {
 				foreach ($gateway->getProviderCatalog() as $provider) {
