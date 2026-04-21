@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\BackgroundJob\GoWhatsAppSessionMonitorJob;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\BackgroundJob\GoWhatsAppSessionMonitorJob;
 use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Events\WhatsAppSessionWarningEvent;
 use OCP\AppFramework\Utility\ITimeFactory;
