@@ -215,7 +215,7 @@ describe('GatewayTestModal', () => {
 		expect(wrapper.emitted('close')).toBeDefined()
 	})
 
-	it('shows account info with avatar image when accountInfo includes avatar URL', async () => {
+	it('shows initials fallback when accountInfo includes a remote avatar URL', async () => {
 		const { testInstance } = await import('../../services/adminGatewayApi.ts')
 		vi.mocked(testInstance).mockResolvedValueOnce({
 			success: true,
@@ -228,9 +228,30 @@ describe('GatewayTestModal', () => {
 		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
 
+		expect(wrapper.find('.test-account-avatar').exists()).toBe(false)
+		expect(wrapper.find('.test-account-avatar-fallback').text()).toBe('AC')
+		expect(wrapper.find('.test-account-name').text()).toBe('Acme Corp')
+	})
+
+	it('shows account info with avatar image when accountInfo includes valid data URI', async () => {
+		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		vi.mocked(testInstance).mockResolvedValueOnce({
+			success: true,
+			message: 'Message sent successfully.',
+			accountInfo: {
+				account_name: 'Acme Corp',
+				account_avatar_url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+n3ioAAAAASUVORK5CYII=',
+			},
+		})
+
+		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		await wrapper.find('input').setValue('+1234567890')
+		await findSendButton(wrapper)?.trigger('click')
+		await flushPromises()
+
 		const avatar = wrapper.find('.test-account-avatar')
 		expect(avatar.exists()).toBe(true)
-		expect(avatar.attributes('src')).toBe('https://wa.example/avatar.png')
+		expect(avatar.attributes('src')).toContain('data:image/png;base64,')
 		expect(avatar.attributes('alt')).toBe('Acme Corp')
 		expect(wrapper.find('.test-account-name').text()).toBe('Acme Corp')
 	})
