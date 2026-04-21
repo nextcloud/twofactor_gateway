@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\Telegram;
 
-use OCA\TwoFactorGateway\Events\TelegramAuthenticationErrorEvent;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Events\TelegramAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\ClientSessionHealthService;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\EventDispatcher\IEventDispatcher;
