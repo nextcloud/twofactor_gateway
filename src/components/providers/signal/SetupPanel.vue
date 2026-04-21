@@ -20,7 +20,7 @@
 		</template>
 
 		<div v-if="wizardStep === 'scan_qr' && wizardQrSvg" class="wizard-qr-section">
-			<div class="wizard-qr-wrapper" v-html="wizardQrSvg" />
+			<div class="wizard-qr-wrapper" v-html="sanitizedWizardQrSvg" />
 			<p class="wizard-qr-instructions">
 				{{ t('twofactor_gateway', 'Open Signal → Settings → Linked Devices → Link New Device and scan this code.') }}
 			</p>
@@ -69,6 +69,7 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
+import domPurify from 'dompurify'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
@@ -115,6 +116,15 @@ export default defineComponent({
 			qrPolling: false,
 			bootstrapUrl: this.config.url ?? '',
 		}
+	},
+	computed: {
+		sanitizedWizardQrSvg(): string {
+			return domPurify.sanitize(this.wizardQrSvg, {
+				USE_PROFILES: { svg: true, svgFilters: true },
+				FORBID_TAGS: ['script', 'foreignObject'],
+				FORBID_ATTR: ['onload', 'onclick', 'onerror'],
+			})
+		},
 	},
 	watch: {
 		wizardSessionId(val: string) {
