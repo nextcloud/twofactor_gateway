@@ -48,7 +48,12 @@
                     "field",
                     "prompt",
                     "default",
-                    "optional"
+                    "optional",
+                    "type",
+                    "hidden",
+                    "min",
+                    "max",
+                    "helper"
                 ],
                 "properties": {
                     "field": {
@@ -62,6 +67,26 @@
                     },
                     "optional": {
                         "type": "boolean"
+                    },
+                    "type": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "hidden": {
+                        "type": "boolean"
+                    },
+                    "min": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "max": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "helper": {
+                        "type": "string"
                     }
                 }
             },
@@ -99,6 +124,15 @@
                         "items": {
                             "$ref": "#/components/schemas/Instance"
                         }
+                    },
+                    "providerSelector": {
+                        "$ref": "#/components/schemas/FieldDefinition"
+                    },
+                    "providerCatalog": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProviderCatalogEntry"
+                        }
                     }
                 }
             },
@@ -110,7 +144,9 @@
                     "default",
                     "createdAt",
                     "config",
-                    "isComplete"
+                    "isComplete",
+                    "groupIds",
+                    "priority"
                 ],
                 "properties": {
                     "id": {
@@ -133,6 +169,16 @@
                     },
                     "isComplete": {
                         "type": "boolean"
+                    },
+                    "groupIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "priority": {
+                        "type": "integer",
+                        "format": "int64"
                     }
                 }
             },
@@ -157,6 +203,28 @@
                     },
                     "itemsperpage": {
                         "type": "string"
+                    }
+                }
+            },
+            "ProviderCatalogEntry": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "fields"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FieldDefinition"
+                        }
                     }
                 }
             },
@@ -195,7 +263,7 @@
         "/ocs/v2.php/apps/twofactor_gateway/admin/gateways": {
             "get": {
                 "operationId": "admin_gateway-list-gateways",
-                "summary": "List all available gateways with current configuration instances.",
+                "summary": "List all available gateways with current configuration instances",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "admin_gateway"
@@ -263,7 +331,7 @@
         "/ocs/v2.php/apps/twofactor_gateway/admin/groups": {
             "get": {
                 "operationId": "admin_gateway-get-groups",
-                "summary": "List assignable Nextcloud groups for per-instance routing.",
+                "summary": "List assignable Nextcloud groups for per-instance routing",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "admin_gateway"
@@ -340,7 +408,7 @@
         "/ocs/v2.php/apps/twofactor_gateway/admin/gateways/{gateway}/instances": {
             "post": {
                 "operationId": "admin_gateway-create-instance",
-                "summary": "Create a new configuration instance for a gateway.",
+                "summary": "Create a new configuration instance for a gateway",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "admin_gateway"
@@ -493,7 +561,7 @@
         "/ocs/v2.php/apps/twofactor_gateway/admin/gateways/{gateway}/instances/{instanceId}": {
             "get": {
                 "operationId": "admin_gateway-get-instance",
-                "summary": "Get a single configuration instance.",
+                "summary": "Get a single configuration instance",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "admin_gateway"
@@ -650,7 +718,7 @@
             },
             "put": {
                 "operationId": "admin_gateway-update-instance",
-                "summary": "Update an existing configuration instance.",
+                "summary": "Update an existing configuration instance",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "admin_gateway"
@@ -848,7 +916,7 @@
             },
             "delete": {
                 "operationId": "admin_gateway-delete-instance",
-                "summary": "Delete a configuration instance.",
+                "summary": "Delete a configuration instance",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "admin_gateway"
@@ -1004,7 +1072,7 @@
         "/ocs/v2.php/apps/twofactor_gateway/admin/gateways/{gateway}/instances/{instanceId}/default": {
             "post": {
                 "operationId": "admin_gateway-set-default-instance",
-                "summary": "Promote an instance to be the default for its gateway.",
+                "summary": "Promote an instance to be the default for its gateway",
                 "description": "The instance's field values are mirrored to the primary config keys used by the 2-FA flow and CLI commands.\nThis endpoint requires admin access",
                 "tags": [
                     "admin_gateway"
@@ -1160,7 +1228,7 @@
         "/ocs/v2.php/apps/twofactor_gateway/admin/gateways/{gateway}/instances/{instanceId}/test": {
             "post": {
                 "operationId": "admin_gateway-test-instance",
-                "summary": "Send a test message using a specific configuration instance.",
+                "summary": "Send a test message using a specific configuration instance",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "admin_gateway"
@@ -1353,7 +1421,7 @@
         "/ocs/v2.php/apps/twofactor_gateway/admin/gateways/{gateway}/interactive-setup/start": {
             "post": {
                 "operationId": "admin_gateway-start-interactive-setup",
-                "summary": "Start an interactive setup flow for gateways that support it.",
+                "summary": "Start an interactive setup flow for gateways that support it",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "admin_gateway"
@@ -1485,7 +1553,7 @@
         "/ocs/v2.php/apps/twofactor_gateway/admin/gateways/{gateway}/interactive-setup/step": {
             "post": {
                 "operationId": "admin_gateway-interactive-setup-step",
-                "summary": "Continue an interactive setup flow.",
+                "summary": "Continue an interactive setup flow",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "admin_gateway"
@@ -1629,7 +1697,7 @@
         "/ocs/v2.php/apps/twofactor_gateway/admin/gateways/{gateway}/interactive-setup/cancel": {
             "post": {
                 "operationId": "admin_gateway-cancel-interactive-setup",
-                "summary": "Cancel an interactive setup flow.",
+                "summary": "Cancel an interactive setup flow",
                 "description": "This endpoint requires admin access",
                 "tags": [
                     "admin_gateway"

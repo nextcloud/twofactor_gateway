@@ -14,6 +14,26 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\Settings\IDelegatedSettings;
 
 class AdminSettings implements IDelegatedSettings {
+	/**
+	 * Restrict delegated AppConfig access to instance registries and per-instance fields.
+	 *
+	 * The admin UI manages gateway instances through dedicated OCS endpoints. It only
+	 * needs access to the instance registry namespace and the per-instance field keys
+	 * used by the multi-instance storage model.
+	 *
+	 * Legacy single-instance keys such as `telegram_provider_name` or operational keys
+	 * such as `gowhatsapp_webhook_secret` remain server-side only and must not be
+	 * exposed through delegated settings authorization.
+	 *
+	 * @return list<string>
+	 */
+	private function getAuthorizedConfigPatterns(): array {
+		return [
+			'/^instances:[^:]+$/',
+			'/^[^:]+:[^:]+:[^:]+$/',
+		];
+	}
+
 	#[\Override]
 	public function getForm(): TemplateResponse {
 		return new TemplateResponse(Application::APP_ID, 'admin_settings');
@@ -37,7 +57,7 @@ class AdminSettings implements IDelegatedSettings {
 	#[\Override]
 	public function getAuthorizedAppConfig(): array {
 		return [
-			Application::APP_ID => ['/instances:.*/', '/.*_.*/'],
+			Application::APP_ID => $this->getAuthorizedConfigPatterns(),
 		];
 	}
 }

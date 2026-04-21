@@ -243,7 +243,7 @@ class GatewayDispatchService {
 	}
 
 	private function compareGroupCandidates(array $left, array $right): int {
-		$priorityDiff = $left['instance']['priority'] <=> $right['instance']['priority'];
+		$priorityDiff = $right['instance']['priority'] <=> $left['instance']['priority'];
 		if ($priorityDiff !== 0) {
 			return $priorityDiff;
 		}
@@ -267,7 +267,7 @@ class GatewayDispatchService {
 			return $defaultDiff;
 		}
 
-		$priorityDiff = $left['instance']['priority'] <=> $right['instance']['priority'];
+		$priorityDiff = $right['instance']['priority'] <=> $left['instance']['priority'];
 		if ($priorityDiff !== 0) {
 			return $priorityDiff;
 		}
