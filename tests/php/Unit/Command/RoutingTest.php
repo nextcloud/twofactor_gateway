@@ -51,6 +51,64 @@ class RoutingTest extends TestCase {
 	}
 
 	/**
+	 * @dataProvider successfulRoutingUpdateProvider
+	 *
+	 * @param list<string> $availableGroupIds
+	 * @param list<string> $expectedGroupIds
+	 */
+	public function testUpdatesRoutingWithProvidedOptions(string $priority, string $groups, array $availableGroupIds, array $expectedGroupIds): void {
+		$instance = [
+			'id' => 'instance-1',
+			'label' => 'Default',
+			'default' => true,
+			'createdAt' => '2026-01-01T00:00:00+00:00',
+			'config' => ['base_url' => 'https://sms.example.com'],
+			'isComplete' => true,
+			'groupIds' => ['existing'],
+			'priority' => 5,
+		];
+
+		$this->configService
+			->method('listInstances')
+			->with($this->gateway)
+			->willReturn([$instance]);
+		$this->groupManager
+			->method('search')
+			->with('')
+			->willReturn(array_map([$this, 'makeGroupStub'], $availableGroupIds));
+		$this->configService
+			->expects($this->once())
+			->method('updateInstance')
+			->with(
+				$this->gateway,
+				'instance-1',
+				'Default',
+				['base_url' => 'https://sms.example.com'],
+				$expectedGroupIds,
+				(int)$priority,
+			)
+			->willReturn([
+				...$instance,
+				'groupIds' => $expectedGroupIds,
+				'priority' => (int)$priority,
+			]);
+
+		$command = new Routing($this->gatewayFactory, $this->configService, $this->groupManager);
+		$input = new ArrayInput([
+			'gateway' => 'sms',
+			'instance' => 'instance-1',
+			'--priority' => $priority,
+			'--groups' => $groups,
+		]);
+		$output = new BufferedOutput();
+
+		$exitCode = $command->run($input, $output);
+
+		$this->assertSame(Command::SUCCESS, $exitCode);
+		$this->assertStringContainsString('Routing updated for instance', $output->fetch());
+	}
+
+	/**
 	 * @dataProvider invalidPriorityProvider
 	 */
 	public function testRejectsNonIntegerPriorityValues(string $priority): void {
@@ -89,6 +147,49 @@ class RoutingTest extends TestCase {
 	}
 
 	/**
+	 * @dataProvider invalidGroupsProvider
+	 */
+	public function testRejectsUnknownGroups(string $groups, string $expectedUnknownGroups): void {
+		$this->configService
+			->method('listInstances')
+			->with($this->gateway)
+			->willReturn([[
+				'id' => 'instance-1',
+				'label' => 'Default',
+				'default' => true,
+				'createdAt' => '2026-01-01T00:00:00+00:00',
+				'config' => [],
+				'isComplete' => true,
+				'groupIds' => [],
+				'priority' => 0,
+			]]);
+		$this->groupManager
+			->method('search')
+			->with('')
+			->willReturn([
+				$this->makeGroupStub('admins'),
+				$this->makeGroupStub('staff'),
+			]);
+		$this->configService
+			->expects($this->never())
+			->method('updateInstance');
+
+		$command = new Routing($this->gatewayFactory, $this->configService, $this->groupManager);
+		$input = new ArrayInput([
+			'gateway' => 'sms',
+			'instance' => 'instance-1',
+			'--priority' => '1',
+			'--groups' => $groups,
+		]);
+		$output = new BufferedOutput();
+
+		$exitCode = $command->run($input, $output);
+
+		$this->assertSame(Command::FAILURE, $exitCode);
+		$this->assertStringContainsString('Unknown group(s): ' . $expectedUnknownGroups, $output->fetch());
+	}
+
+	/**
 	 * @return list<array{0: string}>
 	 */
 	public static function invalidPriorityProvider(): array {
@@ -99,5 +200,41 @@ class RoutingTest extends TestCase {
 			['+ 1'],
 			['0x10'],
 		];
+	}
+
+	/**
+	 * @return list<array{0: string, 1: string, 2: list<string>, 3: list<string>}>
+	 */
+	public static function successfulRoutingUpdateProvider(): array {
+		return [
+			['0', '', ['admins', 'staff'], []],
+			['10', 'admins', ['admins', 'staff'], ['admins']],
+			['25', ' admins , staff ', ['admins', 'staff'], ['admins', 'staff']],
+			['-5', 'staff,,', ['admins', 'staff'], ['staff']],
+		];
+	}
+
+	/**
+	 * @return list<array{0: string, 1: string}>
+	 */
+	public static function invalidGroupsProvider(): array {
+		return [
+			['ghost', 'ghost'],
+			['admins, ghost', 'ghost'],
+			['ghost, phantom', 'ghost, phantom'],
+		];
+	}
+
+	private function makeGroupStub(string $groupId): object {
+		return new class($groupId) {
+			public function __construct(
+				private string $groupId,
+			) {
+			}
+
+			public function getGID(): string {
+				return $this->groupId;
+			}
+		};
 	}
 }
