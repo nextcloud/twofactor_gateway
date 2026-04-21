@@ -365,6 +365,70 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->assertTrue($instance['isComplete']);
 	}
 
+	public function testCatalogInstancePersistsSelectorAndProviderSpecificFieldsWhenSelectorIsNotInBaseSettings(): void {
+		$whatsAppGateway = $this->makeCatalogGatewayMock(
+			'whatsapp',
+			'WhatsApp',
+			[['field' => 'base_url', 'prompt' => 'Base URL']],
+			'provider',
+			[
+				[
+					'id' => 'gowhatsapp',
+					'name' => 'GoWhatsApp',
+					'fields' => [
+						['field' => 'base_url', 'prompt' => 'Base URL', 'optional' => false],
+					],
+				],
+				[
+					'id' => 'whapi',
+					'name' => 'Whapi',
+					'fields' => [
+						['field' => 'api_key', 'prompt' => 'API Key', 'optional' => false],
+					],
+				],
+			],
+		);
+
+		$created = $this->service->createInstance($whatsAppGateway, 'Tenant A', [
+			'provider' => 'whapi',
+			'api_key' => 'key-123',
+		]);
+
+		$fetched = $this->service->getInstance($whatsAppGateway, $created['id']);
+
+		$this->assertSame('whapi', $fetched['config']['provider']);
+		$this->assertSame('key-123', $fetched['config']['api_key']);
+		$this->assertTrue($fetched['isComplete']);
+	}
+
+	public function testDeleteCatalogInstanceRemovesSelectorAndProviderSpecificFields(): void {
+		$whatsAppGateway = $this->makeCatalogGatewayMock(
+			'whatsapp',
+			'WhatsApp',
+			[['field' => 'base_url', 'prompt' => 'Base URL']],
+			'provider',
+			[[
+				'id' => 'whapi',
+				'name' => 'Whapi',
+				'fields' => [
+					['field' => 'api_key', 'prompt' => 'API Key', 'optional' => false],
+				],
+			]],
+		);
+
+		$created = $this->service->createInstance($whatsAppGateway, 'Tenant A', [
+			'provider' => 'whapi',
+			'api_key' => 'key-123',
+		]);
+
+		$this->service->deleteInstance($whatsAppGateway, $created['id']);
+
+		$selectorKey = 'whatsapp:' . $created['id'] . ':provider';
+		$providerFieldKey = 'whatsapp:' . $created['id'] . ':api_key';
+		$this->assertSame('__missing__', $this->appConfig->getValueString('twofactor_gateway', $selectorKey, '__missing__'));
+		$this->assertSame('__missing__', $this->appConfig->getValueString('twofactor_gateway', $providerFieldKey, '__missing__'));
+	}
+
 	public function testSingleCatalogProviderDefaultsSelectorAndMarksInstanceComplete(): void {
 		$whatsAppGateway = $this->makeCatalogGatewayMock(
 			'whatsapp',
