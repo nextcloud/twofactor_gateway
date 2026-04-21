@@ -113,7 +113,8 @@
 				<strong class="wizard-pairing-code-value">{{ wizardPairCode }}</strong>
 			</div>
 			<div v-if="pairingPolling" class="wizard-pairing-polling">
-				<span class="wizard-pairing-polling-label">{{ t('twofactor_gateway', 'Waiting for pairing confirmation…') }}</span>
+				<!-- TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide. -->
+				<span class="wizard-pairing-polling-label">{{ t('twofactor_gateway', 'Waiting for pairing confirmation\u00A0…') }}</span>
 				<NcProgressBar
 					:value="Math.round((pairingAttempt / pairingMaxAttempts) * 100)"
 					type="linear"
@@ -130,7 +131,7 @@
 				<template #icon>
 					<NcLoadingIcon v-if="wizardLoading" :size="20" />
 				</template>
-				{{ wizardLoading ? t('twofactor_gateway', 'Starting guided setup…') : t('twofactor_gateway', 'Start guided setup') }}
+				{{ startWizardButtonLabel() }}
 			</NcButton>
 
 			<NcButton
@@ -241,6 +242,15 @@ export default defineComponent({
 		},
 	},
 	methods: {
+		startWizardButtonLabel(): string {
+			if (this.wizardLoading) {
+				// TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide.
+				return t('twofactor_gateway', 'Starting guided setup\u00A0…')
+			}
+
+			return t('twofactor_gateway', 'Start guided setup')
+		},
+
 		focusWizardRoot() {
 			this.$nextTick(() => {
 				const wizardRoot = this.$refs.wizardRoot as HTMLElement | undefined
@@ -401,7 +411,8 @@ export default defineComponent({
 			})
 			this.wizardLoading = true
 			try {
-				this.wizardMessage = t('twofactor_gateway', 'Starting guided setup…')
+				// TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide.
+				this.wizardMessage = t('twofactor_gateway', 'Starting guided setup\u00A0…')
 				this.wizardMessageType = 'info'
 				const response = await startInteractiveSetup(this.gatewayId, {
 					base_url: this.bootstrapBaseUrl,
@@ -427,7 +438,7 @@ export default defineComponent({
 
 			this.wizardLoading = true
 			try {
-				this.wizardMessage = t('twofactor_gateway', 'Processing guided setup step…')
+				this.wizardMessage = t('twofactor_gateway', 'Processing guided setup step\u00A0…')
 				this.wizardMessageType = 'info'
 				const response = await interactiveSetupStep(this.gatewayId, this.wizardSessionId, action, input)
 				this.applyWizardResponse(response)

@@ -25,7 +25,8 @@
 				{{ t('twofactor_gateway', 'Open Signal → Settings → Linked Devices → Link New Device and scan this code.') }}
 			</p>
 			<div v-if="qrPolling" class="wizard-qr-polling">
-				<span>{{ t('twofactor_gateway', 'Waiting for Signal device link confirmation…') }}</span>
+				<!-- TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide. -->
+				<span>{{ t('twofactor_gateway', 'Waiting for Signal device link confirmation\u00A0…') }}</span>
 				<NcProgressBar
 					:value="Math.round((pollAttempt / pollMaxAttempts) * 100)"
 					type="linear"
@@ -42,7 +43,7 @@
 				<template #icon>
 					<NcLoadingIcon v-if="wizardLoading" :size="20" />
 				</template>
-				{{ wizardLoading ? t('twofactor_gateway', 'Starting guided setup…') : t('twofactor_gateway', 'Start guided setup') }}
+				{{ startWizardButtonLabel() }}
 			</NcButton>
 
 			<NcButton
@@ -135,6 +136,15 @@ export default defineComponent({
 		this.stopPolling()
 	},
 	methods: {
+		startWizardButtonLabel(): string {
+			if (this.wizardLoading) {
+				// TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide.
+				return t('twofactor_gateway', 'Starting guided setup\u00A0…')
+			}
+
+			return t('twofactor_gateway', 'Start guided setup')
+		},
+
 		focusWizardRoot() {
 			this.$nextTick(() => {
 				const wizardRoot = this.$refs.wizardRoot as HTMLElement | undefined
