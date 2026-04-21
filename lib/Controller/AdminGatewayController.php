@@ -39,7 +39,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	/**
-	 * List all available gateways with current configuration instances.
+	 * List all available gateways with current configuration instances
 	 *
 	 * @return DataResponse<Http::STATUS_OK, list<array<string, mixed>>, array{}>
 	 *
@@ -52,7 +52,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	/**
-	 * List assignable Nextcloud groups for per-instance routing.
+	 * List assignable Nextcloud groups for per-instance routing
 	 *
 	 * @return DataResponse<Http::STATUS_OK, list<array{id: string, displayName: string}>, array{}>
 	 *
@@ -75,7 +75,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	/**
-	 * Create a new configuration instance for a gateway.
+	 * Create a new configuration instance for a gateway
 	 *
 	 * @param string $gateway The gateway id (e.g. "sms", "telegram")
 	 * @param string $label Human-readable name for this instance
@@ -103,7 +103,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	/**
-	 * Get a single configuration instance.
+	 * Get a single configuration instance
 	 *
 	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id
@@ -131,7 +131,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	/**
-	 * Update an existing configuration instance.
+	 * Update an existing configuration instance
 	 *
 	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id
@@ -165,7 +165,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	/**
-	 * Delete a configuration instance.
+	 * Delete a configuration instance
 	 *
 	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id
@@ -195,7 +195,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	/**
-	 * Promote an instance to be the default for its gateway.
+	 * Promote an instance to be the default for its gateway
 	 *
 	 * The instance's field values are mirrored to the primary config keys used by
 	 * the 2-FA flow and CLI commands.
@@ -236,7 +236,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	/**
-	 * Send a test message using a specific configuration instance.
+	 * Send a test message using a specific configuration instance
 	 *
 	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id to test
@@ -323,7 +323,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	/**
-	 * Start an interactive setup flow for gateways that support it.
+	 * Start an interactive setup flow for gateways that support it
 	 *
 	 * @param string $gateway The gateway id
 	 * @param array<string, string> $input Initial setup input
@@ -349,7 +349,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	/**
-	 * Continue an interactive setup flow.
+	 * Continue an interactive setup flow
 	 *
 	 * @param string $gateway The gateway id
 	 * @param string $sessionId Interactive setup session id
@@ -377,7 +377,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	/**
-	 * Cancel an interactive setup flow.
+	 * Cancel an interactive setup flow
 	 *
 	 * @param string $gateway The gateway id
 	 * @param string $sessionId Interactive setup session id
