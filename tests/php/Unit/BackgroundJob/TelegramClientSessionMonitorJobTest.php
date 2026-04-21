@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\BackgroundJob;
 
-use OCA\TwoFactorGateway\BackgroundJob\TelegramClientSessionMonitorJob;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\BackgroundJob\TelegramClientSessionMonitorJob;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\ClientSessionHealthService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use PHPUnit\Framework\MockObject\MockObject;
