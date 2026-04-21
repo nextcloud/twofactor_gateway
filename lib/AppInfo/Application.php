@@ -9,14 +9,9 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\AppInfo;
 
-use OCA\TwoFactorGateway\Events\TelegramAuthenticationErrorEvent;
-use OCA\TwoFactorGateway\Events\WhatsAppAuthenticationErrorEvent;
-use OCA\TwoFactorGateway\Events\WhatsAppSessionWarningEvent;
-use OCA\TwoFactorGateway\Listener\NotificationListener;
 use OCA\TwoFactorGateway\Notification\Notifier;
 use OCA\TwoFactorGateway\Provider\Factory;
-use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
-use OCA\TwoFactorGateway\Service\TelegramClientSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Provider\Gateway\BootstrapFactory;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -33,13 +28,10 @@ class Application extends App implements IBootstrap {
 	#[\Override]
 	public function register(IRegistrationContext $context): void {
 		$context->registerNotifierService(Notifier::class);
-		$context->registerEventListener(WhatsAppAuthenticationErrorEvent::class, NotificationListener::class);
-		$context->registerEventListener(WhatsAppSessionWarningEvent::class, NotificationListener::class);
-		$context->registerEventListener(TelegramAuthenticationErrorEvent::class, NotificationListener::class);
 
-		Server::get(GoWhatsAppSessionMonitorJobManager::class)->ensureReconcileJobRegisteredSafely();
-		Server::get(TelegramClientSessionMonitorJobManager::class)->ensureReconcileJobRegisteredSafely();
-
+		foreach (Server::get(BootstrapFactory::class)->getInstances() as $gatewayBootstrap) {
+			$gatewayBootstrap->register($context);
+		}
 		$providerFactory = Server::get(Factory::class);
 		$fqcn = $providerFactory->getFqcnList();
 		foreach ($fqcn as $class) {
