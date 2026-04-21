@@ -12,7 +12,7 @@ namespace OCA\TwoFactorGateway\Provider\Channel\Telegram;
 use OCA\TwoFactorGateway\Events\TelegramAuthenticationErrorEvent;
 use OCA\TwoFactorGateway\Listener\NotificationListener;
 use OCA\TwoFactorGateway\Provider\Gateway\IGatewayBootstrap;
-use OCA\TwoFactorGateway\Service\TelegramClientSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Provider\Channel\Telegram\Service\TelegramClientSessionMonitorJobManager;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\Server;
 
