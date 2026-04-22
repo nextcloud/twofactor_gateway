@@ -37,10 +37,11 @@ class AdminSettingsTest extends TestCase {
 	 */
 	public static function authorizedKeyProvider(): iterable {
 		yield 'allows gateway registry keys' => ['instances:telegram', true];
-		yield 'allows per-instance selector field keys' => ['telegram:abc123:provider', true];
-		yield 'allows per-instance secret field keys' => ['telegram:abc123:api_hash', true];
+		yield 'allows per-instance selector field keys' => ['telegram:a1b2c3d4e5f60708:provider', true];
+		yield 'allows per-instance secret field keys' => ['telegram:a1b2c3d4e5f60708:api_hash', true];
+		yield 'denies per-instance keys with invalid id shape' => ['telegram:abc123:provider', false];
 		yield 'denies legacy single-instance provider keys' => ['telegram_provider_name', false];
 		yield 'denies operational secret keys with underscores' => ['gowhatsapp_webhook_secret', false];
-		yield 'denies deeper colon namespaces' => ['telegram:abc123:provider:extra', false];
+		yield 'denies deeper colon namespaces' => ['telegram:a1b2c3d4e5f60708:provider:extra', false];
 	}
 }

@@ -17,22 +17,14 @@ const openAdminSettings = async (page: Parameters<typeof test>[0]['page']) => {
 	await expect(page.locator('#twofactor-gateway-admin')).toBeVisible()
 	await expect(page.locator('.admin-settings__content')).toBeVisible()
 }
-
-test.afterEach(async ({ request }) => {
-	// Clean up all signal instances created during each test
-	const instances = await listGatewayInstances(request, adminUser, adminPassword, 'signal')
-	for (const instance of instances) {
-		await deleteGatewayInstance(request, adminUser, adminPassword, 'signal', instance.id)
-	}
-})
-
 test('admin settings page renders the gateway list', async ({ page }) => {
 	await openAdminSettings(page)
 	await expect(page.locator('.admin-settings__actions')).toBeVisible()
 })
 
-test('admin can create a new gateway instance', async ({ page, request }) => {
+test('admin can create a new gateway instance', async ({ page, request }, testInfo) => {
 	await openAdminSettings(page)
+	const label = `Playwright Test ${testInfo.workerIndex}-${Date.now()}`
 
 	// Click Add provider configuration
 	await page.getByRole('button', { name: 'Add provider configuration' }).click()
@@ -45,7 +37,7 @@ test('admin can create a new gateway instance', async ({ page, request }) => {
 	await gatewaySelectInput.press('Enter')
 
 	// Fill the label
-	await page.locator('.gateway-instance-modal').getByLabel('Label').fill('Playwright Test')
+	await page.locator('.gateway-instance-modal').getByLabel('Label').fill(label)
 
 	// Fill the URL field
 	await page.locator('.gateway-instance-modal').getByLabel('Gateway URL').fill('http://signal.example.com')
@@ -55,11 +47,11 @@ test('admin can create a new gateway instance', async ({ page, request }) => {
 	await expect(page.locator('.gateway-instance-modal')).not.toBeVisible()
 
 	// The new instance should appear in the list
-	await expect(page.locator('.gateway-instance-card', { hasText: 'Playwright Test' })).toBeVisible()
+	await expect(page.locator('.gateway-instance-card', { hasText: label })).toBeVisible()
 
 	// Cleanup via API
 	const instances = await listGatewayInstances(request, adminUser, adminPassword, 'signal')
-	for (const i of instances.filter((i) => i.label === 'Playwright Test')) {
+	for (const i of instances.filter((i) => i.label === label)) {
 		await deleteGatewayInstance(request, adminUser, adminPassword, 'signal', i.id)
 	}
 })
