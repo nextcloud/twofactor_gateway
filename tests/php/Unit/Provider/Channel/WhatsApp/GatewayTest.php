@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\WhatsApp;
 
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Gateway;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Gateway as GoWhatsAppGateway;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsAppBusiness\Gateway as WhatsAppBusinessGateway;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IAppConfig;
@@ -22,11 +23,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 class GatewayTest extends TestCase {
 	private IAppConfig&MockObject $appConfig;
 	private GoWhatsAppGateway&MockObject $goWhatsAppGateway;
+	private WhatsAppBusinessGateway&MockObject $whatsAppBusinessGateway;
 
 	protected function setUp(): void {
 		parent::setUp();
 		$this->appConfig = $this->createMock(IAppConfig::class);
 		$this->goWhatsAppGateway = $this->createMock(GoWhatsAppGateway::class);
+		$this->whatsAppBusinessGateway = $this->createMock(WhatsAppBusinessGateway::class);
 	}
 
 	public function testCreateSettingsReusesGoWhatsAppFieldsWithoutLegacySessionMetadata(): void {
@@ -58,7 +61,7 @@ class GatewayTest extends TestCase {
 		));
 	}
 
-	public function testProviderCatalogExposesOnlyGoWhatsAppAsWhatsApp(): void {
+	public function testProviderCatalogExposesGoWhatsAppAndWhatsAppBusiness(): void {
 		$this->goWhatsAppGateway
 			->method('getSettings')
 			->willReturn(new Settings(
@@ -66,16 +69,22 @@ class GatewayTest extends TestCase {
 				id: 'gowhatsapp',
 				fields: [new FieldDefinition(field: 'base_url', prompt: 'Base URL')],
 			));
-		$this->goWhatsAppGateway
-			->method('getProviderId')
-			->willReturn('gowhatsapp');
+		$this->whatsAppBusinessGateway
+			->method('getSettings')
+			->willReturn(new Settings(
+				name: 'WhatsApp Business',
+				id: 'whatsappbusiness',
+				fields: [new FieldDefinition(field: 'phone_number_id', prompt: 'Phone number ID')],
+			));
 
 		$gateway = $this->newGateway();
 		$catalog = $gateway->getProviderCatalog();
 
-		$this->assertCount(1, $catalog);
+		$this->assertCount(2, $catalog);
 		$this->assertSame('gowhatsapp', $catalog[0]['id']);
 		$this->assertSame('WhatsApp', $catalog[0]['name']);
+		$this->assertSame('whatsappbusiness', $catalog[1]['id']);
+		$this->assertSame('WhatsApp Business', $catalog[1]['name']);
 	}
 
 	public function testSendDelegatesToGoWhatsAppGateway(): void {
@@ -108,10 +117,24 @@ class GatewayTest extends TestCase {
 		$gateway->syncAfterConfigurationChange();
 	}
 
+	public function testSendDelegatesToWhatsAppBusinessGatewayWhenProviderIsConfigured(): void {
+		$this->goWhatsAppGateway->expects($this->never())->method('send');
+		$this->whatsAppBusinessGateway->expects($this->once())
+			->method('withRuntimeConfig')
+			->willReturn($this->whatsAppBusinessGateway);
+		$this->whatsAppBusinessGateway->expects($this->once())
+			->method('send')
+			->with('+55 (11) 99999-9999', 'codigo 123', ['provider' => 'whatsappbusiness']);
+
+		$gateway = $this->newGateway()->withRuntimeConfig(['provider' => 'whatsappbusiness']);
+		$gateway->send('+55 (11) 99999-9999', 'codigo 123', ['provider' => 'whatsappbusiness']);
+	}
+
 	private function newGateway(): Gateway {
 		return new Gateway(
 			$this->appConfig,
 			$this->goWhatsAppGateway,
+			$this->whatsAppBusinessGateway,
 		);
 	}
 }
