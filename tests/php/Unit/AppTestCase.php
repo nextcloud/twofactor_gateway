@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit;
 
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
 use OCP\IAppConfig;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;

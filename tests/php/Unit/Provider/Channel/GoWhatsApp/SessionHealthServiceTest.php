@@ -9,9 +9,10 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\GoWhatsApp;
 
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppAuthenticationErrorEvent;
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppSessionWarningEvent;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\BackgroundJob\GoWhatsAppSessionMonitorJob;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\DeviceStateFetcher;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Events\WhatsAppAuthenticationErrorEvent;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Events\WhatsAppSessionWarningEvent;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\HealthRiskScorer;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\SessionHealthService;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
@@ -133,7 +134,7 @@ class SessionHealthServiceTest extends AppTestCase {
 		$this->fetcher->method('fetch')->willReturn('logged_out');
 		$this->jobList->expects($this->once())
 			->method('remove')
-			->with(\OCA\TwoFactorGateway\Provider\Channel\WhatsApp\BackgroundJob\GoWhatsAppSessionMonitorJob::class, null);
+			->with(GoWhatsAppSessionMonitorJob::class, null);
 
 		$this->eventDispatcher->expects($this->once())
 			->method('dispatchTyped')

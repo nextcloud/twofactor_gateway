@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\WhatsApp\Notification;
 
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Notification\WhatsAppAdminNotificationFormatter;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Notification\WhatsAppAdminNotificationFormatter;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Notification\INotification;
