@@ -54,6 +54,9 @@ class AdminGatewayController extends OCSController {
 	/**
 	 * List assignable Nextcloud groups for per-instance routing
 	 *
+	 * @param string $query Optional search term used to filter groups server-side
+	 * @param int $limit Maximum number of groups returned (bounded server-side)
+	 *
 	 * @return DataResponse<Http::STATUS_OK, list<array{id: string, displayName: string}>, array{}>
 	 *
 	 * 200: OK
