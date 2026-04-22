@@ -82,7 +82,7 @@ class GatewayTest extends TestCase {
 		$this->goWhatsAppGateway
 			->method('getSettings')
 			->willReturn(new Settings(
-				name: 'GoWhatsApp',
+				name: 'WhatsApp web',
 				id: 'gowhatsapp',
 				fields: [new FieldDefinition(field: 'base_url', prompt: 'Base URL')],
 			));
@@ -99,7 +99,7 @@ class GatewayTest extends TestCase {
 
 		$this->assertCount(2, $catalog);
 		$this->assertSame('gowhatsapp', $catalog[0]['id']);
-		$this->assertSame('WhatsApp', $catalog[0]['name']);
+		$this->assertSame('WhatsApp web', $catalog[0]['name']);
 		$this->assertSame('whatsappbusiness', $catalog[1]['id']);
 		$this->assertSame('WhatsApp Business', $catalog[1]['name']);
 	}
