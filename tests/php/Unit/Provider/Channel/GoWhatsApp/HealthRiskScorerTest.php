@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\GoWhatsApp;
 
-use OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\HealthRiskScorer;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\HealthRiskScorer;
 use PHPUnit\Framework\TestCase;
 
 class HealthRiskScorerTest extends TestCase {

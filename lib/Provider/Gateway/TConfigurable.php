@@ -13,7 +13,13 @@ use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCP\IAppConfig;
 
+/**
+ * @property array<string, string> $runtimeConfig
+ */
 trait TConfigurable {
+	/** @var array<string, string>|null */
+	protected ?array $runtimeConfig = null;
+
 	/**
 	 * @return string|static
 	 * @throws ConfigurationException
@@ -23,10 +29,15 @@ trait TConfigurable {
 			throw new ConfigurationException('Invalid method ' . $name);
 		}
 		$field = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $matches['field']));
+		$runtimeConfig = is_array($this->runtimeConfig) ? $this->runtimeConfig : null;
 		$key = $this->keyFromField($field);
 
 		switch ($matches['operation']) {
 			case 'get':
+				if ($runtimeConfig !== null && array_key_exists($field, $runtimeConfig)) {
+					return (string)$runtimeConfig[$field];
+				}
+
 				$val = (string)$this->getAppConfig()->getValueString(Application::APP_ID, $key, '');
 				if ($val === '') {
 					throw new ConfigurationException('No value set for ' . $field);
@@ -34,10 +45,20 @@ trait TConfigurable {
 				return $val;
 
 			case 'set':
+				if ($runtimeConfig !== null) {
+					$this->runtimeConfig[$field] = (string)($args[0] ?? '');
+					return $this;
+				}
+
 				$this->getAppConfig()->setValueString(Application::APP_ID, $key, (string)($args[0] ?? ''));
 				return $this;
 
 			case 'delete':
+				if ($runtimeConfig !== null) {
+					unset($this->runtimeConfig[$field]);
+					return $this;
+				}
+
 				$this->getAppConfig()->deleteKey(Application::APP_ID, $key);
 				return $this;
 		}

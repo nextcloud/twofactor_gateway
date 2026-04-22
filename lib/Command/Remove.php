@@ -11,7 +11,7 @@ namespace OCA\TwoFactorGateway\Command;
 
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory;
-use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -25,7 +25,7 @@ class Remove extends Command {
 
 	public function __construct(
 		private Factory $gatewayFactory,
-		private GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager,
+		private GatewayConfigurationSyncService $gatewayConfigurationSyncService,
 	) {
 		parent::__construct('twofactorauth:gateway:remove');
 		$this->setDescription('Remove a gateway configuration');
@@ -39,7 +39,7 @@ class Remove extends Command {
 		$this->addArgument(
 			'gateway',
 			InputArgument::OPTIONAL,
-			'The name of the gateway: ' . implode(', ', array_keys($this->gateways))
+			'The gateway id: ' . implode(', ', array_keys($this->gateways))
 		);
 	}
 
@@ -48,15 +48,22 @@ class Remove extends Command {
 		$gatewayName = strtolower((string)$input->getArgument('gateway'));
 		if (!array_key_exists($gatewayName, $this->gateways)) {
 			$helper = new QuestionHelper();
-			$choiceQuestion = new ChoiceQuestion('Please choose a provider:', array_keys($this->gateways));
-			$selected = $helper->ask($input, $output, $choiceQuestion);
-			$gateway = $this->gateways[$selected];
+			$labelsById = GatewayChoiceFormatter::gatewayLabels($this->gateways);
+			$choiceQuestion = new ChoiceQuestion('Please choose a provider:', array_values($labelsById));
+			$selectedLabel = $helper->ask($input, $output, $choiceQuestion);
+			$selectedGatewayId = GatewayChoiceFormatter::resolveIdFromLabel($labelsById, (string)$selectedLabel);
+			if ($selectedGatewayId === null) {
+				$output->writeln('<error>Invalid gateway selection.</error>');
+				return Command::FAILURE;
+			}
+			$gatewayName = $selectedGatewayId;
+			$gateway = $this->gateways[$selectedGatewayId];
 		} else {
 			$gateway = $this->gateways[$gatewayName];
 		}
 
 		$gateway->remove();
-		$this->goWhatsAppSessionMonitorJobManager->sync();
+		$this->gatewayConfigurationSyncService->syncAfterConfigurationChange($gateway);
 		$output->writeln("Removed configuration for gateway $gatewayName");
 		return 0;
 	}
