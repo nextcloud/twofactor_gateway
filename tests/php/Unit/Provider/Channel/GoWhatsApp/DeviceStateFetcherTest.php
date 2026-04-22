@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\GoWhatsApp;
 
-use OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\DeviceStateFetcher;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\DeviceStateFetcher;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;

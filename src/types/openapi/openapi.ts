@@ -4,23 +4,6 @@
  */
 
 export type paths = {
-    "/index.php/apps/twofactor_gateway/gowhatsapp/webhook": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Ingest a signed GoWhatsApp webhook event for hybrid monitoring */
-        post: operations["go_whats_app_webhook-ingest"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/ocs/v2.php/apps/twofactor_gateway/settings/{gateway}/verification": {
         parameters: {
             query?: never;
@@ -73,6 +56,23 @@ export type paths = {
         patch?: never;
         trace?: never;
     };
+    "/index.php/apps/twofactor_gateway/gowhatsapp/webhook": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ingest a signed GoWhatsApp webhook event for hybrid monitoring */
+        post: operations["go_whats_app_webhook-ingest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 };
 export type webhooks = Record<string, never>;
 export type components = {
@@ -100,65 +100,6 @@ export type components = {
 };
 export type $defs = Record<string, never>;
 export interface operations {
-    "go_whats_app_webhook-ingest": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Event accepted (processed or intentionally skipped) */
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        processed: boolean;
-                        message: string;
-                    };
-                };
-            };
-            /** @description Malformed request body */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        processed: boolean;
-                        message: string;
-                    };
-                };
-            };
-            /** @description Invalid or missing HMAC signature */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        processed: boolean;
-                        message: string;
-                    };
-                };
-            };
-            /** @description Webhook ingestion is disabled */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        processed: boolean;
-                        message: string;
-                    };
-                };
-            };
-        };
-    };
     "settings-get-verification-state": {
         parameters: {
             query?: never;
@@ -326,6 +267,65 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
+                        message: string;
+                    };
+                };
+            };
+        };
+    };
+    "go_whats_app_webhook-ingest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event accepted (processed or intentionally skipped) */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        processed: boolean;
+                        message: string;
+                    };
+                };
+            };
+            /** @description Malformed request body */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        processed: boolean;
+                        message: string;
+                    };
+                };
+            };
+            /** @description Invalid or missing HMAC signature */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        processed: boolean;
+                        message: string;
+                    };
+                };
+            };
+            /** @description Webhook ingestion is disabled */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        processed: boolean;
                         message: string;
                     };
                 };

@@ -12,6 +12,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 
 export default createAppConfig({
 	main: path.join(__dirname, 'src', 'main.js'),
+	admin: path.join(__dirname, 'src', 'admin.ts'),
 }, {
 	config: {
 		plugins: [
