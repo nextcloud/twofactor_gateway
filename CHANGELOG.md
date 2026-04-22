@@ -15,6 +15,14 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 2.4.0 - 2026-04-22
+### Added
+- #993 add command descriptions
+- #1001 add admin settings ui for gateway multi-instance configuration
+
+### Changed
+- #1005 #1007 bump dependencies
+
 ## 2.3.0 - 2026-04-14
 ### Added
 - #967 add Cegedim Vortext SMS gateway
