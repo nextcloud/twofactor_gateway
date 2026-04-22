@@ -26,10 +26,10 @@ use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\ClientCli\Se
 use Symfony\Component\Console\Application;
 
 $application = new Application('Telegram CLI');
-$application->addCommand(new Complete2faLogin());
-$application->addCommand(new GetAccountInfo());
-$application->addCommand(new GetLoginQr());
-$application->addCommand(new Login());
-$application->addCommand(new ResetLogin());
-$application->addCommand(new SendMessage());
+$application->add(new Complete2faLogin());
+$application->add(new GetAccountInfo());
+$application->add(new GetLoginQr());
+$application->add(new Login());
+$application->add(new ResetLogin());
+$application->add(new SendMessage());
 $application->run();
