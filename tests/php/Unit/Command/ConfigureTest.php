@@ -107,4 +107,58 @@ class ConfigureTest extends AppTestCase {
 		$this->assertSame('Default', $registry[0]['label']);
 		$this->assertTrue($registry[0]['default']);
 	}
+
+	public function testConfigureUpdatesExistingDefaultInstanceInsteadOfAppending(): void {
+		$this->makeInMemoryAppConfig();
+
+		/** @var \OC\Console\Application */
+		$application = Server::get(\OC\Console\Application::class);
+		$output = new ConsoleOutputSpy();
+		$input = new ArrayInput(['twofactorauth:gateway:configure']);
+		$application->loadCommands($input, $output);
+		$application->setAutoExit(false);
+
+		$gatewayFactory = Server::get(\OCA\TwoFactorGateway\Provider\Gateway\Factory::class);
+		$gatewayChoices = [];
+		foreach ($gatewayFactory->getFqcnList() as $fqcn) {
+			$gatewayChoices[] = $gatewayFactory->get($fqcn)->getProviderId();
+		}
+		$smsGatewayIndex = array_search('sms', $gatewayChoices);
+		$this->assertNotFalse($smsGatewayIndex, 'SMS gateway not found');
+
+		$factory = new SMSFactory();
+		$providerFqcns = $factory->getFqcnList();
+		$this->assertGreaterThanOrEqual(2, count($providerFqcns), 'SMS configure regression test requires at least two SMS providers');
+		$firstProviderSettings = $factory->get($providerFqcns[0])->getSettings();
+		$secondProviderSettings = $factory->get($providerFqcns[1])->getSettings();
+
+		$firstStream = [(string)$smsGatewayIndex, '0'];
+		foreach ($firstProviderSettings->fields as $field) {
+			$firstStream[] = 'value-one';
+		}
+		$input->setStream(self::createStream($firstStream));
+		$this->assertSame(0, $application->run($input, $output));
+
+		$registryJson = self::$store[Application::APP_ID]['instances:sms'] ?? null;
+		$this->assertNotNull($registryJson);
+		$firstRegistry = json_decode((string)$registryJson, true);
+		$this->assertIsArray($firstRegistry);
+		$this->assertCount(1, $firstRegistry);
+		$instanceId = $firstRegistry[0]['id'];
+
+		$secondStream = [(string)$smsGatewayIndex, '1'];
+		foreach ($secondProviderSettings->fields as $field) {
+			$secondStream[] = 'value-two';
+		}
+		$input->setStream(self::createStream($secondStream));
+		$this->assertSame(0, $application->run($input, $output));
+
+		$registryJson = self::$store[Application::APP_ID]['instances:sms'] ?? null;
+		$this->assertNotNull($registryJson);
+		$secondRegistry = json_decode((string)$registryJson, true);
+		$this->assertIsArray($secondRegistry);
+		$this->assertCount(1, $secondRegistry);
+		$this->assertSame($instanceId, $secondRegistry[0]['id']);
+		$this->assertTrue((bool)$secondRegistry[0]['default']);
+	}
 }

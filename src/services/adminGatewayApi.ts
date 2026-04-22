@@ -121,8 +121,10 @@ export async function listGateways(): Promise<GatewayInfo[]> {
 /**
  * List all assignable groups for instance routing.
  */
-export async function listGroups(): Promise<GatewayGroup[]> {
-	const response = await axios.get(generateOcsUrl('/apps/twofactor_gateway/admin/groups'))
+export async function listGroups(query = '', limit = 200): Promise<GatewayGroup[]> {
+	const response = await axios.get(generateOcsUrl('/apps/twofactor_gateway/admin/groups'), {
+		params: { query, limit },
+	})
 	return ocsData<GatewayGroup[]>(response)
 }
 

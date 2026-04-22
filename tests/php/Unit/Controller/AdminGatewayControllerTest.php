@@ -129,7 +129,7 @@ class AdminGatewayControllerTest extends TestCase {
 		$groupB->method('getGID')->willReturn('alpha');
 		$groupB->method('getDisplayName')->willReturn('Alpha');
 
-		$this->groupManager->method('search')->with('')->willReturn([$groupA, $groupB]);
+		$this->groupManager->method('search')->with('', 200, 0)->willReturn([$groupA, $groupB]);
 
 		$response = $this->controller->getGroups();
 
@@ -137,6 +137,24 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->assertSame([
 			['id' => 'admins', 'displayName' => 'Admins'],
 			['id' => 'alpha', 'displayName' => 'Alpha'],
+		], $response->getData());
+	}
+
+	public function testGetGroupsAppliesQueryAndLimitBounds(): void {
+		$group = $this->createMock(IGroup::class);
+		$group->method('getGID')->willReturn('team-a');
+		$group->method('getDisplayName')->willReturn('Team A');
+
+		$this->groupManager->expects($this->once())
+			->method('search')
+			->with('team', 500, 0)
+			->willReturn([$group]);
+
+		$response = $this->controller->getGroups('team', 1000);
+
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
+		$this->assertSame([
+			['id' => 'team-a', 'displayName' => 'Team A'],
 		], $response->getData());
 	}
 

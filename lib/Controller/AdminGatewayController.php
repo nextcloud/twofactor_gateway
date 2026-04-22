@@ -60,13 +60,14 @@ class AdminGatewayController extends OCSController {
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'GET', url: '/admin/groups')]
-	public function getGroups(): DataResponse {
+	public function getGroups(string $query = '', int $limit = 200): DataResponse {
+		$limit = max(1, min(500, $limit));
 		$groups = array_map(
 			static fn ($group): array => [
 				'id' => $group->getGID(),
 				'displayName' => $group->getDisplayName(),
 			],
-			$this->groupManager->search(''),
+			$this->groupManager->search($query, $limit, 0),
 		);
 
 		usort($groups, static fn (array $left, array $right): int => strcasecmp($left['displayName'], $right['displayName']));
