@@ -13,11 +13,15 @@ use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Factory;
 use PHPUnit\Framework\TestCase;
 
 class FactoryTest extends TestCase {
-	public function testDriverGatewayListContainsGoWhatsAppGateway(): void {
+	public function testDriverGatewayListContainsGoWhatsAppGatewayAndWhatsAppBusinessGateway(): void {
 		$factory = new Factory();
 
 		$this->assertContains(
 			'OCA\\TwoFactorGateway\\Provider\\Channel\\WhatsApp\\Provider\\Drivers\\GoWhatsApp\\Gateway',
+			$factory->getFqcnList(),
+		);
+		$this->assertContains(
+			'OCA\\TwoFactorGateway\\Provider\\Channel\\WhatsApp\\Provider\\Drivers\\WhatsAppBusiness\\Gateway',
 			$factory->getFqcnList(),
 		);
 	}

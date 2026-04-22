@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp;
 
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Gateway as GoWhatsAppGateway;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsAppBusiness\Gateway as WhatsAppBusinessGateway;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
@@ -26,13 +27,14 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IPro
 	public function __construct(
 		public IAppConfig $appConfig,
 		private GoWhatsAppGateway $goWhatsAppGateway,
+		private WhatsAppBusinessGateway $whatsAppBusinessGateway,
 	) {
 		parent::__construct($appConfig);
 	}
 
 	#[\Override]
 	public function createSettings(): Settings {
-		$driverSettings = $this->goWhatsAppGateway->getSettings();
+		$driverSettings = $this->delegateDriver()->getSettings();
 		$fields = array_values(array_filter(
 			$driverSettings->fields,
 			static fn (FieldDefinition $field): bool => $field->field !== 'session_id',
@@ -70,17 +72,27 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IPro
 
 	#[\Override]
 	public function getProviderCatalog(): array {
-		$driverSettings = $this->goWhatsAppGateway->getSettings();
-		$fields = array_values(array_filter(
-			$driverSettings->fields,
+		$goSettings = $this->goWhatsAppGateway->getSettings();
+		$goFields = array_values(array_filter(
+			$goSettings->fields,
 			static fn (FieldDefinition $field): bool => $field->field !== 'session_id',
 		));
 
-		return [[
-			'id' => 'gowhatsapp',
-			'name' => 'WhatsApp',
-			'fields' => $fields,
-		]];
+		$businessSettings = $this->whatsAppBusinessGateway->getSettings();
+		$businessFields = array_values($businessSettings->fields);
+
+		return [
+			[
+				'id' => 'gowhatsapp',
+				'name' => 'WhatsApp',
+				'fields' => $goFields,
+			],
+			[
+				'id' => 'whatsappbusiness',
+				'name' => 'WhatsApp Business',
+				'fields' => $businessFields,
+			],
+		];
 	}
 
 	#[\Override]
@@ -105,6 +117,10 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IPro
 
 	#[\Override]
 	public function enrichTestResult(array $instanceConfig, string $identifier = ''): array {
+		if (($instanceConfig['provider'] ?? '') === 'whatsappbusiness') {
+			return $this->whatsAppBusinessGateway->enrichTestResult($instanceConfig, $identifier);
+		}
+
 		return $this->goWhatsAppGateway->enrichTestResult($instanceConfig, $identifier);
 	}
 
@@ -113,12 +129,20 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IPro
 		$this->delegateDriver()->syncAfterConfigurationChange();
 	}
 
-	private function delegateDriver(): GoWhatsAppGateway {
+	private function delegateDriver(): GoWhatsAppGateway|WhatsAppBusinessGateway {
 		if ($this->runtimeConfig === null && $this->settings === null) {
 			return $this->goWhatsAppGateway;
 		}
 
-		$config = is_array($this->runtimeConfig) ? $this->runtimeConfig : $this->getConfiguration($this->getSettings());
+		$config = $this->runtimeConfig;
+		if (!is_array($config)) {
+			$config = $this->getConfiguration($this->getSettings());
+		}
+
+		if (($config['provider'] ?? 'gowhatsapp') === 'whatsappbusiness') {
+			return $this->whatsAppBusinessGateway->withRuntimeConfig($config);
+		}
+
 		return $this->goWhatsAppGateway->withRuntimeConfig($config);
 	}
 }
