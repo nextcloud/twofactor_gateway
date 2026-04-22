@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\WhatsApp;
 
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Factory;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Gateway;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Gateway as GoWhatsAppGateway;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsAppBusiness\Gateway as WhatsAppBusinessGateway;
@@ -22,14 +23,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GatewayTest extends TestCase {
 	private IAppConfig&MockObject $appConfig;
+	private Factory&MockObject $whatsAppFactory;
 	private GoWhatsAppGateway&MockObject $goWhatsAppGateway;
 	private WhatsAppBusinessGateway&MockObject $whatsAppBusinessGateway;
 
 	protected function setUp(): void {
 		parent::setUp();
 		$this->appConfig = $this->createMock(IAppConfig::class);
+		$this->whatsAppFactory = $this->createMock(Factory::class);
 		$this->goWhatsAppGateway = $this->createMock(GoWhatsAppGateway::class);
 		$this->whatsAppBusinessGateway = $this->createMock(WhatsAppBusinessGateway::class);
+
+		$this->whatsAppFactory->method('get')->willReturnMap([
+			['gowhatsapp', $this->goWhatsAppGateway],
+			['whatsappbusiness', $this->whatsAppBusinessGateway],
+			['OCA\\TwoFactorGateway\\Provider\\Channel\\WhatsApp\\Provider\\Drivers\\GoWhatsApp\\Gateway', $this->goWhatsAppGateway],
+			['OCA\\TwoFactorGateway\\Provider\\Channel\\WhatsApp\\Provider\\Drivers\\WhatsAppBusiness\\Gateway', $this->whatsAppBusinessGateway],
+		]);
 	}
 
 	public function testCreateSettingsReusesGoWhatsAppFieldsWithoutLegacySessionMetadata(): void {
@@ -51,7 +61,7 @@ class GatewayTest extends TestCase {
 		$this->assertSame('WhatsApp', $settings->name);
 		$this->assertTrue($settings->allowMarkdown);
 		$this->assertSame('Driver instructions', $settings->instructions);
-		$this->assertSame(['base_url', 'device_name'], array_map(
+		$this->assertSame(['provider', 'base_url', 'device_name'], array_map(
 			static fn (FieldDefinition $field): string => $field->field,
 			$settings->fields,
 		));
@@ -62,6 +72,13 @@ class GatewayTest extends TestCase {
 	}
 
 	public function testProviderCatalogExposesGoWhatsAppAndWhatsAppBusiness(): void {
+		$this->whatsAppFactory
+			->method('getFqcnList')
+			->willReturn([
+				'OCA\\TwoFactorGateway\\Provider\\Channel\\WhatsApp\\Provider\\Drivers\\GoWhatsApp\\Gateway',
+				'OCA\\TwoFactorGateway\\Provider\\Channel\\WhatsApp\\Provider\\Drivers\\WhatsAppBusiness\\Gateway',
+			]);
+
 		$this->goWhatsAppGateway
 			->method('getSettings')
 			->willReturn(new Settings(
@@ -88,6 +105,11 @@ class GatewayTest extends TestCase {
 	}
 
 	public function testSendDelegatesToGoWhatsAppGateway(): void {
+		$this->whatsAppFactory->expects($this->once())
+			->method('get')
+			->with('gowhatsapp')
+			->willReturn($this->goWhatsAppGateway);
+
 		$this->goWhatsAppGateway->expects($this->once())
 			->method('send')
 			->with('+55 (11) 99999-9999', 'codigo 123', ['source' => 'test']);
@@ -99,6 +121,10 @@ class GatewayTest extends TestCase {
 	public function testCliConfigureDelegatesToGoWhatsAppGateway(): void {
 		$input = $this->createMock(InputInterface::class);
 		$output = $this->createMock(OutputInterface::class);
+		$this->whatsAppFactory->expects($this->once())
+			->method('get')
+			->with('gowhatsapp')
+			->willReturn($this->goWhatsAppGateway);
 
 		$this->goWhatsAppGateway->expects($this->once())
 			->method('cliConfigure')
@@ -110,6 +136,11 @@ class GatewayTest extends TestCase {
 	}
 
 	public function testSyncAfterConfigurationChangeDelegatesToGoWhatsAppGateway(): void {
+		$this->whatsAppFactory->expects($this->once())
+			->method('get')
+			->with('gowhatsapp')
+			->willReturn($this->goWhatsAppGateway);
+
 		$this->goWhatsAppGateway->expects($this->once())
 			->method('syncAfterConfigurationChange');
 
@@ -119,6 +150,11 @@ class GatewayTest extends TestCase {
 
 	public function testSendDelegatesToWhatsAppBusinessGatewayWhenProviderIsConfigured(): void {
 		$this->goWhatsAppGateway->expects($this->never())->method('send');
+		$this->whatsAppFactory->expects($this->once())
+			->method('get')
+			->with('whatsappbusiness')
+			->willReturn($this->whatsAppBusinessGateway);
+
 		$this->whatsAppBusinessGateway->expects($this->once())
 			->method('withRuntimeConfig')
 			->willReturn($this->whatsAppBusinessGateway);
@@ -133,8 +169,7 @@ class GatewayTest extends TestCase {
 	private function newGateway(): Gateway {
 		return new Gateway(
 			$this->appConfig,
-			$this->goWhatsAppGateway,
-			$this->whatsAppBusinessGateway,
+			$this->whatsAppFactory,
 		);
 	}
 }
