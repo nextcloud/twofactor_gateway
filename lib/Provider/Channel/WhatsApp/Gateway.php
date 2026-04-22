@@ -89,7 +89,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IPro
 			$settings = $provider->getSettings();
 			$catalog[] = [
 				'id' => (string)($settings->id ?? $provider->getProviderId()),
-				'name' => ($settings->id ?? $provider->getProviderId()) === 'gowhatsapp' ? 'WhatsApp' : $settings->name,
+				'name' => $settings->name,
 				'fields' => array_values(array_filter(
 					$settings->fields,
 					static fn (FieldDefinition $field): bool => $field->field !== 'session_id' && $field->field !== $selectorField,
