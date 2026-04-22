@@ -12,7 +12,8 @@ namespace OCA\TwoFactorGateway\Command;
 use OCA\TwoFactorGateway\Exception\InvalidProviderException;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory;
-use OCA\TwoFactorGateway\Service\GoWhatsAppSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Service\GatewayConfigService;
+use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -26,7 +27,8 @@ class Configure extends Command {
 
 	public function __construct(
 		private Factory $gatewayFactory,
-		private GoWhatsAppSessionMonitorJobManager $goWhatsAppSessionMonitorJobManager,
+		private GatewayConfigurationSyncService $gatewayConfigurationSyncService,
+		private GatewayConfigService $configService,
 	) {
 		parent::__construct('twofactorauth:gateway:configure');
 		$this->setDescription('Configure a gateway for sending messages');
@@ -40,7 +42,7 @@ class Configure extends Command {
 		$this->addArgument(
 			'gateway',
 			InputArgument::OPTIONAL,
-			'The name of the gateway: ' . implode(', ', array_keys($this->gateways))
+			'The gateway id: ' . implode(', ', array_keys($this->gateways))
 		);
 	}
 
@@ -48,21 +50,69 @@ class Configure extends Command {
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$gatewayName = strtolower((string)$input->getArgument('gateway'));
 		if (!array_key_exists($gatewayName, $this->gateways)) {
-			$helper = new QuestionHelper();
-			$choiceQuestion = new ChoiceQuestion('Please choose a provider:', array_keys($this->gateways));
-			$selectedIndex = $helper->ask($input, $output, $choiceQuestion);
-			$gateway = $this->gateways[$selectedIndex];
+			if (count($this->gateways) === 0) {
+				$output->writeln('<error>No gateway is available for configuration.</error>');
+				return 1;
+			}
+
+			if (count($this->gateways) === 1) {
+				$gateway = reset($this->gateways);
+			} else {
+				$helper = new QuestionHelper();
+				$labelsById = GatewayChoiceFormatter::gatewayLabels($this->gateways);
+				$choiceQuestion = new ChoiceQuestion('Please choose a provider:', array_values($labelsById));
+				$selectedLabel = $helper->ask($input, $output, $choiceQuestion);
+				$selectedGatewayId = GatewayChoiceFormatter::resolveIdFromLabel($labelsById, (string)$selectedLabel);
+				if ($selectedGatewayId === null) {
+					$output->writeln('<error>Invalid gateway selection.</error>');
+					return Command::FAILURE;
+				}
+				$gateway = $this->gateways[$selectedGatewayId];
+			}
 		} else {
 			$gateway = $this->gateways[$gatewayName];
 		}
 
+		$existingDefaultId = $this->findDefaultInstanceId($gateway);
+
 		try {
 			$result = $gateway->cliConfigure($input, $output);
-			$this->goWhatsAppSessionMonitorJobManager->sync();
-			return $result;
+			$this->gatewayConfigurationSyncService->syncAfterConfigurationChange($gateway);
 		} catch (InvalidProviderException $e) {
 			$output->writeln("<error>Invalid gateway $gatewayName</error>");
 			return 1;
 		}
+
+		if ($result !== Command::SUCCESS) {
+			return $result;
+		}
+
+		$config = $gateway->getConfiguration();
+		if ($existingDefaultId !== null) {
+			$existingDefault = $this->configService->getInstance($gateway, $existingDefaultId);
+			$this->configService->updateInstance(
+				$gateway,
+				$existingDefaultId,
+				$existingDefault['label'],
+				$config,
+				$existingDefault['groupIds'],
+				$existingDefault['priority'],
+			);
+			$this->configService->setDefaultInstance($gateway, $existingDefaultId);
+			return Command::SUCCESS;
+		}
+
+		$this->configService->createInstance($gateway, 'Default', $config);
+
+		return Command::SUCCESS;
+	}
+
+	private function findDefaultInstanceId(AGateway $gateway): ?string {
+		foreach ($this->configService->listInstances($gateway) as $instance) {
+			if ($instance['default']) {
+				return $instance['id'];
+			}
+		}
+		return null;
 	}
 }

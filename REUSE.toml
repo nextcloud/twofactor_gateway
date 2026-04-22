@@ -28,10 +28,15 @@ path = [
 	"tests/psalm-baseline.xml",
 	"l10n/*.js",
 	"l10n/*.json",
+	"openapi-administration.json",
+	"openapi-full.json",
 	"openapi.json",
 	"src/types/openapi/openapi.ts",
 	"vendor-bin/**/composer.json",
-	"vendor-bin/**/composer.lock"
+	"vendor-bin/**/composer.lock",
+	"tsconfig.json",
+	"tests/integration/composer.json",
+	"tests/integration/composer.lock"
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2025 LibreCode coop and contributors"

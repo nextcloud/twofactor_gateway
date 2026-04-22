@@ -89,9 +89,10 @@ URL: https://www.telegram.org/
 Stability: Experimental
 
 This gateway allows you to send messages via the Telegram protocol using the Telegram
-CLI client. Once the administrator has finished the general Telegram authentication gateway
-setup (Check out the [Administrator Documentation] for further details), you need to follow
-these instructions to activate the use of the gateway for a user:
+client API. Once the administrator has finished the general Telegram authentication gateway
+setup in the native Nextcloud administration wizard (Check out the [Administrator Documentation]
+for further details), you need to follow these instructions to activate the use of the gateway
+for a user:
 
 1. Use your full phone number including country code (e.g. +491751234567) as
    identifier or your Telegram user name preceded by an `@` (e.g. `@myusername`).

@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\GoWhatsApp;
 
-use OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\SessionHealthService;
-use OCA\TwoFactorGateway\Provider\Channel\GoWhatsApp\WebhookIngestionService;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\SessionHealthService;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\WebhookIngestionService;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\AppFramework\Utility\ITimeFactory;
 use PHPUnit\Framework\Attributes\DataProvider;

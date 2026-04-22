@@ -30,5 +30,9 @@
 		<command>OCA\TwoFactorGateway\Command\Status</command>
 		<command>OCA\TwoFactorGateway\Command\Test</command>
 		<command>OCA\TwoFactorGateway\Command\Remove</command>
+		<command>OCA\TwoFactorGateway\Command\Routing</command>
 	</commands>
+	<settings>
+		<admin>OCA\TwoFactorGateway\Settings\AdminSettings</admin>
+	</settings>
 </info>
