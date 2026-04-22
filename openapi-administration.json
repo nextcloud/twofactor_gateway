@@ -163,6 +163,25 @@
                 ],
                 "parameters": [
                     {
+                        "name": "query",
+                        "in": "query",
+                        "description": "Optional search term used to filter groups server-side",
+                        "schema": {
+                            "type": "string",
+                            "default": ""
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Maximum number of groups returned (bounded server-side)",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 200
+                        }
+                    },
+                    {
                         "name": "OCS-APIRequest",
                         "in": "header",
                         "description": "Required to be true for the API request to pass",
