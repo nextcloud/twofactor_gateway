@@ -11,10 +11,10 @@ namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp;
 
 use OCA\TwoFactorGateway\Listener\NotificationListener;
 use OCA\TwoFactorGateway\Notification\AdminNotificationFormatterRegistry;
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppAuthenticationErrorEvent;
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Events\WhatsAppSessionWarningEvent;
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Notification\WhatsAppAdminNotificationFormatter;
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Events\WhatsAppAuthenticationErrorEvent;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Events\WhatsAppSessionWarningEvent;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Notification\WhatsAppAdminNotificationFormatter;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
 use OCA\TwoFactorGateway\Provider\Gateway\IGatewayBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
 use OCP\Server;

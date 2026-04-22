@@ -7,10 +7,10 @@ declare(strict_types=1);
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Service;
+namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Service;
 
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\BackgroundJob\GoWhatsAppSessionMonitorJob;
-use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\BackgroundJob\GoWhatsAppSessionMonitorReconcileJob;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\BackgroundJob\GoWhatsAppSessionMonitorJob;
+use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\BackgroundJob\GoWhatsAppSessionMonitorReconcileJob;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\ReconfigurationState;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCP\BackgroundJob\IJobList;
