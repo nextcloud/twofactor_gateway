@@ -21,7 +21,7 @@ class TestTest extends AppTestCase {
 		$l10n = $this->createMock(\OCP\IL10N::class);
 		$logger = $this->createMock(\Psr\Log\LoggerInterface::class);
 		$eventDispatcher = $this->createMock(\OCP\EventDispatcher\IEventDispatcher::class);
-		$jobManager = $this->createMock(\OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Service\GoWhatsAppSessionMonitorJobManager::class);
+			$jobManager = $this->createMock(\OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Service\GoWhatsAppSessionMonitorJobManager::class);
 
 		return new \OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Gateway(
 			$appConfig,
