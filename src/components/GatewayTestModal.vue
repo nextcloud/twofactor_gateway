@@ -164,37 +164,17 @@ export default defineComponent({
 	},
 
 	methods: {
-		normalizeIdentifier(identifier: string): string {
-			if (this.gatewayId !== 'telegram') {
-				return identifier
-			}
-
-			if (identifier.startsWith('@') || identifier.startsWith('+')) {
-				return identifier
-			}
-
-			if (/^-?\d+$/.test(identifier)) {
-				return identifier
-			}
-
-			if (/^[A-Za-z][A-Za-z0-9_]{2,}$/.test(identifier)) {
-				return `@${identifier}`
-			}
-
-			return identifier
-		},
-
 		async runTest() {
-			if (!this.identifier.trim()) {
+			const identifier = this.identifier.trim()
+			if (!identifier) {
 				return
 			}
-			const normalizedIdentifier = this.normalizeIdentifier(this.identifier.trim())
-			this.identifier = normalizedIdentifier
+			this.identifier = identifier
 			this.avatarLoadFailed = false
 			this.testing = true
 			this.result = null
 			try {
-				this.result = await testInstance(this.gatewayId, this.instanceId, normalizedIdentifier)
+				this.result = await testInstance(this.gatewayId, this.instanceId, identifier)
 			} catch (err: unknown) {
 				const message = (err as { response?: { data?: { ocs?: { data?: { message?: string } } } } })
 					?.response?.data?.ocs?.data?.message

@@ -148,7 +148,7 @@ describe('GatewayTestModal', () => {
 		expect(wrapper.emitted('close')).toBeUndefined()
 	})
 
-	it('auto-prefixes @ when Telegram identifier looks like a username', async () => {
+	it('trims identifier before sending test request', async () => {
 		const { testInstance } = await import('../../services/adminGatewayApi.ts')
 		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
@@ -158,29 +158,12 @@ describe('GatewayTestModal', () => {
 				gatewayId: 'telegram',
 			},
 		})
-		await wrapper.find('input').setValue('vitormattos')
+		await wrapper.find('input').setValue('  vitormattos  ')
 		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
 
-		expect(testInstance).toHaveBeenCalledWith('telegram', 'abc123', '@vitormattos')
-		expect(wrapper.find('input').element).toHaveProperty('value', '@vitormattos')
-	})
-
-	it('keeps @ prefix when Telegram username already has it', async () => {
-		const { testInstance } = await import('../../services/adminGatewayApi.ts')
-		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
-
-		const wrapper = mount(GatewayTestModal, {
-			props: {
-				...defaultProps,
-				gatewayId: 'telegram',
-			},
-		})
-		await wrapper.find('input').setValue('@vitormattos')
-		await findSendButton(wrapper)?.trigger('click')
-		await flushPromises()
-
-		expect(testInstance).toHaveBeenCalledWith('telegram', 'abc123', '@vitormattos')
+		expect(testInstance).toHaveBeenCalledWith('telegram', 'abc123', 'vitormattos')
+		expect(wrapper.find('input').element).toHaveProperty('value', 'vitormattos')
 	})
 
 	it('shows a success result after a successful test', async () => {

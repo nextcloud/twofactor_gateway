@@ -30,7 +30,7 @@ class AdminSettings implements IDelegatedSettings {
 	private function getAuthorizedConfigPatterns(): array {
 		return [
 			'/^instances:[^:]+$/',
-			'/^[^:]+:[^:]+:[^:]+$/',
+			'/^[a-z0-9_]+:[a-f0-9]{16}:[a-z0-9_]+$/',
 		];
 	}
 

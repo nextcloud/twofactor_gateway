@@ -87,14 +87,21 @@ class Configure extends Command {
 		}
 
 		$config = $gateway->getConfiguration();
-		$existingCount = count($this->configService->listInstances($gateway));
-		$label = $existingCount === 0 ? 'Default' : 'Instance ' . ($existingCount + 1);
-
-		$this->configService->createInstance($gateway, $label, $config);
-
 		if ($existingDefaultId !== null) {
+			$existingDefault = $this->configService->getInstance($gateway, $existingDefaultId);
+			$this->configService->updateInstance(
+				$gateway,
+				$existingDefaultId,
+				$existingDefault['label'],
+				$config,
+				$existingDefault['groupIds'],
+				$existingDefault['priority'],
+			);
 			$this->configService->setDefaultInstance($gateway, $existingDefaultId);
+			return Command::SUCCESS;
 		}
+
+		$this->configService->createInstance($gateway, 'Default', $config);
 
 		return Command::SUCCESS;
 	}
