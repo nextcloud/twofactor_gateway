@@ -30,7 +30,7 @@
     "@nextcloud/vue": "^9.6.0",
     "dompurify": "^3.4.0",
     "markdown-it": "^14.1.1",
-    "vue": "^3.5.32",
+    "vue": "^3.5.33",
     "vue-material-design-icons": "^5.3.1",
     "vuedraggable": "^4.1.0"
   },
