@@ -2,8 +2,6 @@ OC.L10N.register(
     "twofactor_gateway",
     {
     "Two-Factor Gateway" : "Dvojfaktorová brána",
-    "Two-Factor Gateway: WhatsApp authentication failed" : "Dvojfaktorový prístup: Overenie WhatsApp zlyhalo",
-    "Two-Factor Gateway cannot send WhatsApp verification codes until this is fixed. Reconfigure the GoWhatsApp gateway from the command line using: occ twofactorauth:gateway:configure gowhatsapp" : "Dvojfaktorový brána nemôže odosielať overovacie kódy WhatsApp, kým to nebude opravené. Prekonfigurujte bránu GoWhatsApp z príkazového riadku pomocou: occ twofactorauth:gateway:configure gowhatsapp",
     "%s is your Nextcloud authentication code" : "%s je váš Nextcloud autentizačný kód",
     "Message gateway verification" : "Overovanie brány správ",
     "Authenticate via SMS" : "Overiť pomocou SMS",
@@ -11,6 +9,8 @@ OC.L10N.register(
     "Authenticate via Signal" : "Overovať pomocou Signal",
     "Telegram verification" : "Telegram overovanie",
     "Authenticate via Telegram" : "Overit pomocou Telegram",
+    "Two-Factor Gateway: WhatsApp authentication failed" : "Dvojfaktorový prístup: Overenie WhatsApp zlyhalo",
+    "Two-Factor Gateway cannot send WhatsApp verification codes until this is fixed. Reconfigure the GoWhatsApp gateway from the command line using: occ twofactorauth:gateway:configure gowhatsapp" : "Dvojfaktorový brána nemôže odosielať overovacie kódy WhatsApp, kým to nebude opravené. Prekonfigurujte bránu GoWhatsApp z príkazového riadku pomocou: occ twofactorauth:gateway:configure gowhatsapp",
     "XMPP verification" : "Overenie XMPP",
     "Authenticate via XMPP" : "Overiť pomocou XMPP",
     "You are not using {displayName} for two-factor authentication at the moment." : "V súčasnosti nepoužívate {displayName} pre dvoj-faktorové overenie.",
