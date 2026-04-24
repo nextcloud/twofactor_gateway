@@ -1,0 +1,15 @@
+{ "translations": {
+    "Enabled" : "Aktivéiert",
+    "Disabled" : "Deaktivéiert",
+    "Edit" : "Änneren",
+    "Delete" : "Läschen",
+    "Groups" : "Gruppen",
+    "Save" : "Späicheren",
+    "Cancel" : "Cancel",
+    "Collapse" : "Zesumme falen",
+    "Close" : "Zoumaachen",
+    "Continue" : "Weider",
+    "Confirm" : "Konfirméieren",
+    "Disable" : "Ofschalten"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}

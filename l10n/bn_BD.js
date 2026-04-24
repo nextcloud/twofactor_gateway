@@ -1,0 +1,16 @@
+OC.L10N.register(
+    "twofactor_gateway",
+    {
+    "Enabled" : "কার্যকর",
+    "Disabled" : "অকার্যকর",
+    "Edit" : "সম্পাদনা",
+    "Delete" : "মুছে",
+    "Groups" : "গোষ্ঠীসমূহ",
+    "Save" : "সংরক্ষণ",
+    "Cancel" : "Cancel",
+    "Collapse" : "ভাঙো",
+    "Close" : "বন্ধ",
+    "Continue" : "চালিয়ে যাও",
+    "Disable" : "নিষ্ক্রিয়"
+},
+"nplurals=2; plural=(n != 1);");
