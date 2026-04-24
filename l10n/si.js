@@ -1,0 +1,17 @@
+OC.L10N.register(
+    "twofactor_gateway",
+    {
+    "Enabled" : "සබල කර ඇත",
+    "Disabled" : "අබල කර ඇත",
+    "Edit" : "සංස්කරණය",
+    "Groups" : "සමූහ",
+    "Cancel" : "Cancel",
+    "Close" : "වසන්න",
+    "Device" : "උපාංගය",
+    "Phone number" : "දුරකථන අංකය",
+    "Back" : "ආපසු",
+    "Retry" : "නැවත උත්සාහ කරන්න",
+    "Confirm" : "තහවුරු කරන්න",
+    "Disable" : "අබල කරන්න"
+},
+"nplurals=2; plural=(n != 1);");
