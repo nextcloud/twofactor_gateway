@@ -1,0 +1,28 @@
+{ "translations": {
+    "WhatsApp verification" : "Спраўджанне WhatsApp",
+    "Authenticate via WhatsApp" : "Аўтэнтыфікацыя праз WhatsApp",
+    "verification token mismatch" : "несупадзенне токена спраўджвання",
+    "Enabled" : "Уключаны",
+    "Disabled" : "Адключаны",
+    "Edit" : "Рэдагаваць",
+    "Delete" : "Выдаліць",
+    "Groups" : "Групы",
+    "Saving …" : "Захаванне …",
+    "Save" : "Захаваць",
+    "Cancel" : "Скасаваць",
+    "Deleting …" : "Выдаленне …",
+    "Collapse" : "Згарнуць",
+    "Expand" : "Разгарнуць",
+    "Close" : "Закрыць",
+    "Device" : "Прылада",
+    "Phone number" : "Нумар тэлефона",
+    "Back" : "Назад",
+    "Continue" : "Працягнуць",
+    "Retry" : "Паўтарыць спробу",
+    "Enable" : "Уключыць",
+    "Verify" : "Спраўдзіць",
+    "Confirm" : "Пацвердзіць",
+    "Disable" : "Адключыць",
+    "Submit" : "Адправіць"
+},"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
+}

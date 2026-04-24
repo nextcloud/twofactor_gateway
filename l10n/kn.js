@@ -1,0 +1,15 @@
+OC.L10N.register(
+    "twofactor_gateway",
+    {
+    "Enabled" : "ಸಕ್ರಿಯಗೊಳಿಸಿದೆ",
+    "Disabled" : "ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ",
+    "Edit" : "ಸಂಪಾದಿಸು",
+    "Delete" : "﻿ಅಳಿಸಿ",
+    "Groups" : "﻿ಗುಂಪುಗಳು",
+    "Save" : "﻿ಉಳಿಸಿ",
+    "Cancel" : "Cancel",
+    "Close" : "ಮುಚ್ಚು",
+    "Continue" : "﻿ಮುಂದುವರಿಸಿ",
+    "Disable" : "﻿ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಿ"
+},
+"nplurals=2; plural=(n > 1);");
