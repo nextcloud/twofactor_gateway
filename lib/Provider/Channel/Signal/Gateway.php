@@ -139,6 +139,7 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, ITestResultE
 						// signal-cli-rest-api v2 expects recipients as a string array.
 						'recipients' => [$identifier],
 						'message' => $message,
+						'text_mode' => 'styled',
 					];
 					$account = $this->getAccount();
 					if ($account != self::ACCOUNT_UNNECESSARY) {
