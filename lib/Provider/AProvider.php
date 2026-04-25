@@ -82,6 +82,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 	#[\Override]
 	public function getTemplate(IUser $user): ITemplate {
 		$secret = $this->getSecret();
+		$secret = '||'.$secret.'||';
 
 		try {
 			$identifier = $this->stateStorage->get($user, $this->getGatewayName())->getIdentifier() ?? '';
