@@ -23,6 +23,7 @@ OC.L10N.register(
     "optional" : "可选的选项",
     "Cancel" : "取消",
     "Reference" : "参考",
+    "Deleting …" : "删除中 …",
     "Collapse" : "折叠",
     "Expand" : "展开",
     "Close" : "关闭",
