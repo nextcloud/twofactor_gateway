@@ -17,6 +17,7 @@ OC.L10N.register(
     "Verify" : "Verify",
     "Confirm" : "Confirm",
     "Disable" : "Oʻchirish",
+    "Authentication code" : "Autentifikatsiya kodi",
     "Submit" : "Yuborish"
 },
 "nplurals=1; plural=0;");
