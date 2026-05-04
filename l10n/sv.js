@@ -11,6 +11,7 @@ OC.L10N.register(
     "`%s` is your Nextcloud verification code." : "`%s` är din Nextcloud verifieringskod.",
     "Telegram verification" : "Telegram-verifikation ",
     "Authenticate via Telegram" : "Autentisera via Telegram",
+    "Failed to send message" : "Kunde inte skicka meddelandet",
     "WhatsApp verification" : "WhatsApp-verifiering",
     "Authenticate via WhatsApp" : "Autentisera via WhatsApp",
     "XMPP verification" : "XMPP-verifiering",
