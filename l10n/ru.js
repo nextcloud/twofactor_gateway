@@ -9,6 +9,7 @@ OC.L10N.register(
     "Authenticate via Signal" : "Аутентифицировать с помощью Signal",
     "Telegram verification" : "Telegram",
     "Authenticate via Telegram" : "Аутентифицировать с помощью Telegram",
+    "Failed to send message" : "Не удалось отправить сообщение",
     "Authenticate via XMPP" : "Аутентификация через XMPP",
     "Enabled" : "Включено",
     "Disabled" : "Отключено",
