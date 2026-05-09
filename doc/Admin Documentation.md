@@ -80,6 +80,43 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure whatsapp
 ```
 
+### WhatsApp Business
+URL: https://developers.facebook.com/docs/whatsapp/cloud-api/
+Stability: Experimental
+
+This gateway sends messages through the WhatsApp Cloud API (Meta Graph API).
+
+Configuration via CLI:
+
+```bash
+occ twofactorauth:gateway:configure whatsappbusiness
+```
+
+You will be prompted for:
+
+* **WhatsApp Graph API version**: for example `v25.0` (optional, defaults to `v22.0`)
+* **WhatsApp Business phone number ID**: the `phone_number_id` from Meta Developers
+* **WhatsApp Business access token**: a temporary or permanent token with Cloud API permissions
+* **Template name (optional)**: approved WhatsApp template to use for outbound messages (recommended for business-initiated delivery)
+* **Template language code (optional)**: template locale such as `pt_BR` or `en_US` (defaults to `pt_BR`)
+
+For LibreSign-style custom messages with document links, configure a template with body variable `{{1}}` (for example body text exactly `{{1}}`).
+The gateway will inject the runtime message content into this variable, so requesters can customize the text and include the document URL.
+
+If no template is configured, the gateway sends plain text messages directly. This may be limited by WhatsApp conversation-window policies.
+
+You can validate the setup with:
+
+```bash
+occ twofactorauth:gateway:test <uid> whatsapp "+5521993408474"
+```
+
+If a message does not send and Meta returns `Unsupported post request`, verify that:
+
+* the token belongs to the same app/business as the configured `phone_number_id`
+* the phone number is active in Cloud API
+* the destination is allowed for your current app mode (test numbers in development mode)
+
 ### GoWhatsApp
 URL: https://github.com/aldinokemal/go-whatsapp-web-multidevice
 Stability: Experimental
