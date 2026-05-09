@@ -312,11 +312,17 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure sms
 ```
 
-### sms77.io
-URL: https://sms77.io
+### seven.io
+<a id="sms77io"></a>
+
+URL: https://www.seven.io (formerly sms77.io)
 Stability: Experimental
 
-Use the SMS gateway provided by sms77.io for sending SMS.
+Use the SMS gateway provided by **seven** (formerly sms77.io) for sending SMS.
+Create an API key in the [seven developer area](https://dashboard.seven.io/developer).
+
+The provider is still listed as `sms77io` in the interactive picker so that
+existing configurations keep working after the rebrand.
 
 Interactive admin configuration:
 ```bash
