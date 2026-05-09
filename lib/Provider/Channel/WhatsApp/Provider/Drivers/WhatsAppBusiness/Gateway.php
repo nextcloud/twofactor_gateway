@@ -34,6 +34,10 @@ use Symfony\Component\Console\Question\Question;
  * @method static setPhoneNumberId(string $phoneNumberId)
  * @method string getAccessToken()
  * @method static setAccessToken(string $accessToken)
+ * @method string getTemplateName()
+ * @method static setTemplateName(string $templateName)
+ * @method string getTemplateLanguage()
+ * @method static setTemplateLanguage(string $templateLanguage)
  */
 class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInteractiveSetupGateway, IDefaultInstanceAwareGateway, ITestResultEnricher {
 	public function __construct(
@@ -67,6 +71,19 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 					prompt: 'WhatsApp Business access token:',
 					type: FieldType::SECRET,
 				),
+				new FieldDefinition(
+					field: 'template_name',
+					prompt: 'Template name (optional):',
+					optional: true,
+					helper: 'If set, outbound messages are sent using this approved template with the message content as body variable {{1}}.',
+				),
+				new FieldDefinition(
+					field: 'template_language',
+					prompt: 'Template language code (optional):',
+					default: 'pt_BR',
+					optional: true,
+					helper: 'Language code used when sending the configured template, e.g. pt_BR or en_US.',
+				),
 			],
 		);
 	}
@@ -83,25 +100,51 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			throw new MessageTransmissionException($this->l10n->t('Invalid phone number for WhatsApp Business.'));
 		}
 
-		$apiVersion = $this->getApiVersion();
+		$apiVersion = $this->resolveApiVersion();
 		$phoneNumberId = $this->getPhoneNumberId();
 		$accessToken = $this->getAccessToken();
 		$url = sprintf('https://graph.facebook.com/%s/%s/messages', trim($apiVersion), trim($phoneNumberId));
+
+		$templateName = $this->resolveTemplateName($extra);
+		$templateLanguage = $this->resolveTemplateLanguage($extra);
+		$payload = [
+			'messaging_product' => 'whatsapp',
+			'to' => $to,
+		];
+
+		if ($templateName !== '') {
+			$payload['type'] = 'template';
+			$payload['template'] = [
+				'name' => $templateName,
+				'language' => [
+					'code' => $templateLanguage,
+				],
+				'components' => [
+					[
+						'type' => 'body',
+						'parameters' => [
+							[
+								'type' => 'text',
+								'text' => $message,
+							],
+						],
+					],
+				],
+			];
+		} else {
+			$payload['type'] = 'text';
+			$payload['text'] = [
+				'body' => $message,
+				'preview_url' => true,
+			];
+		}
 
 		try {
 			$response = $this->clientService->newClient()->post($url, [
 				'headers' => [
 					'Authorization' => 'Bearer ' . $accessToken,
 				],
-				'json' => [
-					'messaging_product' => 'whatsapp',
-					'to' => $to,
-					'type' => 'text',
-					'text' => [
-						'body' => $message,
-						'preview_url' => false,
-					],
-				],
+				'json' => $payload,
 			]);
 
 			$payload = json_decode((string)$response->getBody(), true);
@@ -191,5 +234,55 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			'provider' => 'whatsappbusiness',
 			'phone_number_id' => $phoneNumberId,
 		];
+	}
+
+	private function resolveApiVersion(): string {
+		try {
+			$apiVersion = trim($this->getApiVersion());
+			if ($apiVersion !== '') {
+				return $apiVersion;
+			}
+		} catch (\Throwable) {
+			// Fallback to the settings default when the optional field is not configured.
+		}
+
+		foreach ($this->getSettings()->fields as $field) {
+			if ($field->field === 'api_version') {
+				return trim((string)($field->default ?? 'v22.0'));
+			}
+		}
+
+		return 'v22.0';
+	}
+
+	private function resolveTemplateName(array $extra): string {
+		$runtimeTemplateName = trim((string)($extra['template_name'] ?? ''));
+		if ($runtimeTemplateName !== '') {
+			return $runtimeTemplateName;
+		}
+
+		try {
+			return trim($this->getTemplateName());
+		} catch (\Throwable) {
+			return '';
+		}
+	}
+
+	private function resolveTemplateLanguage(array $extra): string {
+		$runtimeTemplateLanguage = trim((string)($extra['template_language'] ?? ''));
+		if ($runtimeTemplateLanguage !== '') {
+			return $runtimeTemplateLanguage;
+		}
+
+		try {
+			$configured = trim($this->getTemplateLanguage());
+			if ($configured !== '') {
+				return $configured;
+			}
+		} catch (\Throwable) {
+			// Ignore and use safe fallback.
+		}
+
+		return 'pt_BR';
 	}
 }
