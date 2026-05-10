@@ -84,9 +84,71 @@ occ twofactorauth:gateway:configure whatsapp
 URL: https://developers.facebook.com/docs/whatsapp/cloud-api/
 Stability: Experimental
 
-This gateway sends messages through the WhatsApp Cloud API (Meta Graph API).
+This gateway sends messages through the WhatsApp Cloud API (Meta Graph API) with guided auto-discovery for phone numbers and approved templates.
 
-Configuration via CLI:
+#### Before you start: System User token setup
+
+1. In **Business Manager**, create a **System User** and set role to **Admin**.
+2. Assign the app and WhatsApp account assets to this System User with full access.
+3. Generate a System User token for your app with these **minimum permissions**:
+   - `whatsapp_business_messaging` (required for sending messages)
+   - `whatsapp_business_management` (strongly recommended; enables auto-discovery of phone numbers and templates)
+4. Prefer **non-expiring tokens** for production environments.
+
+⚠️ **Token permission note**: If your System User token lacks `whatsapp_business_management` permission, auto-discovery of WhatsApp Business Account (WABA) will be skipped. You can manually enter the WABA ID during setup as a fallback.
+
+#### Configuration via admin UI (recommended)
+
+The **recommended way** is to use the guided auto-discovery wizard:
+
+1. Go to **Settings → Administration → Security**.
+2. Click **Add provider configuration** or edit an existing **WhatsApp Business** instance.
+3. Fill in the **Label** (internal name for this gateway) and **WhatsApp Graph API version** (optional, defaults to `v22.0`).
+4. Enter your **WhatsApp Business access token** from the System User created above.
+5. *(Optional)* If you know your **WABA ID** and want to skip auto-discovery, enter it manually. Otherwise, leave blank.
+6. Click **Discover available resources**.
+   - The wizard will auto-discover your WhatsApp Business Account(s), phone numbers, and approved templates.
+   - *(Note: If discovery is blocked, check that your token includes `whatsapp_business_management` permission. You can still proceed by manually entering the WABA ID.)*
+
+##### Wizard guide: Phone number selection
+
+After discovery, you will see a list of phone numbers associated with your WABA. Each number shows:
+
+- **Phone number** (e.g., `+55 21 97436-4077`)
+- **Platform type** (e.g., `CLOUD_API`) and **Status** (e.g., `EXPIRED`, `VERIFIED`)
+
+**Only phone numbers configured for WhatsApp Cloud API are selectable.** The wizard automatically filters and disables phone numbers that:
+
+- Have `platform_type: NOT_APPLICABLE` (not configured for Cloud API)
+- Have `platform_type: NOT_CAPABLE` (hardware limitation)
+
+If your phone number appears grayed out, check in **WhatsApp Manager** that it is registered and verified for Cloud API use.
+
+##### Wizard guide: Template selection
+
+After selecting a phone number, the wizard displays available templates in the language matching your phone configuration. Each template shows:
+
+- **Template name** (e.g., `libresign_invite_basic_v1`)
+- **Template language** (e.g., `pt_BR`)
+- **Approval status** (e.g., `APPROVED`, `PENDING`, `REJECTED`)
+
+**Only approved templates are selectable.** The wizard automatically filters and disables templates that:
+
+- Have status `REJECTED` (template did not pass Meta review; contact Meta Support)
+- Have status `PENDING` (template is awaiting review; templates usually approve within 24 hours)
+- Have status `DRAFT` (template not submitted; submit for review in WhatsApp Manager)
+
+Templates must have exactly one body variable placeholder `{{1}}`. For Two Factor Gateway, this variable receives the verification code at send time.
+
+##### Finalizing the setup
+
+After selecting a template:
+
+1. Review the **Preview** showing your Label, Phone Number, and Template Name.
+2. Click **Save** to finalize the configuration.
+3. Use the **Test** action in the gateway list to verify delivery.
+
+#### Configuration via CLI (alternative)
 
 ```bash
 occ twofactorauth:gateway:configure whatsappbusiness
@@ -95,27 +157,73 @@ occ twofactorauth:gateway:configure whatsappbusiness
 You will be prompted for:
 
 * **WhatsApp Graph API version**: for example `v25.0` (optional, defaults to `v22.0`)
-* **WhatsApp Business phone number ID**: the `phone_number_id` from Meta Developers
-* **WhatsApp Business access token**: a temporary or permanent token with Cloud API permissions
-* **Template name (optional)**: approved WhatsApp template to use for outbound messages (recommended for business-initiated delivery)
-* **Template language code (optional)**: template locale such as `pt_BR` or `en_US` (defaults to `pt_BR`)
+* **WhatsApp Business access token**: a System User token with Cloud API permissions
+* **WhatsApp Business account ID (WABA ID)** *(optional)*: obtained via auto-discovery or from Business Manager. If skipped, the wizard will attempt auto-discovery. If auto-discovery fails (permission denied), you must provide this ID.
+* **Phone number ID**: the phone number ID from the discovered list (or manually obtained from WhatsApp Manager)
+* **Template name**: the exact name of an approved template (e.g., `libresign_invite_basic_v1`)
+* **Template language code**: the exact locale matching the template configuration (e.g., `pt_BR`, `en_US`, `es_ES`)
 
-For LibreSign-style custom messages with document links, configure a template with body variable `{{1}}` (for example body text exactly `{{1}}`).
-The gateway will inject the runtime message content into this variable, so requesters can customize the text and include the document URL.
+#### Obtaining the WABA ID manually (if auto-discovery fails)
 
-If no template is configured, the gateway sends plain text messages directly. This may be limited by WhatsApp conversation-window policies.
+If auto-discovery cannot retrieve your WABA:
 
-You can validate the setup with:
+1. Open **Business Manager** in your Meta app.
+2. Navigate to **WhatsApp Manager**.
+3. In the **Settings** tab, look for **Accounts** or **Contas do WhatsApp**.
+4. Copy the numeric ID of your WhatsApp Business Account.
+
+Example WABA ID: `1262137285897957`
+
+#### Practical recommendations
+
+##### For phone numbers
+
+- If your current business number is already in use in the WhatsApp app on a personal device, it **cannot simultaneously be used with Cloud API**. Use a dedicated new number for API usage.
+- A dedicated API number reduces migration risk, avoids production interruption, and makes rollback easier if you need to change providers later.
+- Ensure the phone number is **verified** in WhatsApp Manager and configured for **Cloud API** (not the legacy On-Premises API).
+
+##### For templates
+
+- Templates must be **created and submitted for approval** in **WhatsApp Manager → Message Templates** before they appear in the wizard.
+- Meta usually approves template requests within 24 hours. Monitor your email for approval/rejection notifications.
+- To modify a rejected template, create a new version (e.g., rename from `template_v1` to `template_v2`) and resubmit.
+- The template body must include exactly one variable placeholder: `{{1}}`
+
+##### For long-term reliability
+
+- Use **non-expiring tokens** for production environments to avoid recurring reconfiguration.
+- Monitor token expiration in Business Manager and set calendar reminders for token refresh if using temporary tokens.
+- If Meta returns delivery errors like `Unsupported post request`, verify that the token, app, WhatsApp account, and phone number belong to the **same business context**.
+
+#### Validating the setup
 
 ```bash
-occ twofactorauth:gateway:test <uid> whatsapp "+5521993408474"
+occ twofactorauth:gateway:test <uid> whatsappbusiness "<destination_phone_in_e164>"
 ```
 
-If a message does not send and Meta returns `Unsupported post request`, verify that:
+For example:
+```bash
+occ twofactorauth:gateway:test user1 whatsappbusiness "+5585988776655"
+```
 
-* the token belongs to the same app/business as the configured `phone_number_id`
-* the phone number is active in Cloud API
-* the destination is allowed for your current app mode (test numbers in development mode)
+If the test fails with `Unsupported post request`, check:
+
+* The token belongs to the same app/business as the phone number.
+* The phone number is active and verified for Cloud API.
+* The destination phone is allowed (test numbers in development mode, real numbers in production mode).
+* The template was approved by Meta.
+
+#### Troubleshooting wizard errors
+
+| Error | Likely cause | Solution |
+|-------|-------------|----------|
+| `Token is invalid` | Token format incorrect or revoked | Regenerate a new System User token in Business Manager |
+| `Token missing WhatsApp management permission` | Token lacks `whatsapp_business_management` | Regenerate token with the required permission scope |
+| `No WABA found for this token` | Token's business context has no WhatsApp accounts | Create or request access to a WhatsApp Business Account in Meta |
+| `No phone numbers found` | WABA has no registered numbers OR permission denied | Register a phone number in WhatsApp Manager; or manually enter WABA ID if auto-discovery is blocked |
+| `No approved templates found` | No templates approved yet OR all templates are rejected/pending | Create and submit templates for approval in WhatsApp Manager |
+| `This phone number is not configured for WhatsApp Cloud API` | Phone is registered but using legacy API only | Verify phone in WhatsApp Manager for Cloud API compatibility |
+| `Template is not approved` | Template status is PENDING, REJECTED, or DRAFT | Submit template for approval or wait 24 hours for approval processing
 
 ### GoWhatsApp
 URL: https://github.com/aldinokemal/go-whatsapp-web-multidevice
