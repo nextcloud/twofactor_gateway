@@ -444,8 +444,10 @@ class GatewayConfigService {
 						$provider['fields'] ?? [],
 						static fn ($field): bool => $field instanceof FieldDefinition,
 					));
+					$allowedFieldNames = [$selector->field];
 
 					foreach ($providerFields as $field) {
+						$allowedFieldNames[] = $field->field;
 						if (!array_key_exists($field->field, $config)) {
 							$config[$field->field] = $this->appConfig->getValueString(
 								Application::APP_ID,
@@ -462,6 +464,10 @@ class GatewayConfigService {
 						instructions: $settings->instructions,
 						fields: array_values(array_merge([$selector], $providerFields)),
 					);
+
+					// Keep only selector + fields of the active provider.
+					// This prevents stale fields from other providers from appearing in admin cards/forms.
+					$config = array_intersect_key($config, array_flip($allowedFieldNames));
 					break;
 				}
 			}
