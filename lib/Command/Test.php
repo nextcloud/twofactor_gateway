@@ -60,7 +60,7 @@ class Test extends Command {
 			return 1;
 		}
 
-		$message = 'Test';
+		$message = 'Two Factor Gateway test message';
 
 		$output->writeln('');
 		$output->writeln('<info>════════════════════════════════════════════════════════════════</info>');

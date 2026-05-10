@@ -376,7 +376,7 @@ class AdminGatewayControllerTest extends TestCase {
 			'config' => ['url' => 'https://t.example.com'], 'isComplete' => true,
 		];
 		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn($record);
-		$gateway->expects($this->once())->method('send')->with('+1234567890', 'Test');
+		$gateway->expects($this->once())->method('send')->with('+1234567890', 'Two Factor Gateway test message');
 
 		$response = $this->controller->testInstance('telegram', 'abc', '+1234567890');
 
@@ -514,7 +514,7 @@ class AdminGatewayControllerTest extends TestCase {
 		];
 		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn($record);
 		$gateway->expects($this->once())->method('normalizeTestIdentifier')->with('vitormattos')->willReturn('@vitormattos');
-		$gateway->expects($this->once())->method('send')->with('@vitormattos', 'Test');
+		$gateway->expects($this->once())->method('send')->with('@vitormattos', 'Two Factor Gateway test message');
 
 		$response = $this->controller->testInstance('telegram', 'abc', 'vitormattos');
 
@@ -539,7 +539,7 @@ class AdminGatewayControllerTest extends TestCase {
 		];
 		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn($record);
 		$gateway->expects($this->once())->method('normalizeTestIdentifier')->with('-1001234567890')->willReturn('-1001234567890');
-		$gateway->expects($this->once())->method('send')->with('-1001234567890', 'Test');
+		$gateway->expects($this->once())->method('send')->with('-1001234567890', 'Two Factor Gateway test message');
 
 		$response = $this->controller->testInstance('telegram', 'abc', '-1001234567890');
 

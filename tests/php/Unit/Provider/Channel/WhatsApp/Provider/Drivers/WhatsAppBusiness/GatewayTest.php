@@ -45,37 +45,71 @@ class GatewayTest extends AppTestCase {
 		);
 	}
 
-	public function testSendFallsBackToDefaultApiVersionWhenNotConfigured(): void {
-		$this->gateway->setPhoneNumberId('1068309859700859');
+	public function testSendUsesTemplateAndDefaultApiVersionWhenNotConfigured(): void {
+		$this->gateway->setPhoneNumberId('test_9999999999999');
 		$this->gateway->setAccessToken('token-123');
+		$this->gateway->setTemplateName('test_twofactor_token');
+		$this->gateway->setTemplateLanguage('pt_BR');
 
 		$this->client->expects($this->once())
 			->method('post')
 			->with(
-				'https://graph.facebook.com/v22.0/1068309859700859/messages',
+				'https://graph.facebook.com/v22.0/test_9999999999999/messages',
 				$this->callback(static function (array $options): bool {
+					$payload = $options['json'] ?? [];
+					$parameters = $payload['template']['components'][0]['parameters'][0] ?? [];
+
 					return ($options['headers']['Authorization'] ?? null) === 'Bearer token-123'
-						&& ($options['json']['to'] ?? null) === '5521993408474'
-						&& ($options['json']['type'] ?? null) === 'text'
-						&& ($options['json']['text']['preview_url'] ?? null) === true;
+						&& ($payload['to'] ?? null) === '5511999990000'
+						&& ($payload['type'] ?? null) === 'template'
+						&& ($payload['template']['name'] ?? null) === 'test_twofactor_token'
+						&& ($payload['template']['language']['code'] ?? null) === 'pt_BR'
+						&& ($parameters['text'] ?? null) === 'Two Factor Gateway test message';
 				}),
 			)
 			->willReturn($this->createJsonResponse(['messages' => [['id' => 'wamid.1']]]));
 
-		$this->gateway->send('+55 (21) 99340-8474', 'POC message');
+		$this->gateway->send('+55 (11) 99999-0000', 'Two Factor Gateway test message');
+	}
+
+	public function testSendThrowsWhenTemplateNameIsMissing(): void {
+		$this->gateway->setPhoneNumberId('test_9999999999999');
+		$this->gateway->setAccessToken('token-123');
+
+		$this->client->expects($this->never())->method('post');
+
+		$this->expectException(MessageTransmissionException::class);
+		$this->expectExceptionMessage('Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}.');
+
+		$this->gateway->send('+55 (11) 99999-0000', 'Two Factor Gateway test message');
+	}
+
+	public function testSendThrowsWhenTemplateLanguageIsMissing(): void {
+		$this->gateway->setPhoneNumberId('test_9999999999999');
+		$this->gateway->setAccessToken('token-123');
+		$this->gateway->setTemplateName('test_twofactor_token');
+
+		$this->client->expects($this->never())->method('post');
+
+		$this->expectException(MessageTransmissionException::class);
+		$this->expectExceptionMessage('Template language code is required for WhatsApp Business.');
+
+		$this->gateway->send('+55 (11) 99999-0000', 'Two Factor Gateway test message');
 	}
 
 	public function testSendThrowsWhenIdentifierIsInvalid(): void {
 		$this->expectException(MessageTransmissionException::class);
 		$this->expectExceptionMessage('Invalid phone number for WhatsApp Business.');
 
-		$this->gateway->send('not-a-phone', 'POC message');
+		$this->gateway->send('not-a-phone', 'Two Factor Gateway test message');
 	}
 
 	public function testSendThrowsProviderErrorMessageWhenGraphReturnsErrorPayload(): void {
 		$this->gateway->setApiVersion('v25.0');
-		$this->gateway->setPhoneNumberId('1068309859700859');
+		$this->gateway->setPhoneNumberId('test_9999999999999');
 		$this->gateway->setAccessToken('token-123');
+		$this->gateway->setTemplateName('test_twofactor_token');
+		$this->gateway->setTemplateLanguage('pt_BR');
 
 		$this->client->expects($this->once())
 			->method('post')
@@ -88,13 +122,15 @@ class GatewayTest extends AppTestCase {
 		$this->expectException(MessageTransmissionException::class);
 		$this->expectExceptionMessage('Unsupported post request');
 
-		$this->gateway->send('+55 (21) 99340-8474', 'POC message');
+		$this->gateway->send('+55 (11) 99999-0000', 'Two Factor Gateway test message');
 	}
 
 	public function testSendWrapsUnexpectedClientException(): void {
 		$this->gateway->setApiVersion('v25.0');
-		$this->gateway->setPhoneNumberId('1068309859700859');
+		$this->gateway->setPhoneNumberId('test_9999999999999');
 		$this->gateway->setAccessToken('token-123');
+		$this->gateway->setTemplateName('test_twofactor_token');
+		$this->gateway->setTemplateLanguage('pt_BR');
 
 		$this->client->expects($this->once())
 			->method('post')
@@ -103,62 +139,62 @@ class GatewayTest extends AppTestCase {
 		$this->expectException(MessageTransmissionException::class);
 		$this->expectExceptionMessage('Failed to send message through WhatsApp Business.');
 
-		$this->gateway->send('+55 (21) 99340-8474', 'POC message');
+		$this->gateway->send('+55 (11) 99999-0000', 'Two Factor Gateway test message');
 	}
 
 	public function testSendUsesConfiguredTemplateWhenTemplateNameIsConfigured(): void {
 		$this->gateway->setApiVersion('v25.0');
-		$this->gateway->setPhoneNumberId('1068309859700859');
+		$this->gateway->setPhoneNumberId('test_9999999999999');
 		$this->gateway->setAccessToken('token-123');
-		$this->gateway->setTemplateName('libresign_document_invite');
+		$this->gateway->setTemplateName('test_twofactor_verification');
 		$this->gateway->setTemplateLanguage('pt_BR');
 
 		$this->client->expects($this->once())
 			->method('post')
 			->with(
-				'https://graph.facebook.com/v25.0/1068309859700859/messages',
+				'https://graph.facebook.com/v25.0/test_9999999999999/messages',
 				$this->callback(static function (array $options): bool {
 					$payload = $options['json'] ?? [];
 					$parameters = $payload['template']['components'][0]['parameters'][0] ?? [];
 
 					return ($payload['type'] ?? null) === 'template'
-						&& ($payload['template']['name'] ?? null) === 'libresign_document_invite'
+						&& ($payload['template']['name'] ?? null) === 'test_twofactor_verification'
 						&& ($payload['template']['language']['code'] ?? null) === 'pt_BR'
 						&& ($parameters['type'] ?? null) === 'text'
-						&& ($parameters['text'] ?? null) === 'Assine seu documento: https://libresign.coop/s/abc';
+						&& ($parameters['text'] ?? null) === 'Your verification code is 123456.';
 				}),
 			)
 			->willReturn($this->createJsonResponse(['messages' => [['id' => 'wamid.2']]]));
 
-		$this->gateway->send('+55 (21) 99340-8474', 'Assine seu documento: https://libresign.coop/s/abc');
+		$this->gateway->send('+55 (11) 99999-0000', 'Your verification code is 123456.');
 	}
 
 	public function testSendUsesRuntimeTemplateOverridesFromExtra(): void {
 		$this->gateway->setApiVersion('v25.0');
-		$this->gateway->setPhoneNumberId('1068309859700859');
+		$this->gateway->setPhoneNumberId('test_9999999999999');
 		$this->gateway->setAccessToken('token-123');
 
 		$this->client->expects($this->once())
 			->method('post')
 			->with(
-				'https://graph.facebook.com/v25.0/1068309859700859/messages',
+				'https://graph.facebook.com/v25.0/test_9999999999999/messages',
 				$this->callback(static function (array $options): bool {
 					$payload = $options['json'] ?? [];
 					$parameters = $payload['template']['components'][0]['parameters'][0] ?? [];
 
 					return ($payload['type'] ?? null) === 'template'
-						&& ($payload['template']['name'] ?? null) === 'poc_link_libresign'
+						&& ($payload['template']['name'] ?? null) === 'test_twofactor_custom_message'
 						&& ($payload['template']['language']['code'] ?? null) === 'pt_BR'
-						&& ($parameters['text'] ?? null) === 'Mensagem customizada do solicitante: https://libresign.coop/s/xyz';
+						&& ($parameters['text'] ?? null) === 'Two Factor Gateway custom test message.';
 				}),
 			)
 			->willReturn($this->createJsonResponse(['messages' => [['id' => 'wamid.3']]]));
 
 		$this->gateway->send(
-			'+55 (21) 99340-8474',
-			'Mensagem customizada do solicitante: https://libresign.coop/s/xyz',
+			'+55 (11) 99999-0000',
+			'Two Factor Gateway custom test message.',
 			[
-				'template_name' => 'poc_link_libresign',
+				'template_name' => 'test_twofactor_custom_message',
 				'template_language' => 'pt_BR',
 			],
 		);
