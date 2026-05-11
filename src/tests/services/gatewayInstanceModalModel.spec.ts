@@ -11,8 +11,8 @@ import {
 	resolveGatewayId,
 	resolveVisibleFields,
 	validateGatewayInstanceForm,
-} from '../../services/gatewayInstanceModalModel.ts'
-import type { GatewayInfo } from '../../services/adminGatewayTypes.ts'
+} from '@lib/twofactor-gateway'
+import type { GatewayInfo } from '@lib/twofactor-gateway'
 
 const smsGateway: GatewayInfo = {
 	id: 'sms',
