@@ -192,8 +192,8 @@ import {
 	cancelInteractiveSetup,
 	interactiveSetupStep,
 	startInteractiveSetup,
-} from '../../../services/adminGatewayApi.ts'
-import type { InteractiveSetupResponse } from '../../../services/adminGatewayTypes.ts'
+} from '@lib/twofactor-gateway'
+import type { InteractiveSetupResponse } from '@lib/twofactor-gateway'
 
 type PhoneNumberOption = {
 	id: string
