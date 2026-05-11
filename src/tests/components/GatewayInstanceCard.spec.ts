@@ -76,11 +76,11 @@ describe('GatewayInstanceCard', () => {
 		expect(wrapper.text()).toContain('My Signal Config')
 	})
 
-	it('shows the "Default" badge when the instance is the default', () => {
+	it('marks the card with default styling when the instance is default', () => {
 		const wrapper = mount(GatewayInstanceCard, {
 			props: { instance: makeInstance({ default: true }), fields },
 		})
-		expect(wrapper.text()).toContain('tr:Default')
+		expect(wrapper.classes()).toContain('gateway-instance-card--default')
 	})
 
 	it('does not show the "Default" badge for non-default instances', () => {
@@ -104,17 +104,14 @@ describe('GatewayInstanceCard', () => {
 		expect(wrapper.text()).toContain('tr:Incomplete')
 	})
 
-	it('hides the "Set as default" button and shows a disabled star for the default instance', () => {
+	it('hides the "Set as default" button and shows default indicator action for default instance', () => {
 		const wrapper = mount(GatewayInstanceCard, {
 			props: { instance: makeInstance({ default: true }), fields },
 		})
 		const buttons = wrapper.findAll('button')
-		const titlesAndDisabled = buttons.map((b) => ({
-			title: b.attributes('title'),
-			disabled: b.attributes('disabled'),
-		}))
-		expect(titlesAndDisabled.some((b) => b.title === 'tr:This is the default instance' && b.disabled !== undefined)).toBe(true)
-		expect(titlesAndDisabled.some((b) => b.title === 'tr:Set as default')).toBe(false)
+		const titles = buttons.map((b) => b.attributes('title'))
+		expect(titles).toContain('tr:This is the default instance')
+		expect(titles).not.toContain('tr:Set as default')
 	})
 
 	it('shows the "Set as default" button for non-default instances', () => {
