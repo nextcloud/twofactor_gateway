@@ -155,6 +155,16 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import { t } from '@nextcloud/l10n'
 import { resolveGatewaySetupPanel } from './providers/registry'
 import type { FieldDefinition, GatewayInfo } from '../services/adminGatewayTypes.ts'
+import {
+	computeCatalogSelectionState,
+	normalizeProviderCatalog,
+	resolveCurrentFields,
+	resolveEffectiveCatalogProviderId,
+	resolveFieldsToValidate,
+	resolveGatewayId,
+	resolveVisibleFields,
+	validateGatewayInstanceForm,
+} from '../services/gatewayInstanceModalModel.ts'
 
 export default defineComponent({
 	name: 'GatewayInstanceModal',
@@ -214,49 +224,14 @@ export default defineComponent({
 		},
 
 		resolvedGatewayId(): string {
-			if (this.gatewayId) {
-				return this.gatewayId
-			}
-			if (this.selectedGatewayId) {
-				return this.selectedGatewayId
-			}
-
-			if (!this.isEditing) {
-				return ''
-			}
-
-			const hints: string[] = []
-			const providerFromConfig = (this.form.config.provider ?? '').trim()
-			if (providerFromConfig !== '') {
-				hints.push(providerFromConfig)
-			}
-
-			if (this.instanceId.includes(':')) {
-				const fromPrefix = this.instanceId.split(':', 1)[0].trim()
-				if (fromPrefix !== '') {
-					hints.push(fromPrefix)
-				}
-			}
-
-			for (const hint of hints) {
-				const direct = this.gateways.find((gateway) => gateway.id === hint)
-				if (direct) {
-					return direct.id
-				}
-
-				const parent = this.gateways.find((gateway) =>
-					(gateway.providerCatalog ?? []).some((provider) => provider.id === hint),
-				)
-				if (parent) {
-					return parent.id
-				}
-			}
-
-			if (this.isEditing && this.gateways.length > 0) {
-				return this.gateways[0].id
-			}
-
-			return ''
+			return resolveGatewayId({
+				gatewayId: this.gatewayId,
+				selectedGatewayId: this.selectedGatewayId,
+				isEditing: this.isEditing,
+				gateways: this.gateways,
+				config: this.form.config,
+				instanceId: this.instanceId,
+			})
 		},
 
 		selectedGateway(): GatewayInfo | undefined {
@@ -273,32 +248,7 @@ export default defineComponent({
 		},
 
 		normalizedProviderCatalog(): Array<{ id: string; name: string; fields: FieldDefinition[] }> {
-			const rawCatalog = this.selectedGateway?.providerCatalog ?? []
-			const byId = new Map<string, { id: string; name: string; fields: FieldDefinition[] }>()
-			const byLabel = new Set<string>()
-
-			for (const provider of rawCatalog) {
-				if (!provider || typeof provider.id !== 'string' || provider.id.trim() === '') {
-					continue
-				}
-
-				if (byId.has(provider.id)) {
-					continue
-				}
-
-				const normalizedLabel = String(provider.name ?? '').trim().toLowerCase()
-				if (normalizedLabel !== '' && byLabel.has(normalizedLabel)) {
-					continue
-				}
-
-				if (normalizedLabel !== '') {
-					byLabel.add(normalizedLabel)
-				}
-
-				byId.set(provider.id, provider)
-			}
-
-			return Array.from(byId.values())
+			return normalizeProviderCatalog(this.selectedGateway?.providerCatalog)
 		},
 
 		hasProviderCatalog(): boolean {
@@ -325,63 +275,26 @@ export default defineComponent({
 		},
 
 		effectiveCatalogProviderId(): string {
-			if (!this.hasProviderCatalog) {
-				return ''
-			}
-
-			const catalog = this.normalizedProviderCatalog
-			const selected = this.selectedCatalogProviderId.trim()
-			if (selected !== '') {
-				return selected
-			}
-
-			const fromConfig = (this.form.config[this.providerSelectorFieldName] ?? '').trim()
-			if (fromConfig !== '') {
-				return fromConfig
-			}
-
-			if (this.instanceId.includes(':')) {
-				const fromPrefix = this.instanceId.split(':', 1)[0].trim()
-				if (fromPrefix !== '' && catalog.some((provider) => provider.id === fromPrefix)) {
-					return fromPrefix
-				}
-			}
-
-			if (this.isEditing && catalog.length === 1) {
-				return catalog[0].id
-			}
-
-			if (this.isEditing && catalog.length > 0) {
-				return catalog[0].id
-			}
-
-			if (catalog.length === 1) {
-				return catalog[0].id
-			}
-
-			return ''
+			return resolveEffectiveCatalogProviderId({
+				hasProviderCatalog: this.hasProviderCatalog,
+				catalog: this.normalizedProviderCatalog,
+				selectedCatalogProviderId: this.selectedCatalogProviderId,
+				config: this.form.config,
+				providerSelectorFieldName: this.providerSelectorFieldName,
+				instanceId: this.instanceId,
+				isEditing: this.isEditing,
+			})
 		},
 
 		currentFields(): FieldDefinition[] {
-			if (!this.selectedGateway && this.isEditing) {
-				return Object.keys(this.form.config)
-					.filter((fieldName) => fieldName !== 'provider')
-					.map((fieldName) => ({
-						field: fieldName,
-						prompt: fieldName,
-						default: '',
-						optional: true,
-						type: 'text',
-						hidden: false,
-					}))
-					.filter((field) => !field.hidden)
-			}
-
-			if (!this.hasProviderCatalog) {
-				return (this.selectedGateway?.fields ?? []).filter((field) => !field.hidden)
-			}
-			const provider = this.normalizedProviderCatalog.find((item) => item.id === this.effectiveCatalogProviderId)
-			return (provider?.fields ?? []).filter((field) => !field.hidden)
+			return resolveCurrentFields({
+				selectedGateway: this.selectedGateway,
+				isEditing: this.isEditing,
+				config: this.form.config,
+				hasProviderCatalog: this.hasProviderCatalog,
+				catalog: this.normalizedProviderCatalog,
+				effectiveCatalogProviderId: this.effectiveCatalogProviderId,
+			})
 		},
 
 		showWizardFirstFlow(): boolean {
@@ -389,20 +302,11 @@ export default defineComponent({
 		},
 
 		visibleFields(): FieldDefinition[] {
-			if (!this.showWizardFirstFlow) {
-				return this.currentFields
-			}
-
-			const wizardBootstrapFields = new Set(['base_url', 'username', 'password', 'device_name'])
-			return this.currentFields.filter((field) => wizardBootstrapFields.has(field.field))
+			return resolveVisibleFields(this.currentFields, this.showWizardFirstFlow)
 		},
 
 		fieldsToValidate(): FieldDefinition[] {
-			if (this.showWizardFirstFlow) {
-				return []
-			}
-
-			return this.currentFields
+			return resolveFieldsToValidate(this.currentFields, this.showWizardFirstFlow)
 		},
 
 		currentInstructions(): string {
@@ -541,44 +445,14 @@ export default defineComponent({
 		},
 
 		syncCatalogProviderSelection() {
-			const gateway = this.selectedGateway
-			const catalog = this.normalizedProviderCatalog
-			if (!gateway || catalog.length === 0) {
-				this.selectedCatalogProviderId = ''
-				return
-			}
-
-			const selectorFieldName = gateway.providerSelector?.field ?? 'provider'
-			if (catalog.length === 1) {
-				const onlyProviderId = String(catalog[0]?.id ?? '')
-				this.selectedCatalogProviderId = onlyProviderId
-				this.form.config = {
-					...this.form.config,
-					[selectorFieldName]: onlyProviderId,
-				}
-				return
-			}
-
-			const fromConfig = (this.form.config[selectorFieldName] ?? '').trim()
-			if (fromConfig !== '') {
-				this.selectedCatalogProviderId = fromConfig
-				return
-			}
-
-			// In edit mode catalog child instances are prefixed as "provider:instance".
-			if (this.instanceId.includes(':')) {
-				const prefix = this.instanceId.split(':', 1)[0].trim()
-				if (prefix !== '' && catalog.some((provider) => provider.id === prefix)) {
-					this.selectedCatalogProviderId = prefix
-					this.form.config = {
-						...this.form.config,
-						[selectorFieldName]: prefix,
-					}
-					return
-				}
-			}
-
-			this.selectedCatalogProviderId = ''
+			const state = computeCatalogSelectionState({
+				selectedGateway: this.selectedGateway,
+				catalog: this.normalizedProviderCatalog,
+				config: this.form.config,
+				instanceId: this.instanceId,
+			})
+			this.selectedCatalogProviderId = state.selectedCatalogProviderId
+			this.form.config = state.config
 		},
 
 		onGatewayChange() {
@@ -599,55 +473,17 @@ export default defineComponent({
 		},
 
 		validate(): boolean {
-			this.errors = {}
-			if (!this.form.label.trim()) {
-				this.errors.label = t('twofactor_gateway', 'Label is required.')
-				return false
-			}
-			if (!this.selectedGateway) {
-				return false
-			}
-			if (this.hasProviderCatalog && !this.effectiveCatalogProviderId) {
-				this.errors[this.providerSelectorFieldName] = t('twofactor_gateway', 'Please select a channel/provider.')
-				return false
-			}
-			for (const field of this.fieldsToValidate) {
-				if (this.isEditing && field.type === 'secret' && !this.form.config[field.field]?.trim()) {
-					continue
-				}
-				if (!field.optional && !this.form.config[field.field]?.trim()) {
-					this.errors[field.field] = t('twofactor_gateway', '{field} is required.', { field: field.prompt })
-					continue
-				}
-
-				if (field.type === 'integer') {
-					const value = (this.form.config[field.field] ?? '').trim()
-					if (value === '') {
-						continue
-					}
-
-					if (!/^-?\d+$/.test(value)) {
-						this.errors[field.field] = t('twofactor_gateway', '{field} must be an integer.', { field: field.prompt })
-						continue
-					}
-
-					const numericValue = Number.parseInt(value, 10)
-					if (field.min !== undefined && numericValue < field.min) {
-						this.errors[field.field] = t('twofactor_gateway', '{field} must be at least {min}.', {
-							field: field.prompt,
-							min: field.min,
-						})
-						continue
-					}
-
-					if (field.max !== undefined && numericValue > field.max) {
-						this.errors[field.field] = t('twofactor_gateway', '{field} must be at most {max}.', {
-							field: field.prompt,
-							max: field.max,
-						})
-					}
-				}
-			}
+			this.errors = validateGatewayInstanceForm({
+				label: this.form.label,
+				isEditing: this.isEditing,
+				selectedGateway: this.selectedGateway,
+				hasProviderCatalog: this.hasProviderCatalog,
+				effectiveCatalogProviderId: this.effectiveCatalogProviderId,
+				providerSelectorFieldName: this.providerSelectorFieldName,
+				fieldsToValidate: this.fieldsToValidate,
+				config: this.form.config,
+				t: (text, parameters) => t('twofactor_gateway', text, parameters),
+			})
 			return Object.keys(this.errors).length === 0
 		},
 
