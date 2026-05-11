@@ -15,4 +15,4 @@ export {
 	startInteractiveSetup,
 	testInstance,
 	updateInstance,
-} from '@libresign/twofactor-gateway'
+} from '@lib/twofactor-gateway'
