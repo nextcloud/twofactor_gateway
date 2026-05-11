@@ -149,16 +149,15 @@ import {
 	setDefaultInstance,
 	updateInstance,
 } from '../services/adminGatewayApi.ts'
-import type { FieldDefinition, GatewayGroup, GatewayInfo, GatewayInstance } from '../services/adminGatewayTypes.ts'
-
-interface FlatInstanceEntry {
-	orderKey: string
-	gatewayId: string
-	providerName: string
-	fields: FieldDefinition[]
-	instance: GatewayInstance
-	showRoutingAction: boolean
-}
+import type { GatewayGroup, GatewayInfo } from '../services/adminGatewayTypes.ts'
+import {
+	buildFlatInstances,
+	buildPriorityUpdates,
+	findFlatInstanceEntry,
+	mergeOrderKeys,
+	orderInstances,
+	type FlatInstanceEntry,
+} from '../services/adminGatewayViewModel.ts'
 
 export default defineComponent({
 	name: 'AdminSettings',
@@ -211,58 +210,12 @@ export default defineComponent({
 
 	computed: {
 		allInstances(): FlatInstanceEntry[] {
-			const rows: FlatInstanceEntry[] = []
-			for (const gateway of this.gateways) {
-				const instances = Array.isArray(gateway.instances) ? gateway.instances : []
-				for (const instance of instances) {
-					const groupIds = Array.isArray(instance.groupIds) ? instance.groupIds : []
-					const priority = typeof instance.priority === 'number' ? instance.priority : 0
-					const selectedProviderId = gateway.providerSelector
-						? instance.config[gateway.providerSelector.field]
-						: undefined
-					const selectedProvider = gateway.providerCatalog?.find((provider) => provider.id === selectedProviderId)
-					rows.push({
-						orderKey: `${gateway.id}:${instance.id}`,
-						gatewayId: gateway.id,
-						providerName: selectedProvider?.name ?? gateway.name,
-						fields: selectedProvider?.fields ?? gateway.fields,
-						instance: {
-							...instance,
-							groupIds,
-							priority,
-						},
-						showRoutingAction: true,
-					})
-				}
-			}
-
-			// Default visual order follows effective routing priority (higher first)
-			// so cards don't appear randomly mixed before any drag interaction.
-			return rows.sort((left, right) => {
-				const priorityDiff = (right.instance.priority ?? 0) - (left.instance.priority ?? 0)
-				if (priorityDiff !== 0) {
-					return priorityDiff
-				}
-
-				const labelDiff = left.instance.label.localeCompare(right.instance.label)
-				if (labelDiff !== 0) {
-					return labelDiff
-				}
-
-				return left.orderKey.localeCompare(right.orderKey)
-			})
+			return buildFlatInstances(this.gateways)
 		},
 
 		orderedInstances: {
 			get(): FlatInstanceEntry[] {
-				const fallbackOrder = this.allInstances.map((item) => item.orderKey)
-				const knownOrder = this.orderKeys.length > 0 ? this.orderKeys : fallbackOrder
-				const position = new Map(knownOrder.map((key, index) => [key, index]))
-				return [...this.allInstances].sort((left, right) => {
-					const leftIndex = position.get(left.orderKey) ?? Number.MAX_SAFE_INTEGER
-					const rightIndex = position.get(right.orderKey) ?? Number.MAX_SAFE_INTEGER
-					return leftIndex - rightIndex
-				})
+				return orderInstances(this.allInstances, this.orderKeys)
 			},
 			set(value: FlatInstanceEntry[]) {
 				this.orderKeys = value.map((item) => item.orderKey)
@@ -290,11 +243,7 @@ export default defineComponent({
 	watch: {
 		allInstances: {
 			handler(items: FlatInstanceEntry[]) {
-				const nextKeys = items.map((item) => item.orderKey)
-				const nextKeysSet = new Set(nextKeys)
-				const keptKeys = this.orderKeys.filter((key) => nextKeysSet.has(key))
-				const appendedKeys = nextKeys.filter((key) => !keptKeys.includes(key))
-				this.orderKeys = [...keptKeys, ...appendedKeys]
+				this.orderKeys = mergeOrderKeys(this.orderKeys, items)
 			},
 			immediate: true,
 		},
@@ -306,8 +255,7 @@ export default defineComponent({
 
 	methods: {
 		openEditById(gatewayId: string, instanceId: string) {
-			const item = this.allInstances.find((entry) => entry.gatewayId === gatewayId && entry.instance.id === instanceId)
-				?? this.allInstances.find((entry) => entry.instance.id === instanceId)
+			const item = findFlatInstanceEntry(this.allInstances, gatewayId, instanceId)
 			if (!item) {
 				return
 			}
@@ -337,8 +285,7 @@ export default defineComponent({
 		},
 
 		openRoutingById(gatewayId: string, instanceId: string) {
-			const item = this.allInstances.find((entry) => entry.gatewayId === gatewayId && entry.instance.id === instanceId)
-				?? this.allInstances.find((entry) => entry.instance.id === instanceId)
+			const item = findFlatInstanceEntry(this.allInstances, gatewayId, instanceId)
 			if (!item) {
 				return
 			}
@@ -404,8 +351,7 @@ export default defineComponent({
 		async onSaved(payload: { gatewayId: string; instanceId: string; label: string; config: Record<string, string> }) {
 			try {
 				if (payload.instanceId) {
-					const existingItem = this.allInstances.find((item) => item.gatewayId === payload.gatewayId && item.instance.id === payload.instanceId)
-						?? this.allInstances.find((item) => item.instance.id === payload.instanceId)
+					const existingItem = findFlatInstanceEntry(this.allInstances, payload.gatewayId, payload.instanceId)
 					await updateInstance(
 						payload.gatewayId,
 						payload.instanceId,
@@ -457,12 +403,7 @@ export default defineComponent({
 
 			this.savingOrder = true
 			try {
-				const updates = orderedItems
-					.map((item, index) => ({
-						item,
-						priority: orderedItems.length - index,
-					}))
-					.filter(({ item, priority }) => item.instance.priority !== priority)
+				const updates = buildPriorityUpdates(orderedItems)
 
 				for (const { item, priority } of updates) {
 					await updateInstance(
