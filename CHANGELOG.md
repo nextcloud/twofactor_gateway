@@ -15,6 +15,18 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 2.5.0 - 2026-05-11
+### Added
+- implement WhatsApp Business setup and UX [#1055](https://github.com/nextcloud/twofactor_gateway/pull/1055)
+
+### Changed
+- isolate GoWhatsApp driver internals [#1011](https://github.com/nextcloud/twofactor_gateway/pull/1011)
+- bump dependencies [#1018](https://github.com/nextcloud/twofactor_gateway/pull/1018) [#1028](https://github.com/nextcloud/twofactor_gateway/pull/1028) [#1027](https://github.com/nextcloud/twofactor_gateway/pull/1027) [#1016](https://github.com/nextcloud/twofactor_gateway/pull/1016) [#1015](https://github.com/nextcloud/twofactor_gateway/pull/1015) [#1014](https://github.com/nextcloud/twofactor_gateway/pull/1014) [#1024](https://github.com/nextcloud/twofactor_gateway/pull/1024) [#1037](https://github.com/nextcloud/twofactor_gateway/pull/1037) [#1026](https://github.com/nextcloud/twofactor_gateway/pull/1026) [#1017](https://github.com/nextcloud/twofactor_gateway/pull/1017)
+
+### Fixed
+- modernize sms77io driver to use seven.io endpoint and validate delivery [#1022](https://github.com/nextcloud/twofactor_gateway/pull/1022)
+- use server container instance of AdminNotificationFormatterRegistry [#1052](https://github.com/nextcloud/twofactor_gateway/pull/1052)
+
 ## 2.4.0 - 2026-04-22
 ### Added
 - #993 add command descriptions
