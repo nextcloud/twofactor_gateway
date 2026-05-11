@@ -169,8 +169,8 @@ import {
 	cancelInteractiveSetup,
 	interactiveSetupStep,
 	startInteractiveSetup,
-	type InteractiveSetupResponse,
 } from '../../../services/adminGatewayApi.ts'
+import type { InteractiveSetupResponse } from '../../../services/adminGatewayTypes.ts'
 
 export default defineComponent({
 	name: 'SetupPanel',
