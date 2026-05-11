@@ -15,6 +15,11 @@ export default createAppConfig({
 	admin: path.join(__dirname, 'src', 'admin.ts'),
 }, {
 	config: {
+		resolve: {
+			alias: {
+				'@libresign/twofactor-gateway': path.resolve(__dirname, 'packages/twofactor-gateway/src/index.ts'),
+			},
+		},
 		plugins: [
 			...(!isProduction ? [eslint()] : []),
 			stylelint(),
