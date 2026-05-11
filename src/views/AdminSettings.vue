@@ -147,12 +147,9 @@ import {
 	listGateways,
 	listGroups,
 	setDefaultInstance,
-	type FieldDefinition,
-	type GatewayGroup,
-	type GatewayInfo,
-	type GatewayInstance,
 	updateInstance,
 } from '../services/adminGatewayApi.ts'
+import type { FieldDefinition, GatewayGroup, GatewayInfo, GatewayInstance } from '../services/adminGatewayTypes.ts'
 
 interface FlatInstanceEntry {
 	orderKey: string
