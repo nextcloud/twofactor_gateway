@@ -27,9 +27,13 @@ vi.mock('@nextcloud/l10n', () => ({
 	},
 }))
 
-vi.mock('../../services/adminGatewayApi.ts', () => ({
-	testInstance: vi.fn(),
-}))
+vi.mock('@lib/twofactor-gateway', async (importOriginal) => {
+	const orig = await importOriginal()
+	return {
+		...(orig as Record<string, unknown>),
+		testInstance: vi.fn(),
+	}
+})
 
 vi.mock('@nextcloud/vue/components/NcModal', () => ({
 	default: defineComponent({
@@ -112,7 +116,7 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('calls testInstance with the correct arguments on send', async () => {
-		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		const { testInstance } = await import('@lib/twofactor-gateway')
 		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
@@ -124,7 +128,7 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('sends test when pressing Enter in identifier field', async () => {
-		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		const { testInstance } = await import('@lib/twofactor-gateway')
 		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
@@ -136,7 +140,7 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('does not close modal when pressing Enter in identifier field', async () => {
-		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		const { testInstance } = await import('@lib/twofactor-gateway')
 		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
@@ -149,7 +153,7 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('trims identifier before sending test request', async () => {
-		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		const { testInstance } = await import('@lib/twofactor-gateway')
 		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
 		const wrapper = mount(GatewayTestModal, {
@@ -167,7 +171,7 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('shows a success result after a successful test', async () => {
-		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		const { testInstance } = await import('@lib/twofactor-gateway')
 		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
@@ -180,7 +184,7 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('shows an error result when the test fails', async () => {
-		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		const { testInstance } = await import('@lib/twofactor-gateway')
 		vi.mocked(testInstance).mockResolvedValueOnce({ success: false, message: 'Connection refused.' })
 
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
@@ -199,7 +203,7 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('shows initials fallback when accountInfo includes a remote avatar URL', async () => {
-		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		const { testInstance } = await import('@lib/twofactor-gateway')
 		vi.mocked(testInstance).mockResolvedValueOnce({
 			success: true,
 			message: 'Message sent successfully.',
@@ -217,7 +221,7 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('shows account info with avatar image when accountInfo includes valid data URI', async () => {
-		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		const { testInstance } = await import('@lib/twofactor-gateway')
 		vi.mocked(testInstance).mockResolvedValueOnce({
 			success: true,
 			message: 'Message sent successfully.',
@@ -240,7 +244,7 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('shows initials fallback when accountInfo has no avatar URL', async () => {
-		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		const { testInstance } = await import('@lib/twofactor-gateway')
 		vi.mocked(testInstance).mockResolvedValueOnce({
 			success: true,
 			message: 'Message sent successfully.',
@@ -258,7 +262,7 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('shows initials fallback when accountInfo avatar data URI is truncated', async () => {
-		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		const { testInstance } = await import('@lib/twofactor-gateway')
 		vi.mocked(testInstance).mockResolvedValueOnce({
 			success: true,
 			message: 'Message sent successfully.',
@@ -276,7 +280,7 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('does not show account info section when no accountInfo is returned', async () => {
-		const { testInstance } = await import('../../services/adminGatewayApi.ts')
+		const { testInstance } = await import('@lib/twofactor-gateway')
 		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
 		const wrapper = mount(GatewayTestModal, { props: defaultProps })
