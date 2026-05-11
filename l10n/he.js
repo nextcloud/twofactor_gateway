@@ -27,6 +27,8 @@ OC.L10N.register(
     "Phone number" : "מספר טלפון",
     "Back" : "אחורה",
     "Continue" : "להמשך",
+    "Template" : "תבנית",
+    "Language" : "שפה",
     "Retry" : "ניסיון חוזר",
     "Verify" : "אימות",
     "Confirm" : "אימות",

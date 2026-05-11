@@ -11,6 +11,7 @@ OC.L10N.register(
     "Close" : "Clauder",
     "Device" : "Dispositivo",
     "Phone number" : "Numero de telephono",
+    "Language" : "Lingua",
     "Confirm" : "Confirmar",
     "Disable" : "Disactivar",
     "Authentication code" : "Codice de authentication"

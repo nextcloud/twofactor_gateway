@@ -16,6 +16,8 @@ OC.L10N.register(
     "Phone number" : "Numri i telefonit",
     "Back" : "Mbrapsht",
     "Continue" : "Vazhdo",
+    "Header" : "Header",
+    "Language" : "Gjuha",
     "Retry" : "Riprovoni",
     "Enable" : "Aktivizoje",
     "Verify" : "Verifiko",

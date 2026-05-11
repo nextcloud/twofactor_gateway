@@ -16,6 +16,8 @@ OC.L10N.register(
     "Device" : "Ierīce",
     "Phone number" : "Tālruņa numurs",
     "Continue" : "Turpināt",
+    "Status:" : "Statuss:",
+    "Language" : "Valoda",
     "Retry" : "Mēģināt vēlreiz",
     "Enable" : "Iespējot",
     "Verify" : "Verificēt",

@@ -29,6 +29,8 @@ OC.L10N.register(
     "Phone number" : "Número telefónico",
     "Back" : "Regresar",
     "Continue" : "Continuar",
+    "Status:" : "Estado:",
+    "Template" : "Plantilla",
     "Retry" : "Reintentar",
     "You are not using {displayName} for two-factor authentication at the moment." : "Actualmente no estás usando {displayName} para la autenticación de dos factores.",
     "Enable" : "Habilitar",

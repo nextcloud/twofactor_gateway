@@ -30,6 +30,8 @@ OC.L10N.register(
     "Phone number" : "Broj telefona",
     "Back" : "Natrag",
     "Continue" : "Nastavi",
+    "Template" : "Predložak",
+    "Language" : "Jezik",
     "Retry" : "Pokušaj ponovno",
     "Enable" : "Omogućite",
     "Verify" : "Provjeri",
