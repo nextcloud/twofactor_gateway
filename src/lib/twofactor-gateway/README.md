@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # @lib/twofactor-gateway
 
 Internal module under `src/lib/` for TwoFactor Gateway frontend logic.
