@@ -11,6 +11,7 @@ OC.L10N.register(
     "Collapse" : "បត់បង្រួម",
     "Close" : "បិទ",
     "Continue" : "បន្ត",
+    "Language" : "ភាសា",
     "Disable" : "បិទ"
 },
 "nplurals=1; plural=0;");

@@ -17,6 +17,8 @@ OC.L10N.register(
     "Phone number" : "Số điện thoại",
     "Back" : "Trở lại",
     "Continue" : "Tiếp tục",
+    "Body" : "Thân",
+    "Language" : "Ngôn ngữ",
     "Retry" : "Thử lại",
     "Enable" : "Bật",
     "Verify" : "Xác minh",

@@ -22,6 +22,8 @@ OC.L10N.register(
     "Phone number" : "Nomor telepon",
     "Back" : "Kembali",
     "Continue" : "Lanjutkan",
+    "Status:" : "Status:",
+    "Language" : "Bahasa",
     "Retry" : "Coba lagi",
     "Enable" : "Aktifkan",
     "Verify" : "Verifikasi",

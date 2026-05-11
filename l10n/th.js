@@ -14,6 +14,8 @@ OC.L10N.register(
     "Device" : "อุปกรณ์",
     "Phone number" : "หมายเลขโทรศัพท์",
     "Continue" : "ดำเนินการต่อ",
+    "Header" : "ส่วนหัว",
+    "Language" : "ภาษา",
     "Verify" : "ยืนยัน",
     "Confirm" : "ยืนยัน",
     "Disable" : "ปิดใช้งาน",

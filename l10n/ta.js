@@ -8,6 +8,7 @@ OC.L10N.register(
     "Cancel" : "Cancel",
     "Close" : "மூடுக",
     "Back" : "பின்னுக்கு",
+    "Language" : "மொழி",
     "Enable" : "இயலுமைப்படுத்துக",
     "Disable" : "இயலுமைப்ப"
 },

@@ -10,6 +10,8 @@ OC.L10N.register(
     "Device" : "උපාංගය",
     "Phone number" : "දුරකථන අංකය",
     "Back" : "ආපසු",
+    "Body" : "අන්තර්ගතය",
+    "Language" : "භාෂාව",
     "Retry" : "නැවත උත්සාහ කරන්න",
     "Confirm" : "තහවුරු කරන්න",
     "Disable" : "අබල කරන්න"

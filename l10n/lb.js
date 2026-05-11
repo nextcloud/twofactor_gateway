@@ -11,6 +11,7 @@ OC.L10N.register(
     "Collapse" : "Zesumme falen",
     "Close" : "Zoumaachen",
     "Continue" : "Weider",
+    "Language" : "Sprooch",
     "Confirm" : "Konfirméieren",
     "Disable" : "Ofschalten"
 },

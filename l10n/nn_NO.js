@@ -12,6 +12,7 @@ OC.L10N.register(
     "Close" : "Lat att",
     "Device" : "Eining",
     "Continue" : "Gå vidare",
+    "Language" : "Språk",
     "Retry" : "Forsøk att",
     "Enable" : "SLå på",
     "Verify" : "Stadfest",

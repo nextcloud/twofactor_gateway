@@ -24,6 +24,7 @@ OC.L10N.register(
     "Phone number" : "Número telefónico",
     "Back" : "Atrás",
     "Continue" : "Continuar",
+    "Status:" : "Estado:",
     "Retry" : "Reintentar",
     "Enable" : "Activar",
     "Verify" : "Verificar",
