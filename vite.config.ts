@@ -17,7 +17,7 @@ export default createAppConfig({
 	config: {
 		resolve: {
 			alias: {
-				'@libresign/twofactor-gateway': path.resolve(__dirname, 'packages/twofactor-gateway/src/index.ts'),
+				'@libresign/twofactor-gateway': path.resolve(__dirname, 'src/lib/twofactor-gateway/index.ts'),
 			},
 		},
 		plugins: [
