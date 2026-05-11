@@ -1,6 +1,6 @@
-# @libresign/twofactor-gateway
+# @lib/twofactor-gateway
 
-Internal reusable frontend package for TwoFactor Gateway and LibreSign integrations.
+Internal module under `src/lib/` for TwoFactor Gateway frontend logic.
 
 It currently provides:
 - Shared gateway types
