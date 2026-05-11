@@ -148,16 +148,15 @@ import {
 	listGroups,
 	setDefaultInstance,
 	updateInstance,
-} from '../services/adminGatewayApi.ts'
-import type { GatewayGroup, GatewayInfo } from '../services/adminGatewayTypes.ts'
-import {
 	buildFlatInstances,
 	buildPriorityUpdates,
 	findFlatInstanceEntry,
 	mergeOrderKeys,
 	orderInstances,
 	type FlatInstanceEntry,
-} from '../services/adminGatewayViewModel.ts'
+	type GatewayGroup,
+	type GatewayInfo,
+} from '@lib/twofactor-gateway'
 
 export default defineComponent({
 	name: 'AdminSettings',
