@@ -10,4 +10,4 @@ export {
 	resolveGatewayId,
 	resolveVisibleFields,
 	validateGatewayInstanceForm,
-} from '@libresign/twofactor-gateway'
+} from '@lib/twofactor-gateway'
