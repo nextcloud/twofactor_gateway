@@ -11,4 +11,4 @@ export {
 	type GatewayProviderDefinition,
 	type InteractiveSetupResponse,
 	type TestResult,
-} from '@libresign/twofactor-gateway'
+} from '@lib/twofactor-gateway'
