@@ -8,4 +8,4 @@ export {
 	mergeOrderKeys,
 	orderInstances,
 	type FlatInstanceEntry,
-} from '@libresign/twofactor-gateway'
+} from '@lib/twofactor-gateway'
