@@ -1742,6 +1742,14 @@
                                     "sessionId": {
                                         "type": "string",
                                         "description": "Interactive setup session id"
+                                    },
+                                    "input": {
+                                        "type": "object",
+                                        "default": {},
+                                        "description": "Optional setup context used to resolve catalog providers",
+                                        "additionalProperties": {
+                                            "type": "string"
+                                        }
                                     }
                                 }
                             }

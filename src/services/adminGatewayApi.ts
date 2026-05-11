@@ -255,12 +255,13 @@ export async function interactiveSetupStep(
 export async function cancelInteractiveSetup(
 	gatewayId: string,
 	sessionId: string,
+	input: Record<string, string> = {},
 ): Promise<InteractiveSetupResponse> {
 	const response = await axios.post(
 		generateOcsUrl('/apps/twofactor_gateway/admin/gateways/{gateway}/interactive-setup/cancel', {
 			gateway: gatewayId,
 		}),
-		{ sessionId },
+		{ sessionId, input },
 	)
 	return ocsData<InteractiveSetupResponse>(response)
 }

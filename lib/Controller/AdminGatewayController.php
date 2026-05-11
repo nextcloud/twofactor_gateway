@@ -290,7 +290,7 @@ class AdminGatewayController extends OCSController {
 		}
 
 		try {
-			$gatewayForTest->send($identifier, 'Test');
+			$gatewayForTest->send($identifier, 'Two Factor Gateway test message');
 			$data = ['success' => true, 'message' => 'Test message sent successfully.'];
 
 			$gatewayForEnrichment = null;
@@ -385,6 +385,7 @@ class AdminGatewayController extends OCSController {
 	 *
 	 * @param string $gateway The gateway id
 	 * @param string $sessionId Interactive setup session id
+	 * @param array<string, string> $input Optional setup context used to resolve catalog providers
 	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
 	 *
 	 * 200: Interactive setup cancelled
@@ -392,9 +393,9 @@ class AdminGatewayController extends OCSController {
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/interactive-setup/cancel')]
-	public function cancelInteractiveSetup(string $gateway, string $sessionId): DataResponse {
+	public function cancelInteractiveSetup(string $gateway, string $sessionId, array $input = []): DataResponse {
 		try {
-			$gw = $this->gatewayFactory->get($gateway);
+			$gw = $this->resolveGatewayForPayload($gateway, $input);
 		} catch (\InvalidArgumentException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}

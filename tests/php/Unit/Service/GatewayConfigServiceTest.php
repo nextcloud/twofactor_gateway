@@ -401,6 +401,43 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->assertTrue($fetched['isComplete']);
 	}
 
+	public function testCatalogInstanceRecordDoesNotExposeFieldsFromOtherProviders(): void {
+		$whatsAppGateway = $this->makeCatalogGatewayMock(
+			'whatsapp',
+			'WhatsApp',
+			[['field' => 'base_url', 'prompt' => 'Base URL']],
+			'provider',
+			[
+				[
+					'id' => 'gowhatsapp',
+					'name' => 'GoWhatsApp',
+					'fields' => [
+						['field' => 'base_url', 'prompt' => 'Base URL', 'optional' => false],
+					],
+				],
+				[
+					'id' => 'whatsappbusiness',
+					'name' => 'WhatsApp Business',
+					'fields' => [
+						['field' => 'phone_number_id', 'prompt' => 'Phone Number ID', 'optional' => false],
+					],
+				],
+			],
+		);
+
+		$created = $this->service->createInstance($whatsAppGateway, 'Business', [
+			'provider' => 'whatsappbusiness',
+			'phone_number_id' => 'test_9999999999999',
+			'base_url' => 'https://gowhatsapp.example.test',
+		]);
+
+		$fetched = $this->service->getInstance($whatsAppGateway, $created['id']);
+
+		$this->assertSame('whatsappbusiness', $fetched['config']['provider']);
+		$this->assertSame('test_9999999999999', $fetched['config']['phone_number_id']);
+		$this->assertArrayNotHasKey('base_url', $fetched['config']);
+	}
+
 	public function testDeleteCatalogInstanceRemovesSelectorAndProviderSpecificFields(): void {
 		$whatsAppGateway = $this->makeCatalogGatewayMock(
 			'whatsapp',
