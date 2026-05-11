@@ -29,6 +29,8 @@ OC.L10N.register(
     "Phone number" : "Símanúmer",
     "Back" : "Til baka",
     "Continue" : "Halda áfram",
+    "Template" : "Sniðmát",
+    "Language" : "Tungumál",
     "Retry" : "Reyna aftur",
     "Verify" : "Sannprófa",
     "Confirm" : "Staðfesta",

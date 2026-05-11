@@ -12,6 +12,8 @@ OC.L10N.register(
     "Close" : "Yopish",
     "Back" : "Orqaga",
     "Continue" : "Davom etish",
+    "Status:" : "Holati:",
+    "Language" : "Language",
     "Retry" : "Qayta urinish",
     "Enable" : "Enable",
     "Verify" : "Verify",

@@ -14,6 +14,8 @@ OC.L10N.register(
     "Close" : "დახურვა",
     "Device" : "მოწყობილობა",
     "Phone number" : "ტელეფონის ნომერი",
+    "Header" : "დასათაურება",
+    "Language" : "ენა",
     "Retry" : "ვცადოთ ახლიდან",
     "Verify" : "დამოწმება",
     "Confirm" : "დადასტურება",
