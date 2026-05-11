@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent } from 'vue'
 import AdminSettings from '../../views/AdminSettings.vue'
-import type { GatewayInfo } from '../../services/adminGatewayApi.ts'
+import type { GatewayInfo } from '../../services/adminGatewayTypes.ts'
 
 const GatewayInstanceCardStub = vi.hoisted(() => ({
 	name: 'GatewayInstanceCard',

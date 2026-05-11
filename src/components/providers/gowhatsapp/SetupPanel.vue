@@ -181,8 +181,8 @@ import {
 	cancelInteractiveSetup,
 	interactiveSetupStep,
 	startInteractiveSetup,
-	type InteractiveSetupResponse,
 } from '../../../services/adminGatewayApi.ts'
+import type { InteractiveSetupResponse } from '../../../services/adminGatewayTypes.ts'
 
 type WizardDevice = {
 	id: string

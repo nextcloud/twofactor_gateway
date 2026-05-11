@@ -135,7 +135,7 @@ import StarOutlineIcon from 'vue-material-design-icons/StarOutline.vue'
 import TestTubeIcon from 'vue-material-design-icons/TestTube.vue'
 import AccountMultipleIcon from 'vue-material-design-icons/AccountMultiple.vue'
 import { t } from '@nextcloud/l10n'
-import type { FieldDefinition, GatewayGroup, GatewayInstance } from '../services/adminGatewayApi.ts'
+import type { FieldDefinition, GatewayGroup, GatewayInstance } from '../services/adminGatewayTypes.ts'
 
 const MASKED_FIELDS = ['token', 'password', 'secret', 'api_key', 'key', 'pass', 'credential']
 
