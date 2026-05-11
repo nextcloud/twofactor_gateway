@@ -110,9 +110,8 @@ import {
 	deleteInstance,
 	setDefaultInstance,
 	updateInstance,
-	type GatewayInfo,
-	type GatewayInstance,
 } from '../services/adminGatewayApi.ts'
+import type { GatewayInfo, GatewayInstance } from '../services/adminGatewayTypes.ts'
 
 export default defineComponent({
 	name: 'GatewaySection',
