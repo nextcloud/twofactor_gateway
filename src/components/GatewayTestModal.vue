@@ -70,17 +70,7 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
 import { testInstance } from '../services/adminGatewayApi.ts'
-
-type GatewayAccountInfo = {
-	account_name?: string
-	account_avatar_url?: string
-}
-
-type GatewayTestResult = {
-	success: boolean
-	message: string
-	accountInfo?: GatewayAccountInfo
-}
+import type { TestResult } from '../services/adminGatewayTypes.ts'
 
 export default defineComponent({
 	name: 'GatewayTestModal',
@@ -104,7 +94,7 @@ export default defineComponent({
 			identifier: '',
 			testing: false,
 			avatarLoadFailed: false,
-			result: null as GatewayTestResult | null,
+			result: null as TestResult | null,
 		}
 	},
 

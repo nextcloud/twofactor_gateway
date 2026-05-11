@@ -154,7 +154,7 @@ import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import { t } from '@nextcloud/l10n'
 import { resolveGatewaySetupPanel } from './providers/registry'
-import type { FieldDefinition, GatewayInfo } from '../services/adminGatewayApi.ts'
+import type { FieldDefinition, GatewayInfo } from '../services/adminGatewayTypes.ts'
 
 export default defineComponent({
 	name: 'GatewayInstanceModal',
