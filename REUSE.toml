@@ -15,12 +15,6 @@ SPDX-FileCopyrightText = "none"
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
-path = "src/lib/twofactor-gateway/README.md"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 LibreCode coop and contributors"
-SPDX-License-Identifier = "AGPL-3.0-or-later"
-
-[[annotations]]
 path = [
 	".tx/config",
 	"composer.json",
