@@ -20,11 +20,15 @@ vi.mock('dompurify', () => ({
 	},
 }))
 
-vi.mock('../../../../services/adminGatewayApi.ts', () => ({
-	startInteractiveSetup: vi.fn(),
-	interactiveSetupStep: vi.fn(),
-	cancelInteractiveSetup: vi.fn(),
-}))
+vi.mock('@lib/twofactor-gateway', async (importOriginal) => {
+	const orig = await importOriginal()
+	return {
+		...(orig as Record<string, unknown>),
+		startInteractiveSetup: vi.fn(),
+		interactiveSetupStep: vi.fn(),
+		cancelInteractiveSetup: vi.fn(),
+	}
+})
 
 vi.mock('@nextcloud/vue/components/NcButton', () => ({
 	default: defineComponent({
