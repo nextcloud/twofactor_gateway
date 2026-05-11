@@ -14,7 +14,7 @@
     "verbatimModuleSyntax": false,
     "baseUrl": ".",
     "paths": {
-      "@libresign/twofactor-gateway": ["src/lib/twofactor-gateway/index.ts"]
+      "@lib/twofactor-gateway": ["src/lib/twofactor-gateway/index.ts"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
