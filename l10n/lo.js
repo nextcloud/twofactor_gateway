@@ -23,6 +23,7 @@ OC.L10N.register(
     "Back" : "ກັບຄືນ",
     "Continue" : "ສືບຕໍ່",
     "Template:" : "ແມ່ແບບ:",
+    "Language:" : "ພາສາ:",
     "Status:" : "ສະຖານະ:",
     "Header" : "ສ່ວນຫົວ",
     "Body" : "ເນື້ອໃນ",

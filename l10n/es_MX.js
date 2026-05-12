@@ -25,6 +25,8 @@ OC.L10N.register(
     "Back" : "Atrás",
     "Continue" : "Continuar",
     "Status:" : "Estado:",
+    "Header" : "Encabezado",
+    "Language" : "Idioma",
     "Retry" : "Reintentar",
     "Enable" : "Activar",
     "Verify" : "Verificar",

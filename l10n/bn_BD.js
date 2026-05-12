@@ -11,6 +11,7 @@ OC.L10N.register(
     "Collapse" : "ভাঙো",
     "Close" : "বন্ধ",
     "Continue" : "চালিয়ে যাও",
+    "Language" : "ভাষা",
     "Disable" : "নিষ্ক্রিয়"
 },
 "nplurals=2; plural=(n != 1);");

@@ -23,6 +23,8 @@ OC.L10N.register(
     "Back" : "Kembali",
     "Continue" : "Lanjutkan",
     "Status:" : "Status:",
+    "Header" : "Header",
+    "Body" : "Isi",
     "Language" : "Bahasa",
     "Retry" : "Coba lagi",
     "Enable" : "Aktifkan",

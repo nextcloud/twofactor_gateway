@@ -13,6 +13,8 @@ OC.L10N.register(
     "Device" : "Dispositivo",
     "Phone number" : "Número de teléfono",
     "Continue" : "Continuar",
+    "Header" : "Encabezado",
+    "Language" : "Idioma",
     "Retry" : "Reintentar",
     "Verify" : "Verificar",
     "Confirm" : "Confirmar",
