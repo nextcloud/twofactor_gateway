@@ -14,6 +14,8 @@ OC.L10N.register(
     "Device" : "Cihaz",
     "Back" : "Geri",
     "Continue" : "Davam et",
+    "Language:" : "Dil:",
+    "Language" : "Dil",
     "Verify" : "Təsdiq et",
     "Confirm" : "Təsdiq edin",
     "Disable" : "Dayandır"

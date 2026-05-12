@@ -20,6 +20,8 @@ OC.L10N.register(
     "Phone number" : "Нумар тэлефона",
     "Back" : "Назад",
     "Continue" : "Працягнуць",
+    "Template" : "Шаблон",
+    "Language" : "Мова",
     "Retry" : "Паўтарыць спробу",
     "Enable" : "Уключыць",
     "Verify" : "Спраўдзіць",

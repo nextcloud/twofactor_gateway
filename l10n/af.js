@@ -11,6 +11,7 @@ OC.L10N.register(
     "Device" : "Toestel",
     "Phone number" : "Foonnommer",
     "Continue" : "Gaan voort",
+    "Language" : "Taal",
     "Retry" : "Herprobeer",
     "Confirm" : "Bevestig",
     "Disable" : "Deaktiveer",
