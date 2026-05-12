@@ -34,7 +34,7 @@
 		<div v-if="wizardStep === 'phone_selection'" class="modal-field">
 			<label for="wizard-phone-select">{{ t('twofactor_gateway', 'Available phone numbers') }}</label>
 			<select id="wizard-phone-select" v-model="wizardSelectedPhone" class="wizard-select">
-				<option value="">{{ t('twofactor_gateway', 'Select a phone number...') }}</option>
+				<option value="">{{ t('twofactor_gateway', 'Select a phone number\u00A0…') }}</option>
 				<option
 					v-for="phone in wizardPhoneNumbers"
 					:key="phone.id"
@@ -49,7 +49,7 @@
 		<div v-if="wizardStep === 'template_selection'" class="modal-field">
 			<label for="wizard-template-select">{{ t('twofactor_gateway', 'Approved templates') }}</label>
 			<select id="wizard-template-select" v-model="wizardSelectedTemplate" class="wizard-select">
-				<option value="">{{ t('twofactor_gateway', 'Select a template...') }}</option>
+				<option value="">{{ t('twofactor_gateway', 'Select a template\u00A0…') }}</option>
 				<option
 					v-for="template in wizardTemplates"
 					:key="`${template.name}-${template.language}`"
