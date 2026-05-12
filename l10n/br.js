@@ -12,6 +12,7 @@ OC.L10N.register(
     "Device" : "Ardivink",
     "Phone number" : "Niverenn bellgomz",
     "Continue" : "Kendec'hel",
+    "Language" : "Yezh",
     "Retry" : "Klaskit en dro",
     "Enable" : "Aotreañ",
     "Verify" : "Gwiriañ",

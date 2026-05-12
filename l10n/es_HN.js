@@ -14,6 +14,8 @@ OC.L10N.register(
     "Close" : "Cerrar",
     "Device" : "Dispositivo",
     "Phone number" : "Número telefónico",
+    "Header" : "Encabezado",
+    "Language" : "Idioma",
     "Retry" : "Reintentar",
     "Verify" : "Verificar",
     "Confirm" : "Confirmar",

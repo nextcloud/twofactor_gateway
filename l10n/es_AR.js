@@ -17,6 +17,8 @@ OC.L10N.register(
     "Phone number" : "Número telefónico",
     "Back" : "Volver",
     "Continue" : "Continuar",
+    "Header" : "Encabezado",
+    "Language" : "Idioma",
     "Retry" : "Reintentar",
     "Enable" : "Activar",
     "Verify" : "Verificar",

@@ -12,6 +12,8 @@ OC.L10N.register(
     "Device" : "Aparato",
     "Phone number" : "Telefonnumero",
     "Continue" : "Daŭrigi",
+    "Header" : "Kapo",
+    "Language" : "Lingvo",
     "Retry" : "Reprovi",
     "Enable" : "Ŝalti",
     "Verify" : "Kontroli",
