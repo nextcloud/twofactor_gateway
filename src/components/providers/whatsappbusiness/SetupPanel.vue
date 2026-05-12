@@ -389,7 +389,7 @@ export default defineComponent({
 		async startWizard() {
 			this.wizardLoading = true
 			this.wizardMessageType = 'info'
-			this.wizardMessage = t('twofactor_gateway', 'Initializing WhatsApp Business discovery...')
+			this.wizardMessage = t('twofactor_gateway', 'Initializing WhatsApp Business discovery\u00A0…')
 
 			try {
 				const started = this.ensureStepOk(await startInteractiveSetup(this.gatewayId, {
@@ -429,7 +429,7 @@ export default defineComponent({
 
 			this.wizardLoading = true
 			this.wizardMessageType = 'info'
-			this.wizardMessage = t('twofactor_gateway', 'Loading approved templates...')
+			this.wizardMessage = t('twofactor_gateway', 'Loading approved templates\u00A0…')
 
 			try {
 				this.ensureStepOk(await interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'select_phone', {
@@ -456,7 +456,7 @@ export default defineComponent({
 
 			this.wizardLoading = true
 			this.wizardMessageType = 'info'
-			this.wizardMessage = t('twofactor_gateway', 'Finishing setup...')
+			this.wizardMessage = t('twofactor_gateway', 'Finishing setup\u00A0…')
 
 			try {
 				let templateName = ''
