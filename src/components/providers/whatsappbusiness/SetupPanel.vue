@@ -34,7 +34,7 @@
 		<div v-if="wizardStep === 'phone_selection'" class="modal-field">
 			<label for="wizard-phone-select">{{ t('twofactor_gateway', 'Available phone numbers') }}</label>
 			<select id="wizard-phone-select" v-model="wizardSelectedPhone" class="wizard-select">
-				<option value="">{{ t('twofactor_gateway', 'Select a phone number...') }}</option>
+				<option value="">{{ t('twofactor_gateway', 'Select a phone number\u00A0…') }}</option>
 				<option
 					v-for="phone in wizardPhoneNumbers"
 					:key="phone.id"
@@ -49,7 +49,7 @@
 		<div v-if="wizardStep === 'template_selection'" class="modal-field">
 			<label for="wizard-template-select">{{ t('twofactor_gateway', 'Approved templates') }}</label>
 			<select id="wizard-template-select" v-model="wizardSelectedTemplate" class="wizard-select">
-				<option value="">{{ t('twofactor_gateway', 'Select a template...') }}</option>
+				<option value="">{{ t('twofactor_gateway', 'Select a template\u00A0…') }}</option>
 				<option
 					v-for="template in wizardTemplates"
 					:key="`${template.name}-${template.language}`"
@@ -389,7 +389,7 @@ export default defineComponent({
 		async startWizard() {
 			this.wizardLoading = true
 			this.wizardMessageType = 'info'
-			this.wizardMessage = t('twofactor_gateway', 'Initializing WhatsApp Business discovery...')
+			this.wizardMessage = t('twofactor_gateway', 'Initializing WhatsApp Business discovery\u00A0…')
 
 			try {
 				const started = this.ensureStepOk(await startInteractiveSetup(this.gatewayId, {
@@ -429,7 +429,7 @@ export default defineComponent({
 
 			this.wizardLoading = true
 			this.wizardMessageType = 'info'
-			this.wizardMessage = t('twofactor_gateway', 'Loading approved templates...')
+			this.wizardMessage = t('twofactor_gateway', 'Loading approved templates\u00A0…')
 
 			try {
 				this.ensureStepOk(await interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'select_phone', {
@@ -456,7 +456,7 @@ export default defineComponent({
 
 			this.wizardLoading = true
 			this.wizardMessageType = 'info'
-			this.wizardMessage = t('twofactor_gateway', 'Finishing setup...')
+			this.wizardMessage = t('twofactor_gateway', 'Finishing setup\u00A0…')
 
 			try {
 				let templateName = ''
