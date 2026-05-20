@@ -202,11 +202,6 @@ OC.L10N.register(
     "Submit" : "Cuir isteach",
     "An access code has been sent to %s" : "Tá cód rochtana seolta chuig%s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Earráid agus an Teachtaireacht á seoladh. Bain triail eile as ar ball le do thoil nó déan teagmháil leis an riarthóir.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Athraíodh d'uimhir theileafóin agus níor athfhíoraíodh í. Bain úsáid as meicníocht dhifriúil dhá fhachtóir nó déan teagmháil le do riarthóir.",
-    "Initializing WhatsApp Business discovery..." : "Ag tosú fionnachtain WhatsApp Business...",
-    "Loading approved templates..." : "Ag lódáil teimpléid cheadaithe...",
-    "Finishing setup..." : "Ag críochnú an tsuímh...",
-    "Select a phone number..." : "Roghnaigh uimhir theileafóin...",
-    "Select a template..." : "Roghnaigh teimpléad..."
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Athraíodh d'uimhir theileafóin agus níor athfhíoraíodh í. Bain úsáid as meicníocht dhifriúil dhá fhachtóir nó déan teagmháil le do riarthóir."
 },
 "nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);");
