@@ -202,11 +202,6 @@ OC.L10N.register(
     "Submit" : "遞交",
     "An access code has been sent to %s" : "驗証碼已經發送到 %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "發送簡訊出錯。請重試或聯絡系統管理員。",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "你的電話號碼已經更改，但尚未重新驗證。請使用不同的雙重認證機制或者聯絡你的管理員。",
-    "Initializing WhatsApp Business discovery..." : "正在初始化 WhatsApp Business 探索程序…",
-    "Loading approved templates..." : "正在載入已批准範本…",
-    "Finishing setup..." : "正在完成設定…",
-    "Select a phone number..." : "選擇電話號碼…",
-    "Select a template..." : "選擇範本…"
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "你的電話號碼已經更改，但尚未重新驗證。請使用不同的雙重認證機制或者聯絡你的管理員。"
 },
 "nplurals=1; plural=0;");

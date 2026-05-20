@@ -200,11 +200,6 @@
     "Submit" : "Übermitteln",
     "An access code has been sent to %s" : "Ein Zugriffscode wurde an %s gesendet",
     "Error while sending the Message. Please try again later or contact the administrator." : "Fehler beim Senden der Nachricht. Bitte versuche es noch einmal oder kontaktiere deine Administration.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Deine Telefonnummer hat sich geändert und wurde nicht erneut verifiziert. Nutze einen anderen Zwei-Faktor-Mechanismus oder wende dich an die Administration.",
-    "Initializing WhatsApp Business discovery..." : "Initialisierung der WhatsApp Business-Erkennung ...",
-    "Loading approved templates..." : "Genehmigte Vorlagen werden geladen ...",
-    "Finishing setup..." : "Einrichtung wird abgeschlossen …",
-    "Select a phone number..." : "Eine Telefonnummer auswählen …",
-    "Select a template..." : "Eine Vorlage auswählen …"
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Deine Telefonnummer hat sich geändert und wurde nicht erneut verifiziert. Nutze einen anderen Zwei-Faktor-Mechanismus oder wende dich an die Administration."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

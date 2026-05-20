@@ -202,11 +202,6 @@ OC.L10N.register(
     "Submit" : "Übermitteln",
     "An access code has been sent to %s" : "Ein Zugriffscode wurde an %s versendet",
     "Error while sending the Message. Please try again later or contact the administrator." : "Fehler beim Versenden der Nachricht. Bitte erneut versuchen oder kontaktieren Sie Ihre Administration.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Ihre Telefonnumer hat sich geändert und wurde nicht erneut verifiziert. Nutzen Sie einen anderen Zwei-Faktor-Mechanismus oder wenden Sie sich an Ihre Administration.",
-    "Initializing WhatsApp Business discovery..." : "Initialisierung der WhatsApp Business-Erkennung ...",
-    "Loading approved templates..." : "Genehmigte Vorlagen werden geladen ...",
-    "Finishing setup..." : "Einrichtung wird abgeschlossen …",
-    "Select a phone number..." : "Eine Telefonnummer auswählen …",
-    "Select a template..." : "Eine Vorlage auswählen …"
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Ihre Telefonnumer hat sich geändert und wurde nicht erneut verifiziert. Nutzen Sie einen anderen Zwei-Faktor-Mechanismus oder wenden Sie sich an Ihre Administration."
 },
 "nplurals=2; plural=(n != 1);");
