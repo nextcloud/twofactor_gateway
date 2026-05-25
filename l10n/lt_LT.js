@@ -153,7 +153,7 @@ OC.L10N.register(
     "Finishing setup …" : "Baigiama sąranka …",
     "Failed to finalize WhatsApp Business setup." : "Nepavyko užbaigti „WhatsApp Business“ sąrankos.",
     "Guided WhatsApp Business Setup" : "Vadovaujama „WhatsApp Business“ sąranka",
-    "Access token:" : "Prieigos žymuo:",
+    "Access token:" : "Prieigos raktas:",
     "Paste a System User token with WhatsApp permissions" : "Įklijuokite sistemos vartotojo prieigos žymenį su „WhatsApp“ leidimais",
     "Graph API version (optional):" : "Graph API versija (neprivaloma):",
     "Default: v22.0" : "Numatytoji: v22.0",
