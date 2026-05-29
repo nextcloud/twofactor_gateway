@@ -25,6 +25,7 @@ OC.L10N.register(
     "optional" : "необязательно",
     "Cancel" : "Cancel",
     "Reference" : "Ссылка",
+    "Deleting …" : "Удаление …",
     "Collapse" : "Свернуть",
     "Expand" : "Развернуть",
     "Close" : "Закрыть",
