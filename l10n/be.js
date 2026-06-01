@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Failed to send message" : "Не ўдалося адправіць паведамленне",
     "WhatsApp verification" : "Спраўджанне WhatsApp",
     "Authenticate via WhatsApp" : "Аўтэнтыфікацыя праз WhatsApp",
     "verification token mismatch" : "несупадзенне токена спраўджвання",
