@@ -7,6 +7,7 @@ OC.L10N.register(
     "Edit" : "Rediger",
     "Delete" : "Slett",
     "Groups" : "Grupper",
+    "Saving …" : "Lagrar …",
     "Save" : "Lagre",
     "Cancel" : "Cancel",
     "Close" : "Lat att",
