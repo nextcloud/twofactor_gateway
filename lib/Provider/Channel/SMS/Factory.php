@@ -31,6 +31,7 @@ class Factory extends AbstractCatalogFactory {
 
 	#[\Override]
 	protected function resolveInstanceCacheKey(string $name, object $instance): string {
-		return $instance->getSettings()->id;
+		$id = $instance->getSettings()->id;
+		return $id !== null && $id !== '' ? $id : $name;
 	}
 }

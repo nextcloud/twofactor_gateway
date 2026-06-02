@@ -17,7 +17,7 @@ use OCA\TwoFactorGateway\Provider\AFactory;
  * @extends AFactory<T>
  */
 abstract class AbstractCatalogFactory extends AFactory {
-	/** @var array<T> */
+	/** @var array<string, T> */
 	private array $instancesByFqcn = [];
 
 	/**
@@ -38,6 +38,7 @@ abstract class AbstractCatalogFactory extends AFactory {
 			return $this->instances[$name];
 		}
 		foreach ($this->getFqcnList() as $fqcn) {
+			/** @var T $instance */
 			$instance = \OCP\Server::get($fqcn);
 			$settings = $instance->getSettings();
 			if ($fqcn === $name || $settings->id === $name) {
