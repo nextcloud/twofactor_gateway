@@ -9,14 +9,11 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider\Channel\SMS;
 
-use OCA\TwoFactorGateway\Exception\InvalidProviderException;
-use OCA\TwoFactorGateway\Provider\AFactory;
+use OCA\TwoFactorGateway\Provider\Channel\AbstractCatalogFactory;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider\AProvider;
 
-/** @extends AFactory<AProvider> */
-class Factory extends AFactory {
-	/** @var array<AProvider> */
-	private array $instancesByFqcn = [];
+/** @extends AbstractCatalogFactory<AProvider> */
+class Factory extends AbstractCatalogFactory {
 	#[\Override]
 	protected function getPrefix(): string {
 		return 'OCA\\TwoFactorGateway\\Provider\\Channel\\SMS\\Provider\\Drivers\\';
@@ -33,23 +30,7 @@ class Factory extends AFactory {
 	}
 
 	#[\Override]
-	public function get(string $name): object {
-		if (isset($this->instancesByFqcn[$name])) {
-			return $this->instancesByFqcn[$name];
-		}
-		if (isset($this->instances[$name])) {
-			return $this->instances[$name];
-		}
-		foreach ($this->getFqcnList() as $fqcn) {
-			$instance = \OCP\Server::get($fqcn);
-			$settings = $instance->getSettings();
-			if ($fqcn === $name || $settings->id === $name) {
-				$instance->setAppConfig(\OCP\Server::get(\OCP\IAppConfig::class));
-				$this->instances[$settings->id] = $instance;
-				$this->instancesByFqcn[$fqcn] = $instance;
-				return $instance;
-			}
-		}
-		throw new InvalidProviderException("Provider <$name> does not exist");
+	protected function resolveInstanceCacheKey(string $name, object $instance): string {
+		return $instance->getSettings()->id;
 	}
 }
