@@ -78,7 +78,6 @@ class SMSApi extends AProvider {
 			if ($content === false) {
 				throw new MessageTransmissionException();
 			}
-			$http_status = curl_getinfo($c, CURLINFO_HTTP_CODE);
 
 			curl_close($c);
 			$responseData = json_decode($content, true);
