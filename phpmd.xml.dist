@@ -11,13 +11,19 @@
     <description>
         PHPMD ruleset focused on dead-code smells for an incremental rollout.
         The initial rules are intentionally narrow so the project can adopt the
-        tool in CI without blocking on the broader architectural backlog. Future
-        iterations can expand the ruleset once this first wave of issues is paid down.
+        tool in CI without blocking on the broader architectural backlog. This
+        second rollout expands the coverage with a few additional low-noise
+        safety checks that are already clean or require only small targeted
+        fixes in the current codebase.
     </description>
 
     <exclude-pattern>.*/lib/Vendor/.*</exclude-pattern>
     <exclude-pattern>.*/Vendor/.*</exclude-pattern>
 
+    <rule ref="rulesets/unusedcode.xml/UnusedPrivateField" />
     <rule ref="rulesets/unusedcode.xml/UnusedLocalVariable" />
     <rule ref="rulesets/unusedcode.xml/UnusedPrivateMethod" />
+    <rule ref="rulesets/cleancode.xml/DuplicatedArrayKey" />
+    <rule ref="rulesets/design.xml/CountInLoopExpression" />
+    <rule ref="rulesets/design.xml/EmptyCatchBlock" />
 </ruleset>
