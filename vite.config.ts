@@ -15,6 +15,11 @@ export default createAppConfig({
 	admin: path.join(__dirname, 'src', 'admin.ts'),
 }, {
 	config: {
+		resolve: {
+			alias: {
+				'@lib/twofactor-gateway': path.resolve(__dirname, 'src/lib/twofactor-gateway/index.ts'),
+			},
+		},
 		plugins: [
 			...(!isProduction ? [eslint()] : []),
 			stylelint(),

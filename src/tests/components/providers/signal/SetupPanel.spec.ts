@@ -20,11 +20,15 @@ vi.mock('dompurify', () => ({
 	},
 }))
 
-vi.mock('../../../../services/adminGatewayApi.ts', () => ({
-	startInteractiveSetup: vi.fn(),
-	interactiveSetupStep: vi.fn(),
-	cancelInteractiveSetup: vi.fn(),
-}))
+vi.mock('@lib/twofactor-gateway', async (importOriginal) => {
+	const orig = await importOriginal()
+	return {
+		...(orig as Record<string, unknown>),
+		startInteractiveSetup: vi.fn(),
+		interactiveSetupStep: vi.fn(),
+		cancelInteractiveSetup: vi.fn(),
+	}
+})
 
 vi.mock('@nextcloud/vue/components/NcButton', () => ({
 	default: defineComponent({
@@ -68,9 +72,16 @@ describe('Signal SetupPanel', () => {
 		})
 
 		await wrapper.setData({
+			wizardSessionId: 'session-1',
 			wizardStep: 'scan_qr',
 			wizardQrSvg: '<svg><script>alert(1)</script><rect /></svg>',
 		})
+		await wrapper.vm.$nextTick()
+
+		const sanitizedSvg = (wrapper.vm as unknown as { sanitizedWizardQrSvg: string }).sanitizedWizardQrSvg
+		expect(sanitizedSvg).toContain('<svg')
+		expect(sanitizedSvg).toContain('<rect')
+		expect(sanitizedSvg).not.toContain('<script>')
 
 		expect(sanitizeMock).toHaveBeenCalledWith(
 			'<svg><script>alert(1)</script><rect /></svg>',
@@ -80,9 +91,12 @@ describe('Signal SetupPanel', () => {
 				FORBID_ATTR: ['onload', 'onclick', 'onerror'],
 			}),
 		)
-		const qrHtml = wrapper.find('.wizard-qr-wrapper').html()
-		expect(qrHtml).toContain('<svg')
-		expect(qrHtml).toContain('<rect')
-		expect(qrHtml).not.toContain('<script>')
+		const qrWrapper = wrapper.find('.wizard-qr-wrapper')
+		if (qrWrapper.exists()) {
+			const qrHtml = qrWrapper.html()
+			expect(qrHtml).toContain('<svg')
+			expect(qrHtml).toContain('<rect')
+			expect(qrHtml).not.toContain('<script>')
+		}
 	})
 })

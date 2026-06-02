@@ -69,8 +69,7 @@ import NcModal from '@nextcloud/vue/components/NcModal'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
-import { testInstance } from '../services/adminGatewayApi.ts'
-import type { TestResult } from '../services/adminGatewayTypes.ts'
+import { testInstance, type TestResult } from '@lib/twofactor-gateway'
 
 export default defineComponent({
 	name: 'GatewayTestModal',

@@ -69,7 +69,7 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import { t } from '@nextcloud/l10n'
-import type { GatewayGroup } from '../services/adminGatewayTypes.ts'
+import type { GatewayGroup } from '@lib/twofactor-gateway'
 
 export default defineComponent({
 	name: 'GatewayRoutingModal',

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import type { FieldDefinition, GatewayInfo, GatewayProviderDefinition } from './adminGatewayTypes.ts'
+import type { FieldDefinition, GatewayInfo, GatewayProviderDefinition } from '../types/gateway.ts'
 
 const WIZARD_BOOTSTRAP_FIELDS = new Set(['base_url', 'username', 'password', 'device_name'])
 
@@ -71,9 +71,7 @@ export function resolveGatewayId(params: {
 	return ''
 }
 
-export function normalizeProviderCatalog(
-	rawCatalog: GatewayProviderDefinition[] | undefined,
-): GatewayProviderDefinition[] {
+export function normalizeProviderCatalog(rawCatalog: GatewayProviderDefinition[] | undefined): GatewayProviderDefinition[] {
 	const byId = new Map<string, GatewayProviderDefinition>()
 	const byLabel = new Set<string>()
 
