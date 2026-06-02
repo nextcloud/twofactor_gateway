@@ -48,7 +48,11 @@ trait GatewayCliSetupTrait {
 				try {
 					$date = new \DateTime($createdAt);
 					$createdFormatted = ' - Created: ' . $date->format('Y-m-d H:i:s');
-				} catch (\Exception) {
+				} catch (\Exception $e) {
+					$this->logger->debug('Skipping device created_at formatting', [
+						'created_at' => $createdAt,
+						'exception' => $e,
+					]);
 				}
 			}
 
@@ -336,7 +340,11 @@ trait GatewayCliSetupTrait {
 		try {
 			$this->lazyDeviceName = $this->getDeviceName();
 			return $this->lazyDeviceName;
-		} catch (\Exception) {
+		} catch (\Exception $e) {
+			$this->logger->debug('Falling back to default device name', [
+				'exception' => $e,
+			]);
+			$this->lazyDeviceName = '';
 		}
 
 		$this->lazyDeviceName = $this->getFieldDefault('device_name') ?: 'TwoFactor Gateway';

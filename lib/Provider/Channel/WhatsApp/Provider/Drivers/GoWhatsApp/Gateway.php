@@ -504,51 +504,6 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 		return $this->displayPairingCodeAndWaitConfirmation($output, $pairingCodeResult['code']);
 	}
 
-	private function configureWithDevice(OutputInterface $output, array $device): int {
-		// Device is an array with API v8 fields: id, jid, phone_number, display_name, state
-		$deviceId = $device['id'] ?? '';
-		$deviceJid = $device['jid'] ?? '';
-		$phoneNumber = $device['phone_number'] ?? '';
-
-		// Use device_id for API calls
-		if (!empty($deviceId)) {
-			$this->lazyDeviceId = $deviceId;
-		} else {
-			return self::CONFIG_CONTINUE;
-		}
-
-		// Extract phone number from jid (format: "phone@s.whatsapp.net") or use phone_number field
-		if (!empty($deviceJid)) {
-			preg_match('/^(\d+)@/', $deviceJid, $matches);
-			if (!empty($matches[1])) {
-				$this->lazyPhone = $matches[1];
-			}
-		} elseif (!empty($phoneNumber)) {
-			// Fallback to phone_number field if available
-			$this->lazyPhone = preg_replace('/\D/', '', $phoneNumber) ?? '';
-		}
-
-		if (empty($this->lazyPhone)) {
-			return self::CONFIG_CONTINUE;
-		}
-
-		$statusCheck = $this->checkDeviceStatusQuiet($deviceJid ?: $this->lazyPhone . '@s.whatsapp.net');
-		if ($statusCheck) {
-			$this->setBaseUrl($this->lazyBaseUrl);
-			$this->setPhone($this->lazyPhone);
-			$this->setDeviceName($this->getDeviceNameValue());
-			$this->setDeviceId($this->lazyDeviceId);
-			$output->writeln('<info>✓ Configuration saved using existing device.</info>');
-			$output->writeln('');
-			$output->writeln('<comment>Base URL:</comment> ' . $this->lazyBaseUrl);
-			$output->writeln('<comment>Phone:</comment> ' . $this->lazyPhone);
-			$output->writeln('');
-			return self::CONFIG_SUCCESS;
-		}
-
-		return self::CONFIG_CONTINUE;
-	}
-
 	private function configureWithDeviceAndAuth(InputInterface $input, OutputInterface $output, array $device): int {
 		// Device is an array with API v8 fields: id, jid, phone_number, display_name, state
 		$deviceId = $device['id'] ?? '';
@@ -661,7 +616,11 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 					$this->setDeviceId($this->lazyDeviceId);
 					return 0;
 				}
-			} catch (\Exception) {
+			} catch (\Exception $e) {
+				$this->logger->debug('Pairing confirmation is still pending', [
+					'attempt' => $attempt + 1,
+					'exception' => $e,
+				]);
 			}
 
 			$attempt++;

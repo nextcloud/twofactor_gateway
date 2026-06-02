@@ -84,6 +84,7 @@ class Gateway extends AGateway {
 		$method = $this->getMethod();
 		$user = $this->getUsername();
 		$url = $server . $identifier;
+		$from = $sender;
 
 		if ($method === '1') {
 			$from = $user;
@@ -101,7 +102,7 @@ class Gateway extends AGateway {
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
 			curl_setopt($ch, CURLOPT_USERPWD, $from . ':' . $password);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: text/plain']);
-			$result = curl_exec($ch);
+			curl_exec($ch);
 			curl_close($ch);
 			$this->logger->debug("XMPP message to $identifier sent");
 		} catch (\Exception) {
@@ -118,6 +119,7 @@ class Gateway extends AGateway {
 			$fields[$field->field] = $field;
 		}
 		$sender = '';
+		$username = '';
 		while (empty($sender) or substr_count($sender, '@') !== 1) {
 			$senderQuestion = new Question($fields['sender']->prompt . ' ');
 			$sender = $helper->ask($input, $output, $senderQuestion);

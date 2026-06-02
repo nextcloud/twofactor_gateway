@@ -26,6 +26,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GatewayTest extends TestCase {
 	private IClient&MockObject $client;
+	private LoggerInterface&MockObject $logger;
 	private Gateway $gateway;
 	private array $store = [];
 
@@ -38,7 +39,7 @@ class GatewayTest extends TestCase {
 		$clientService->method('newClient')->willReturn($this->client);
 
 		$l10n = $this->createMock(IL10N::class);
-		$logger = $this->createMock(LoggerInterface::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 		$eventDispatcher = $this->createMock(IEventDispatcher::class);
 		$jobManager = $this->createMock(GoWhatsAppSessionMonitorJobManager::class);
 
@@ -46,10 +47,35 @@ class GatewayTest extends TestCase {
 			appConfig: $appConfig,
 			clientService: $clientService,
 			l10n: $l10n,
-			logger: $logger,
+			logger: $this->logger,
 			eventDispatcher: $eventDispatcher,
 			goWhatsAppSessionMonitorJobManager: $jobManager,
 		);
+	}
+
+	public function testDisplayDeviceListLogsDebugWhenCreatedAtIsInvalid(): void {
+		$this->logger
+			->expects($this->once())
+			->method('debug')
+			->with(
+				'Skipping device created_at formatting',
+				$this->callback(static function (array $context): bool {
+					return ($context['created_at'] ?? null) === 'not-a-date'
+						&& array_key_exists('exception', $context)
+						&& $context['exception'] instanceof \Exception;
+				}),
+			);
+
+		$output = $this->createMock(OutputInterface::class);
+		$output->expects($this->atLeastOnce())->method('writeln');
+
+		$this->invokePrivate('displayDeviceList', [$output, [[
+			'id' => 'dev-1',
+			'display_name' => 'Device 1',
+			'phone_number' => '5511999999999',
+			'state' => 'connected',
+			'created_at' => 'not-a-date',
+		]]]);
 	}
 
 	public function testValidateUrlReachabilityAcceptsUnauthorizedAsReachable(): void {
