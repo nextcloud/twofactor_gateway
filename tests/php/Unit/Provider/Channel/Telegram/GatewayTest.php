@@ -206,6 +206,23 @@ class GatewayTest extends TestCase {
 		$this->assertSame('api_id', $settings->fields[1]->field);
 	}
 
+	public function testCreateSettingsFallsBackToSelectorWhenProviderIsNotConfigured(): void {
+		$this->appConfig
+			->method('getValueString')
+			->willReturnMap([
+				['twofactor_gateway', 'telegram_provider_name', '', ''],
+				['twofactor_gateway', 'instances:telegram', '[]', '[]'],
+			]);
+
+		$gateway = new Gateway($this->appConfig, $this->telegramProviderFactory);
+
+		$settings = $gateway->getSettings();
+
+		$this->assertSame('Telegram', $settings->name);
+		$this->assertCount(1, $settings->fields);
+		$this->assertSame('provider', $settings->fields[0]->field);
+	}
+
 	public function testSendPassesRuntimeTokenToProvider(): void {
 		TelegramGatewayProviderTestDouble::$usedTokensByProvider = [];
 		$botProvider = new TelegramGatewayProviderTestDouble(new Settings(
