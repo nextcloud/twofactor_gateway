@@ -1,0 +1,11 @@
+{
+    "require-dev": {
+        "sebastian/phpcpd": "^6.0"
+    },
+    "config": {
+        "platform": {
+            "php": "8.2"
+        },
+        "sort-packages": true
+    }
+}
