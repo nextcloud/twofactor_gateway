@@ -8,6 +8,7 @@ updates:
       - "/"
       - "/vendor-bin/csfixer"
       - "/vendor-bin/openapi-extractor"
+      - "/vendor-bin/phpmd"
       - "/vendor-bin/php-scoper"
       - "/vendor-bin/psalm"
       - "/vendor-bin/telegram-client"
