@@ -18,6 +18,17 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 trait GatewayCliSetupTrait {
+	private const CODE_NOT_ON_WHATSAPP = 1001;
+	private const CODE_AUTHENTICATION = 1401;
+	private const CODE_FORBIDDEN = 1403;
+	private const CODE_VERIFY_FAILED = 1500;
+	private const CODE_SEND_FAILED = 2001;
+	private const CODE_SEND_UNKNOWN = 2002;
+
+	private const CONFIG_SUCCESS = 0;
+	private const CONFIG_ERROR = 1;
+	private const CONFIG_CONTINUE = 2;
+
 	private function writeCliFeedback(OutputInterface $output, string $type, string $message): void {
 		$tag = match ($type) {
 			'success', 'info' => 'info',
@@ -48,7 +59,11 @@ trait GatewayCliSetupTrait {
 				try {
 					$date = new \DateTime($createdAt);
 					$createdFormatted = ' - Created: ' . $date->format('Y-m-d H:i:s');
-				} catch (\Exception) {
+				} catch (\Exception $e) {
+					$this->logger->debug('Skipping device created_at formatting', [
+						'created_at' => $createdAt,
+						'exception' => $e,
+					]);
 				}
 			}
 
@@ -336,7 +351,11 @@ trait GatewayCliSetupTrait {
 		try {
 			$this->lazyDeviceName = $this->getDeviceName();
 			return $this->lazyDeviceName;
-		} catch (\Exception) {
+		} catch (\Exception $e) {
+			$this->logger->debug('Falling back to default device name', [
+				'exception' => $e,
+			]);
+			$this->lazyDeviceName = '';
 		}
 
 		$this->lazyDeviceName = $this->getFieldDefault('device_name') ?: 'TwoFactor Gateway';
