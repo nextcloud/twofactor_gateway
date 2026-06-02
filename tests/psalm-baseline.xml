@@ -1,35 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="6.16.1@f1f5de594dc76faf8784e02d3dc4716c91c6f6ac">
   <file src="lib/Provider/Channel/Telegram/Provider/Drivers/ClientCli/Login.php">
-    <MissingOverrideAttribute>
-      <code><![CDATA[protected function configure(): void {]]></code>
-      <code><![CDATA[protected function execute(InputInterface $input, OutputInterface $output): int {]]></code>
-    </MissingOverrideAttribute>
+    <UndefinedClass>
+      <code><![CDATA[$api]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="lib/Provider/Channel/Telegram/Provider/Drivers/ClientCli/AbstractMadelineCommand.php">
     <UndefinedClass>
       <code><![CDATA[API]]></code>
-      <code><![CDATA[AppInfo]]></code>
       <code><![CDATA[Logger]]></code>
-      <code><![CDATA[MadelineLogger]]></code>
-      <code><![CDATA[MadelineLogger]]></code>
-      <code><![CDATA[MadelineLogger]]></code>
-      <code><![CDATA[Settings]]></code>
     </UndefinedClass>
   </file>
   <file src="lib/Provider/Channel/Telegram/Provider/Drivers/ClientCli/SendMessage.php">
     <InvalidThrow>
       <code><![CDATA[throw $e]]></code>
     </InvalidThrow>
-    <MissingOverrideAttribute>
-      <code><![CDATA[protected function configure(): void {]]></code>
-      <code><![CDATA[protected function execute(InputInterface $input, OutputInterface $output): int {]]></code>
-    </MissingOverrideAttribute>
     <UndefinedClass>
       <code><![CDATA[$e]]></code>
       <code><![CDATA[API]]></code>
-      <code><![CDATA[Logger]]></code>
-      <code><![CDATA[MadelineLogger]]></code>
-      <code><![CDATA[MadelineLogger]]></code>
-      <code><![CDATA[MadelineLogger]]></code>
       <code><![CDATA[RPCErrorException]]></code>
       <code><![CDATA[Settings]]></code>
     </UndefinedClass>

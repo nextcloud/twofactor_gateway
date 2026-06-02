@@ -9,55 +9,23 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
-use OCA\TwoFactorGateway\Provider\Gateway\TConfigurable;
-use OCA\TwoFactorGateway\Provider\Settings;
-use OCP\IAppConfig;
+use OCA\TwoFactorGateway\Provider\Channel\AbstractChannelAProvider;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class AProvider implements IProvider {
-	use TConfigurable;
-	public IAppConfig $appConfig;
-	protected ?Settings $settings = null;
+abstract class AProvider extends AbstractChannelAProvider implements IProvider {
+
+	#[\Override]
+	protected static function getDriverNamespacePrefix(): string {
+		return 'OCA\\TwoFactorGateway\\Provider\\Channel\\Telegram\\Provider\\Drivers\\';
+	}
 
 	/**
 	 * @throws MessageTransmissionException
 	 */
 	#[\Override]
 	abstract public function send(string $identifier, string $message);
-
-	#[\Override]
-	public function setAppConfig(IAppConfig $appConfig): void {
-		$this->appConfig = $appConfig;
-	}
-
-	#[\Override]
-	public function getSettings(): Settings {
-		if ($this->settings !== null) {
-			return $this->settings;
-		}
-		return $this->settings = $this->createSettings();
-	}
-
-	#[\Override]
-	public static function idOverride(): ?string {
-		return null;
-	}
-
-	#[\Override]
-	public function getProviderId(): string {
-		$settings = $this->getSettings();
-		if (!empty($settings->id)) {
-			return $settings->id;
-		}
-		$id = self::getIdFromProviderFqcn(static::class);
-		if ($id === null) {
-			throw new \LogicException('Cannot derive gateway id from FQCN: ' . static::class);
-		}
-		return $id;
-	}
 
 	#[\Override]
 	abstract public function cliConfigure(InputInterface $input, OutputInterface $output): int;
@@ -73,27 +41,4 @@ abstract class AProvider implements IProvider {
 		return $clone;
 	}
 
-	public function isComplete(): bool {
-		$settings = $this->getSettings();
-		$providerId = $settings->id ?? $this->getProviderId();
-		foreach ($settings->fields as $field) {
-			$key = self::keyFromFieldName($providerId, $field->field);
-			if (!$this->appConfig->hasKey(Application::APP_ID, $key, true)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private static function getIdFromProviderFqcn(string $fqcn): ?string {
-		$prefix = 'OCA\\TwoFactorGateway\\Provider\\Channel\\Telegram\\Provider\\Drivers\\';
-		if (strncmp($fqcn, $prefix, strlen($prefix)) !== 0) {
-			return null;
-		}
-		$type = substr($fqcn, strlen($prefix));
-		if (strpos($type, '\\') !== false) {
-			return null;
-		}
-		return $type !== '' ? strtolower($type) : null;
-	}
 }
