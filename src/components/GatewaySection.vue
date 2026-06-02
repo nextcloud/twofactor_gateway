@@ -110,8 +110,9 @@ import {
 	deleteInstance,
 	setDefaultInstance,
 	updateInstance,
-} from '../services/adminGatewayApi.ts'
-import type { GatewayInfo, GatewayInstance } from '../services/adminGatewayTypes.ts'
+	type GatewayInfo,
+	type GatewayInstance,
+} from '@lib/twofactor-gateway'
 
 export default defineComponent({
 	name: 'GatewaySection',

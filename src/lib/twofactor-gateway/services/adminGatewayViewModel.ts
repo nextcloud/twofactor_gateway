@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import type { FieldDefinition, GatewayInfo, GatewayInstance } from './adminGatewayTypes.ts'
+import type { FieldDefinition, GatewayInfo, GatewayInstance } from '../types/gateway.ts'
 
 export interface FlatInstanceEntry {
 	orderKey: string

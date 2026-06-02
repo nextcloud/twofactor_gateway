@@ -9,8 +9,8 @@ import {
 	mergeOrderKeys,
 	orderInstances,
 	type FlatInstanceEntry,
-} from '../../services/adminGatewayViewModel.ts'
-import type { GatewayInfo, GatewayInstance } from '../../services/adminGatewayTypes.ts'
+} from '@lib/twofactor-gateway'
+import type { GatewayInfo, GatewayInstance } from '@lib/twofactor-gateway'
 
 const makeInstance = (overrides: Partial<GatewayInstance> = {}): GatewayInstance => ({
 	id: 'instance-1',
