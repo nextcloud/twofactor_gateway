@@ -71,7 +71,7 @@ abstract class AFactory {
 		}
 
 		$loader = require __DIR__ . '/../../vendor/autoload.php';
-		foreach ($loader->getClassMap() as $fqcn => $_) {
+		foreach (array_keys($loader->getClassMap()) as $fqcn) {
 			$type = $this->typeFrom($fqcn);
 			if ($type === null) {
 				continue;
