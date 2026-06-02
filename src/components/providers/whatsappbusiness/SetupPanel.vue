@@ -192,8 +192,8 @@ import {
 	cancelInteractiveSetup,
 	interactiveSetupStep,
 	startInteractiveSetup,
-} from '../../../services/adminGatewayApi.ts'
-import type { InteractiveSetupResponse } from '../../../services/adminGatewayTypes.ts'
+} from '@lib/twofactor-gateway'
+import type { InteractiveSetupResponse } from '@lib/twofactor-gateway'
 
 type PhoneNumberOption = {
 	id: string
@@ -688,18 +688,16 @@ export default defineComponent({
 .template-body {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
 		'Helvetica Neue', sans-serif;
+}
 
-	// Highlight the {{1}} placeholder
-	::v-deep {
-		.placeholder {
-			background: var(--color-primary-element);
-			color: white;
-			padding: 0.2rem 0.4rem;
-			border-radius: 3px;
-			font-weight: 600;
-			font-family: monospace;
-		}
-	}
+// Highlight the {{1}} placeholder
+.template-body :deep(.placeholder) {
+	background: var(--color-primary-element);
+	color: white;
+	padding: 0.2rem 0.4rem;
+	border-radius: 3px;
+	font-weight: 600;
+	font-family: monospace;
 }
 
 .footer-text {

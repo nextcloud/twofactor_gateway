@@ -81,8 +81,8 @@ import {
 	cancelInteractiveSetup,
 	interactiveSetupStep,
 	startInteractiveSetup,
-} from '../../../services/adminGatewayApi.ts'
-import type { InteractiveSetupResponse } from '../../../services/adminGatewayTypes.ts'
+} from '@lib/twofactor-gateway'
+import type { InteractiveSetupResponse } from '@lib/twofactor-gateway'
 
 export default defineComponent({
 	name: 'SetupPanel',
