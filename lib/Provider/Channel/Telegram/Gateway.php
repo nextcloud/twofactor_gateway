@@ -117,15 +117,20 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 	#[\Override]
 	public function createSettings(): Settings {
 		$fields = [$this->getProviderSelectorField()];
+		$providerSettings = null;
 		try {
 			$providerSettings = $this->getProvider()->getSettings();
+		} catch (ConfigurationException) {
+			$providerSettings = null;
+		}
+
+		if ($providerSettings !== null) {
 			foreach ($providerSettings->fields as $field) {
 				if ($field->field === $this->getProviderSelectorField()->field) {
 					continue;
 				}
 				$fields[] = $field;
 			}
-		} catch (ConfigurationException) {
 		}
 
 		return new Settings(
