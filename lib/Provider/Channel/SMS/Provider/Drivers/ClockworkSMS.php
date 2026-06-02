@@ -46,7 +46,7 @@ class ClockworkSMS extends AProvider {
 	#[\Override]
 	public function send(string $identifier, string $message) {
 		try {
-			$response = $this->client->get(
+			$this->client->get(
 				'https://api.clockworksms.com/http/send.aspx',
 				[
 					'query' => [
