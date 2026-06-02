@@ -223,7 +223,24 @@ class GatewayDispatchService {
 		));
 
 		if ($groupCandidates !== []) {
-			usort($groupCandidates, [$this, 'compareGroupCandidates']);
+			usort($groupCandidates, static function (array $left, array $right): int {
+				$priorityDiff = $right['instance']['priority'] <=> $left['instance']['priority'];
+				if ($priorityDiff !== 0) {
+					return $priorityDiff;
+				}
+
+				$defaultDiff = (int)$right['instance']['default'] <=> (int)$left['instance']['default'];
+				if ($defaultDiff !== 0) {
+					return $defaultDiff;
+				}
+
+				$createdAtDiff = strcmp($left['instance']['createdAt'], $right['instance']['createdAt']);
+				if ($createdAtDiff !== 0) {
+					return $createdAtDiff;
+				}
+
+				return strcmp($left['publicInstanceId'], $right['publicInstanceId']);
+			});
 			return $groupCandidates;
 		}
 
@@ -235,49 +252,28 @@ class GatewayDispatchService {
 		));
 
 		if ($openCandidates !== []) {
-			usort($openCandidates, [$this, 'compareFallbackCandidates']);
+			usort($openCandidates, static function (array $left, array $right): int {
+				$defaultDiff = (int)$right['instance']['default'] <=> (int)$left['instance']['default'];
+				if ($defaultDiff !== 0) {
+					return $defaultDiff;
+				}
+
+				$priorityDiff = $right['instance']['priority'] <=> $left['instance']['priority'];
+				if ($priorityDiff !== 0) {
+					return $priorityDiff;
+				}
+
+				$createdAtDiff = strcmp($left['instance']['createdAt'], $right['instance']['createdAt']);
+				if ($createdAtDiff !== 0) {
+					return $createdAtDiff;
+				}
+
+				return strcmp($left['publicInstanceId'], $right['publicInstanceId']);
+			});
 			return $openCandidates;
 		}
 
 		throw new MessageTransmissionException('No gateway instance is accessible for this user. Check group assignments in the gateway configuration.');
-	}
-
-	private function compareGroupCandidates(array $left, array $right): int {
-		$priorityDiff = $right['instance']['priority'] <=> $left['instance']['priority'];
-		if ($priorityDiff !== 0) {
-			return $priorityDiff;
-		}
-
-		$defaultDiff = (int)$right['instance']['default'] <=> (int)$left['instance']['default'];
-		if ($defaultDiff !== 0) {
-			return $defaultDiff;
-		}
-
-		$createdAtDiff = strcmp($left['instance']['createdAt'], $right['instance']['createdAt']);
-		if ($createdAtDiff !== 0) {
-			return $createdAtDiff;
-		}
-
-		return strcmp($left['publicInstanceId'], $right['publicInstanceId']);
-	}
-
-	private function compareFallbackCandidates(array $left, array $right): int {
-		$defaultDiff = (int)$right['instance']['default'] <=> (int)$left['instance']['default'];
-		if ($defaultDiff !== 0) {
-			return $defaultDiff;
-		}
-
-		$priorityDiff = $right['instance']['priority'] <=> $left['instance']['priority'];
-		if ($priorityDiff !== 0) {
-			return $priorityDiff;
-		}
-
-		$createdAtDiff = strcmp($left['instance']['createdAt'], $right['instance']['createdAt']);
-		if ($createdAtDiff !== 0) {
-			return $createdAtDiff;
-		}
-
-		return strcmp($left['publicInstanceId'], $right['publicInstanceId']);
 	}
 
 	/**
