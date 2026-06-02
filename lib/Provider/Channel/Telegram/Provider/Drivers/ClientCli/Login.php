@@ -116,7 +116,6 @@ class Login extends Command {
 
 				MESSAGE);
 
-
 			return Command::SUCCESS;
 		} catch (\Throwable $e) {
 			$output->writeln('<error>Error: ' . $e->getMessage() . '</error>');

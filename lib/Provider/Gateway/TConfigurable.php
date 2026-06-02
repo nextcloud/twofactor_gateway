@@ -43,7 +43,6 @@ trait TConfigurable {
 					throw new ConfigurationException('No value set for ' . $field);
 				}
 				return $val;
-
 			case 'set':
 				if ($runtimeConfig !== null) {
 					$this->runtimeConfig[$field] = (string)($args[0] ?? '');
@@ -52,7 +51,6 @@ trait TConfigurable {
 
 				$this->getAppConfig()->setValueString(Application::APP_ID, $key, (string)($args[0] ?? ''));
 				return $this;
-
 			case 'delete':
 				if ($runtimeConfig !== null) {
 					unset($this->runtimeConfig[$field]);

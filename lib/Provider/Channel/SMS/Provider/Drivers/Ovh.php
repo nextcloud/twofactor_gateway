@@ -60,7 +60,6 @@ class Ovh extends AProvider {
 		'timedelta' => null
 	];
 
-
 	public function __construct(
 		IClientService $clientService,
 	) {
