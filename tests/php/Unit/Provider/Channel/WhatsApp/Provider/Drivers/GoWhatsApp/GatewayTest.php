@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp;
 
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Gateway;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -102,6 +104,47 @@ class GatewayTest extends TestCase {
 
 		$output = $this->createMock(OutputInterface::class);
 		$this->assertTrue($this->invokePrivate('validateUrlReachability', [$output]));
+	}
+
+	public function testSendDoesNotLogMessageContent(): void {
+		$maskedIdentifier = PhoneNumberMask::maskIdentifier('5511999999999');
+		$debugMessages = [];
+		$errorEntries = [];
+		$this->logger->expects($this->once())
+			->method('debug')
+			->with('sending whatsapp message to ' . $maskedIdentifier)
+			->willReturnCallback(static function (string $message) use (&$debugMessages): void {
+				$debugMessages[] = $message;
+			});
+		$this->logger->expects($this->exactly(2))
+			->method('error')
+			->willReturnCallback(static function (string $message, array $context) use (&$errorEntries): void {
+				$errorEntries[] = ['message' => $message, 'context' => $context];
+			});
+		$this->client->expects($this->once())
+			->method('get')
+			->willThrowException(new \Exception('GoWhatsApp API unavailable'));
+
+		try {
+			$this->gateway
+				->withRuntimeConfig([
+					'base_url' => 'http://gowa.local',
+					'phone' => '5511999999999',
+				])
+				->send('5511999999999', '123456 is your verification code.');
+			$this->fail('Expected MessageTransmissionException to be thrown.');
+		} catch (MessageTransmissionException) {
+			$this->assertCount(1, $debugMessages);
+			$this->assertSame('sending whatsapp message to ' . $maskedIdentifier, $debugMessages[0]);
+			$this->assertStringNotContainsString('123456 is your verification code.', $debugMessages[0]);
+			$this->assertCount(2, $errorEntries);
+			$this->assertSame('Error checking if user is on WhatsApp', $errorEntries[0]['message']);
+			$this->assertSame($maskedIdentifier, $errorEntries[0]['context']['phone'] ?? null);
+			$this->assertArrayHasKey('exception', $errorEntries[0]['context']);
+			$this->assertSame('Could not verify WhatsApp user', $errorEntries[1]['message']);
+			$this->assertSame($maskedIdentifier, $errorEntries[1]['context']['identifier'] ?? null);
+			$this->assertArrayHasKey('exception', $errorEntries[1]['context']);
+		}
 	}
 
 	public function testCreateNewDeviceSendsBasicAuthAndStoresDeviceId(): void {
