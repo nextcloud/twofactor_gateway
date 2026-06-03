@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Controller;
 
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Exception\GatewayInstanceNotFoundException;
+use OCA\TwoFactorGateway\Exception\GatewayPermissionDeniedException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
@@ -19,6 +20,8 @@ use OCA\TwoFactorGateway\Provider\Gateway\ITestIdentifierNormalizer;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
+use OCA\TwoFactorGateway\Service\GatewayInstanceViewFactory;
+use OCA\TwoFactorGateway\Service\GatewayPermissionService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -26,6 +29,8 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IGroupManager;
 use OCP\IRequest;
+use OCP\IUser;
+use OCP\IUserSession;
 
 class AdminGatewayController extends OCSController {
 	public function __construct(
@@ -34,6 +39,9 @@ class AdminGatewayController extends OCSController {
 		private GatewayFactory $gatewayFactory,
 		private GatewayConfigurationSyncService $gatewayConfigurationSyncService,
 		private IGroupManager $groupManager,
+		private GatewayInstanceViewFactory $gatewayInstanceViewFactory,
+		private GatewayPermissionService $gatewayPermissionService,
+		private IUserSession $userSession,
 	) {
 		parent::__construct('twofactor_gateway', $request);
 	}
@@ -48,7 +56,17 @@ class AdminGatewayController extends OCSController {
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'GET', url: '/admin/gateways')]
 	public function listGateways(): DataResponse {
-		return new DataResponse($this->configService->getGatewayList());
+		$actor = $this->currentActor();
+		$scope = $this->gatewayPermissionService->resolveViewScope($actor);
+		$result = [];
+
+		foreach ($this->gatewayFactory->getFqcnList() as $fqcn) {
+			$gateway = $this->gatewayFactory->get($fqcn);
+			$instances = $this->gatewayPermissionService->filterVisibleInstances($actor, $this->configService->listInstances($gateway));
+			$result[] = $this->gatewayInstanceViewFactory->createGatewayEntry($gateway, $instances, $scope);
+		}
+
+		return new DataResponse($result);
 	}
 
 	/**
@@ -87,10 +105,11 @@ class AdminGatewayController extends OCSController {
 	 * @param list<string> $groupIds Optional group restrictions for routing
 	 * @param int $priority Optional routing priority (higher runs first)
 	 *
-	 * @return DataResponse<Http::STATUS_CREATED, array<string, mixed>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, array<string, mixed>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{message: string}, array{}>
 	 *
 	 * 201: Created
 	 * 400: Unknown gateway
+	 * 403: Permission denied for requested group scope
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/instances')]
@@ -98,12 +117,18 @@ class AdminGatewayController extends OCSController {
 		try {
 			$gw = $this->resolveGatewayForConfigurationPayload($gateway, $config);
 		} catch (\InvalidArgumentException $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return $this->badRequestResponse($e->getMessage());
+		}
+
+		try {
+			$this->gatewayPermissionService->assertCanCreateInstanceForGroups($this->currentActor(), $groupIds);
+		} catch (GatewayPermissionDeniedException $e) {
+			return $this->forbiddenResponse($e);
 		}
 
 		$instance = $this->configService->createInstance($gw, $label, $config, $groupIds, $priority);
 		$this->syncSessionMonitorSafely($gw);
-		return new DataResponse($instance, Http::STATUS_CREATED);
+		return $this->createdInstanceResponse($gw, $instance);
 	}
 
 	/**
@@ -112,11 +137,12 @@ class AdminGatewayController extends OCSController {
 	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{message: string}, array{}>
 	 *
 	 * 200: OK
 	 * 404: Instance not found
 	 * 400: Unknown gateway
+	 * 403: Permission denied for this instance
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'GET', url: '/admin/gateways/{gateway}/instances/{instanceId}')]
@@ -124,13 +150,17 @@ class AdminGatewayController extends OCSController {
 		try {
 			$gw = $this->resolveGatewayForInstance($gateway, $instanceId);
 		} catch (\InvalidArgumentException $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return $this->badRequestResponse($e->getMessage());
 		}
 
 		try {
-			return new DataResponse($this->configService->getInstance($gw, $instanceId));
+			$instance = $this->configService->getInstance($gw, $instanceId);
+			$this->gatewayPermissionService->assertCanViewInstance($this->currentActor(), $instance);
+			return $this->instanceViewResponse($gw, $instance);
 		} catch (GatewayInstanceNotFoundException $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			return $this->notFoundResponse($e->getMessage());
+		} catch (GatewayPermissionDeniedException $e) {
+			return $this->forbiddenResponse($e);
 		}
 	}
 
@@ -144,11 +174,12 @@ class AdminGatewayController extends OCSController {
 	 * @param list<string> $groupIds Updated group restrictions for routing
 	 * @param int $priority Updated routing priority
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{message: string}, array{}>
 	 *
 	 * 200: OK
 	 * 404: Instance not found
 	 * 400: Unknown gateway
+	 * 403: Permission denied for this instance or target group scope
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'PUT', url: '/admin/gateways/{gateway}/instances/{instanceId}')]
@@ -156,15 +187,20 @@ class AdminGatewayController extends OCSController {
 		try {
 			$gw = $this->resolveGatewayForUpdate($gateway, $instanceId, $config);
 		} catch (\InvalidArgumentException $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return $this->badRequestResponse($e->getMessage());
 		}
 
 		try {
+			$existing = $this->configService->getInstance($gw, $instanceId);
+			$this->gatewayPermissionService->assertCanEditInstance($this->currentActor(), $existing);
+			$this->gatewayPermissionService->assertCanCreateInstanceForGroups($this->currentActor(), $groupIds);
 			$record = $this->configService->updateInstance($gw, $instanceId, $label, $config, $groupIds, $priority);
 			$this->syncSessionMonitorSafely($gw);
-			return new DataResponse($record);
+			return $this->instanceViewResponse($gw, $record);
 		} catch (GatewayInstanceNotFoundException $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			return $this->notFoundResponse($e->getMessage());
+		} catch (GatewayPermissionDeniedException $e) {
+			return $this->forbiddenResponse($e);
 		}
 	}
 
@@ -174,11 +210,12 @@ class AdminGatewayController extends OCSController {
 	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<empty>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{message: string}, array{}>
 	 *
 	 * 200: OK
 	 * 404: Instance not found
 	 * 400: Unknown gateway
+	 * 403: Permission denied for this instance
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'DELETE', url: '/admin/gateways/{gateway}/instances/{instanceId}')]
@@ -186,15 +223,19 @@ class AdminGatewayController extends OCSController {
 		try {
 			$gw = $this->resolveGatewayForInstance($gateway, $instanceId);
 		} catch (\InvalidArgumentException $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return $this->badRequestResponse($e->getMessage());
 		}
 
 		try {
+			$instance = $this->configService->getInstance($gw, $instanceId);
+			$this->gatewayPermissionService->assertCanDeleteInstance($this->currentActor(), $instance);
 			$this->configService->deleteInstance($gw, $instanceId);
 			$this->syncSessionMonitorSafely($gw);
-			return new DataResponse([]);
+			return $this->emptyOkResponse();
 		} catch (GatewayInstanceNotFoundException $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			return $this->notFoundResponse($e->getMessage());
+		} catch (GatewayPermissionDeniedException $e) {
+			return $this->forbiddenResponse($e);
 		}
 	}
 
@@ -207,11 +248,12 @@ class AdminGatewayController extends OCSController {
 	 * @param string $gateway The gateway id
 	 * @param string $instanceId The instance id to promote
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{message: string}, array{}>
 	 *
 	 * 200: OK
 	 * 404: Instance not found
 	 * 400: Unknown gateway
+	 * 403: Permission denied for routing changes
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/instances/{instanceId}/default')]
@@ -219,15 +261,19 @@ class AdminGatewayController extends OCSController {
 		try {
 			$gw = $this->resolveGatewayForInstance($gateway, $instanceId);
 		} catch (\InvalidArgumentException $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return $this->badRequestResponse($e->getMessage());
 		}
 
 		try {
+			$instance = $this->configService->getInstance($gw, $instanceId);
+			$this->gatewayPermissionService->assertCanManageRouting($this->currentActor(), $instance);
 			$this->configService->setDefaultInstance($gw, $instanceId);
 			$this->syncSessionMonitorSafely($gw);
-			return new DataResponse([]);
+			return $this->emptyOkResponse();
 		} catch (GatewayInstanceNotFoundException $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			return $this->notFoundResponse($e->getMessage());
+		} catch (GatewayPermissionDeniedException $e) {
+			return $this->forbiddenResponse($e);
 		}
 	}
 
@@ -246,11 +292,12 @@ class AdminGatewayController extends OCSController {
 	 * @param string $instanceId The instance id to test
 	 * @param string $identifier The recipient identifier (e.g. phone number)
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{success: bool, message: string, accountInfo?: array<string, string>}, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array<string, mixed>, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{message: string}, array{}>
 	 *
 	 * 200: Test sent
 	 * 400: Gateway not complete or unknown gateway
 	 * 404: Instance not found
+	 * 403: Permission denied for this instance
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/instances/{instanceId}/test')]
@@ -260,20 +307,20 @@ class AdminGatewayController extends OCSController {
 		try {
 			$gw = $this->resolveGatewayForInstance($gateway, $instanceId);
 		} catch (\InvalidArgumentException $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
+			return $this->badRequestResponse($e->getMessage());
 		}
 
 		try {
 			$instance = $this->configService->getInstance($gw, $instanceId);
+			$this->gatewayPermissionService->assertCanViewInstance($this->currentActor(), $instance);
 		} catch (GatewayInstanceNotFoundException $e) {
-			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_NOT_FOUND);
+			return $this->notFoundResponse($e->getMessage());
+		} catch (GatewayPermissionDeniedException $e) {
+			return $this->forbiddenResponse($e);
 		}
 
 		if (!$instance['isComplete']) {
-			return new DataResponse(
-				['message' => 'Gateway instance is not fully configured.'],
-				Http::STATUS_BAD_REQUEST,
-			);
+			return $this->badRequestResponse('Gateway instance is not fully configured.');
 		}
 
 		$gatewayForTest = $gw;
@@ -312,17 +359,11 @@ class AdminGatewayController extends OCSController {
 					$data['accountInfo'] = $accountInfo;
 				}
 			}
-			return new DataResponse($data);
+			return $this->okPayloadResponse($data);
 		} catch (MessageTransmissionException|ConfigurationException $e) {
-			return new DataResponse(
-				['success' => false, 'message' => $e->getMessage()],
-				Http::STATUS_BAD_REQUEST,
-			);
+			return $this->badRequestPayloadResponse(['success' => false, 'message' => $e->getMessage()]);
 		} catch (\Throwable) {
-			return new DataResponse(
-				['success' => false, 'message' => 'Gateway test failed unexpectedly.'],
-				Http::STATUS_BAD_REQUEST,
-			);
+			return $this->badRequestPayloadResponse(['success' => false, 'message' => 'Gateway test failed unexpectedly.']);
 		}
 	}
 
@@ -526,5 +567,75 @@ class AdminGatewayController extends OCSController {
 			substr($instanceId, 0, $separatorPosition),
 			substr($instanceId, $separatorPosition + 1),
 		];
+	}
+
+	private function currentActor(): ?IUser {
+		$user = $this->userSession->getUser();
+		return $user instanceof IUser ? $user : null;
+	}
+
+	/**
+	 * @param array<string, mixed> $payload
+	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>
+	 */
+	private function okPayloadResponse(array $payload): DataResponse {
+		return new DataResponse($payload);
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_OK, array{}, array{}>
+	 */
+	private function emptyOkResponse(): DataResponse {
+		return new DataResponse([]);
+	}
+
+	/**
+	 * @param array<string, mixed> $instance
+	 * @return DataResponse<Http::STATUS_CREATED, array<string, mixed>, array{}>
+	 */
+	private function createdInstanceResponse(IGateway $gateway, array $instance): DataResponse {
+		$scope = $this->gatewayPermissionService->resolveViewScope($this->currentActor());
+		return new DataResponse(
+			$this->gatewayInstanceViewFactory->createInstanceView($gateway, $instance, $scope),
+			Http::STATUS_CREATED,
+		);
+	}
+
+	/**
+	 * @param array<string, mixed> $instance
+	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>
+	 */
+	private function instanceViewResponse(IGateway $gateway, array $instance): DataResponse {
+		$scope = $this->gatewayPermissionService->resolveViewScope($this->currentActor());
+		return new DataResponse($this->gatewayInstanceViewFactory->createInstanceView($gateway, $instance, $scope));
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 */
+	private function badRequestResponse(string $message): DataResponse {
+		return new DataResponse(['message' => $message], Http::STATUS_BAD_REQUEST);
+	}
+
+	/**
+	 * @param array<string, mixed> $payload
+	 * @return DataResponse<Http::STATUS_BAD_REQUEST, array<string, mixed>, array{}>
+	 */
+	private function badRequestPayloadResponse(array $payload): DataResponse {
+		return new DataResponse($payload, Http::STATUS_BAD_REQUEST);
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_NOT_FOUND, array{message: string}, array{}>
+	 */
+	private function notFoundResponse(string $message): DataResponse {
+		return new DataResponse(['message' => $message], Http::STATUS_NOT_FOUND);
+	}
+
+	/**
+	 * @return DataResponse<Http::STATUS_FORBIDDEN, array{message: string}, array{}>
+	 */
+	private function forbiddenResponse(GatewayPermissionDeniedException $e): DataResponse {
+		return new DataResponse(['message' => $e->getMessage()], Http::STATUS_FORBIDDEN);
 	}
 }
