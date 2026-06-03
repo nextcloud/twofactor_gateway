@@ -6,6 +6,7 @@
  */
 
 use OCP\App\IAppManager;
+use OCP\IConfig;
 use OCP\Server;
 
 if (!defined('PHPUNIT_RUN')) {
