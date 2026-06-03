@@ -186,6 +186,18 @@ class DeviceStateFetcherTest extends AppTestCase {
 	// -------------------------------------------------------------------------
 
 	public function testReturnsDisconnectedOnNonSuccessResponse(): void {
+		$this->logger->expects($this->once())
+			->method('info')
+			->with(
+				'GoWhatsApp /devices returned non-SUCCESS.',
+				$this->callback(static function (array $context): bool {
+					return ($context['response_code'] ?? null) === 'ERROR'
+						&& ($context['has_results'] ?? null) === true
+						&& ($context['results_type'] ?? null) === 'array'
+						&& !array_key_exists('body', $context);
+				}),
+			);
+
 		$this->stubRawDevicesResponse(json_encode(['code' => 'ERROR', 'results' => []]));
 
 		$this->assertSame('disconnected', $this->fetcher->fetch('http://gowa.local'));

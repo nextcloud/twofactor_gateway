@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\Telegram\Provider\Drivers;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\Bot;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
@@ -37,6 +38,24 @@ class BotTest extends TestCase {
 
 	public function testSendReturnsTelegramDescriptionWithoutLeakingToken(): void {
 		$token = '123456:ABCDEF_SECRET_TOKEN';
+		$maskedIdentifier = PhoneNumberMask::maskIdentifier('vitormattos');
+		$debugMessages = [];
+		$this->logger->expects($this->once())
+			->method('debug')
+			->with('sending telegram message to ' . $maskedIdentifier)
+			->willReturnCallback(static function (string $message) use (&$debugMessages): void {
+				$debugMessages[] = $message;
+			});
+		$this->logger->expects($this->once())
+			->method('error')
+			->with(
+				'Failed to send Telegram message',
+				$this->callback(static function (array $context) use ($maskedIdentifier): bool {
+					return ($context['chat_id'] ?? null) === $maskedIdentifier
+						&& array_key_exists('exception', $context)
+						&& $context['exception'] instanceof \RuntimeException;
+				}),
+			);
 		$this->client->expects($this->once())
 			->method('post')
 			->willThrowException(new \RuntimeException(
@@ -54,6 +73,10 @@ class BotTest extends TestCase {
 			$this->assertStringContainsString('chat not found', $e->getMessage());
 			$this->assertStringContainsString('numeric Telegram ID', $e->getMessage());
 			$this->assertStringNotContainsString($token, $e->getMessage());
+			$this->assertCount(1, $debugMessages);
+			$this->assertSame('sending telegram message to ' . $maskedIdentifier, $debugMessages[0]);
+			$this->assertStringNotContainsString($token, $debugMessages[0]);
+			$this->assertStringNotContainsString('Test', $debugMessages[0]);
 		}
 	}
 

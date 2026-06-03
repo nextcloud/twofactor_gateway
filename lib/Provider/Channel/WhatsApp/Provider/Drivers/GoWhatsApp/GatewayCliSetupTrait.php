@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Events\WhatsAppAuthenticationErrorEvent;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -238,7 +239,7 @@ trait GatewayCliSetupTrait {
 	private function fetchPairingCode(): array {
 		try {
 			$this->logger->debug('Fetching pairing code', [
-				'phone' => $this->lazyPhone,
+				'phone' => PhoneNumberMask::maskIdentifier($this->lazyPhone),
 				'device_id' => $this->lazyDeviceId,
 			]);
 
@@ -440,6 +441,7 @@ trait GatewayCliSetupTrait {
 	}
 
 	private function checkUserOnWhatsApp(string $phoneNumber): bool {
+		$maskedPhoneNumber = PhoneNumberMask::maskIdentifier($phoneNumber);
 		try {
 			$phone = preg_replace('/\D/', '', $phoneNumber);
 			$options = [
@@ -487,7 +489,7 @@ trait GatewayCliSetupTrait {
 			}
 
 			$this->logger->error('Error checking if user is on WhatsApp', [
-				'phone' => $phoneNumber,
+				'phone' => $maskedPhoneNumber,
 				'status' => $status,
 				'response' => $body,
 				'exception' => $e,
@@ -499,7 +501,7 @@ trait GatewayCliSetupTrait {
 			);
 		} catch (\Exception $e) {
 			$this->logger->error('Error checking if user is on WhatsApp', [
-				'phone' => $phoneNumber,
+				'phone' => $maskedPhoneNumber,
 				'exception' => $e,
 			]);
 			throw new MessageTransmissionException(
