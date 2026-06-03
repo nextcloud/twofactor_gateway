@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\FieldType;
@@ -159,7 +160,8 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 
 	#[\Override]
 	public function send(string $identifier, string $message, array $extra = []): void {
-		$this->logger->debug("sending whatsapp message to $identifier, message: $message");
+		$maskedIdentifier = PhoneNumberMask::maskIdentifier($identifier);
+		$this->logger->debug('sending whatsapp message to ' . $maskedIdentifier);
 
 		try {
 			$isOnWhatsApp = $this->checkUserOnWhatsApp($identifier);
@@ -171,13 +173,13 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			}
 		} catch (MessageTransmissionException $e) {
 			$this->logger->error('Could not verify WhatsApp user', [
-				'identifier' => $identifier,
+				'identifier' => $maskedIdentifier,
 				'exception' => $e,
 			]);
 			throw $e;
 		} catch (\Exception $e) {
 			$this->logger->error('Could not verify WhatsApp user', [
-				'identifier' => $identifier,
+				'identifier' => $maskedIdentifier,
 				'exception' => $e,
 			]);
 			throw new MessageTransmissionException(
@@ -214,18 +216,18 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 				);
 			}
 
-			$this->logger->debug("whatsapp message to $identifier sent successfully", [
+			$this->logger->debug('whatsapp message to ' . $maskedIdentifier . ' sent successfully', [
 				'message_id' => $data['results']['message_id'] ?? null,
 			]);
 		} catch (MessageTransmissionException $e) {
 			$this->logger->error('Could not send WhatsApp message', [
-				'identifier' => $identifier,
+				'identifier' => $maskedIdentifier,
 				'exception' => $e,
 			]);
 			throw $e;
 		} catch (\Exception $e) {
 			$this->logger->error('Could not send WhatsApp message', [
-				'identifier' => $identifier,
+				'identifier' => $maskedIdentifier,
 				'exception' => $e,
 			]);
 			throw new MessageTransmissionException('Failed to send WhatsApp message: ' . $e->getMessage(), self::CODE_SEND_UNKNOWN);
