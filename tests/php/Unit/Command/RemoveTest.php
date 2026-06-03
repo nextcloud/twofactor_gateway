@@ -9,7 +9,8 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Command;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
+use OC\Console\Application as ConsoleApplication;
+use OCA\TwoFactorGateway\AppInfo\Application as TwoFactorGatewayApplication;
 use OCA\TwoFactorGateway\Command\Remove;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Factory as SMSFactory;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Factory as TelegramFactory;
