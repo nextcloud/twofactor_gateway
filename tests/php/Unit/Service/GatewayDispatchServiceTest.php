@@ -9,149 +9,96 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
-use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
-use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
-use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
-use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
-use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayDispatchService;
+use OCA\TwoFactorGateway\Service\GatewayInstanceRecord;
+use OCA\TwoFactorGateway\Service\GatewayRouteCandidate;
+use OCA\TwoFactorGateway\Service\GatewayRoutingService;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
-use OCP\IAppConfig;
-use OCP\IGroupManager;
+use OCA\TwoFactorGateway\Tests\Unit\Service\Support\RuntimeAwareGatewayDouble;
 use OCP\IUser;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class GatewayDispatchServiceTest extends AppTestCase {
-	private GatewayFactory&MockObject $gatewayFactory;
-	private GatewayConfigService&MockObject $gatewayConfigService;
-	private IGroupManager&MockObject $groupManager;
+	private GatewayRoutingService&MockObject $gatewayRoutingService;
 	private LoggerInterface&MockObject $logger;
 	private GatewayDispatchService $service;
-	private IAppConfig $appConfig;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->appConfig = $this->makeInMemoryAppConfig();
-		$this->gatewayFactory = $this->createMock(GatewayFactory::class);
-		$this->gatewayConfigService = $this->createMock(GatewayConfigService::class);
-		$this->groupManager = $this->createMock(IGroupManager::class);
+		$this->gatewayRoutingService = $this->createMock(GatewayRoutingService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->service = new GatewayDispatchService(
-			$this->gatewayFactory,
-			$this->gatewayConfigService,
-			$this->groupManager,
+			$this->gatewayRoutingService,
 			$this->logger,
 		);
 	}
 
-	public function testSendWithInstanceUsesInstanceRuntimeConfiguration(): void {
+	public function testSendWithInstanceUsesResolvedInstanceRuntimeConfiguration(): void {
 		RuntimeAwareGatewayDouble::$sentBaseUrls = [];
-		$this->appConfig->setValueString('twofactor_gateway', 'runtimeaware_base_url', 'https://global.example.com');
-		$gateway = new RuntimeAwareGatewayDouble($this->appConfig);
+		$appConfig = $this->makeInMemoryAppConfig();
+		$appConfig->setValueString('twofactor_gateway', 'runtimeaware_base_url', 'https://global.example.com');
+		$gateway = new RuntimeAwareGatewayDouble($appConfig);
 
-		$this->gatewayFactory->method('get')->with('runtimeaware')->willReturn($gateway);
-		$this->gatewayConfigService->method('getInstance')->with($gateway, 'inst-a')->willReturn([
-			'id' => 'inst-a',
-			'providerId' => 'runtimeaware',
-			'label' => 'Client A',
-			'default' => false,
-			'createdAt' => '2026-01-01T00:00:00+00:00',
-			'config' => ['base_url' => 'https://instance-a.example.com'],
-			'isComplete' => true,
-			'groupIds' => [],
-			'priority' => 0,
-		]);
+		$this->gatewayRoutingService->expects($this->once())
+			->method('resolveProviderInstance')
+			->with('runtimeaware', 'inst-a')
+			->willReturn($this->makeCandidate($gateway, 'runtimeaware', 'inst-a', [
+				'id' => 'inst-a',
+				'label' => 'Client A',
+				'default' => false,
+				'createdAt' => '2026-01-01T00:00:00+00:00',
+				'config' => ['base_url' => 'https://instance-a.example.com'],
+				'isComplete' => true,
+				'groupIds' => [],
+				'priority' => 0,
+			]));
 
 		$this->service->sendWithInstance('runtimeaware', 'inst-a', '+5511999990000', 'Hello');
 
 		$this->assertSame(['https://instance-a.example.com'], RuntimeAwareGatewayDouble::$sentBaseUrls);
 	}
 
-	public function testSendWithReferenceResolvesCatalogChildInstance(): void {
+	public function testSendWithReferenceUsesResolvedCandidate(): void {
 		RuntimeAwareGatewayDouble::$sentBaseUrls = [];
-		$catalogGateway = $this->createMockForIntersectionOfInterfaces([\OCA\TwoFactorGateway\Provider\Gateway\IGateway::class, IProviderCatalogGateway::class]);
-		$catalogGateway->method('getProviderId')->willReturn('whatsapp');
-		$catalogGateway->method('getSettings')->willReturn(new Settings(name: 'WhatsApp', id: 'whatsapp', fields: []));
-		$catalogGateway->method('getProviderCatalog')->willReturn([
-			['id' => 'gowhatsapp', 'name' => 'WhatsApp', 'fields' => []],
-		]);
-		$childGateway = new RuntimeAwareGatewayDouble($this->appConfig, 'gowhatsapp');
+		$appConfig = $this->makeInMemoryAppConfig();
+		$gateway = new RuntimeAwareGatewayDouble($appConfig, 'gowhatsapp');
 
-		$this->gatewayFactory->method('get')->willReturnMap([
-			['whatsapp', $catalogGateway],
-			['gowhatsapp', $childGateway],
-		]);
-		$this->gatewayConfigService->method('listInstances')->willReturnCallback(static function (object $gateway): array {
-			if ($gateway instanceof RuntimeAwareGatewayDouble && $gateway->getProviderId() === 'gowhatsapp') {
-				return [[
-					'id' => 'inst-b',
-					'providerId' => 'gowhatsapp',
-					'label' => 'Client B',
-					'default' => true,
-					'createdAt' => '2026-01-01T00:00:00+00:00',
-					'config' => ['base_url' => 'https://catalog-child.example.com'],
-					'isComplete' => true,
-					'groupIds' => [],
-					'priority' => 0,
-				]];
-			}
-
-			return [];
-		});
+		$this->gatewayRoutingService->expects($this->once())
+			->method('resolveGatewayInstanceReference')
+			->with('whatsapp', 'gowhatsapp:inst-b')
+			->willReturn($this->makeCandidate($gateway, 'gowhatsapp', 'gowhatsapp:inst-b', [
+				'id' => 'inst-b',
+				'label' => 'Client B',
+				'default' => true,
+				'createdAt' => '2026-01-01T00:00:00+00:00',
+				'config' => ['base_url' => 'https://catalog-child.example.com'],
+				'isComplete' => true,
+				'groupIds' => [],
+				'priority' => 0,
+			]));
 
 		$this->service->sendWithReference('whatsapp', 'gowhatsapp:inst-b', '+5511999990000', 'Hello');
 
 		$this->assertSame(['https://catalog-child.example.com'], RuntimeAwareGatewayDouble::$sentBaseUrls);
 	}
 
-	/**
-	 * @dataProvider priorityOrderingProvider
-	 *
-	 * @param list<string> $userGroupIds
-	 * @param list<array{id: string, providerId: string, label: string, default: bool, createdAt: string, config: array{base_url: string}, isComplete: bool, groupIds: list<string>, priority: int}> $instances
-	 * @param list<string> $expectedSentBaseUrls
-	 */
-	public function testSendForUserOrdersCandidatesByPriority(array $userGroupIds, array $instances, array $expectedSentBaseUrls, string $expectedInstanceId): void {
+	public function testSendForUserDelegatesCandidateResolutionAndRetriesFallbacks(): void {
 		RuntimeAwareGatewayDouble::$sentBaseUrls = [];
-		$gateway = new RuntimeAwareGatewayDouble($this->appConfig);
+		$appConfig = $this->makeInMemoryAppConfig();
+		$gateway = new RuntimeAwareGatewayDouble($appConfig);
 		$user = $this->createMock(IUser::class);
 
-		$this->gatewayFactory->method('get')->with('runtimeaware')->willReturn($gateway);
-		$this->gatewayConfigService->method('listInstances')->with($gateway)->willReturn($instances);
-		$this->groupManager->method('getUserGroupIds')->with($user)->willReturn($userGroupIds);
-
-		$result = $this->service->sendForUser($user, 'runtimeaware', '+5511999990000', 'Hello');
-
-		$this->assertSame($expectedSentBaseUrls, RuntimeAwareGatewayDouble::$sentBaseUrls);
-		$this->assertSame($expectedInstanceId, $result['instanceId']);
-	}
-
-	/**
-	 * @return iterable<string, array{0: list<string>, 1: list<array{id: string, providerId: string, label: string, default: bool, createdAt: string, config: array{base_url: string}, isComplete: bool, groupIds: list<string>, priority: int}>, 2: list<string>, 3: string}>
-	 */
-	public static function priorityOrderingProvider(): iterable {
-		yield 'group candidates prefer higher priority first' => [
-			['group-a', 'group-b'],
-			[
-				[
-					'id' => 'inst-low',
-					'providerId' => 'runtimeaware',
-					'label' => 'Low',
-					'default' => false,
-					'createdAt' => '2026-01-01T00:00:00+00:00',
-					'config' => ['base_url' => 'https://ok-low.example.com'],
-					'isComplete' => true,
-					'groupIds' => ['group-a'],
-					'priority' => 10,
-				],
-				[
+		$this->gatewayRoutingService->expects($this->once())
+			->method('resolveCandidatesForUser')
+			->with($user, 'runtimeaware')
+			->willReturn([
+				$this->makeCandidate($gateway, 'runtimeaware', 'inst-high', [
 					'id' => 'inst-high',
-					'providerId' => 'runtimeaware',
 					'label' => 'High',
 					'default' => false,
 					'createdAt' => '2026-01-02T00:00:00+00:00',
@@ -159,195 +106,87 @@ class GatewayDispatchServiceTest extends AppTestCase {
 					'isComplete' => true,
 					'groupIds' => ['group-b'],
 					'priority' => 20,
-				],
-			],
-			['https://fail-high.example.com', 'https://ok-low.example.com'],
-			'inst-low',
-		];
-
-		yield 'fallback candidates prefer higher priority first' => [
-			[],
-			[
-				[
-					'id' => 'open-low',
-					'providerId' => 'runtimeaware',
-					'label' => 'Open Low',
+				]),
+				$this->makeCandidate($gateway, 'runtimeaware', 'inst-low', [
+					'id' => 'inst-low',
+					'label' => 'Low',
 					'default' => false,
 					'createdAt' => '2026-01-01T00:00:00+00:00',
-					'config' => ['base_url' => 'https://ok-open-low.example.com'],
+					'config' => ['base_url' => 'https://ok-low.example.com'],
 					'isComplete' => true,
-					'groupIds' => [],
+					'groupIds' => ['group-a'],
 					'priority' => 10,
-				],
-				[
-					'id' => 'open-high',
-					'providerId' => 'runtimeaware',
-					'label' => 'Open High',
-					'default' => false,
-					'createdAt' => '2026-01-02T00:00:00+00:00',
-					'config' => ['base_url' => 'https://fail-open-high.example.com'],
-					'isComplete' => true,
-					'groupIds' => [],
-					'priority' => 20,
-				],
-			],
-			['https://fail-open-high.example.com', 'https://ok-open-low.example.com'],
-			'open-low',
-		];
-	}
-
-	public function testSendForUserSingleInstanceNoGroupAllowsEveryone(): void {
-		RuntimeAwareGatewayDouble::$sentBaseUrls = [];
-		$gateway = new RuntimeAwareGatewayDouble($this->appConfig);
-		$user = $this->createMock(IUser::class);
-
-		$this->gatewayFactory->method('get')->with('runtimeaware')->willReturn($gateway);
-		$this->gatewayConfigService->method('listInstances')->with($gateway)->willReturn([
-			[
-				'id' => 'signal-inst',
-				'providerId' => 'runtimeaware',
-				'label' => 'Signal',
-				'default' => true,
-				'createdAt' => '2026-01-01T00:00:00+00:00',
-				'config' => ['base_url' => 'https://signal.example.com'],
-				'isComplete' => true,
-				'groupIds' => [],
-				'priority' => 0,
-			],
-		]);
-		$this->groupManager->method('getUserGroupIds')->with($user)->willReturn([]);
-
-		$result = $this->service->sendForUser($user, 'runtimeaware', '+5511999990000', 'code');
-
-		$this->assertSame('signal-inst', $result['instanceId']);
-	}
-
-	public function testSendForUserSingleInstanceWithGroupAllowsGroupMember(): void {
-		RuntimeAwareGatewayDouble::$sentBaseUrls = [];
-		$gateway = new RuntimeAwareGatewayDouble($this->appConfig);
-		$user = $this->createMock(IUser::class);
-
-		$this->gatewayFactory->method('get')->with('runtimeaware')->willReturn($gateway);
-		$this->gatewayConfigService->method('listInstances')->with($gateway)->willReturn([
-			[
-				'id' => 'signal-inst',
-				'providerId' => 'runtimeaware',
-				'label' => 'Signal',
-				'default' => true,
-				'createdAt' => '2026-01-01T00:00:00+00:00',
-				'config' => ['base_url' => 'https://signal.example.com'],
-				'isComplete' => true,
-				'groupIds' => ['signal-users'],
-				'priority' => 0,
-			],
-		]);
-		$this->groupManager->method('getUserGroupIds')->with($user)->willReturn(['signal-users']);
-
-		$result = $this->service->sendForUser($user, 'runtimeaware', '+5511999990000', 'code');
-
-		$this->assertSame('signal-inst', $result['instanceId']);
-	}
-
-	public function testSendForUserSingleInstanceWithGroupBlocksNonMember(): void {
-		$gateway = new RuntimeAwareGatewayDouble($this->appConfig);
-		$user = $this->createMock(IUser::class);
-
-		$this->gatewayFactory->method('get')->with('runtimeaware')->willReturn($gateway);
-		$this->gatewayConfigService->method('listInstances')->with($gateway)->willReturn([
-			[
-				'id' => 'signal-inst',
-				'providerId' => 'runtimeaware',
-				'label' => 'Signal',
-				'default' => true,
-				'createdAt' => '2026-01-01T00:00:00+00:00',
-				'config' => ['base_url' => 'https://signal.example.com'],
-				'isComplete' => true,
-				'groupIds' => ['signal-users'],
-				'priority' => 0,
-			],
-		]);
-		$this->groupManager->method('getUserGroupIds')->with($user)->willReturn(['other-group']);
-
-		$this->expectException(MessageTransmissionException::class);
-
-		$this->service->sendForUser($user, 'runtimeaware', '+5511999990000', 'code');
-	}
-
-	public function testSendForUserUsesOpenInstanceAsFallbackWhenNoGroupMappingMatches(): void {
-		RuntimeAwareGatewayDouble::$sentBaseUrls = [];
-		$gateway = new RuntimeAwareGatewayDouble($this->appConfig);
-		$user = $this->createMock(IUser::class);
-
-		$this->gatewayFactory->method('get')->with('runtimeaware')->willReturn($gateway);
-		$this->gatewayConfigService->method('listInstances')->with($gateway)->willReturn([
-			[
-				'id' => 'group-a-inst',
-				'providerId' => 'runtimeaware',
-				'label' => 'Group A instance',
-				'default' => false,
-				'createdAt' => '2026-01-01T00:00:00+00:00',
-				'config' => ['base_url' => 'https://group-a.example.com'],
-				'isComplete' => true,
-				'groupIds' => ['group-a'],
-				'priority' => 0,
-			],
-			[
-				'id' => 'open-inst',
-				'providerId' => 'runtimeaware',
-				'label' => 'Open (no group)',
-				'default' => false,
-				'createdAt' => '2026-01-02T00:00:00+00:00',
-				'config' => ['base_url' => 'https://ok.example.com'],
-				'isComplete' => true,
-				'groupIds' => [],
-				'priority' => 0,
-			],
-		]);
-		$this->groupManager->method('getUserGroupIds')->with($user)->willReturn([]);
+				]),
+			]);
+		$this->logger->expects($this->once())->method('warning');
 
 		$result = $this->service->sendForUser($user, 'runtimeaware', '+5511999990000', 'Hello');
 
-		$this->assertSame(['https://ok.example.com'], RuntimeAwareGatewayDouble::$sentBaseUrls);
-		$this->assertSame('open-inst', $result['instanceId']);
-	}
-}
-
-class RuntimeAwareGatewayDouble extends AGateway {
-	/** @var list<string> */
-	public static array $sentBaseUrls = [];
-
-	public function __construct(
-		IAppConfig $appConfig,
-		private string $gatewayId = 'runtimeaware',
-	) {
-		parent::__construct($appConfig);
+		$this->assertSame(['https://fail-high.example.com', 'https://ok-low.example.com'], RuntimeAwareGatewayDouble::$sentBaseUrls);
+		$this->assertSame('inst-low', $result['instanceId']);
 	}
 
-	#[\Override]
-	public function send(string $identifier, string $message, array $extra = []): void {
-		$baseUrl = $this->getBaseUrl();
-		self::$sentBaseUrls[] = $baseUrl;
-		if (str_contains($baseUrl, 'fail')) {
-			throw new MessageTransmissionException('simulated failure');
-		}
+	public function testSendForUserFallsBackToGatewayWhenRoutingReturnsNoCandidates(): void {
+		RuntimeAwareGatewayDouble::$sentBaseUrls = [];
+		$appConfig = $this->makeInMemoryAppConfig();
+		$appConfig->setValueString('twofactor_gateway', 'runtimeaware_base_url', 'https://global.example.com');
+		$gateway = new RuntimeAwareGatewayDouble($appConfig);
+		$user = $this->createMock(IUser::class);
+
+		$this->gatewayRoutingService->expects($this->once())
+			->method('resolveCandidatesForUser')
+			->with($user, 'runtimeaware')
+			->willReturn([]);
+		$this->gatewayRoutingService->expects($this->once())
+			->method('getGateway')
+			->with('runtimeaware')
+			->willReturn($gateway);
+
+		$result = $this->service->sendForUser($user, 'runtimeaware', '+5511999990000', 'Hello');
+
+		$this->assertSame(['https://global.example.com'], RuntimeAwareGatewayDouble::$sentBaseUrls);
+		$this->assertSame('', $result['instanceId']);
+		$this->assertSame('runtimeaware', $result['providerId']);
 	}
 
-	#[\Override]
-	public function createSettings(): Settings {
-		return new Settings(
-			name: 'RuntimeAware',
-			id: $this->gatewayId,
-			fields: [new FieldDefinition('base_url', 'Base URL')],
+	public function testEnrichTestResultForReferenceUsesResolvedCandidateConfig(): void {
+		/** @var IGateway&ITestResultEnricher&MockObject $gateway */
+		$gateway = $this->createMockForIntersectionOfInterfaces([IGateway::class, ITestResultEnricher::class]);
+		$gateway->method('getProviderId')->willReturn('gowhatsapp');
+		$gateway->method('getSettings')->willReturn(new Settings(name: 'GoWhatsApp', id: 'gowhatsapp', fields: [new FieldDefinition('base_url', 'Base URL')]));
+		$gateway->expects($this->once())
+			->method('enrichTestResult')
+			->with(['base_url' => 'https://wa.example.com'], '+5511999990000')
+			->willReturn(['account_name' => 'Acme']);
+
+		$this->gatewayRoutingService->expects($this->once())
+			->method('resolveGatewayInstanceReference')
+			->with('whatsapp', 'gowhatsapp:prod')
+			->willReturn($this->makeCandidate($gateway, 'gowhatsapp', 'gowhatsapp:prod', [
+				'id' => 'prod',
+				'label' => 'Prod',
+				'default' => true,
+				'createdAt' => '2026-01-01T00:00:00+00:00',
+				'config' => ['base_url' => 'https://wa.example.com'],
+				'isComplete' => true,
+				'groupIds' => [],
+				'priority' => 0,
+			]));
+
+		$result = $this->service->enrichTestResultForReference('whatsapp', 'gowhatsapp:prod', '+5511999990000');
+
+		$this->assertSame(['account_name' => 'Acme'], $result);
+	}
+
+	/**
+	 * @param array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int} $instance
+	 */
+	private function makeCandidate(IGateway $gateway, string $providerId, string $publicInstanceId, array $instance): GatewayRouteCandidate {
+		return new GatewayRouteCandidate(
+			gateway: $gateway,
+			providerId: $providerId,
+			publicInstanceId: $publicInstanceId,
+			instance: GatewayInstanceRecord::fromArray($instance),
 		);
-	}
-
-	#[\Override]
-	public function cliConfigure(InputInterface $input, OutputInterface $output): int {
-		return 0;
-	}
-
-	#[\Override]
-	public function getProviderId(): string {
-		return $this->gatewayId;
 	}
 }
