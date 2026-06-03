@@ -12,6 +12,7 @@ namespace OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Command\FieldQuestionPrompter;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\FieldType;
@@ -88,7 +89,8 @@ class Client extends AProvider {
 
 	#[\Override]
 	public function send(string $identifier, string $message, array $extra = []): void {
-		$this->logger->debug("sending telegram message to $identifier, message: $message");
+		$maskedIdentifier = PhoneNumberMask::maskIdentifier($identifier);
+		$this->logger->debug('sending telegram message to ' . $maskedIdentifier);
 
 		$this->exportApiCredentials();
 		$output = [];
@@ -108,7 +110,7 @@ class Client extends AProvider {
 			throw new MessageTransmissionException($this->buildUserFacingCliErrorMessage($output));
 		}
 
-		$this->logger->debug("telegram message to chat $identifier sent");
+		$this->logger->debug('telegram message to chat ' . $maskedIdentifier . ' sent');
 	}
 
 	/**
