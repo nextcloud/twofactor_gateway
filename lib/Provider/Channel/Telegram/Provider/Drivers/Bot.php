@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\FieldType;
@@ -65,7 +66,8 @@ class Bot extends AProvider {
 		if (empty($message)) {
 			$message = $this->l10n->t('`%s` is your Nextcloud verification code.', [$extra['code']]);
 		}
-		$this->logger->debug("sending telegram message to $identifier, message: $message");
+		$maskedIdentifier = PhoneNumberMask::maskIdentifier($identifier);
+		$this->logger->debug('sending telegram message to ' . $maskedIdentifier);
 		$token = $this->getToken();
 
 		$url = self::TELEGRAM_API_URL . $token . '/sendMessage';
@@ -74,8 +76,6 @@ class Bot extends AProvider {
 			'text' => $message,
 			'parse_mode' => 'markdown',
 		];
-
-		$this->logger->debug("sending telegram message to $identifier");
 		try {
 			$client = $this->clientService->newClient();
 			$response = $client->post($url, [
@@ -92,14 +92,14 @@ class Bot extends AProvider {
 				throw new MessageTransmissionException('Telegram API error: ' . $errorDescription);
 			}
 
-			$this->logger->debug("telegram message to chat $identifier sent");
+			$this->logger->debug('telegram message to chat ' . $maskedIdentifier . ' sent');
 		} catch (RuntimeException $e) {
 			$telegramErrorDescription = $this->extractTelegramErrorDescription($e->getMessage());
 			$safeMessage = $this->buildUserFacingErrorMessage($telegramErrorDescription);
 
 			$this->logger->error('Failed to send Telegram message', [
 				'exception' => $e,
-				'chat_id' => $identifier,
+				'chat_id' => $maskedIdentifier,
 			]);
 			throw new MessageTransmissionException($safeMessage, 0, $e);
 		}
