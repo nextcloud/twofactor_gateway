@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsAppBusiness;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\FieldType;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
@@ -103,6 +104,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 		if ($to === '') {
 			throw new MessageTransmissionException($this->l10n->t('Invalid phone number for WhatsApp Business.'));
 		}
+		$maskedIdentifier = PhoneNumberMask::maskIdentifier($identifier);
 
 		$apiVersion = $this->resolveApiVersion();
 		$phoneNumberId = $this->getPhoneNumberId();
@@ -155,13 +157,13 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			}
 		} catch (MessageTransmissionException $e) {
 			$this->logger->warning('WhatsApp Business send failed.', [
-				'identifier' => $identifier,
+				'identifier' => $maskedIdentifier,
 				'exception' => $e,
 			]);
 			throw $e;
 		} catch (\Throwable $e) {
 			$this->logger->warning('WhatsApp Business send failed.', [
-				'identifier' => $identifier,
+				'identifier' => $maskedIdentifier,
 				'exception' => $e,
 			]);
 			throw new MessageTransmissionException($this->l10n->t('Failed to send message through WhatsApp Business.'));
