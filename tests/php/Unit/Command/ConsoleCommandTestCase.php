@@ -12,7 +12,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Command;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\App\IAppManager;
-use OCP\IConfig;
+use OCP\IAppConfig;
 use OCP\Server;
 
 abstract class ConsoleCommandTestCase extends AppTestCase {
@@ -23,11 +23,11 @@ abstract class ConsoleCommandTestCase extends AppTestCase {
 		parent::setUpBeforeClass();
 
 		$appManager = Server::get(IAppManager::class);
-		$config = Server::get(IConfig::class);
+		$appConfig = Server::get(IAppConfig::class);
 
-		self::$originalInstalledVersion = $config->getAppValue(Application::APP_ID, 'installed_version', '');
+		self::$originalInstalledVersion = $appConfig->getValueString(Application::APP_ID, 'installed_version', '');
 		if (self::$originalInstalledVersion === '') {
-			$config->setAppValue(
+			$appConfig->setValueString(
 				Application::APP_ID,
 				'installed_version',
 				$appManager->getAppVersion(Application::APP_ID, false),
@@ -44,14 +44,14 @@ abstract class ConsoleCommandTestCase extends AppTestCase {
 
 	public static function tearDownAfterClass(): void {
 		$appManager = Server::get(IAppManager::class);
-		$config = Server::get(IConfig::class);
+		$appConfig = Server::get(IAppConfig::class);
 
 		if (!self::$appWasEnabled) {
 			$appManager->disableApp(Application::APP_ID);
 		}
 
 		if (self::$originalInstalledVersion === '') {
-			$config->deleteAppValue(Application::APP_ID, 'installed_version');
+			$appConfig->deleteKey(Application::APP_ID, 'installed_version');
 		}
 
 		parent::tearDownAfterClass();
