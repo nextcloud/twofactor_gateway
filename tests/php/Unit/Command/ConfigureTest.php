@@ -9,20 +9,20 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Tests\Unit\Command;
 
-use OCA\TwoFactorGateway\AppInfo\Application;
+use OC\Console\Application as ConsoleApplication;
+use OCA\TwoFactorGateway\AppInfo\Application as TwoFactorGatewayApplication;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Factory as SMSFactory;
-use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\Server;
 use Symfony\Component\Console\Input\ArrayInput;
 
-class ConfigureTest extends AppTestCase {
+class ConfigureTest extends \OCA\TwoFactorGateway\Tests\Unit\Command\ConsoleCommandTestCase {
 
 	public function testConfigureSmsProviders(): void {
 		$this->makeInMemoryAppConfig();
 		self::$store = [];
 
-		/** @var \OC\Console\Application */
-		$application = Server::get(\OC\Console\Application::class);
+		/** @var ConsoleApplication */
+		$application = Server::get(ConsoleApplication::class);
 		$output = new ConsoleOutputSpy();
 		$input = new ArrayInput(['twofactorauth:gateway:configure']);
 		$application->loadCommands($input, $output);
@@ -58,7 +58,7 @@ class ConfigureTest extends AppTestCase {
 				$this->assertStringContainsString('SMS', $output->fetch());
 			}
 			foreach ($fields as $key) {
-				$this->assertArrayHasKey($key, self::$store[Application::APP_ID] ?? [], "Field {$key} of provider {$gatewaySettings->name} was not saved.");
+				$this->assertArrayHasKey($key, self::$store[TwoFactorGatewayApplication::APP_ID] ?? [], "Field {$key} of provider {$gatewaySettings->name} was not saved.");
 			}
 		}
 	}
@@ -66,8 +66,8 @@ class ConfigureTest extends AppTestCase {
 	public function testConfigureCreatesInstanceRegistryEntry(): void {
 		$this->makeInMemoryAppConfig();
 
-		/** @var \OC\Console\Application */
-		$application = Server::get(\OC\Console\Application::class);
+		/** @var ConsoleApplication */
+		$application = Server::get(ConsoleApplication::class);
 		$output = new ConsoleOutputSpy();
 		$input = new ArrayInput(['twofactorauth:gateway:configure']);
 		$application->loadCommands($input, $output);
@@ -98,7 +98,7 @@ class ConfigureTest extends AppTestCase {
 		$this->assertSame(0, $exitCode);
 
 		// After configure, a registry entry must exist so the web UI can list the instance
-		$registryJson = self::$store[Application::APP_ID]['instances:sms'] ?? null;
+		$registryJson = self::$store[TwoFactorGatewayApplication::APP_ID]['instances:sms'] ?? null;
 		$this->assertNotNull($registryJson, 'instances:sms registry entry must be created after CLI configure');
 
 		$registry = json_decode((string)$registryJson, true);
@@ -111,8 +111,8 @@ class ConfigureTest extends AppTestCase {
 	public function testConfigureUpdatesExistingDefaultInstanceInsteadOfAppending(): void {
 		$this->makeInMemoryAppConfig();
 
-		/** @var \OC\Console\Application */
-		$application = Server::get(\OC\Console\Application::class);
+		/** @var ConsoleApplication */
+		$application = Server::get(ConsoleApplication::class);
 		$output = new ConsoleOutputSpy();
 		$input = new ArrayInput(['twofactorauth:gateway:configure']);
 		$application->loadCommands($input, $output);
@@ -139,7 +139,7 @@ class ConfigureTest extends AppTestCase {
 		$input->setStream(self::createStream($firstStream));
 		$this->assertSame(0, $application->run($input, $output));
 
-		$registryJson = self::$store[Application::APP_ID]['instances:sms'] ?? null;
+		$registryJson = self::$store[TwoFactorGatewayApplication::APP_ID]['instances:sms'] ?? null;
 		$this->assertNotNull($registryJson);
 		$firstRegistry = json_decode((string)$registryJson, true);
 		$this->assertIsArray($firstRegistry);
@@ -153,7 +153,7 @@ class ConfigureTest extends AppTestCase {
 		$input->setStream(self::createStream($secondStream));
 		$this->assertSame(0, $application->run($input, $output));
 
-		$registryJson = self::$store[Application::APP_ID]['instances:sms'] ?? null;
+		$registryJson = self::$store[TwoFactorGatewayApplication::APP_ID]['instances:sms'] ?? null;
 		$this->assertNotNull($registryJson);
 		$secondRegistry = json_decode((string)$registryJson, true);
 		$this->assertIsArray($secondRegistry);
