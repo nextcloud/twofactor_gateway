@@ -171,6 +171,55 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->assertSame(['token' => 'new-token'], $updated['config']);
 	}
 
+	public function testUpdateCatalogInstanceDeletesOldProviderSpecificFieldsWhenProviderChanges(): void {
+		$whatsAppGateway = $this->makeCatalogGatewayMock(
+			'whatsapp',
+			'WhatsApp',
+			[['field' => 'base_url', 'prompt' => 'Base URL']],
+			'provider',
+			[
+				[
+					'id' => 'gowhatsapp',
+					'name' => 'GoWhatsApp',
+					'fields' => [
+						['field' => 'device_name', 'prompt' => 'Device name', 'optional' => true],
+					],
+				],
+				[
+					'id' => 'whapi',
+					'name' => 'Whapi',
+					'fields' => [
+						['field' => 'api_key', 'prompt' => 'API Key', 'optional' => false],
+					],
+				],
+			],
+		);
+
+		$created = $this->service->createInstance($whatsAppGateway, 'Tenant A', [
+			'provider' => 'whapi',
+			'api_key' => 'key-123',
+		]);
+
+		$this->service->updateInstance($whatsAppGateway, $created['id'], 'Tenant A', [
+			'provider' => 'gowhatsapp',
+			'base_url' => 'https://gowhatsapp.example.test',
+			'device_name' => 'TwoFactor Gateway',
+		]);
+
+		$this->assertSame(
+			'__missing__',
+			$this->appConfig->getValueString('twofactor_gateway', 'whatsapp:' . $created['id'] . ':api_key', '__missing__'),
+		);
+		$this->assertSame(
+			'TwoFactor Gateway',
+			$this->appConfig->getValueString('twofactor_gateway', 'whatsapp:' . $created['id'] . ':device_name', '__missing__'),
+		);
+		$this->assertSame(
+			'gowhatsapp',
+			$this->appConfig->getValueString('twofactor_gateway', 'whatsapp:' . $created['id'] . ':provider', '__missing__'),
+		);
+	}
+
 	public function testCreateAndUpdateInstancePersistRoutingMetadata(): void {
 		$gateway = $this->makeGatewayMock('sms', 'SMS', [
 			['field' => 'url', 'prompt' => 'URL'],

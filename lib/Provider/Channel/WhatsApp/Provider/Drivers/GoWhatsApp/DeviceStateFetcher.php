@@ -119,7 +119,11 @@ class DeviceStateFetcher {
 			$data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
 
 			if (($data['code'] ?? '') !== 'SUCCESS' || !array_key_exists('results', $data)) {
-				$this->logger->info('GoWhatsApp /devices returned non-SUCCESS.', ['body' => $body]);
+				$this->logger->info('GoWhatsApp /devices returned non-SUCCESS.', [
+					'response_code' => isset($data['code']) && is_scalar($data['code']) ? (string)$data['code'] : null,
+					'has_results' => array_key_exists('results', $data),
+					'results_type' => get_debug_type($data['results'] ?? null),
+				]);
 				return 'disconnected';
 			}
 
