@@ -14,18 +14,17 @@ use OCA\TwoFactorGateway\Command\Remove;
 use OCA\TwoFactorGateway\Provider\Channel\SMS\Factory as SMSFactory;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Factory as TelegramFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
-use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\IAppConfig;
 use OCP\Server;
 use Symfony\Component\Console\Input\ArrayInput;
 
-class RemoveTest extends AppTestCase {
+class RemoveTest extends \OCA\TwoFactorGateway\Tests\Unit\Command\ConsoleCommandTestCase {
 
 	public function testWithInvalidProvider(): void {
 		$this->makeInMemoryAppConfig();
 
-		/** @var \OC\Console\Application */
-		$application = Server::get(\OC\Console\Application::class);
+		/** @var ConsoleApplication */
+		$application = Server::get(ConsoleApplication::class);
 		$input = new ArrayInput(['twofactorauth:gateway:remove']);
 		$input->setStream(self::createStream(['99999']));
 		$output = new ConsoleOutputSpy();
@@ -42,8 +41,8 @@ class RemoveTest extends AppTestCase {
 		$this->assertNotEmpty($settings->fields, "Provider {$settings->name} ({$nsHint}) não definiu fields.");
 		foreach ($settings->fields as $field) {
 			$key = $settings->id . '_' . $field->field;
-			$appConfig->setValueString(Application::APP_ID, $key, 'some_value');
-			$this->assertArrayHasKey($key, self::$store[Application::APP_ID] ?? [], "Field {$key} não foi salvo ({$nsHint}).");
+			$appConfig->setValueString(TwoFactorGatewayApplication::APP_ID, $key, 'some_value');
+			$this->assertArrayHasKey($key, self::$store[TwoFactorGatewayApplication::APP_ID] ?? [], "Field {$key} não foi salvo ({$nsHint}).");
 			$configured[] = $key;
 		}
 		return $configured;
@@ -59,7 +58,7 @@ class RemoveTest extends AppTestCase {
 		return $all;
 	}
 
-	private function runRemoveCommand(\OC\Console\Application $application, string $gatewayId): void {
+	private function runRemoveCommand(ConsoleApplication $application, string $gatewayId): void {
 		$gwFactory = new GatewayFactory();
 		$index = 0;
 		foreach ($gwFactory->getFqcnList() as $i => $fqcn) {
@@ -82,7 +81,7 @@ class RemoveTest extends AppTestCase {
 
 	private function assertKeysRemoved(array $keys, string $nsHint): void {
 		foreach ($keys as $key) {
-			$this->assertArrayNotHasKey($key, self::$store[Application::APP_ID] ?? [], "Ainda existe {$key} após remoção ({$nsHint}).");
+			$this->assertArrayNotHasKey($key, self::$store[TwoFactorGatewayApplication::APP_ID] ?? [], "Ainda existe {$key} após remoção ({$nsHint}).");
 		}
 	}
 
@@ -96,8 +95,8 @@ class RemoveTest extends AppTestCase {
 		$this->makeInMemoryAppConfig();
 		/** @var IAppConfig $appConfig */
 		$appConfig = Server::get(IAppConfig::class);
-		/** @var \OC\Console\Application $application */
-		$application = Server::get(\OC\Console\Application::class);
+		/** @var ConsoleApplication $application */
+		$application = Server::get(ConsoleApplication::class);
 
 		$smsFactory = new SMSFactory();
 		$configured = $this->configureAllChannelProviders(
@@ -113,7 +112,7 @@ class RemoveTest extends AppTestCase {
 	public function testTelegramGatewaysAreConfiguredAndRemoved(): void {
 		$this->makeInMemoryAppConfig();
 		$appConfig = Server::get(IAppConfig::class);
-		$application = Server::get(\OC\Console\Application::class);
+		$application = Server::get(ConsoleApplication::class);
 
 		$tgFactory = new TelegramFactory();
 		$configured = $this->configureAllChannelProviders(
@@ -129,7 +128,7 @@ class RemoveTest extends AppTestCase {
 	public function testOtherGatewaysAreConfiguredAndRemoved(): void {
 		$this->makeInMemoryAppConfig();
 		$appConfig = Server::get(IAppConfig::class);
-		$application = Server::get(\OC\Console\Application::class);
+		$application = Server::get(ConsoleApplication::class);
 
 		$gwFactory = new GatewayFactory();
 
