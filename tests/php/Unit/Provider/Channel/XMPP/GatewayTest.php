@@ -10,8 +10,8 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\XMPP;
 
 use OCA\TwoFactorGateway\PhoneNumberMask;
-use OCA\TwoFactorGateway\Provider\Channel\XMPP\Gateway;
 use OCA\TwoFactorGateway\Provider\Channel\XMPP\CurlFunctionStubs;
+use OCA\TwoFactorGateway\Provider\Channel\XMPP\Gateway;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCP\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
