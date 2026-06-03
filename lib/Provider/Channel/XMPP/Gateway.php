@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider\Channel\XMPP;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Settings;
@@ -76,7 +77,8 @@ class Gateway extends AGateway {
 
 	#[\Override]
 	public function send(string $identifier, string $message, array $extra = []): void {
-		$this->logger->debug("sending xmpp message to $identifier, message: $message");
+		$maskedIdentifier = PhoneNumberMask::maskIdentifier($identifier);
+		$this->logger->debug('sending xmpp message to ' . $maskedIdentifier);
 
 		$sender = $this->getSender();
 		$password = $this->getPassword();
@@ -92,7 +94,10 @@ class Gateway extends AGateway {
 		if ($method === '2') {
 			$from = $sender;
 		}
-		$this->logger->debug("URL: $url, sender: $sender, method: $method");
+		$this->logger->debug('Preparing XMPP request', [
+			'recipient' => $maskedIdentifier,
+			'method' => $method,
+		]);
 
 		try {
 			$ch = curl_init();
@@ -104,7 +109,7 @@ class Gateway extends AGateway {
 			curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: text/plain']);
 			curl_exec($ch);
 			curl_close($ch);
-			$this->logger->debug("XMPP message to $identifier sent");
+			$this->logger->debug('XMPP message to ' . $maskedIdentifier . ' sent');
 		} catch (\Exception) {
 			throw new MessageTransmissionException();
 		}
