@@ -137,6 +137,7 @@ class GatewayConfigService {
 	public function updateInstance(IGateway $gateway, string $instanceId, string $label, array $config, array $groupIds = [], int $priority = 0): array {
 		$gatewayId = $gateway->getProviderId();
 		$registry = $this->loadRegistry($gatewayId);
+		$existingRecord = $this->getInstance($gateway, $instanceId);
 
 		$updated = false;
 		foreach ($registry as &$meta) {
@@ -145,6 +146,7 @@ class GatewayConfigService {
 				$meta['groupIds'] = $this->normalizeGroupIds($groupIds);
 				$meta['priority'] = $this->normalizePriority($priority);
 				$this->storeFieldValues($gatewayId, $instanceId, $gateway, $config);
+				$this->deleteObsoleteFieldValues($gatewayId, $instanceId, $gateway, $existingRecord, $config);
 				$updated = true;
 				break;
 			}
@@ -393,6 +395,62 @@ class GatewayConfigService {
 				Application::APP_ID,
 				$this->instanceFieldKey($gatewayId, $instanceId, $fieldName),
 			);
+		}
+	}
+
+	/**
+	 * Remove provider-specific values that no longer belong to the active catalog provider.
+	 *
+	 * @param array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int} $existingRecord
+	 * @param array<string, string> $config
+	 */
+	private function deleteObsoleteFieldValues(string $gatewayId, string $instanceId, IGateway $gateway, array $existingRecord, array $config): void {
+		if (!($gateway instanceof IProviderCatalogGateway)) {
+			return;
+		}
+
+		$selector = $gateway->getProviderSelectorField();
+		$previousProviderId = trim((string)($existingRecord['config'][$selector->field] ?? ''));
+		$currentProviderId = trim((string)($config[$selector->field] ?? ''));
+
+		if ($previousProviderId === '' || $currentProviderId === '' || $previousProviderId === $currentProviderId) {
+			return;
+		}
+
+		$currentProviderFields = [];
+		foreach ($gateway->getProviderCatalog() as $provider) {
+			if ((string)($provider['id'] ?? '') !== $currentProviderId) {
+				continue;
+			}
+
+			foreach ($provider['fields'] ?? [] as $providerField) {
+				if ($providerField instanceof FieldDefinition) {
+					$currentProviderFields[$providerField->field] = true;
+				}
+			}
+			break;
+		}
+
+		foreach ($gateway->getProviderCatalog() as $provider) {
+			if ((string)($provider['id'] ?? '') !== $previousProviderId) {
+				continue;
+			}
+
+			foreach ($provider['fields'] ?? [] as $providerField) {
+				if (!($providerField instanceof FieldDefinition)) {
+					continue;
+				}
+
+				if (isset($currentProviderFields[$providerField->field])) {
+					continue;
+				}
+
+				$this->appConfig->deleteKey(
+					Application::APP_ID,
+					$this->instanceFieldKey($gatewayId, $instanceId, $providerField->field),
+				);
+			}
+			break;
 		}
 	}
 
