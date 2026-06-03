@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\Telegram\Provider\Drivers;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\Client;
 use OCP\Files\IAppData;
 use OCP\IConfig;
@@ -55,6 +56,14 @@ class ClientTest extends TestCase {
 				'api_id' => '18307',
 				'api_hash' => 'secret-hash',
 			]);
+		$maskedIdentifier = PhoneNumberMask::maskIdentifier('vitormattos');
+		$debugMessages = [];
+		$this->logger->expects($this->once())
+			->method('debug')
+			->with('sending telegram message to ' . $maskedIdentifier)
+			->willReturnCallback(static function (string $message) use (&$debugMessages): void {
+				$debugMessages[] = $message;
+			});
 		$provider->cliOutput = [
 			'Open Telegram on your phone, go to Settings > Devices > Link Desktop Device and scan the above QR code to login automatically.',
 			'Alternatively, you can also enter a bot token or phone number to login manually:',
@@ -68,6 +77,10 @@ class ClientTest extends TestCase {
 			$this->assertStringContainsString('Telegram Client session is not logged in', $e->getMessage());
 			$this->assertStringContainsString('login flow', $e->getMessage());
 			$this->assertStringNotContainsString('secret-hash', $e->getMessage());
+			$this->assertCount(1, $debugMessages);
+			$this->assertSame('sending telegram message to ' . $maskedIdentifier, $debugMessages[0]);
+			$this->assertStringNotContainsString('secret-hash', $debugMessages[0]);
+			$this->assertStringNotContainsString('Test', $debugMessages[0]);
 		}
 	}
 

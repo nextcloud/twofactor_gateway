@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\WhatsApp\Provider\Drivers\WhatsAppBusiness;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsAppBusiness\Gateway;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\Http\Client\IClient;
@@ -22,6 +23,7 @@ use Psr\Log\LoggerInterface;
 
 class GatewayTest extends AppTestCase {
 	private IClient&MockObject $client;
+	private LoggerInterface&MockObject $logger;
 	private Gateway $gateway;
 
 	protected function setUp(): void {
@@ -35,13 +37,13 @@ class GatewayTest extends AppTestCase {
 		$l10n = $this->createMock(IL10N::class);
 		$l10n->method('t')->willReturnCallback(static fn (string $text): string => $text);
 
-		$logger = $this->createMock(LoggerInterface::class);
+		$this->logger = $this->createMock(LoggerInterface::class);
 
 		$this->gateway = new Gateway(
 			appConfig: $appConfig,
 			clientService: $clientService,
 			l10n: $l10n,
-			logger: $logger,
+			logger: $this->logger,
 		);
 	}
 
@@ -110,6 +112,17 @@ class GatewayTest extends AppTestCase {
 		$this->gateway->setAccessToken('token-123');
 		$this->gateway->setTemplateName('test_twofactor_token');
 		$this->gateway->setTemplateLanguage('pt_BR');
+		$maskedIdentifier = PhoneNumberMask::maskIdentifier('+55 (11) 99999-0000');
+
+		$this->logger->expects($this->once())
+			->method('warning')
+			->with(
+				'WhatsApp Business send failed.',
+				$this->callback(static function (array $context) use ($maskedIdentifier): bool {
+					return ($context['identifier'] ?? null) === $maskedIdentifier
+						&& ($context['exception'] ?? null) instanceof MessageTransmissionException;
+				}),
+			);
 
 		$this->client->expects($this->once())
 			->method('post')
@@ -131,6 +144,17 @@ class GatewayTest extends AppTestCase {
 		$this->gateway->setAccessToken('token-123');
 		$this->gateway->setTemplateName('test_twofactor_token');
 		$this->gateway->setTemplateLanguage('pt_BR');
+		$maskedIdentifier = PhoneNumberMask::maskIdentifier('+55 (11) 99999-0000');
+
+		$this->logger->expects($this->once())
+			->method('warning')
+			->with(
+				'WhatsApp Business send failed.',
+				$this->callback(static function (array $context) use ($maskedIdentifier): bool {
+					return ($context['identifier'] ?? null) === $maskedIdentifier
+						&& ($context['exception'] ?? null) instanceof \RuntimeException;
+				}),
+			);
 
 		$this->client->expects($this->once())
 			->method('post')
