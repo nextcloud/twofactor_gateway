@@ -10,6 +10,9 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider;
 
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
+use OCA\TwoFactorGateway\Provider\FieldSensitivity;
+use OCA\TwoFactorGateway\Provider\FieldType;
 use PHPUnit\Framework\TestCase;
 
 class FieldDefinitionTest extends TestCase {
@@ -34,5 +37,30 @@ class FieldDefinitionTest extends TestCase {
 		$serialized = $field->jsonSerialize();
 		$this->assertArrayHasKey('helper', $serialized);
 		$this->assertSame('', $serialized['helper']);
+	}
+
+	public function testJsonSerializeDerivesSecretSensitivityAndAdminExposureByDefault(): void {
+		$field = new FieldDefinition(
+			field: 'token',
+			prompt: 'Token',
+			type: FieldType::SECRET,
+		);
+
+		$serialized = $field->jsonSerialize();
+		$this->assertSame('secret', $serialized['sensitivity']);
+		$this->assertSame('admin', $serialized['exposure']);
+	}
+
+	public function testJsonSerializePreservesExplicitSensitivityAndExposure(): void {
+		$field = new FieldDefinition(
+			field: 'display_name',
+			prompt: 'Display name',
+			sensitivity: FieldSensitivity::NORMAL,
+			exposure: FieldExposure::DELEGATED,
+		);
+
+		$serialized = $field->jsonSerialize();
+		$this->assertSame('normal', $serialized['sensitivity']);
+		$this->assertSame('delegated', $serialized['exposure']);
 	}
 }
