@@ -50,6 +50,14 @@ class FieldDefinition implements JsonSerializable {
 		 * Optional helper text displayed separately from the main prompt.
 		 */
 		public string $helper = '',
+		/**
+		 * Optional security sensitivity metadata for backend sanitization.
+		 */
+		public string|FieldSensitivity|null $sensitivity = null,
+		/**
+		 * Optional exposure target metadata for backend sanitization.
+		 */
+		public string|FieldExposure|null $exposure = null,
 	) {
 	}
 
@@ -59,6 +67,28 @@ class FieldDefinition implements JsonSerializable {
 		}
 
 		return $this->type;
+	}
+
+	public function getSensitivity(): string {
+		if ($this->sensitivity instanceof FieldSensitivity) {
+			return $this->sensitivity->value;
+		}
+
+		if (is_string($this->sensitivity) && $this->sensitivity !== '') {
+			return FieldSensitivity::fromNullable($this->sensitivity)->value;
+		}
+
+		return FieldType::fromNullable($this->type) === FieldType::SECRET
+			? FieldSensitivity::SECRET->value
+			: FieldSensitivity::NORMAL->value;
+	}
+
+	public function getExposure(): string {
+		if ($this->exposure instanceof FieldExposure) {
+			return $this->exposure->value;
+		}
+
+		return FieldExposure::fromNullable($this->exposure)->value;
 	}
 
 	#[\Override]
@@ -73,6 +103,8 @@ class FieldDefinition implements JsonSerializable {
 			'min' => $this->min,
 			'max' => $this->max,
 			'helper' => $this->helper,
+			'sensitivity' => $this->getSensitivity(),
+			'exposure' => $this->getExposure(),
 		];
 	}
 }
