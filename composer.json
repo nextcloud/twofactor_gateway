@@ -21,7 +21,7 @@
 	"scripts": {
 		"cs:check": "php-cs-fixer fix --dry-run --diff",
 		"cs:fix": "php-cs-fixer fix",
-		"lint": "find . -name \\*.php -not -path './vendor/*' -print0 | xargs -0 -n1 php -l",
+		"lint": "find . -name \\*.php -not -path './vendor/*' -not -path './vendor-bin/*' -print0 | xargs -0 -n1 php -l",
 		"phpmd": "php -d error_reporting=E_ALL\\&~E_DEPRECATED\\&~E_USER_DEPRECATED vendor/bin/phpmd lib text phpmd.xml.dist --exclude lib/Vendor,Vendor",
 		"phpcpd": "vendor/bin/phpcpd lib --exclude lib/Vendor",
 		"openapi": "generate-spec --verbose && (npm run typescript:generate || echo 'Please manually regenerate the typescript OpenAPI models')",
