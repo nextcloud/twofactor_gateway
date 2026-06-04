@@ -21,6 +21,7 @@ use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Service\GatewayCatalogService;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
+use OCA\TwoFactorGateway\Service\GatewayInteractiveSetupSessionService;
 use OCA\TwoFactorGateway\Service\GatewayPermissionService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -41,6 +42,7 @@ class AdminGatewayController extends OCSController {
 		private GatewayConfigurationSyncService $gatewayConfigurationSyncService,
 		private IGroupManager $groupManager,
 		private GatewayPermissionService $gatewayPermissionService,
+		private GatewayInteractiveSetupSessionService $gatewayInteractiveSetupSessionService,
 		private IUserSession $userSession,
 	) {
 		parent::__construct('twofactor_gateway', $request);
@@ -121,7 +123,7 @@ class AdminGatewayController extends OCSController {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_FORBIDDEN);
 		}
 
-		$instance = $this->configService->createInstance($gw, $label, $config, $groupIds, $priority);
+		$instance = $this->configService->createInstance($gw, $label, $config, $groupIds, $priority, $actor?->getUID());
 		$this->syncSessionMonitorSafely($gw);
 		return new DataResponse(
 			$this->gatewayCatalogService->createInstanceView($actor, $gw, $instance),
@@ -397,7 +399,10 @@ class AdminGatewayController extends OCSController {
 			return new DataResponse(['message' => 'Gateway does not support interactive setup.'], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse($gw->interactiveSetupStart($input));
+		$response = $gw->interactiveSetupStart($input);
+		$this->claimInteractiveSetupSession($gateway, $response);
+
+		return new DataResponse($response);
 	}
 
 	/**
@@ -407,10 +412,11 @@ class AdminGatewayController extends OCSController {
 	 * @param string $sessionId Interactive setup session id
 	 * @param string $action Action to execute in the setup flow
 	 * @param array<string, mixed> $input Step input
-	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{message: string}, array{}>
 	 *
 	 * 200: Interactive setup step executed
 	 * 400: Unknown gateway, invalid provider, or interactive setup unsupported
+	 * 403: Interactive setup session belongs to a different actor
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/interactive-setup/step')]
@@ -425,7 +431,16 @@ class AdminGatewayController extends OCSController {
 			return new DataResponse(['message' => 'Gateway does not support interactive setup.'], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse($gw->interactiveSetupStep($sessionId, $action, $input));
+		try {
+			$this->gatewayInteractiveSetupSessionService->assertCanAccess($this->currentActor(), $gateway, $sessionId);
+		} catch (GatewayPermissionDeniedException $e) {
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_FORBIDDEN);
+		}
+
+		$response = $gw->interactiveSetupStep($sessionId, $action, $input);
+		$this->releaseInteractiveSetupSessionIfFinished($gateway, $sessionId, $response);
+
+		return new DataResponse($response);
 	}
 
 	/**
@@ -434,10 +449,11 @@ class AdminGatewayController extends OCSController {
 	 * @param string $gateway The gateway id
 	 * @param string $sessionId Interactive setup session id
 	 * @param array<string, string> $input Optional setup context used to resolve catalog providers
-	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{message: string}, array{}>
 	 *
 	 * 200: Interactive setup cancelled
 	 * 400: Unknown gateway or interactive setup unsupported
+	 * 403: Interactive setup session belongs to a different actor
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/interactive-setup/cancel')]
@@ -452,7 +468,54 @@ class AdminGatewayController extends OCSController {
 			return new DataResponse(['message' => 'Gateway does not support interactive setup.'], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse($gw->interactiveSetupCancel($sessionId));
+		try {
+			$this->gatewayInteractiveSetupSessionService->assertCanAccess($this->currentActor(), $gateway, $sessionId);
+		} catch (GatewayPermissionDeniedException $e) {
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_FORBIDDEN);
+		}
+
+		$response = $gw->interactiveSetupCancel($sessionId);
+		$this->gatewayInteractiveSetupSessionService->release($gateway, $sessionId);
+
+		return new DataResponse($response);
+	}
+
+	/** @param array<string, mixed> $response */
+	private function claimInteractiveSetupSession(string $gateway, array $response): void {
+		$sessionId = trim((string)($response['sessionId'] ?? ''));
+		if ($sessionId === '') {
+			return;
+		}
+
+		$this->gatewayInteractiveSetupSessionService->claim($this->currentActor(), $gateway, $sessionId);
+	}
+
+	/** @param array<string, mixed> $response */
+	private function releaseInteractiveSetupSessionIfFinished(string $gateway, string $sessionId, array $response): void {
+		if (!$this->isInteractiveSetupTerminalResponse($response)) {
+			return;
+		}
+
+		$this->gatewayInteractiveSetupSessionService->release($gateway, $sessionId);
+	}
+
+	/** @param array<string, mixed> $response */
+	private function isInteractiveSetupTerminalResponse(array $response): bool {
+		$status = trim((string)($response['status'] ?? ''));
+		if (in_array($status, ['done', 'cancelled'], true)) {
+			return true;
+		}
+
+		if ($status === 'ok' && ((string)($response['step'] ?? '') === 'complete' || array_key_exists('result', $response))) {
+			return true;
+		}
+
+		if ($status !== 'error') {
+			return false;
+		}
+
+		$message = strtolower(trim((string)($response['message'] ?? '')));
+		return $message !== '' && (str_contains($message, 'not found') || str_contains($message, 'expired'));
 	}
 
 	private function resolveGatewayForPayload(string $gateway, array $config): IGateway {
