@@ -75,7 +75,7 @@ class GatewayConfigService {
 	/**
 	 * List all configured instances for a gateway.
 	 *
-	 * @return list<array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}>
+	 * @return list<array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int, createdByUserId: ?string}>
 	 */
 	public function listInstances(IGateway $gateway): array {
 		$registry = $this->loadRegistry($gateway->getProviderId());
@@ -85,7 +85,7 @@ class GatewayConfigService {
 	/**
 	 * Return a single named instance.
 	 *
-	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}
+	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int, createdByUserId: ?string}
 	 * @throws GatewayInstanceNotFoundException
 	 */
 	public function getInstance(IGateway $gateway, string $instanceId): array {
@@ -101,9 +101,9 @@ class GatewayConfigService {
 	 * @param array<string, string> $config
 	 * @param list<string> $groupIds
 	 * @param int $priority
-	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}
+	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int, createdByUserId: ?string}
 	 */
-	public function createInstance(IGateway $gateway, string $label, array $config, array $groupIds = [], int $priority = 0): array {
+	public function createInstance(IGateway $gateway, string $label, array $config, array $groupIds = [], int $priority = 0, ?string $createdByUserId = null): array {
 		$gatewayId = $gateway->getProviderId();
 		$registry = $this->loadRegistry($gatewayId);
 
@@ -118,6 +118,7 @@ class GatewayConfigService {
 			'createdAt' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
 			'groupIds' => $this->normalizeGroupIds($groupIds),
 			'priority' => $this->normalizePriority($priority),
+			'createdByUserId' => $this->normalizeCreatedByUserId($createdByUserId),
 		];
 		$registry[] = $meta;
 		$this->saveRegistry($gatewayId, $registry);
@@ -131,7 +132,7 @@ class GatewayConfigService {
 	 * @param array<string, string> $config
 	 * @param list<string> $groupIds
 	 * @param int $priority
-	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}
+	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int, createdByUserId: ?string}
 	 * @throws GatewayInstanceNotFoundException
 	 */
 	public function updateInstance(IGateway $gateway, string $instanceId, string $label, array $config, array $groupIds = [], int $priority = 0): array {
@@ -246,7 +247,7 @@ class GatewayConfigService {
 	}
 
 	/**
-	 * @return list<array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int}>
+	 * @return list<array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int, createdByUserId?: ?string}>
 	 */
 	private function loadRegistry(string $gatewayId): array {
 		$raw = $this->appConfig->getValueString(Application::APP_ID, $this->registryKey($gatewayId), '[]');
@@ -254,7 +255,7 @@ class GatewayConfigService {
 		if (!is_array($data)) {
 			return [];
 		}
-		/** @var list<array{id: string, label: string, default: bool, createdAt: string}> */
+		/** @var list<array{id: string, label: string, default: bool, createdAt: string, createdByUserId?: ?string}> */
 		$result = array_values($data);
 		[$normalized, $changed] = $this->normalizeRegistryDefaults($result);
 		if ($changed) {
@@ -264,8 +265,8 @@ class GatewayConfigService {
 	}
 
 	/**
-	 * @param list<array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int}> $registry
-	 * @return array{0: list<array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int}>, 1: bool}
+	 * @param list<array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int, createdByUserId?: ?string}> $registry
+	 * @return array{0: list<array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int, createdByUserId?: ?string}>, 1: bool}
 	 */
 	private function normalizeRegistryDefaults(array $registry): array {
 		if ($registry === []) {
@@ -304,7 +305,7 @@ class GatewayConfigService {
 	}
 
 	/**
-	 * @param list<array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int}> $registry
+	 * @param list<array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int, createdByUserId?: ?string}> $registry
 	 */
 	private function saveRegistry(string $gatewayId, array $registry): void {
 		$this->appConfig->setValueString(Application::APP_ID, $this->registryKey($gatewayId), json_encode(array_values($registry), JSON_THROW_ON_ERROR));
@@ -401,7 +402,7 @@ class GatewayConfigService {
 	/**
 	 * Remove provider-specific values that no longer belong to the active catalog provider.
 	 *
-	 * @param array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int} $existingRecord
+	 * @param array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int, createdByUserId: ?string} $existingRecord
 	 * @param array<string, string> $config
 	 */
 	private function deleteObsoleteFieldValues(string $gatewayId, string $instanceId, IGateway $gateway, array $existingRecord, array $config): void {
@@ -472,8 +473,8 @@ class GatewayConfigService {
 	}
 
 	/**
-	 * @param array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int} $meta
-	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}
+	 * @param array{id: string, label: string, default: bool, createdAt: string, groupIds?: list<string>, priority?: int, createdByUserId?: ?string} $meta
+	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int, createdByUserId: ?string}
 	 */
 	private function buildInstanceRecord(IGateway $gateway, array $meta): array {
 		$settings = $gateway->getSettings();
@@ -534,16 +535,20 @@ class GatewayConfigService {
 		$isComplete = $this->isInstanceComplete($completenessSettings, $config);
 		$groupIds = is_array($meta['groupIds'] ?? null) ? $this->normalizeGroupIds($meta['groupIds']) : [];
 		$priority = $this->normalizePriority($meta['priority'] ?? 0);
-		return [
-			'id' => $meta['id'],
-			'label' => $meta['label'],
-			'default' => $meta['default'],
-			'createdAt' => $meta['createdAt'],
-			'config' => $config,
-			'isComplete' => $isComplete,
-			'groupIds' => $groupIds,
-			'priority' => $priority,
-		];
+
+		$record = new GatewayInstanceRecord(
+			id: $meta['id'],
+			label: $meta['label'],
+			default: $meta['default'],
+			createdAt: $meta['createdAt'],
+			config: $config,
+			isComplete: $isComplete,
+			groupIds: $groupIds,
+			priority: $priority,
+			createdByUserId: $this->normalizeCreatedByUserId($meta['createdByUserId'] ?? null),
+		);
+
+		return $record->toArray();
 	}
 
 	/** @param list<string> $groupIds
@@ -564,6 +569,11 @@ class GatewayConfigService {
 		}
 
 		return (int)$priority;
+	}
+
+	private function normalizeCreatedByUserId(mixed $createdByUserId): ?string {
+		$createdByUserId = trim((string)$createdByUserId);
+		return $createdByUserId !== '' ? $createdByUserId : null;
 	}
 
 	/** @param array<string, string> $config */
