@@ -12,6 +12,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\WhatsApp\Provider\Dri
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsAppBusiness\Gateway;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
@@ -45,6 +46,21 @@ class GatewayTest extends AppTestCase {
 			l10n: $l10n,
 			logger: $this->logger,
 		);
+	}
+
+	public function testCreateSettingsMarksFieldsAsAdminOnly(): void {
+		$settings = $this->gateway->createSettings();
+		$fieldByName = [];
+		foreach ($settings->fields as $field) {
+			$fieldByName[$field->field] = $field;
+		}
+
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['api_version']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['phone_number_id']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['phone_number_display']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['access_token']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['template_name']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['template_language']->getExposure());
 	}
 
 	public function testSendUsesTemplateAndDefaultApiVersionWhenNotConfigured(): void {
