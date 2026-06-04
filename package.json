@@ -41,7 +41,7 @@
     "@nextcloud/vite-config": "^2.5.2",
     "@playwright/test": "^1.60.0",
     "@typescript-eslint/eslint-plugin": "^8.59.0",
-    "@typescript-eslint/parser": "^8.60.0",
+    "@typescript-eslint/parser": "^8.60.1",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vue/test-utils": "^2.4.10",
     "@vue/tsconfig": "^0.9.1",
