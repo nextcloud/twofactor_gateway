@@ -63,6 +63,27 @@ class GatewayPermissionServiceTest extends TestCase {
 		);
 	}
 
+	public function testDelegatedAdminOnlySeesAssignableGroupsInsideOwnSubadminScope(): void {
+		$actor = $this->makeUser('delegated');
+		$this->groupManager->method('isAdmin')->with('delegated')->willReturn(false);
+		$this->groupManager->method('isDelegatedAdmin')->with('delegated')->willReturn(true);
+		$this->subAdmin->method('getSubAdminsGroups')->with($actor)->willReturn([
+			$this->makeGroup('client-a'),
+			$this->makeGroup('client-b'),
+		]);
+
+		$groups = $this->service->filterAssignableGroups($actor, [
+			$this->makeGroup('foreign'),
+			$this->makeGroup('client-b'),
+			$this->makeGroup('client-a'),
+		]);
+
+		$this->assertSame(['client-b', 'client-a'], array_map(
+			static fn (IGroup $group): string => $group->getGID(),
+			$groups,
+		));
+	}
+
 	public function testDelegatedAdminCreateScopeThrowsExplicitPermissionError(): void {
 		$actor = $this->makeUser('delegated');
 		$this->groupManager->method('isAdmin')->with('delegated')->willReturn(false);
