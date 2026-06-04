@@ -12,6 +12,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\Telegram\Provider\Dri
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\Bot;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
@@ -78,6 +79,13 @@ class BotTest extends TestCase {
 			$this->assertStringNotContainsString($token, $debugMessages[0]);
 			$this->assertStringNotContainsString('Test', $debugMessages[0]);
 		}
+	}
+
+	public function testCreateSettingsMarksTokenAsAdminOnly(): void {
+		$settings = (new Bot($this->logger, $this->l10n, $this->clientService))->createSettings();
+
+		$this->assertSame('token', $settings->fields[0]->field);
+		$this->assertSame(FieldExposure::ADMIN->value, $settings->fields[0]->getExposure());
 	}
 
 	public function testSendUsesGenericSafeMessageWhenDescriptionIsMissing(): void {
