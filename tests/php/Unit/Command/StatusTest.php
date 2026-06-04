@@ -11,11 +11,10 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Command;
 
 use OC\Console\Application;
 use OCA\TwoFactorGateway\AppInfo\Application as TwoFactorGatewayApplication;
-use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\Server;
 use Symfony\Component\Console\Input\ArrayInput;
 
-class StatusTest extends AppTestCase {
+class StatusTest extends \OCA\TwoFactorGateway\Tests\Unit\Command\ConsoleCommandTestCase {
 
 	public function testExecute(): void {
 		$this->makeInMemoryAppConfig();

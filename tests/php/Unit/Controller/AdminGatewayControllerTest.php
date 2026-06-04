@@ -12,6 +12,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Controller;
 use OCA\TwoFactorGateway\Controller\AdminGatewayController;
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Exception\GatewayInstanceNotFoundException;
+use OCA\TwoFactorGateway\Exception\GatewayPermissionDeniedException;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
@@ -22,11 +23,16 @@ use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
+use OCA\TwoFactorGateway\Service\GatewayInstanceViewFactory;
+use OCA\TwoFactorGateway\Service\GatewayPermissionService;
+use OCA\TwoFactorGateway\Service\GatewayViewScope;
 use OCP\AppFramework\Http;
 use OCP\IAppConfig;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IRequest;
+use OCP\IUser;
+use OCP\IUserSession;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,15 +44,40 @@ class AdminGatewayControllerTest extends TestCase {
 	private GatewayFactory&MockObject $gatewayFactory;
 	private GatewayConfigurationSyncService&MockObject $gatewayConfigurationSyncService;
 	private IGroupManager&MockObject $groupManager;
+	private GatewayInstanceViewFactory&MockObject $gatewayInstanceViewFactory;
+	private GatewayPermissionService&MockObject $gatewayPermissionService;
+	private IUserSession&MockObject $userSession;
 
 	protected function setUp(): void {
 		parent::setUp();
 		$request = $this->createMock(IRequest::class);
+		$actor = $this->createMock(IUser::class);
 		$this->configService = $this->createMock(GatewayConfigService::class);
 		$this->gatewayFactory = $this->createMock(GatewayFactory::class);
 		$this->gatewayConfigurationSyncService = $this->createMock(GatewayConfigurationSyncService::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
+		$this->gatewayInstanceViewFactory = $this->createMock(GatewayInstanceViewFactory::class);
+		$this->gatewayPermissionService = $this->createMock(GatewayPermissionService::class);
+		$this->userSession = $this->createMock(IUserSession::class);
 		$this->gatewayConfigurationSyncService->method('syncAfterConfigurationChange');
+		$this->userSession->method('getUser')->willReturn($actor);
+		$this->gatewayPermissionService->method('resolveViewScope')->willReturn(GatewayViewScope::ADMIN);
+		$this->gatewayPermissionService->method('filterVisibleInstances')->willReturnCallback(
+			static fn (?IUser $actor, array $instances): array => $instances,
+		);
+		$this->gatewayInstanceViewFactory->method('createInstanceView')->willReturnCallback(
+			static fn (IGateway $gateway, array $instance, GatewayViewScope $scope): array => $instance,
+		);
+		$this->gatewayInstanceViewFactory->method('createGatewayEntry')->willReturnCallback(
+			static fn (IGateway $gateway, array $instances, GatewayViewScope $scope): array => [
+				'id' => $gateway->getProviderId(),
+				'name' => $gateway->getSettings()->name,
+				'instructions' => $gateway->getSettings()->instructions,
+				'allowMarkdown' => $gateway->getSettings()->allowMarkdown,
+				'fields' => [],
+				'instances' => $instances,
+			],
+		);
 
 		$this->controller = new AdminGatewayController(
 			$request,
@@ -54,6 +85,9 @@ class AdminGatewayControllerTest extends TestCase {
 			$this->gatewayFactory,
 			$this->gatewayConfigurationSyncService,
 			$this->groupManager,
+			$this->gatewayInstanceViewFactory,
+			$this->gatewayPermissionService,
+			$this->userSession,
 		);
 	}
 
@@ -108,9 +142,10 @@ class AdminGatewayControllerTest extends TestCase {
 	}
 
 	public function testListGatewaysReturns200WithData(): void {
-		$this->configService->method('getGatewayList')->willReturn([
-			['id' => 'sms', 'name' => 'SMS', 'instances' => []],
-		]);
+		$gateway = $this->makeGatewayMock('sms');
+		$this->gatewayFactory->method('getFqcnList')->willReturn(['sms']);
+		$this->gatewayFactory->method('get')->with('sms')->willReturn($gateway);
+		$this->configService->method('listInstances')->with($gateway)->willReturn([]);
 
 		$response = $this->controller->listGateways();
 
@@ -177,6 +212,19 @@ class AdminGatewayControllerTest extends TestCase {
 		$response = $this->controller->createInstance('unknown', 'Test', []);
 
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+	}
+
+	public function testCreateInstanceReturns403WhenPermissionServiceRejectsGroupScope(): void {
+		$gateway = $this->makeGatewayMock('telegram');
+		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);
+		$this->gatewayPermissionService->expects($this->once())
+			->method('assertCanCreateInstanceForGroups')
+			->willThrowException(new GatewayPermissionDeniedException('Scope denied'));
+
+		$response = $this->controller->createInstance('telegram', 'Prod', ['url' => 'https://example.com'], ['admins']);
+
+		$this->assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		$this->assertSame('Scope denied', $response->getData()['message']);
 	}
 
 	public function testCreateInstanceKeepsWhatsAppCatalogGatewayWhenProviderIsGoWhatsApp(): void {
@@ -268,6 +316,27 @@ class AdminGatewayControllerTest extends TestCase {
 		$response = $this->controller->getInstance('sms', 'notfound');
 
 		$this->assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
+	}
+
+	public function testGetInstanceReturns403WhenPermissionServiceRejectsView(): void {
+		$gateway = $this->makeGatewayMock('sms');
+		$this->gatewayFactory->method('get')->with('sms')->willReturn($gateway);
+		$this->configService->method('getInstance')->with($gateway, 'def456')->willReturn([
+			'id' => 'def456',
+			'label' => 'Test',
+			'default' => false,
+			'createdAt' => '2026-01-01T00:00:00+00:00',
+			'config' => ['url' => 'https://sms.example.com'],
+			'isComplete' => true,
+		]);
+		$this->gatewayPermissionService->expects($this->once())
+			->method('assertCanViewInstance')
+			->willThrowException(new GatewayPermissionDeniedException('Forbidden'));
+
+		$response = $this->controller->getInstance('sms', 'def456');
+
+		$this->assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		$this->assertSame('Forbidden', $response->getData()['message']);
 	}
 
 	public function testGetInstanceResolvesGoWhatsAppPrefixedInstanceId(): void {
