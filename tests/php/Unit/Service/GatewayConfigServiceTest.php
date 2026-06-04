@@ -101,6 +101,26 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->assertArrayHasKey('createdAt', $instance);
 	}
 
+	public function testCreateInstanceStoresCreatorUserIdWhenProvided(): void {
+		$gateway = $this->makeGatewayMock('telegram', 'Telegram', [
+			['field' => 'token', 'prompt' => 'Bot Token'],
+		]);
+
+		$instance = $this->service->createInstance(
+			$gateway,
+			'Production',
+			['token' => 'abc123'],
+			[],
+			0,
+			'delegated-admin',
+		);
+
+		$this->assertSame('delegated-admin', $instance['createdByUserId']);
+
+		$fetched = $this->service->getInstance($gateway, $instance['id']);
+		$this->assertSame('delegated-admin', $fetched['createdByUserId']);
+	}
+
 	public function testFirstCreatedInstanceBecomesDefault(): void {
 		$gateway = $this->makeGatewayMock('signal', 'Signal', [
 			['field' => 'number', 'prompt' => 'Number'],
