@@ -22,6 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
+/** @psalm-import-type GatewayInstanceArray from \OCA\TwoFactorGateway\Service\GatewayInstanceRecord */
 class Routing extends Command {
 	/** @var \OCA\TwoFactorGateway\Provider\Gateway\IGateway[] */
 	private array $gateways = [];
@@ -126,9 +127,7 @@ class Routing extends Command {
 		return $this->gateways[$selectedGatewayId];
 	}
 
-	/**
-	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}|null
-	 */
+	/** @return GatewayInstanceArray|null */
 	private function resolveInstance(IGateway $gateway, InputInterface $input, OutputInterface $output, QuestionHelper $helper): ?array {
 		$instances = $this->configService->listInstances($gateway);
 		if ($instances === []) {
@@ -157,9 +156,7 @@ class Routing extends Command {
 		return $instanceById[$selectedInstanceId] ?? null;
 	}
 
-	/**
-	 * @param array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int} $instance
-	 */
+	/** @param GatewayInstanceArray $instance */
 	private function resolvePriority(array $instance, InputInterface $input, OutputInterface $output, QuestionHelper $helper): ?int {
 		$priorityRaw = $input->getOption('priority');
 		if ($priorityRaw === null) {
@@ -180,7 +177,7 @@ class Routing extends Command {
 	}
 
 	/**
-	 * @param array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int} $instance
+	 * @param GatewayInstanceArray $instance
 	 * @return list<string>|null
 	 */
 	private function resolveGroupIds(array $instance, InputInterface $input, OutputInterface $output, QuestionHelper $helper): ?array {
