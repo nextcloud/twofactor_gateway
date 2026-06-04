@@ -43,7 +43,7 @@
     "@typescript-eslint/eslint-plugin": "^8.59.0",
     "@typescript-eslint/parser": "^8.60.0",
     "@vitejs/plugin-vue": "^6.0.7",
-    "@vue/test-utils": "^2.4.8",
+    "@vue/test-utils": "^2.4.10",
     "@vue/tsconfig": "^0.9.1",
     "jsdom": "^29.1.1",
     "openapi-typescript": "^7.13.0",
