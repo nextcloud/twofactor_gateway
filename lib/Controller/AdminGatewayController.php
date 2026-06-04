@@ -18,9 +18,9 @@ use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestIdentifierNormalizer;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
+use OCA\TwoFactorGateway\Service\GatewayCatalogService;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
-use OCA\TwoFactorGateway\Service\GatewayInstanceViewFactory;
 use OCA\TwoFactorGateway\Service\GatewayPermissionService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -35,11 +35,11 @@ use OCP\IUserSession;
 class AdminGatewayController extends OCSController {
 	public function __construct(
 		IRequest $request,
+		private GatewayCatalogService $gatewayCatalogService,
 		private GatewayConfigService $configService,
 		private GatewayFactory $gatewayFactory,
 		private GatewayConfigurationSyncService $gatewayConfigurationSyncService,
 		private IGroupManager $groupManager,
-		private GatewayInstanceViewFactory $gatewayInstanceViewFactory,
 		private GatewayPermissionService $gatewayPermissionService,
 		private IUserSession $userSession,
 	) {
@@ -56,17 +56,7 @@ class AdminGatewayController extends OCSController {
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'GET', url: '/admin/gateways')]
 	public function listGateways(): DataResponse {
-		$actor = $this->currentActor();
-		$scope = $this->gatewayPermissionService->resolveViewScope($actor);
-		$result = [];
-
-		foreach ($this->gatewayFactory->getFqcnList() as $fqcn) {
-			$gateway = $this->gatewayFactory->get($fqcn);
-			$instances = $this->gatewayPermissionService->filterVisibleInstances($actor, $this->configService->listInstances($gateway));
-			$result[] = $this->gatewayInstanceViewFactory->createGatewayEntry($gateway, $instances, $scope);
-		}
-
-		return new DataResponse($result);
+		return new DataResponse($this->gatewayCatalogService->listGateways($this->currentActor()));
 	}
 
 	/**
@@ -597,9 +587,8 @@ class AdminGatewayController extends OCSController {
 	 * @return DataResponse<Http::STATUS_CREATED, array<string, mixed>, array{}>
 	 */
 	private function createdInstanceResponse(IGateway $gateway, array $instance): DataResponse {
-		$scope = $this->gatewayPermissionService->resolveViewScope($this->currentActor());
 		return new DataResponse(
-			$this->gatewayInstanceViewFactory->createInstanceView($gateway, $instance, $scope),
+			$this->gatewayCatalogService->createInstanceView($this->currentActor(), $gateway, $instance),
 			Http::STATUS_CREATED,
 		);
 	}
@@ -609,8 +598,7 @@ class AdminGatewayController extends OCSController {
 	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>
 	 */
 	private function instanceViewResponse(IGateway $gateway, array $instance): DataResponse {
-		$scope = $this->gatewayPermissionService->resolveViewScope($this->currentActor());
-		return new DataResponse($this->gatewayInstanceViewFactory->createInstanceView($gateway, $instance, $scope));
+		return new DataResponse($this->gatewayCatalogService->createInstanceView($this->currentActor(), $gateway, $instance));
 	}
 
 	/**
