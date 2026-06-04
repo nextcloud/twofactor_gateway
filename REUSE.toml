@@ -3,7 +3,7 @@
 version = 1
 SPDX-PackageName = "TwoFactorGateway"
 SPDX-PackageSupplier = "LibreCode <contact@librecode.coop>"
-SPDX-PackageDownloadLocation = "https://github.com/LibreSign/twofactor_gateway/"
+SPDX-PackageDownloadLocation = "https://github.com/nextcloud/twofactor_gateway/"
 
 default-license = "AGPL-3.0-or-later"
 default-copyright = "2025 LibreCode coop and contributors"
