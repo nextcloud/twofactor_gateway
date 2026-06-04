@@ -13,6 +13,7 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Provider\FieldType;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
@@ -99,33 +100,39 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 				new FieldDefinition(
 					field: 'base_url',
 					prompt: 'Base URL to your WhatsApp API endpoint:',
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'phone',
 					prompt: 'Phone number for WhatsApp Web access:',
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'device_name',
 					prompt: 'Device name shown in WhatsApp linked devices:',
 					default: 'TwoFactor Gateway',
 					optional: true,
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'device_id',
 					prompt: 'Device ID (auto-generated, do not edit):',
 					optional: true,
 					hidden: true,
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'username',
 					prompt: 'API Username:',
 					optional: true,
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'password',
 					prompt: 'API Password:',
 					optional: true,
 					type: FieldType::SECRET,
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'webhook_hybrid_enabled',
@@ -133,12 +140,14 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 					default: '0',
 					optional: true,
 					type: FieldType::BOOLEAN,
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'webhook_secret',
 					prompt: 'Webhook HMAC secret for X-Hub-Signature-256:',
 					optional: true,
 					type: FieldType::SECRET,
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'webhook_min_check_interval',
@@ -148,6 +157,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 					type: FieldType::INTEGER,
 					min: 0,
 					max: 3600,
+					exposure: FieldExposure::ADMIN,
 				),
 			],
 		);
