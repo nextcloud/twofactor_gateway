@@ -128,7 +128,7 @@ If your phone number appears grayed out, check in **WhatsApp Manager** that it i
 
 After selecting a phone number, the wizard displays available templates in the language matching your phone configuration. Each template shows:
 
-- **Template name** (e.g., `libresign_invite_basic_v1`)
+- **Template name** (e.g., `verification_code_v1`)
 - **Template language** (e.g., `pt_BR`)
 - **Approval status** (e.g., `APPROVED`, `PENDING`, `REJECTED`)
 
@@ -160,7 +160,7 @@ You will be prompted for:
 * **WhatsApp Business access token**: a System User token with Cloud API permissions
 * **WhatsApp Business account ID (WABA ID)** *(optional)*: obtained via auto-discovery or from Business Manager. If skipped, the wizard will attempt auto-discovery. If auto-discovery fails (permission denied), you must provide this ID.
 * **Phone number ID**: the phone number ID from the discovered list (or manually obtained from WhatsApp Manager)
-* **Template name**: the exact name of an approved template (e.g., `libresign_invite_basic_v1`)
+* **Template name**: the exact name of an approved template (e.g., `verification_code_v1`)
 * **Template language code**: the exact locale matching the template configuration (e.g., `pt_BR`, `en_US`, `es_ES`)
 
 #### Obtaining the WABA ID manually (if auto-discovery fails)
