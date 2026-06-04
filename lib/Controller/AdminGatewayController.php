@@ -83,12 +83,15 @@ class AdminGatewayController extends OCSController {
 	#[ApiRoute(verb: 'GET', url: '/admin/groups')]
 	public function getGroups(string $query = '', int $limit = 200): DataResponse {
 		$limit = max(1, min(500, $limit));
+		$actor = $this->currentActor();
+		$matchingGroups = $this->groupManager->search($query, $limit, 0);
+		$assignableGroups = $this->gatewayPermissionService->filterAssignableGroups($actor, $matchingGroups);
 		$groups = array_map(
 			static fn ($group): array => [
 				'id' => $group->getGID(),
 				'displayName' => $group->getDisplayName(),
 			],
-			$this->groupManager->search($query, $limit, 0),
+			$assignableGroups,
 		);
 
 		usort($groups, static fn (array $left, array $right): int => strcasecmp($left['displayName'], $right['displayName']));
