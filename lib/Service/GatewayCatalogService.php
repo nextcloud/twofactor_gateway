@@ -13,6 +13,10 @@ use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCP\IUser;
 
+/**
+ * @psalm-import-type GatewayInstanceArray from GatewayInstanceRecord
+ * @psalm-import-type GatewayInstanceViewArray from GatewayInstanceRecord
+ */
 class GatewayCatalogService {
 	public function __construct(
 		private GatewayFactory $gatewayFactory,
@@ -39,8 +43,8 @@ class GatewayCatalogService {
 	}
 
 	/**
-	 * @param array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int} $instance
-	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}
+	 * @param GatewayInstanceArray $instance
+	 * @return GatewayInstanceViewArray
 	 */
 	public function createInstanceView(?IUser $actor, IGateway $gateway, array $instance): array {
 		$scope = $this->gatewayPermissionService->resolveViewScope($actor);
