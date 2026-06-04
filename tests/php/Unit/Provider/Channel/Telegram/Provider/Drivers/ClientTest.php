@@ -12,6 +12,7 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\Telegram\Provider\Dri
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\Client;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCP\Files\IAppData;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -47,6 +48,20 @@ class ClientTest extends TestCase {
 		$this->assertSame('api_hash', $settings->fields[1]->field);
 		$this->assertNotSame('', trim($settings->fields[1]->prompt));
 		$this->assertStringContainsString('my.telegram.org/apps', $settings->fields[1]->helper);
+	}
+
+	public function testCreateSettingsMarksFieldsAsAdminOnly(): void {
+		$provider = new Client($this->logger, $this->l10n, $this->appData, $this->config);
+		$settings = $provider->createSettings();
+		$fieldByName = [];
+		foreach ($settings->fields as $field) {
+			$fieldByName[$field->field] = $field;
+		}
+
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['api_id']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['api_hash']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['madeline_log_enabled']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['madeline_log_path']->getExposure());
 	}
 
 	public function testSendReturnsHelpfulMessageWhenSessionIsNotLoggedIn(): void {
