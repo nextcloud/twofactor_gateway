@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\Signal;
 
 use OCA\TwoFactorGateway\Provider\Channel\Signal\Gateway;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClient;
@@ -41,6 +42,17 @@ class GatewayTest extends AppTestCase {
 			timeFactory: $timeFactory,
 			logger: $logger,
 		);
+	}
+
+	public function testCreateSettingsMarksFieldsAsAdminOnly(): void {
+		$settings = $this->gateway->getSettings();
+		$fieldByName = [];
+		foreach ($settings->fields as $field) {
+			$fieldByName[$field->field] = $field;
+		}
+
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['url']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['account']->getExposure());
 	}
 
 	public function testSendUsesRecipientsArrayAndNumberForSignalCliRestApiV2(): void {
