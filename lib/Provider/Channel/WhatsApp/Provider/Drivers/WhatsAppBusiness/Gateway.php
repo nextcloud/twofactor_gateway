@@ -12,6 +12,7 @@ namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsA
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Provider\FieldType;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
@@ -64,30 +65,36 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 					prompt: 'WhatsApp Graph API version:',
 					default: 'v22.0',
 					optional: true,
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'phone_number_id',
 					prompt: 'WhatsApp Business phone number ID:',
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'phone_number_display',
 					prompt: 'Phone number (for display):',
 					optional: true,
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'access_token',
 					prompt: 'WhatsApp Business access token:',
 					type: FieldType::SECRET,
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'template_name',
 					prompt: 'Template name:',
 					helper: 'If set, outbound messages are sent using this approved template. For Two Factor Gateway, keep one body variable {{1}} to receive the verification token/message.',
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'template_language',
 					prompt: 'Template language code:',
 					helper: 'Language code used when sending the configured template, e.g. pt_BR or en_US.',
+					exposure: FieldExposure::ADMIN,
 				),
 			],
 		);
