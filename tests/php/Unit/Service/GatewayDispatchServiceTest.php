@@ -17,6 +17,7 @@ use OCA\TwoFactorGateway\Service\GatewayDispatchService;
 use OCA\TwoFactorGateway\Service\GatewayInstanceRecord;
 use OCA\TwoFactorGateway\Service\GatewayRouteCandidate;
 use OCA\TwoFactorGateway\Service\GatewayRoutingService;
+use OCA\TwoFactorGateway\Service\GatewayRuntimeAvailabilityService;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
 use OCA\TwoFactorGateway\Tests\Unit\Service\Support\RuntimeAwareGatewayDouble;
 use OCP\IUser;
@@ -25,15 +26,18 @@ use Psr\Log\LoggerInterface;
 
 class GatewayDispatchServiceTest extends AppTestCase {
 	private GatewayRoutingService&MockObject $gatewayRoutingService;
+	private GatewayRuntimeAvailabilityService&MockObject $gatewayRuntimeAvailabilityService;
 	private LoggerInterface&MockObject $logger;
 	private GatewayDispatchService $service;
 
 	protected function setUp(): void {
 		parent::setUp();
 		$this->gatewayRoutingService = $this->createMock(GatewayRoutingService::class);
+		$this->gatewayRuntimeAvailabilityService = $this->createMock(GatewayRuntimeAvailabilityService::class);
 		$this->logger = $this->createMock(LoggerInterface::class);
 		$this->service = new GatewayDispatchService(
 			$this->gatewayRoutingService,
+			$this->gatewayRuntimeAvailabilityService,
 			$this->logger,
 		);
 	}
@@ -93,7 +97,7 @@ class GatewayDispatchServiceTest extends AppTestCase {
 		$gateway = new RuntimeAwareGatewayDouble($appConfig);
 		$user = $this->createMock(IUser::class);
 
-		$this->gatewayRoutingService->expects($this->once())
+		$this->gatewayRuntimeAvailabilityService->expects($this->once())
 			->method('resolveCandidatesForUser')
 			->with($user, 'runtimeaware')
 			->willReturn([
@@ -133,11 +137,11 @@ class GatewayDispatchServiceTest extends AppTestCase {
 		$gateway = new RuntimeAwareGatewayDouble($appConfig);
 		$user = $this->createMock(IUser::class);
 
-		$this->gatewayRoutingService->expects($this->once())
+		$this->gatewayRuntimeAvailabilityService->expects($this->once())
 			->method('resolveCandidatesForUser')
 			->with($user, 'runtimeaware')
 			->willReturn([]);
-		$this->gatewayRoutingService->expects($this->once())
+		$this->gatewayRuntimeAvailabilityService->expects($this->once())
 			->method('getGateway')
 			->with('runtimeaware')
 			->willReturn($gateway);
