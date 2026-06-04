@@ -74,6 +74,27 @@ class GatewayPermissionService {
 	}
 
 	/**
+	 * @param list<IGroup> $groups
+	 * @return list<IGroup>
+	 */
+	public function filterAssignableGroups(?IUser $actor, array $groups): array {
+		if ($this->isAdmin($actor)) {
+			return array_values($groups);
+		}
+
+		if (!$this->isDelegatedAdmin($actor)) {
+			return [];
+		}
+
+		$allowedGroupIds = $this->delegatedAllowedGroupIds($actor);
+
+		return array_values(array_filter(
+			$groups,
+			static fn (IGroup $group): bool => isset($allowedGroupIds[$group->getGID()]),
+		));
+	}
+
+	/**
 	 * @param list<array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}> $instances
 	 * @return list<array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}>
 	 */
@@ -179,10 +200,7 @@ class GatewayPermissionService {
 			return false;
 		}
 
-		$allowedGroupIds = array_fill_keys(array_map(
-			static fn (IGroup $group): string => $group->getGID(),
-			$this->subAdmin->getSubAdminsGroups($actor),
-		), true);
+		$allowedGroupIds = $this->delegatedAllowedGroupIds($actor);
 
 		foreach ($groupIds as $groupId) {
 			if (!isset($allowedGroupIds[$groupId])) {
@@ -191,6 +209,14 @@ class GatewayPermissionService {
 		}
 
 		return true;
+	}
+
+	/** @return array<string, true> */
+	private function delegatedAllowedGroupIds(IUser $actor): array {
+		return array_fill_keys(array_map(
+			static fn (IGroup $group): string => $group->getGID(),
+			$this->subAdmin->getSubAdminsGroups($actor),
+		), true);
 	}
 
 	/**
