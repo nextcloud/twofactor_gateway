@@ -46,12 +46,13 @@ class AdminGatewayControllerTest extends TestCase {
 	private IGroupManager&MockObject $groupManager;
 	private GatewayInstanceViewFactory&MockObject $gatewayInstanceViewFactory;
 	private GatewayPermissionService&MockObject $gatewayPermissionService;
+	private IUser&MockObject $actor;
 	private IUserSession&MockObject $userSession;
 
 	protected function setUp(): void {
 		parent::setUp();
 		$request = $this->createMock(IRequest::class);
-		$actor = $this->createMock(IUser::class);
+		$this->actor = $this->createMock(IUser::class);
 		$this->configService = $this->createMock(GatewayConfigService::class);
 		$this->gatewayFactory = $this->createMock(GatewayFactory::class);
 		$this->gatewayConfigurationSyncService = $this->createMock(GatewayConfigurationSyncService::class);
@@ -60,7 +61,7 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->gatewayPermissionService = $this->createMock(GatewayPermissionService::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->gatewayConfigurationSyncService->method('syncAfterConfigurationChange');
-		$this->userSession->method('getUser')->willReturn($actor);
+		$this->userSession->method('getUser')->willReturn($this->actor);
 		$this->gatewayPermissionService->method('resolveViewScope')->willReturn(GatewayViewScope::ADMIN);
 		$this->gatewayPermissionService->method('filterVisibleInstances')->willReturnCallback(
 			static fn (?IUser $actor, array $instances): array => $instances,
@@ -165,6 +166,10 @@ class AdminGatewayControllerTest extends TestCase {
 		$groupB->method('getDisplayName')->willReturn('Alpha');
 
 		$this->groupManager->method('search')->with('', 200, 0)->willReturn([$groupA, $groupB]);
+		$this->gatewayPermissionService->expects($this->once())
+			->method('filterAssignableGroups')
+			->with($this->actor, [$groupA, $groupB])
+			->willReturn([$groupA, $groupB]);
 
 		$response = $this->controller->getGroups();
 
@@ -184,12 +189,42 @@ class AdminGatewayControllerTest extends TestCase {
 			->method('search')
 			->with('team', 500, 0)
 			->willReturn([$group]);
+		$this->gatewayPermissionService->expects($this->once())
+			->method('filterAssignableGroups')
+			->with($this->actor, [$group])
+			->willReturn([$group]);
 
 		$response = $this->controller->getGroups('team', 1000);
 
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 		$this->assertSame([
 			['id' => 'team-a', 'displayName' => 'Team A'],
+		], $response->getData());
+	}
+
+	public function testGetGroupsFiltersAssignableGroupsForDelegatedActorScope(): void {
+		$groupA = $this->createMock(IGroup::class);
+		$groupA->method('getGID')->willReturn('admins');
+		$groupA->method('getDisplayName')->willReturn('Admins');
+
+		$groupB = $this->createMock(IGroup::class);
+		$groupB->method('getGID')->willReturn('alpha');
+		$groupB->method('getDisplayName')->willReturn('Alpha');
+
+		$this->groupManager->expects($this->once())
+			->method('search')
+			->with('', 200, 0)
+			->willReturn([$groupA, $groupB]);
+		$this->gatewayPermissionService->expects($this->once())
+			->method('filterAssignableGroups')
+			->with($this->actor, [$groupA, $groupB])
+			->willReturn([$groupB]);
+
+		$response = $this->controller->getGroups();
+
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
+		$this->assertSame([
+			['id' => 'alpha', 'displayName' => 'Alpha'],
 		], $response->getData());
 	}
 
