@@ -19,6 +19,7 @@ use Psr\Log\LoggerInterface;
 class GatewayDispatchService {
 	public function __construct(
 		private GatewayRoutingService $gatewayRoutingService,
+		private GatewayRuntimeAvailabilityService $gatewayRuntimeAvailabilityService,
 		private LoggerInterface $logger,
 	) {
 	}
@@ -63,10 +64,10 @@ class GatewayDispatchService {
 	 * @throws MessageTransmissionException
 	 */
 	public function sendForUser(IUser $user, string $gatewayId, string $identifier, string $message, array $extra = []): array {
-		$candidates = $this->gatewayRoutingService->resolveCandidatesForUser($user, $gatewayId);
+		$candidates = $this->gatewayRuntimeAvailabilityService->resolveCandidatesForUser($user, $gatewayId);
 
 		if ($candidates === []) {
-			$gateway = $this->gatewayRoutingService->getGateway($gatewayId);
+			$gateway = $this->gatewayRuntimeAvailabilityService->getGateway($gatewayId);
 			$gateway->send($identifier, $message, $extra);
 			return [
 				'providerId' => $gateway->getProviderId(),
