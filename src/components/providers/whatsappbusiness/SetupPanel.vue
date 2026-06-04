@@ -107,7 +107,7 @@
 			<NcTextField
 				v-model="wizardManualTemplateName"
 				:label="t('twofactor_gateway', 'Template name:')"
-				:placeholder="t('twofactor_gateway', 'e.g. libresign_invite_basic_v1')" />
+				:placeholder="manualTemplateNamePlaceholder" />
 		</div>
 
 		<div v-if="wizardStep === 'template_selection' && wizardTemplates.length === 0" class="modal-field">
@@ -259,6 +259,16 @@ export default defineComponent({
 		},
 	},
 	computed: {
+		manualTemplateNamePlaceholder(): string {
+			// TRANSLATORS: Placeholder shown when an administrator must manually enter
+			// the exact approved WhatsApp Business template name. "{templateName}"
+			// is an example technical identifier (snake_case + version suffix), not
+			// a natural-language sentence, and should remain a template-code example.
+			return t('twofactor_gateway', 'e.g. {templateName}', {
+				templateName: 'verification_code_v1',
+			})
+		},
+
 		selectedTemplatePreview(): TemplateOption | null {
 			if (this.wizardSelectedTemplate === '') {
 				return null

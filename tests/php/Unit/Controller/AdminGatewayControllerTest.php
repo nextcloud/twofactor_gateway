@@ -21,9 +21,9 @@ use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestIdentifierNormalizer;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
+use OCA\TwoFactorGateway\Service\GatewayCatalogService;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
-use OCA\TwoFactorGateway\Service\GatewayInstanceViewFactory;
 use OCA\TwoFactorGateway\Service\GatewayPermissionService;
 use OCA\TwoFactorGateway\Service\GatewayViewScope;
 use OCP\AppFramework\Http;
@@ -40,11 +40,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AdminGatewayControllerTest extends TestCase {
 	private AdminGatewayController $controller;
+	private GatewayCatalogService&MockObject $gatewayCatalogService;
 	private GatewayConfigService&MockObject $configService;
 	private GatewayFactory&MockObject $gatewayFactory;
 	private GatewayConfigurationSyncService&MockObject $gatewayConfigurationSyncService;
 	private IGroupManager&MockObject $groupManager;
-	private GatewayInstanceViewFactory&MockObject $gatewayInstanceViewFactory;
 	private GatewayPermissionService&MockObject $gatewayPermissionService;
 	private IUser&MockObject $actor;
 	private IUserSession&MockObject $userSession;
@@ -53,11 +53,11 @@ class AdminGatewayControllerTest extends TestCase {
 		parent::setUp();
 		$request = $this->createMock(IRequest::class);
 		$this->actor = $this->createMock(IUser::class);
+		$this->gatewayCatalogService = $this->createMock(GatewayCatalogService::class);
 		$this->configService = $this->createMock(GatewayConfigService::class);
 		$this->gatewayFactory = $this->createMock(GatewayFactory::class);
 		$this->gatewayConfigurationSyncService = $this->createMock(GatewayConfigurationSyncService::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
-		$this->gatewayInstanceViewFactory = $this->createMock(GatewayInstanceViewFactory::class);
 		$this->gatewayPermissionService = $this->createMock(GatewayPermissionService::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->gatewayConfigurationSyncService->method('syncAfterConfigurationChange');
@@ -66,27 +66,17 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->gatewayPermissionService->method('filterVisibleInstances')->willReturnCallback(
 			static fn (?IUser $actor, array $instances): array => $instances,
 		);
-		$this->gatewayInstanceViewFactory->method('createInstanceView')->willReturnCallback(
-			static fn (IGateway $gateway, array $instance, GatewayViewScope $scope): array => $instance,
-		);
-		$this->gatewayInstanceViewFactory->method('createGatewayEntry')->willReturnCallback(
-			static fn (IGateway $gateway, array $instances, GatewayViewScope $scope): array => [
-				'id' => $gateway->getProviderId(),
-				'name' => $gateway->getSettings()->name,
-				'instructions' => $gateway->getSettings()->instructions,
-				'allowMarkdown' => $gateway->getSettings()->allowMarkdown,
-				'fields' => [],
-				'instances' => $instances,
-			],
+		$this->gatewayCatalogService->method('createInstanceView')->willReturnCallback(
+			static fn (?IUser $actor, IGateway $gateway, array $instance): array => $instance,
 		);
 
 		$this->controller = new AdminGatewayController(
 			$request,
+			$this->gatewayCatalogService,
 			$this->configService,
 			$this->gatewayFactory,
 			$this->gatewayConfigurationSyncService,
 			$this->groupManager,
-			$this->gatewayInstanceViewFactory,
 			$this->gatewayPermissionService,
 			$this->userSession,
 		);
@@ -143,10 +133,17 @@ class AdminGatewayControllerTest extends TestCase {
 	}
 
 	public function testListGatewaysReturns200WithData(): void {
-		$gateway = $this->makeGatewayMock('sms');
-		$this->gatewayFactory->method('getFqcnList')->willReturn(['sms']);
-		$this->gatewayFactory->method('get')->with('sms')->willReturn($gateway);
-		$this->configService->method('listInstances')->with($gateway)->willReturn([]);
+		$this->gatewayCatalogService->expects($this->once())
+			->method('listGateways')
+			->with($this->actor)
+			->willReturn([[
+				'id' => 'sms',
+				'name' => 'Sms',
+				'instructions' => null,
+				'allowMarkdown' => false,
+				'fields' => [],
+				'instances' => [],
+			]]);
 
 		$response = $this->controller->listGateways();
 
