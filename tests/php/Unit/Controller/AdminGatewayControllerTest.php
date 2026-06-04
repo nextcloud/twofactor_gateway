@@ -24,6 +24,7 @@ use OCA\TwoFactorGateway\Provider\Settings;
 use OCA\TwoFactorGateway\Service\GatewayCatalogService;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
+use OCA\TwoFactorGateway\Service\GatewayInteractiveSetupSessionService;
 use OCA\TwoFactorGateway\Service\GatewayPermissionService;
 use OCA\TwoFactorGateway\Service\GatewayViewScope;
 use OCP\AppFramework\Http;
@@ -44,6 +45,7 @@ class AdminGatewayControllerTest extends TestCase {
 	private GatewayConfigService&MockObject $configService;
 	private GatewayFactory&MockObject $gatewayFactory;
 	private GatewayConfigurationSyncService&MockObject $gatewayConfigurationSyncService;
+	private GatewayInteractiveSetupSessionService&MockObject $gatewayInteractiveSetupSessionService;
 	private IGroupManager&MockObject $groupManager;
 	private GatewayPermissionService&MockObject $gatewayPermissionService;
 	private IUser&MockObject $actor;
@@ -57,10 +59,12 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->configService = $this->createMock(GatewayConfigService::class);
 		$this->gatewayFactory = $this->createMock(GatewayFactory::class);
 		$this->gatewayConfigurationSyncService = $this->createMock(GatewayConfigurationSyncService::class);
+		$this->gatewayInteractiveSetupSessionService = $this->createMock(GatewayInteractiveSetupSessionService::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->gatewayPermissionService = $this->createMock(GatewayPermissionService::class);
 		$this->userSession = $this->createMock(IUserSession::class);
 		$this->gatewayConfigurationSyncService->method('syncAfterConfigurationChange');
+		$this->actor->method('getUID')->willReturn('admin-user');
 		$this->userSession->method('getUser')->willReturn($this->actor);
 		$this->gatewayPermissionService->method('resolveViewScope')->willReturn(GatewayViewScope::ADMIN);
 		$this->gatewayPermissionService->method('filterVisibleInstances')->willReturnCallback(
@@ -78,6 +82,7 @@ class AdminGatewayControllerTest extends TestCase {
 			$this->gatewayConfigurationSyncService,
 			$this->groupManager,
 			$this->gatewayPermissionService,
+			$this->gatewayInteractiveSetupSessionService,
 			$this->userSession,
 		);
 	}
@@ -229,7 +234,7 @@ class AdminGatewayControllerTest extends TestCase {
 		$gateway = $this->makeGatewayMock('telegram');
 		$this->gatewayFactory->method('get')->with('telegram')->willReturn($gateway);
 		$this->configService->method('createInstance')
-			->with($gateway, 'Prod', ['url' => 'https://example.com'], [], 0)
+			->with($gateway, 'Prod', ['url' => 'https://example.com'], [], 0, 'admin-user')
 			->willReturn(['id' => 'abc123', 'label' => 'Prod', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00', 'config' => ['url' => 'https://example.com'], 'isComplete' => true]);
 
 		$response = $this->controller->createInstance('telegram', 'Prod', ['url' => 'https://example.com']);
@@ -265,7 +270,7 @@ class AdminGatewayControllerTest extends TestCase {
 			['whatsapp', $whatsAppGateway],
 		]);
 		$this->configService->method('createInstance')
-			->with($whatsAppGateway, 'Prod', ['provider' => 'gowhatsapp', 'base_url' => 'https://wa.example.com'], [], 0)
+			->with($whatsAppGateway, 'Prod', ['provider' => 'gowhatsapp', 'base_url' => 'https://wa.example.com'], [], 0, 'admin-user')
 			->willReturn([
 				'id' => 'abc123',
 				'label' => 'Prod',
@@ -287,7 +292,7 @@ class AdminGatewayControllerTest extends TestCase {
 			['whatsapp', $whatsAppGateway],
 		]);
 		$this->configService->method('createInstance')
-			->with($whatsAppGateway, 'Prod', ['base_url' => 'https://wa.example.com'], [], 0)
+			->with($whatsAppGateway, 'Prod', ['base_url' => 'https://wa.example.com'], [], 0, 'admin-user')
 			->willReturn([
 				'id' => 'abc123',
 				'label' => 'Prod',
@@ -311,7 +316,7 @@ class AdminGatewayControllerTest extends TestCase {
 			['telegram_bot', $providerDriver],
 		]);
 		$this->configService->method('createInstance')
-			->with($telegramGateway, 'Prod', ['provider' => 'telegram_bot', 'bot_token' => 'secret'], [], 0)
+			->with($telegramGateway, 'Prod', ['provider' => 'telegram_bot', 'bot_token' => 'secret'], [], 0, 'admin-user')
 			->willReturn([
 				'id' => 'tg123',
 				'label' => 'Prod',
@@ -675,6 +680,9 @@ class AdminGatewayControllerTest extends TestCase {
 			'sessionId' => 'abc',
 			'step' => 'phone',
 		]);
+		$this->gatewayInteractiveSetupSessionService->expects($this->once())
+			->method('claim')
+			->with($this->actor, 'gowhatsapp', 'abc');
 		$this->gatewayFactory->method('get')->with('gowhatsapp')->willReturn($gateway);
 
 		$response = $this->controller->startInteractiveSetup('gowhatsapp', ['base_url' => 'https://wa.example.com']);
@@ -685,6 +693,11 @@ class AdminGatewayControllerTest extends TestCase {
 
 	public function testInteractiveSetupStepReturns200ForInteractiveGateway(): void {
 		$gateway = $this->makeInteractiveGatewayMock('gowhatsapp');
+		$this->gatewayInteractiveSetupSessionService->expects($this->once())
+			->method('assertCanAccess')
+			->with($this->actor, 'gowhatsapp', 'session-1');
+		$this->gatewayInteractiveSetupSessionService->expects($this->never())
+			->method('release');
 		$gateway->method('interactiveSetupStep')
 			->with('session-1', 'poll_pairing', [])
 			->willReturn([
@@ -702,6 +715,12 @@ class AdminGatewayControllerTest extends TestCase {
 
 	public function testCancelInteractiveSetupReturns200ForInteractiveGateway(): void {
 		$gateway = $this->makeInteractiveGatewayMock('gowhatsapp');
+		$this->gatewayInteractiveSetupSessionService->expects($this->once())
+			->method('assertCanAccess')
+			->with($this->actor, 'gowhatsapp', 'session-1');
+		$this->gatewayInteractiveSetupSessionService->expects($this->once())
+			->method('release')
+			->with('gowhatsapp', 'session-1');
 		$gateway->method('interactiveSetupCancel')->with('session-1')->willReturn([
 			'status' => 'cancelled',
 		]);
@@ -711,6 +730,57 @@ class AdminGatewayControllerTest extends TestCase {
 
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 		$this->assertSame('cancelled', $response->getData()['status']);
+	}
+
+	public function testInteractiveSetupStepReturns403WhenSessionBelongsToAnotherActor(): void {
+		$gateway = $this->makeInteractiveGatewayMock('gowhatsapp');
+		$this->gatewayInteractiveSetupSessionService->expects($this->once())
+			->method('assertCanAccess')
+			->with($this->actor, 'gowhatsapp', 'session-1')
+			->willThrowException(new GatewayPermissionDeniedException('Session denied'));
+		$gateway->expects($this->never())->method('interactiveSetupStep');
+		$this->gatewayFactory->method('get')->with('gowhatsapp')->willReturn($gateway);
+
+		$response = $this->controller->interactiveSetupStep('gowhatsapp', 'session-1', 'poll_pairing', []);
+
+		$this->assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		$this->assertSame('Session denied', $response->getData()['message']);
+	}
+
+	public function testInteractiveSetupStepReleasesSessionWhenGatewayFinishesSetup(): void {
+		$gateway = $this->makeInteractiveGatewayMock('gowhatsapp');
+		$this->gatewayInteractiveSetupSessionService->expects($this->once())
+			->method('assertCanAccess')
+			->with($this->actor, 'gowhatsapp', 'session-1');
+		$this->gatewayInteractiveSetupSessionService->expects($this->once())
+			->method('release')
+			->with('gowhatsapp', 'session-1');
+		$gateway->method('interactiveSetupStep')
+			->with('session-1', 'poll_pairing', [])
+			->willReturn([
+				'status' => 'done',
+			]);
+		$this->gatewayFactory->method('get')->with('gowhatsapp')->willReturn($gateway);
+
+		$response = $this->controller->interactiveSetupStep('gowhatsapp', 'session-1', 'poll_pairing', []);
+
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
+		$this->assertSame('done', $response->getData()['status']);
+	}
+
+	public function testCancelInteractiveSetupReturns403WhenSessionBelongsToAnotherActor(): void {
+		$gateway = $this->makeInteractiveGatewayMock('gowhatsapp');
+		$this->gatewayInteractiveSetupSessionService->expects($this->once())
+			->method('assertCanAccess')
+			->with($this->actor, 'gowhatsapp', 'session-1')
+			->willThrowException(new GatewayPermissionDeniedException('Session denied'));
+		$gateway->expects($this->never())->method('interactiveSetupCancel');
+		$this->gatewayFactory->method('get')->with('gowhatsapp')->willReturn($gateway);
+
+		$response = $this->controller->cancelInteractiveSetup('gowhatsapp', 'session-1');
+
+		$this->assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		$this->assertSame('Session denied', $response->getData()['message']);
 	}
 }
 
