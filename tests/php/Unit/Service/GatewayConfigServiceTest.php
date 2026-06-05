@@ -191,6 +191,21 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->assertSame(['token' => 'new-token'], $updated['config']);
 	}
 
+	public function testUpdateInstanceKeepsExistingSecretWhenSubmittedBlank(): void {
+		$gateway = $this->makeGatewayMock('telegram', 'Telegram', [
+			['field' => 'token', 'prompt' => 'Token', 'type' => 'secret'],
+		]);
+		$created = $this->service->createInstance($gateway, 'Production', ['token' => 'keep-me']);
+
+		$updated = $this->service->updateInstance($gateway, $created['id'], 'Production', ['token' => '']);
+
+		$this->assertSame('keep-me', $updated['config']['token']);
+		$this->assertSame(
+			'keep-me',
+			$this->appConfig->getValueString('twofactor_gateway', 'telegram:' . $created['id'] . ':token', '__missing__'),
+		);
+	}
+
 	public function testUpdateCatalogInstanceDeletesOldProviderSpecificFieldsWhenProviderChanges(): void {
 		$whatsAppGateway = $this->makeCatalogGatewayMock(
 			'whatsapp',
