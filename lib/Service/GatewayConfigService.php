@@ -12,6 +12,7 @@ namespace OCA\TwoFactorGateway\Service;
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Exception\GatewayInstanceNotFoundException;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\FieldSensitivity;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
@@ -329,40 +330,12 @@ class GatewayConfigService {
 	 * @param array<string, string> $config
 	 */
 	private function storeFieldValues(string $gatewayId, string $instanceId, IGateway $gateway, array $config): void {
-		$fieldNames = array_map(
-			static fn (FieldDefinition $field): string => $field->field,
-			$gateway->getSettings()->fields,
-		);
-
-		if ($gateway instanceof IProviderCatalogGateway) {
-			$selector = $gateway->getProviderSelectorField();
-			$fieldNames[] = $selector->field;
-
-			$selectedProvider = trim((string)($config[$selector->field]
-				?? $this->appConfig->getValueString(
-					Application::APP_ID,
-					$this->instanceFieldKey($gatewayId, $instanceId, $selector->field),
-					$selector->default,
-				)));
-			if ($selectedProvider !== '') {
-				$config[$selector->field] = $selectedProvider;
-				foreach ($gateway->getProviderCatalog() as $provider) {
-					if ((string)($provider['id'] ?? '') !== $selectedProvider) {
-						continue;
-					}
-
-					foreach ($provider['fields'] ?? [] as $providerField) {
-						if ($providerField instanceof FieldDefinition) {
-							$fieldNames[] = $providerField->field;
-						}
-					}
-					break;
-				}
-			}
-		}
-
-		foreach (array_values(array_unique($fieldNames)) as $fieldName) {
+		foreach ($this->resolvePersistedFieldDefinitions($gatewayId, $instanceId, $gateway, $config) as $fieldName => $field) {
 			if (!array_key_exists($fieldName, $config)) {
+				continue;
+			}
+
+			if ($this->shouldPreserveExistingSecretValue($gatewayId, $instanceId, $field, $config[$fieldName])) {
 				continue;
 			}
 
@@ -466,6 +439,66 @@ class GatewayConfigService {
 			);
 		}
 		return $config;
+	}
+
+	/**
+	 * @param array<string, string> $config
+	 * @return array<string, FieldDefinition>
+	 */
+	private function resolvePersistedFieldDefinitions(string $gatewayId, string $instanceId, IGateway $gateway, array $config): array {
+		$fieldDefinitions = [];
+		foreach ($gateway->getSettings()->fields as $field) {
+			$fieldDefinitions[$field->field] = $field;
+		}
+
+		if (!($gateway instanceof IProviderCatalogGateway)) {
+			return $fieldDefinitions;
+		}
+
+		$selector = $gateway->getProviderSelectorField();
+		$fieldDefinitions[$selector->field] = $selector;
+		$selectedProvider = trim((string)($config[$selector->field]
+			?? $this->appConfig->getValueString(
+				Application::APP_ID,
+				$this->instanceFieldKey($gatewayId, $instanceId, $selector->field),
+				$selector->default,
+			)));
+		if ($selectedProvider === '') {
+			return $fieldDefinitions;
+		}
+
+		foreach ($gateway->getProviderCatalog() as $provider) {
+			if ((string)($provider['id'] ?? '') !== $selectedProvider) {
+				continue;
+			}
+
+			foreach ($provider['fields'] ?? [] as $providerField) {
+				if ($providerField instanceof FieldDefinition) {
+					$fieldDefinitions[$providerField->field] = $providerField;
+				}
+			}
+			break;
+		}
+
+		return $fieldDefinitions;
+	}
+
+	private function shouldPreserveExistingSecretValue(string $gatewayId, string $instanceId, FieldDefinition $field, string $value): bool {
+		if (FieldSensitivity::fromNullable($field->getSensitivity()) !== FieldSensitivity::SECRET) {
+			return false;
+		}
+
+		if (trim($value) !== '') {
+			return false;
+		}
+
+		$existingValue = $this->appConfig->getValueString(
+			Application::APP_ID,
+			$this->instanceFieldKey($gatewayId, $instanceId, $field->field),
+			"\0__missing__\0",
+		);
+
+		return $existingValue !== "\0__missing__\0";
 	}
 
 	private function generateId(): string {
