@@ -70,7 +70,7 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, ITestResultE
 				new FieldDefinition(
 					field: 'account',
 					prompt: 'Please enter the account (phone-number) of the sending signal account (leave blank if a phone-number is not required):',
-					exposure: FieldExposure::ADMIN,
+					exposure: FieldExposure::DELEGATED,
 				),
 			]
 		);
