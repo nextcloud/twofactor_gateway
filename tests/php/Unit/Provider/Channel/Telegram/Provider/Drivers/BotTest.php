@@ -81,11 +81,11 @@ class BotTest extends TestCase {
 		}
 	}
 
-	public function testCreateSettingsMarksTokenAsAdminOnly(): void {
+	public function testCreateSettingsMarksTokenAsDelegated(): void {
 		$settings = (new Bot($this->logger, $this->l10n, $this->clientService))->createSettings();
 
 		$this->assertSame('token', $settings->fields[0]->field);
-		$this->assertSame(FieldExposure::ADMIN->value, $settings->fields[0]->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $settings->fields[0]->getExposure());
 	}
 
 	public function testSendUsesGenericSafeMessageWhenDescriptionIsMissing(): void {
