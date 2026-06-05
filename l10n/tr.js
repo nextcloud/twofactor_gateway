@@ -174,7 +174,6 @@ OC.L10N.register(
     "The verification code will be inserted at" : "Doğrulama kodu şuraya eklenecek:",
     "Footer" : "Alt bilgi",
     "Template name:" : "Kalıp adı:",
-    "e.g. libresign_invite_basic_v1" : "örnek libresign_invite_basic_v1",
     "Template language code:" : "Kalıp dil kodu:",
     "e.g. pt_BR" : "örnek pt_BR",
     "Template" : "Kalıp",

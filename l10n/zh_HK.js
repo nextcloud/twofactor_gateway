@@ -174,7 +174,6 @@ OC.L10N.register(
     "The verification code will be inserted at" : "驗證碼將插入於",
     "Footer" : "頁尾",
     "Template name:" : "範本名稱：",
-    "e.g. libresign_invite_basic_v1" : "例如：libresign_invite_basic_v1",
     "Template language code:" : "範本語言代碼：",
     "e.g. pt_BR" : "例如：pt_BR",
     "Template" : "模板",
