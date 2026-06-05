@@ -4,6 +4,12 @@
 import type { FieldDefinition, GatewayInfo, GatewayProviderDefinition } from '../types/gateway.ts'
 
 const WIZARD_BOOTSTRAP_FIELDS = new Set(['base_url', 'username', 'password', 'device_name'])
+const GUIDED_SETUP_REQUIRED_FIELDS: Record<string, string[]> = {
+	signal: ['url'],
+	gowhatsapp: ['base_url', 'device_name', 'username', 'password'],
+	telegram_client: ['api_id', 'api_hash', 'madeline_log_enabled', 'madeline_log_path'],
+	whatsappbusiness: ['access_token', 'api_version', 'waba_id'],
+}
 
 type TranslateFn = (text: string, parameters?: Record<string, string | number>) => string
 
@@ -182,6 +188,16 @@ export function resolveFieldsToValidate(currentFields: FieldDefinition[], showWi
 	}
 
 	return currentFields
+}
+
+export function canUseGuidedSetupPanel(providerId: string, currentFields: FieldDefinition[]): boolean {
+	const requiredFields = GUIDED_SETUP_REQUIRED_FIELDS[providerId]
+	if (!requiredFields) {
+		return true
+	}
+
+	const fieldNames = new Set(currentFields.map((field) => field.field))
+	return requiredFields.every((fieldName) => fieldNames.has(fieldName))
 }
 
 export function computeCatalogSelectionState(params: {
