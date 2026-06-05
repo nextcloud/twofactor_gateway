@@ -174,7 +174,6 @@ OC.L10N.register(
     "The verification code will be inserted at" : "O código de verificação será inserido em",
     "Footer" : "Rodapé",
     "Template name:" : "Nome do modelo:",
-    "e.g. libresign_invite_basic_v1" : "p. ex., libresign_convite_básico_v1",
     "Template language code:" : "Código do idioma do modelo:",
     "e.g. pt_BR" : "p. ex., pt_BR",
     "Template" : "Modelo",
