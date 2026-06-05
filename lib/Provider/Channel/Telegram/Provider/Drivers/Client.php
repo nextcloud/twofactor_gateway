@@ -15,7 +15,6 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
-use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Provider\FieldType;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Files\IAppData;
@@ -61,14 +60,12 @@ class Client extends AProvider {
 					field: 'api_id',
 					prompt: 'Please enter your Telegram api_id:',
 					helper: 'Get one at https://my.telegram.org/apps',
-					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'api_hash',
 					prompt: 'Please enter your Telegram api_hash:',
 					helper: 'Get one at https://my.telegram.org/apps',
 					type: FieldType::SECRET,
-					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'madeline_log_enabled',
@@ -77,7 +74,6 @@ class Client extends AProvider {
 					optional: true,
 					type: FieldType::BOOLEAN,
 					helper: 'Disabled by default. Enable only when debugging Telegram Client issues.',
-					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'madeline_log_path',
@@ -86,7 +82,6 @@ class Client extends AProvider {
 					optional: true,
 					type: FieldType::TEXT,
 					helper: 'When empty, uses session directory inside Nextcloud data/appdata. Relative paths are resolved inside the session directory.',
-					exposure: FieldExposure::ADMIN,
 				),
 			]
 		);
