@@ -14,6 +14,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Exception\GatewayInstanceNotFoundException;
 use OCA\TwoFactorGateway\Exception\GatewayPermissionDeniedException;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
@@ -24,6 +25,7 @@ use OCA\TwoFactorGateway\Provider\Settings;
 use OCA\TwoFactorGateway\Service\GatewayCatalogService;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
+use OCA\TwoFactorGateway\Service\GatewayFieldSanitizer;
 use OCA\TwoFactorGateway\Service\GatewayInteractiveSetupSessionService;
 use OCA\TwoFactorGateway\Service\GatewayPermissionService;
 use OCA\TwoFactorGateway\Service\GatewayViewScope;
@@ -48,6 +50,7 @@ class AdminGatewayControllerTest extends TestCase {
 	private GatewayInteractiveSetupSessionService&MockObject $gatewayInteractiveSetupSessionService;
 	private IGroupManager&MockObject $groupManager;
 	private GatewayPermissionService&MockObject $gatewayPermissionService;
+	private GatewayViewScope $resolvedViewScope;
 	private IUser&MockObject $actor;
 	private IUserSession&MockObject $userSession;
 
@@ -63,10 +66,13 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->groupManager = $this->createMock(IGroupManager::class);
 		$this->gatewayPermissionService = $this->createMock(GatewayPermissionService::class);
 		$this->userSession = $this->createMock(IUserSession::class);
+		$this->resolvedViewScope = GatewayViewScope::ADMIN;
 		$this->gatewayConfigurationSyncService->method('syncAfterConfigurationChange');
 		$this->actor->method('getUID')->willReturn('admin-user');
 		$this->userSession->method('getUser')->willReturn($this->actor);
-		$this->gatewayPermissionService->method('resolveViewScope')->willReturn(GatewayViewScope::ADMIN);
+		$this->gatewayPermissionService->method('resolveViewScope')->willReturnCallback(
+			fn (): GatewayViewScope => $this->resolvedViewScope,
+		);
 		$this->gatewayPermissionService->method('filterVisibleInstances')->willReturnCallback(
 			static fn (?IUser $actor, array $instances): array => $instances,
 		);
@@ -80,6 +86,7 @@ class AdminGatewayControllerTest extends TestCase {
 			$this->configService,
 			$this->gatewayFactory,
 			$this->gatewayConfigurationSyncService,
+			new GatewayFieldSanitizer(),
 			$this->groupManager,
 			$this->gatewayPermissionService,
 			$this->gatewayInteractiveSetupSessionService,
@@ -87,11 +94,14 @@ class AdminGatewayControllerTest extends TestCase {
 		);
 	}
 
-	private function makeGatewayMock(string $id): IGateway&MockObject {
+	/**
+	 * @param list<FieldDefinition>|null $fields
+	 */
+	private function makeGatewayMock(string $id, ?array $fields = null): IGateway&MockObject {
 		$settings = new Settings(
 			name: ucfirst($id),
 			id: $id,
-			fields: [new FieldDefinition('url', 'API URL')],
+			fields: $fields ?? [new FieldDefinition('url', 'API URL')],
 		);
 		$mock = $this->createMock(IGateway::class);
 		$mock->method('getProviderId')->willReturn($id);
@@ -99,11 +109,14 @@ class AdminGatewayControllerTest extends TestCase {
 		return $mock;
 	}
 
-	private function makeInteractiveGatewayMock(string $id): IGateway&IInteractiveSetupGateway&MockObject {
+	/**
+	 * @param list<FieldDefinition>|null $fields
+	 */
+	private function makeInteractiveGatewayMock(string $id, ?array $fields = null): IGateway&IInteractiveSetupGateway&MockObject {
 		$settings = new Settings(
 			name: ucfirst($id),
 			id: $id,
-			fields: [new FieldDefinition('url', 'API URL')],
+			fields: $fields ?? [new FieldDefinition('url', 'API URL')],
 		);
 		/** @var IGateway&IInteractiveSetupGateway&MockObject $mock */
 		$mock = $this->createMockForIntersectionOfInterfaces([IGateway::class, IInteractiveSetupGateway::class]);
@@ -264,6 +277,51 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->assertSame('Scope denied', $response->getData()['message']);
 	}
 
+	public function testCreateInstanceAllowsDelegatedActorToWriteDelegatedFields(): void {
+		$this->resolvedViewScope = GatewayViewScope::DELEGATED;
+		$gateway = $this->makeGatewayMock('signal', [
+			new FieldDefinition(field: 'url', prompt: 'Gateway URL', exposure: FieldExposure::ADMIN),
+			new FieldDefinition(field: 'account', prompt: 'Signal account', exposure: FieldExposure::DELEGATED),
+		]);
+		$this->gatewayFactory->method('get')->with('signal')->willReturn($gateway);
+		$this->configService->expects($this->once())
+			->method('createInstance')
+			->with($gateway, 'Team A', ['account' => '+5511999999999'], ['team-a'], 0, 'admin-user')
+			->willReturn([
+				'id' => 'delegated-1',
+				'label' => 'Team A',
+				'default' => true,
+				'createdAt' => '2026-01-01T00:00:00+00:00',
+				'config' => ['account' => '+5511999999999'],
+				'isComplete' => true,
+				'groupIds' => ['team-a'],
+				'priority' => 0,
+			]);
+
+		$response = $this->controller->createInstance('signal', 'Team A', ['account' => '+5511999999999'], ['team-a']);
+
+		$this->assertSame(Http::STATUS_CREATED, $response->getStatus());
+		$this->assertSame(['account' => '+5511999999999'], $response->getData()['config']);
+	}
+
+	public function testCreateInstanceReturns403WhenDelegatedActorWritesAdminOnlyFields(): void {
+		$this->resolvedViewScope = GatewayViewScope::DELEGATED;
+		$gateway = $this->makeGatewayMock('signal', [
+			new FieldDefinition(field: 'url', prompt: 'Gateway URL', exposure: FieldExposure::ADMIN),
+			new FieldDefinition(field: 'account', prompt: 'Signal account', exposure: FieldExposure::DELEGATED),
+		]);
+		$this->gatewayFactory->method('get')->with('signal')->willReturn($gateway);
+		$this->configService->expects($this->never())->method('createInstance');
+
+		$response = $this->controller->createInstance('signal', 'Team A', [
+			'url' => 'https://signal.example.com',
+			'account' => '+5511999999999',
+		], ['team-a']);
+
+		$this->assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		$this->assertStringContainsString('url', (string)$response->getData()['message']);
+	}
+
 	public function testCreateInstanceKeepsWhatsAppCatalogGatewayWhenProviderIsGoWhatsApp(): void {
 		$whatsAppGateway = $this->makeCatalogGatewayMock('whatsapp', 'provider', ['whatsapp', 'gowhatsapp']);
 		$this->gatewayFactory->method('get')->willReturnMap([
@@ -414,6 +472,37 @@ class AdminGatewayControllerTest extends TestCase {
 		$response = $this->controller->updateInstance('signal', 'notfound', 'X', []);
 
 		$this->assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
+	}
+
+	public function testUpdateInstanceReturns403WhenDelegatedActorWritesAdminOnlyFields(): void {
+		$this->resolvedViewScope = GatewayViewScope::DELEGATED;
+		$gateway = $this->makeGatewayMock('signal', [
+			new FieldDefinition(field: 'url', prompt: 'Gateway URL', exposure: FieldExposure::ADMIN),
+			new FieldDefinition(field: 'account', prompt: 'Signal account', exposure: FieldExposure::DELEGATED),
+		]);
+		$this->gatewayFactory->method('get')->with('signal')->willReturn($gateway);
+		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn([
+			'id' => 'abc',
+			'label' => 'Team A',
+			'default' => true,
+			'createdAt' => '2026-01-01T00:00:00+00:00',
+			'config' => [
+				'url' => 'https://signal.example.com',
+				'account' => '+5511988887777',
+			],
+			'isComplete' => true,
+			'groupIds' => ['team-a'],
+			'priority' => 10,
+		]);
+		$this->configService->expects($this->never())->method('updateInstance');
+
+		$response = $this->controller->updateInstance('signal', 'abc', 'Team A', [
+			'url' => 'https://signal-2.example.com',
+			'account' => '+5511999999999',
+		], ['team-a'], 10);
+
+		$this->assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		$this->assertStringContainsString('url', (string)$response->getData()['message']);
 	}
 
 	public function testUpdateInstanceReturns200EvenIfSessionMonitorSyncFails(): void {
@@ -671,6 +760,21 @@ class AdminGatewayControllerTest extends TestCase {
 		$response = $this->controller->startInteractiveSetup('telegram', ['base_url' => 'https://wa.example.com']);
 
 		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+	}
+
+	public function testStartInteractiveSetupReturns403WhenDelegatedActorSuppliesAdminOnlySetupField(): void {
+		$gateway = $this->makeInteractiveGatewayMock('signal', [
+			new FieldDefinition(field: 'url', prompt: 'Gateway URL', exposure: FieldExposure::ADMIN),
+			new FieldDefinition(field: 'account', prompt: 'Signal account', exposure: FieldExposure::DELEGATED),
+		]);
+		$this->resolvedViewScope = GatewayViewScope::DELEGATED;
+		$gateway->expects($this->never())->method('interactiveSetupStart');
+		$this->gatewayFactory->method('get')->with('signal')->willReturn($gateway);
+
+		$response = $this->controller->startInteractiveSetup('signal', ['url' => 'http://signal.internal']);
+
+		$this->assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		$this->assertStringContainsString('url', (string)$response->getData()['message']);
 	}
 
 	public function testStartInteractiveSetupReturns200ForInteractiveGateway(): void {
