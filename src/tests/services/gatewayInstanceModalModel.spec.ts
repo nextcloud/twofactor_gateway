@@ -3,6 +3,7 @@
 
 import { describe, expect, it } from 'vitest'
 import {
+	canUseGuidedSetupPanel,
 	computeCatalogSelectionState,
 	normalizeProviderCatalog,
 	resolveCurrentFields,
@@ -143,6 +144,23 @@ describe('gatewayInstanceModalModel', () => {
 			{ field: 'token', prompt: 'Token', default: '', optional: false },
 		], true)
 		expect(fields).toEqual([])
+	})
+
+	it('enables guided setup only when all setup fields are exposed', () => {
+		expect(canUseGuidedSetupPanel('whatsappbusiness', [
+			{ field: 'access_token', prompt: 'Access token', default: '', optional: false },
+			{ field: 'api_version', prompt: 'API version', default: 'v22.0', optional: true },
+			{ field: 'waba_id', prompt: 'WABA ID', default: '', optional: true },
+		])).toBe(true)
+
+		expect(canUseGuidedSetupPanel('gowhatsapp', [
+			{ field: 'phone', prompt: 'Phone', default: '', optional: false },
+		])).toBe(false)
+
+		expect(canUseGuidedSetupPanel('telegram_client', [
+			{ field: 'api_id', prompt: 'API ID', default: '', optional: false },
+			{ field: 'api_hash', prompt: 'API hash', default: '', optional: false, type: 'secret' },
+		])).toBe(false)
 	})
 
 	it('validates required and integer constraints', () => {
