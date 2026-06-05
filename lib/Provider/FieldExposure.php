@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Provider;
 
 enum FieldExposure: string {
+	/** Default exposure when a field does not declare one explicitly. */
 	case ADMIN = 'admin';
 	case DELEGATED = 'delegated';
 	case RUNTIME = 'runtime';
