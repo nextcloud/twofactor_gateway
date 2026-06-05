@@ -11,6 +11,7 @@ namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp;
 
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IDefaultInstanceAwareGateway;
@@ -77,6 +78,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IPro
 			default: 'gowhatsapp',
 			optional: false,
 			hidden: true,
+			exposure: FieldExposure::DELEGATED,
 		);
 	}
 
