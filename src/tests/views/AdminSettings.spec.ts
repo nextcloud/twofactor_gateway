@@ -15,7 +15,7 @@ const GatewayInstanceCardStub = vi.hoisted(() => ({
 
 const GatewayInstanceModalStub = vi.hoisted(() => ({
 	name: 'GatewayInstanceModal',
-	props: ['show', 'gatewayId', 'instanceId', 'initialLabel', 'initialConfig'],
+	props: ['show', 'gatewayId', 'instanceId', 'initialLabel', 'initialConfig', 'groups'],
 	template: '<div class="gateway-instance-modal" :data-show="show" :data-gateway="gatewayId" :data-instance="instanceId" />',
 }))
 
@@ -279,6 +279,45 @@ describe('AdminSettings', () => {
 		})
 
 		expect(api.updateInstance).toHaveBeenCalledWith('signal', 's1', 'Signal Prod 2', { token: 'abc' }, ['admins'], 20)
+	})
+
+	it('passes selected groups when creating a new instance', async () => {
+		const api = await import('@lib/twofactor-gateway')
+		vi.mocked(api.listGateways).mockResolvedValueOnce([
+			{
+				id: 'signal',
+				name: 'Signal',
+				instructions: '',
+				allowMarkdown: false,
+				fields: [],
+				instances: [],
+			},
+		])
+		vi.mocked(api.listGroups).mockResolvedValueOnce([
+			{ id: 'staff', displayName: 'Staff' },
+			{ id: 'admins', displayName: 'Admins' },
+		])
+
+		const wrapper = mount(AdminSettings)
+		await flushPromises()
+
+		await (wrapper.vm as unknown as {
+			onSaved: (payload: { gatewayId: string; instanceId: string; label: string; config: Record<string, string>; groupIds?: string[] }) => Promise<void>
+		}).onSaved({
+			gatewayId: 'signal',
+			instanceId: '',
+			label: 'Signal Team A',
+			config: { account: '+5511999999999' },
+			groupIds: ['admins', 'staff'],
+		})
+
+		expect(api.createInstance).toHaveBeenCalledWith(
+			'signal',
+			'Signal Team A',
+			{ account: '+5511999999999' },
+			['admins', 'staff'],
+			0,
+		)
 	})
 
 	it('uses catalog provider name for flattened instances', async () => {
