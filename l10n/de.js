@@ -174,7 +174,6 @@ OC.L10N.register(
     "The verification code will be inserted at" : "Der Überprüfungscode wird eingefügt an",
     "Footer" : "Fusszeile",
     "Template name:" : "Vorlagenname:",
-    "e.g. libresign_invite_basic_v1" : "z. B. libresign_invite_basic_v1",
     "Template language code:" : "Sprachcode der Vorlage:",
     "e.g. pt_BR" : "z. B. pt_BR",
     "Template" : "Vorlage",
