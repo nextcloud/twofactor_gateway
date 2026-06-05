@@ -65,7 +65,6 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, ITestResultE
 					field: 'url',
 					prompt: 'Please enter the URL of the Signal gateway (leave blank to use default):',
 					default: 'http://localhost:5000',
-					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'account',
