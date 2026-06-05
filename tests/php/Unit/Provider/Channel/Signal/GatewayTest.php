@@ -44,7 +44,7 @@ class GatewayTest extends AppTestCase {
 		);
 	}
 
-	public function testCreateSettingsMarksFieldsAsAdminOnly(): void {
+	public function testCreateSettingsKeepsUrlAdminOnlyAndDelegatesAccountSelection(): void {
 		$settings = $this->gateway->getSettings();
 		$fieldByName = [];
 		foreach ($settings->fields as $field) {
@@ -52,7 +52,7 @@ class GatewayTest extends AppTestCase {
 		}
 
 		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['url']->getExposure());
-		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['account']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['account']->getExposure());
 	}
 
 	public function testSendUsesRecipientsArrayAndNumberForSignalCliRestApiV2(): void {
