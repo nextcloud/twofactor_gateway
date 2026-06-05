@@ -54,6 +54,18 @@ class GatewayFieldSanitizerTest extends TestCase {
 		$this->assertSame(['display_name' => 'Client A'], $sanitized);
 	}
 
+	public function testFilterFieldsKeepsDelegatedSecretFieldsVisibleForEditing(): void {
+		$fields = [
+			new FieldDefinition(field: 'display_name', prompt: 'Display name', exposure: FieldExposure::DELEGATED),
+			new FieldDefinition(field: 'token', prompt: 'Token', type: FieldType::SECRET, exposure: FieldExposure::DELEGATED),
+			new FieldDefinition(field: 'base_url', prompt: 'Base URL', exposure: FieldExposure::ADMIN),
+		];
+
+		$visible = $this->sanitizer->filterFields($fields, GatewayViewScope::DELEGATED);
+
+		$this->assertSame(['display_name', 'token'], array_map(static fn (FieldDefinition $field): string => $field->field, $visible));
+	}
+
 	public function testSanitizeConfigKeepsOnlyRuntimeNonSecretFieldsForRuntimeView(): void {
 		$fields = [
 			new FieldDefinition(field: 'device_name', prompt: 'Device name', sensitivity: FieldSensitivity::NORMAL, exposure: FieldExposure::RUNTIME),
