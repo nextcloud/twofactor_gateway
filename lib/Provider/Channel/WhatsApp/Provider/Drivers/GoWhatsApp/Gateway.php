@@ -13,6 +13,7 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Provider\FieldType;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
@@ -92,6 +93,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 				new FieldDefinition(
 					field: 'phone',
 					prompt: 'Phone number for WhatsApp Web access:',
+					exposure: FieldExposure::DELEGATED,
 				),
 				new FieldDefinition(
 					field: 'device_name',
