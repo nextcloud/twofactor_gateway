@@ -12,7 +12,6 @@ namespace OCA\TwoFactorGateway\Provider\Channel\XMPP;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
-use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IAppConfig;
@@ -54,28 +53,23 @@ class Gateway extends AGateway {
 				new FieldDefinition(
 					field: 'sender',
 					prompt: 'Please enter your sender XMPP-JID:',
-					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'password',
 					prompt: 'Please enter your sender XMPP password:',
-					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'server',
 					prompt: 'Please enter full path to access REST/HTTP API:',
-					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'username',
 					prompt: 'XMPP username (derived from sender JID)',
 					optional: true,
-					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'method',
 					prompt: 'Please enter 1 or 2 for XMPP sending option:',
-					exposure: FieldExposure::ADMIN,
 				),
 			],
 		);
