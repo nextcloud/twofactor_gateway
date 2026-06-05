@@ -50,7 +50,7 @@ class ClientTest extends TestCase {
 		$this->assertStringContainsString('my.telegram.org/apps', $settings->fields[1]->helper);
 	}
 
-	public function testCreateSettingsMarksFieldsAsAdminOnly(): void {
+	public function testCreateSettingsDelegatesCredentialsButKeepsDiagnosticsAdminOnly(): void {
 		$provider = new Client($this->logger, $this->l10n, $this->appData, $this->config);
 		$settings = $provider->createSettings();
 		$fieldByName = [];
@@ -58,8 +58,8 @@ class ClientTest extends TestCase {
 			$fieldByName[$field->field] = $field;
 		}
 
-		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['api_id']->getExposure());
-		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['api_hash']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['api_id']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['api_hash']->getExposure());
 		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['madeline_log_enabled']->getExposure());
 		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['madeline_log_path']->getExposure());
 	}
