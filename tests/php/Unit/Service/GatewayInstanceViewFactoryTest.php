@@ -103,7 +103,7 @@ class GatewayInstanceViewFactoryTest extends TestCase {
 		]], GatewayViewScope::DELEGATED);
 
 		$this->assertArrayNotHasKey('providerSelector', $entry);
-		$this->assertSame(['display_name'], array_map(static fn (array $field): string => $field['field'], $entry['providerCatalog'][0]['fields']));
+		$this->assertSame(['display_name', 'token'], array_map(static fn (array $field): string => $field['field'], $entry['providerCatalog'][0]['fields']));
 		$this->assertSame(['display_name' => 'WA Prod'], $entry['instances'][0]['config']);
 	}
 
