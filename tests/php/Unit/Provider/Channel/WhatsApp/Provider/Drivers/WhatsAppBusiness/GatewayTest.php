@@ -48,19 +48,19 @@ class GatewayTest extends AppTestCase {
 		);
 	}
 
-	public function testCreateSettingsMarksFieldsAsAdminOnly(): void {
+	public function testCreateSettingsMarksAllFieldsAsDelegated(): void {
 		$settings = $this->gateway->createSettings();
 		$fieldByName = [];
 		foreach ($settings->fields as $field) {
 			$fieldByName[$field->field] = $field;
 		}
 
-		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['api_version']->getExposure());
-		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['phone_number_id']->getExposure());
-		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['phone_number_display']->getExposure());
-		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['access_token']->getExposure());
-		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['template_name']->getExposure());
-		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['template_language']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['api_version']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['phone_number_id']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['phone_number_display']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['access_token']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_name']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_language']->getExposure());
 	}
 
 	public function testSendUsesTemplateAndDefaultApiVersionWhenNotConfigured(): void {
