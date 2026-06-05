@@ -13,6 +13,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Exception\GatewayInstanceNotFoundException;
 use OCA\TwoFactorGateway\Exception\GatewayPermissionDeniedException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
@@ -21,8 +22,10 @@ use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Service\GatewayCatalogService;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
+use OCA\TwoFactorGateway\Service\GatewayFieldSanitizer;
 use OCA\TwoFactorGateway\Service\GatewayInteractiveSetupSessionService;
 use OCA\TwoFactorGateway\Service\GatewayPermissionService;
+use OCA\TwoFactorGateway\Service\GatewayViewScope;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
@@ -40,6 +43,7 @@ class AdminGatewayController extends OCSController {
 		private GatewayConfigService $configService,
 		private GatewayFactory $gatewayFactory,
 		private GatewayConfigurationSyncService $gatewayConfigurationSyncService,
+		private GatewayFieldSanitizer $gatewayFieldSanitizer,
 		private IGroupManager $groupManager,
 		private GatewayPermissionService $gatewayPermissionService,
 		private GatewayInteractiveSetupSessionService $gatewayInteractiveSetupSessionService,
@@ -119,6 +123,7 @@ class AdminGatewayController extends OCSController {
 
 		try {
 			$this->gatewayPermissionService->assertCanCreateInstanceForGroups($actor, $groupIds);
+			$this->assertCanWriteConfigurationFields($actor, $gw, $config);
 		} catch (GatewayPermissionDeniedException $e) {
 			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_FORBIDDEN);
 		}
@@ -198,6 +203,7 @@ class AdminGatewayController extends OCSController {
 			$existing = $this->configService->getInstance($gw, $instanceId);
 			$this->gatewayPermissionService->assertCanEditInstance($actor, $existing);
 			$this->gatewayPermissionService->assertCanCreateInstanceForGroups($actor, $groupIds);
+			$this->assertCanWriteConfigurationFields($actor, $gw, $config);
 			$record = $this->configService->updateInstance($gw, $instanceId, $label, $config, $groupIds, $priority);
 			$this->syncSessionMonitorSafely($gw);
 			return new DataResponse($this->gatewayCatalogService->createInstanceView($actor, $gw, $record));
@@ -385,6 +391,7 @@ class AdminGatewayController extends OCSController {
 	 *
 	 * 200: Interactive setup started
 	 * 400: Unknown gateway, invalid provider, or interactive setup unsupported
+	 * 403: Permission denied for admin-only setup fields
 	 */
 	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
 	#[ApiRoute(verb: 'POST', url: '/admin/gateways/{gateway}/interactive-setup/start')]
@@ -397,6 +404,12 @@ class AdminGatewayController extends OCSController {
 
 		if (!($gw instanceof IInteractiveSetupGateway)) {
 			return new DataResponse(['message' => 'Gateway does not support interactive setup.'], Http::STATUS_BAD_REQUEST);
+		}
+
+		try {
+			$this->assertCanWriteConfigurationFields($this->currentActor(), $gw, $input);
+		} catch (GatewayPermissionDeniedException $e) {
+			return new DataResponse(['message' => $e->getMessage()], Http::STATUS_FORBIDDEN);
 		}
 
 		$response = $gw->interactiveSetupStart($input);
@@ -642,5 +655,46 @@ class AdminGatewayController extends OCSController {
 	private function currentActor(): ?IUser {
 		$user = $this->userSession->getUser();
 		return $user instanceof IUser ? $user : null;
+	}
+
+	/**
+	 * @param array<string, string> $config
+	 * @throws GatewayPermissionDeniedException
+	 */
+	private function assertCanWriteConfigurationFields(?IUser $actor, IGateway $gateway, array $config): void {
+		$scope = $this->gatewayPermissionService->resolveViewScope($actor);
+		if ($scope === GatewayViewScope::ADMIN || $config === []) {
+			return;
+		}
+
+		$knownFieldNames = [];
+		foreach ($gateway->getSettings()->fields as $field) {
+			if ($field instanceof FieldDefinition) {
+				$knownFieldNames[$field->field] = true;
+			}
+		}
+
+		$writableFieldNames = [];
+		foreach ($this->gatewayFieldSanitizer->filterFields($gateway->getSettings()->fields, $scope) as $field) {
+			$writableFieldNames[$field->field] = true;
+		}
+
+		$disallowedFields = [];
+		foreach (array_keys($config) as $fieldName) {
+			if (!isset($knownFieldNames[$fieldName]) || isset($writableFieldNames[$fieldName])) {
+				continue;
+			}
+
+			$disallowedFields[] = $fieldName;
+		}
+
+		if ($disallowedFields === []) {
+			return;
+		}
+
+		sort($disallowedFields);
+		throw new GatewayPermissionDeniedException(
+			'You are not allowed to modify the following fields: ' . implode(', ', $disallowedFields),
+		);
 	}
 }
