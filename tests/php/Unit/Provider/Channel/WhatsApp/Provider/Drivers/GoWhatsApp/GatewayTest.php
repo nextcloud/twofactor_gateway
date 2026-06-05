@@ -56,7 +56,7 @@ class GatewayTest extends TestCase {
 		);
 	}
 
-	public function testCreateSettingsMarksFieldsAsAdminOnly(): void {
+	public function testCreateSettingsDelegatesOnlyPhoneField(): void {
 		$settings = $this->gateway->createSettings();
 		$fieldByName = [];
 		foreach ($settings->fields as $field) {
@@ -64,7 +64,7 @@ class GatewayTest extends TestCase {
 		}
 
 		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['base_url']->getExposure());
-		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['phone']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['phone']->getExposure());
 		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['device_name']->getExposure());
 		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['device_id']->getExposure());
 		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['username']->getExposure());
