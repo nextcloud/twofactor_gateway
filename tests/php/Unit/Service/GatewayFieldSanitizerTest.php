@@ -70,4 +70,25 @@ class GatewayFieldSanitizerTest extends TestCase {
 
 		$this->assertSame(['device_name' => 'GW-1'], $sanitized);
 	}
+
+	public function testSanitizeConfigKeepsDelegatedXmppFieldsForDelegatedView(): void {
+		$fields = [
+			new FieldDefinition(field: 'sender', prompt: 'Sender', exposure: FieldExposure::DELEGATED),
+			new FieldDefinition(field: 'password', prompt: 'Password', exposure: FieldExposure::DELEGATED),
+			new FieldDefinition(field: 'server', prompt: 'Server', exposure: FieldExposure::DELEGATED),
+			new FieldDefinition(field: 'username', prompt: 'Username', exposure: FieldExposure::DELEGATED),
+			new FieldDefinition(field: 'method', prompt: 'Method', exposure: FieldExposure::DELEGATED),
+		];
+		$config = [
+			'sender' => 'bot@example.com',
+			'password' => 'secret-password',
+			'server' => 'https://xmpp.example.com/messages/',
+			'username' => 'bot',
+			'method' => '2',
+		];
+
+		$sanitized = $this->sanitizer->sanitizeConfig($config, $fields, GatewayViewScope::DELEGATED);
+
+		$this->assertSame($config, $sanitized);
+	}
 }
