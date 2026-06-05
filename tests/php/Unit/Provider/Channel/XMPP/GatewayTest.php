@@ -72,12 +72,12 @@ class GatewayTest extends TestCase {
 		$this->assertCount(0, $emptyPromptFields);
 	}
 
-	public function testCreateSettingsMarksFieldsAsAdminOnly(): void {
+	public function testCreateSettingsMarksFieldsAsDelegated(): void {
 		$gateway = new Gateway($this->appConfig, $this->logger);
 		$settings = $gateway->getSettings();
 
 		foreach ($settings->fields as $field) {
-			$this->assertSame(FieldExposure::ADMIN->value, $field->getExposure());
+			$this->assertSame(FieldExposure::DELEGATED->value, $field->getExposure());
 		}
 	}
 
