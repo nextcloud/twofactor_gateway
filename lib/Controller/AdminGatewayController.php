@@ -387,7 +387,7 @@ class AdminGatewayController extends OCSController {
 	 *
 	 * @param string $gateway The gateway id
 	 * @param array<string, string> $input Initial setup input
-	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array<string, mixed>, array{}>|DataResponse<Http::STATUS_BAD_REQUEST, array{message: string}, array{}>|DataResponse<Http::STATUS_FORBIDDEN, array{message: string}, array{}>
 	 *
 	 * 200: Interactive setup started
 	 * 400: Unknown gateway, invalid provider, or interactive setup unsupported
