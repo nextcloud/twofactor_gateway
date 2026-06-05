@@ -21,7 +21,7 @@ class GatewayFieldSanitizer {
 	public function filterFields(array $fields, GatewayViewScope $scope): array {
 		return array_values(array_filter(
 			$fields,
-			fn (FieldDefinition $field): bool => $this->shouldExposeField($field, $scope),
+			fn (FieldDefinition $field): bool => $this->shouldExposeFieldMetadata($field, $scope),
 		));
 	}
 
@@ -33,13 +33,17 @@ class GatewayFieldSanitizer {
 	public function sanitizeConfig(array $config, array $fields, GatewayViewScope $scope): array {
 		$visibleFieldNames = [];
 		foreach ($this->filterFields($fields, $scope) as $field) {
+			if ($scope !== GatewayViewScope::ADMIN && $this->isSecretField($field)) {
+				continue;
+			}
+
 			$visibleFieldNames[$field->field] = true;
 		}
 
 		return array_intersect_key($config, $visibleFieldNames);
 	}
 
-	private function shouldExposeField(FieldDefinition $field, GatewayViewScope $scope): bool {
+	private function shouldExposeFieldMetadata(FieldDefinition $field, GatewayViewScope $scope): bool {
 		$exposure = FieldExposure::fromNullable($field->getExposure());
 		if ($exposure === FieldExposure::NEVER) {
 			return false;
@@ -49,15 +53,14 @@ class GatewayFieldSanitizer {
 			return true;
 		}
 
-		$sensitivity = FieldSensitivity::fromNullable($field->getSensitivity());
-		if ($sensitivity === FieldSensitivity::SECRET) {
-			return false;
-		}
-
 		return match ($scope) {
 			GatewayViewScope::DELEGATED => $exposure === FieldExposure::DELEGATED,
-			GatewayViewScope::RUNTIME => $exposure === FieldExposure::RUNTIME,
+			GatewayViewScope::RUNTIME => $exposure === FieldExposure::RUNTIME && !$this->isSecretField($field),
 			GatewayViewScope::ADMIN => true,
 		};
+	}
+
+	private function isSecretField(FieldDefinition $field): bool {
+		return FieldSensitivity::fromNullable($field->getSensitivity()) === FieldSensitivity::SECRET;
 	}
 }
