@@ -4,8 +4,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent } from 'vue'
-import AdminSettings from '../../views/AdminSettings.vue'
 import type { GatewayInfo } from '@lib/twofactor-gateway'
+import { GatewayAdminSettings as AdminSettings } from '@lib/twofactor-gateway/components/adminSettings'
 
 const GatewayInstanceCardStub = vi.hoisted(() => ({
 	name: 'GatewayInstanceCard',
@@ -135,20 +135,20 @@ vi.mock('vuedraggable', () => ({
 	}),
 }))
 
-vi.mock('../../components/GatewayInstanceCard.vue', () => ({
-	default: GatewayInstanceCardStub,
+vi.mock('@lib/twofactor-gateway/components/gatewayInstanceCard', () => ({
+	GatewayInstanceCard: GatewayInstanceCardStub,
 }))
 
-vi.mock('../../components/GatewayInstanceModal.vue', () => ({
-	default: GatewayInstanceModalStub,
+vi.mock('@lib/twofactor-gateway/components/gatewayInstanceModal', () => ({
+	GatewayInstanceModal: GatewayInstanceModalStub,
 }))
 
-vi.mock('../../components/GatewayRoutingModal.vue', () => ({
-	default: GatewayRoutingModalStub,
+vi.mock('@lib/twofactor-gateway/components/gatewayRoutingModal', () => ({
+	GatewayRoutingModal: GatewayRoutingModalStub,
 }))
 
-vi.mock('../../components/GatewayTestModal.vue', () => ({
-	default: GatewayTestModalStub,
+vi.mock('@lib/twofactor-gateway/components/gatewayTestModal', () => ({
+	GatewayTestModal: GatewayTestModalStub,
 }))
 
 describe('AdminSettings', () => {
