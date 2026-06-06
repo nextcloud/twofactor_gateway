@@ -9,6 +9,11 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service;
 
+/**
+ * @psalm-type GatewayInstanceInputArray = array{id: string, label?: string, default?: bool, createdAt?: string, config?: array<string, scalar|null>, isComplete?: bool, groupIds?: list<string>, priority?: int, createdByUserId?: scalar|null}
+ * @psalm-type GatewayInstanceArray = array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int, createdByUserId: ?string}
+ * @psalm-type GatewayInstanceViewArray = array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}
+ */
 final class GatewayInstanceRecord {
 	/**
 	 * @param array<string, string> $config
@@ -23,12 +28,11 @@ final class GatewayInstanceRecord {
 		public bool $isComplete,
 		public array $groupIds,
 		public int $priority,
+		public ?string $createdByUserId,
 	) {
 	}
 
-	/**
-	 * @param array{id: string, label?: string, default?: bool, createdAt?: string, config?: array<string, scalar|null>, isComplete?: bool, groupIds?: list<string>, priority?: int} $instance
-	 */
+	/** @param GatewayInstanceInputArray $instance */
 	public static function fromArray(array $instance): self {
 		$config = [];
 		foreach (($instance['config'] ?? []) as $key => $value) {
@@ -39,6 +43,10 @@ final class GatewayInstanceRecord {
 			static fn ($groupId): string => (string)$groupId,
 			is_array($instance['groupIds'] ?? null) ? $instance['groupIds'] : [],
 		));
+		$createdByUserId = trim((string)($instance['createdByUserId'] ?? ''));
+		if ($createdByUserId === '') {
+			$createdByUserId = null;
+		}
 
 		return new self(
 			id: (string)$instance['id'],
@@ -49,12 +57,11 @@ final class GatewayInstanceRecord {
 			isComplete: (bool)($instance['isComplete'] ?? false),
 			groupIds: $groupIds,
 			priority: is_numeric($instance['priority'] ?? null) ? (int)$instance['priority'] : 0,
+			createdByUserId: $createdByUserId,
 		);
 	}
 
-	/**
-	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}
-	 */
+	/** @return GatewayInstanceArray */
 	public function toArray(): array {
 		return [
 			'id' => $this->id,
@@ -65,6 +72,7 @@ final class GatewayInstanceRecord {
 			'isComplete' => $this->isComplete,
 			'groupIds' => $this->groupIds,
 			'priority' => $this->priority,
+			'createdByUserId' => $this->createdByUserId,
 		];
 	}
 

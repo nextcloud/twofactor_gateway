@@ -16,6 +16,7 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
@@ -64,10 +65,12 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, ITestResultE
 					field: 'url',
 					prompt: 'Please enter the URL of the Signal gateway (leave blank to use default):',
 					default: 'http://localhost:5000',
+					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'account',
 					prompt: 'Please enter the account (phone-number) of the sending signal account (leave blank if a phone-number is not required):',
+					exposure: FieldExposure::DELEGATED,
 				),
 			]
 		);

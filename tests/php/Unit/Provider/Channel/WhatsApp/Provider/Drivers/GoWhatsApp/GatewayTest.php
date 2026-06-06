@@ -13,6 +13,7 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Gateway;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\GoWhatsApp\Service\GoWhatsAppSessionMonitorJobManager;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
@@ -53,6 +54,24 @@ class GatewayTest extends TestCase {
 			eventDispatcher: $eventDispatcher,
 			goWhatsAppSessionMonitorJobManager: $jobManager,
 		);
+	}
+
+	public function testCreateSettingsDelegatesOnlyPhoneField(): void {
+		$settings = $this->gateway->createSettings();
+		$fieldByName = [];
+		foreach ($settings->fields as $field) {
+			$fieldByName[$field->field] = $field;
+		}
+
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['base_url']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['phone']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['device_name']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['device_id']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['username']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['password']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['webhook_hybrid_enabled']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['webhook_secret']->getExposure());
+		$this->assertSame(FieldExposure::ADMIN->value, $fieldByName['webhook_min_check_interval']->getExposure());
 	}
 
 	public function testDisplayDeviceListLogsDebugWhenCreatedAtIsInvalid(): void {
