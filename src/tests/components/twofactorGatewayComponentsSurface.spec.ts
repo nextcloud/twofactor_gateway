@@ -10,28 +10,28 @@ const gatewayRoutingModalStub = { name: 'GatewayRoutingModalStub' }
 const gatewaySectionStub = { name: 'GatewaySectionStub' }
 const gatewayTestModalStub = { name: 'GatewayTestModalStub' }
 
-vi.mock('../../views/AdminSettings.vue', () => ({
-	default: gatewayAdminSettingsStub,
+vi.mock('@lib/twofactor-gateway/components/adminSettings', () => ({
+	GatewayAdminSettings: gatewayAdminSettingsStub,
 }))
 
-vi.mock('../../components/GatewayInstanceCard.vue', () => ({
-	default: gatewayInstanceCardStub,
+vi.mock('@lib/twofactor-gateway/components/gatewayInstanceCard', () => ({
+	GatewayInstanceCard: gatewayInstanceCardStub,
 }))
 
-vi.mock('../../components/GatewayInstanceModal.vue', () => ({
-	default: gatewayInstanceModalStub,
+vi.mock('@lib/twofactor-gateway/components/gatewayInstanceModal', () => ({
+	GatewayInstanceModal: gatewayInstanceModalStub,
 }))
 
-vi.mock('../../components/GatewayRoutingModal.vue', () => ({
-	default: gatewayRoutingModalStub,
+vi.mock('@lib/twofactor-gateway/components/gatewayRoutingModal', () => ({
+	GatewayRoutingModal: gatewayRoutingModalStub,
 }))
 
-vi.mock('../../components/GatewaySection.vue', () => ({
-	default: gatewaySectionStub,
+vi.mock('@lib/twofactor-gateway/components/gatewayTestModal', () => ({
+	GatewayTestModal: gatewayTestModalStub,
 }))
 
-vi.mock('../../components/GatewayTestModal.vue', () => ({
-	default: gatewayTestModalStub,
+vi.mock('@lib/twofactor-gateway/components/gatewaySection', () => ({
+	GatewaySection: gatewaySectionStub,
 }))
 
 describe('twofactor gateway component surface', () => {
