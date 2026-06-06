@@ -4,7 +4,7 @@
  */
 
 import { createApp } from 'vue'
-import { GatewayAdminSettings } from '@lib/twofactor-gateway/components'
+import { GatewayAdminSettings } from '@lib/twofactor-gateway/components/adminSettings'
 
 const el = document.getElementById('twofactor-gateway-admin')
 if (el) {
