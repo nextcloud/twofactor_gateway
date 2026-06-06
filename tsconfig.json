@@ -12,9 +12,9 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "verbatimModuleSyntax": false,
-    "baseUrl": ".",
     "paths": {
-      "@lib/twofactor-gateway": ["src/lib/twofactor-gateway/index.ts"]
+      "@lib/twofactor-gateway": ["./src/lib/twofactor-gateway/index.ts"],
+      "@lib/twofactor-gateway/*": ["./src/lib/twofactor-gateway/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
