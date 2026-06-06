@@ -4,8 +4,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent } from 'vue'
-import GatewayInstanceCard from '../../components/GatewayInstanceCard.vue'
 import type { FieldDefinition, GatewayInstance } from '@lib/twofactor-gateway'
+import { GatewayInstanceCard } from '@lib/twofactor-gateway/components/gatewayInstanceCard'
 
 Object.defineProperty(window, 'matchMedia', {
 	writable: true,
