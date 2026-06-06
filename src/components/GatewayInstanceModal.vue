@@ -54,6 +54,26 @@
 					:helper-text="errors.label ?? ''" />
 			</div>
 
+			<div v-if="!isEditing && canRenderProviderFields && !wizardPanelActive && groups.length > 0" class="modal-field">
+				<label for="instance-groups-select">{{ t('twofactor_gateway', 'Groups') }}</label>
+				<!-- TRANSLATORS "\u00A0" keeps the ellipsis attached to the previous word and avoids awkward line breaks. -->
+				<NcSelect
+					input-id="instance-groups-select"
+					v-model="selectedGroups"
+					:options="groups"
+					:placeholder="t('twofactor_gateway', 'Restrict to groups\u00A0…')"
+					label="displayName"
+					track-by="id"
+					:no-wrap="false"
+					:multiple="true"
+					:keep-open="true"
+					:deselect-from-dropdown="true"
+					:close-on-select="false" />
+				<small class="modal-help-text">
+					{{ t('twofactor_gateway', 'Choose the initial group scope for this instance. Delegated admins must select at least one managed group.') }}
+				</small>
+			</div>
+
 			<!-- Dynamic gateway fields (hidden in wizard-first create mode; collected inside the wizard panel) -->
 			<template v-if="canRenderProviderFields && !showWizardFirstFlow">
 				<div
@@ -155,6 +175,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import { t } from '@nextcloud/l10n'
 import { resolveGatewaySetupPanel } from './providers/registry'
 import {
+	canUseGuidedSetupPanel,
 	computeCatalogSelectionState,
 	normalizeProviderCatalog,
 	resolveCurrentFields,
@@ -164,6 +185,7 @@ import {
 	resolveVisibleFields,
 	validateGatewayInstanceForm,
 	type FieldDefinition,
+	type GatewayGroup,
 	type GatewayInfo,
 } from '@lib/twofactor-gateway'
 
@@ -186,6 +208,8 @@ export default defineComponent({
 		instanceId: { type: String, default: '' },
 		initialLabel: { type: String, default: '' },
 		initialConfig: { type: Object as PropType<Record<string, string>>, default: () => ({}) },
+		groups: { type: Array as PropType<GatewayGroup[]>, default: () => [] },
+		initialGroupIds: { type: Array as PropType<string[]>, default: () => [] },
 	},
 
 	emits: ['close', 'saved'],
@@ -201,6 +225,7 @@ export default defineComponent({
 			selectedCatalogProviderId: '',
 			wizardPanelActive: false,
 			guidedSetupReadyToSave: false,
+			selectedGroups: this.groups.filter((group) => this.initialGroupIds.includes(group.id)) as GatewayGroup[],
 			form: {
 				label: this.initialLabel,
 				config: { ...this.initialConfig } as Record<string, string>,
@@ -363,6 +388,10 @@ export default defineComponent({
 				return null
 			}
 
+			if (!canUseGuidedSetupPanel(this.selectedProviderId, this.currentFields)) {
+				return null
+			}
+
 			return resolveGatewaySetupPanel(this.selectedProviderId)
 		},
 
@@ -383,7 +412,14 @@ export default defineComponent({
 		show(val: boolean) {
 			if (!val) {
 				this.guidedSetupReadyToSave = false
+				this.wizardPanelActive = false
 			}
+		},
+		initialGroupIds(value: string[]) {
+			this.selectedGroups = this.groups.filter((group) => value.includes(group.id))
+		},
+		groups() {
+			this.selectedGroups = this.groups.filter((group) => this.initialGroupIds.includes(group.id))
 		},
 		initialLabel(val: string) {
 			this.form.label = val
@@ -507,12 +543,22 @@ export default defineComponent({
 				if (this.hasProviderCatalog) {
 					config[this.providerSelectorFieldName] = this.effectiveCatalogProviderId
 				}
-				this.$emit('saved', {
+				const payload: {
+					gatewayId: string
+					instanceId: string
+					label: string
+					config: Record<string, string>
+					groupIds?: string[]
+				} = {
 					gatewayId: gwId,
 					instanceId: this.instanceId,
 					label: this.form.label.trim(),
 					config,
-				})
+				}
+				if (!this.isEditing) {
+					payload.groupIds = this.selectedGroups.map((group) => group.id).sort()
+				}
+				this.$emit('saved', payload)
 			} finally {
 				this.saving = false
 			}

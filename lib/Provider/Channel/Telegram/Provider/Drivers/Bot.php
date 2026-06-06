@@ -13,6 +13,7 @@ use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Provider\FieldType;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClientService;
@@ -56,6 +57,7 @@ class Bot extends AProvider {
 					field: 'token',
 					prompt: 'Please enter your Telegram bot token:',
 					type: FieldType::SECRET,
+					exposure: FieldExposure::DELEGATED,
 				),
 			]
 		);

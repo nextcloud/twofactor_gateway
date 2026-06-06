@@ -11,6 +11,10 @@ namespace OCA\TwoFactorGateway\Service;
 
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 
+/**
+ * @psalm-import-type GatewayInstanceArray from GatewayInstanceRecord
+ * @psalm-import-type GatewayInstanceInputArray from GatewayInstanceRecord
+ */
 final class GatewayRouteCandidate {
 	public function __construct(
 		public IGateway $gateway,
@@ -20,9 +24,7 @@ final class GatewayRouteCandidate {
 	) {
 	}
 
-	/**
-	 * @param array{gateway: IGateway, providerId?: string, publicInstanceId?: string, instance: array{id: string, label?: string, default?: bool, createdAt?: string, config?: array<string, scalar|null>, isComplete?: bool, groupIds?: list<string>, priority?: int}} $candidate
-	 */
+	/** @param array{gateway: IGateway, providerId?: string, publicInstanceId?: string, instance: GatewayInstanceInputArray} $candidate */
 	public static function fromArray(array $candidate): self {
 		return new self(
 			gateway: $candidate['gateway'],
@@ -32,9 +34,7 @@ final class GatewayRouteCandidate {
 		);
 	}
 
-	/**
-	 * @param array{id: string, label?: string, default?: bool, createdAt?: string, config?: array<string, scalar|null>, isComplete?: bool, groupIds?: list<string>, priority?: int} $instance
-	 */
+	/** @param GatewayInstanceInputArray $instance */
 	public static function fromGatewayAndInstance(IGateway $gateway, array $instance, bool $prefixPublicId): self {
 		$record = GatewayInstanceRecord::fromArray($instance);
 
@@ -46,9 +46,7 @@ final class GatewayRouteCandidate {
 		);
 	}
 
-	/**
-	 * @return array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}}
-	 */
+	/** @return array{gateway: IGateway, providerId: string, publicInstanceId: string, instance: GatewayInstanceArray} */
 	public function toArray(): array {
 		return [
 			'gateway' => $this->gateway,

@@ -54,6 +54,18 @@ class GatewayFieldSanitizerTest extends TestCase {
 		$this->assertSame(['display_name' => 'Client A'], $sanitized);
 	}
 
+	public function testFilterFieldsKeepsDelegatedSecretFieldsVisibleForEditing(): void {
+		$fields = [
+			new FieldDefinition(field: 'display_name', prompt: 'Display name', exposure: FieldExposure::DELEGATED),
+			new FieldDefinition(field: 'token', prompt: 'Token', type: FieldType::SECRET, exposure: FieldExposure::DELEGATED),
+			new FieldDefinition(field: 'base_url', prompt: 'Base URL', exposure: FieldExposure::ADMIN),
+		];
+
+		$visible = $this->sanitizer->filterFields($fields, GatewayViewScope::DELEGATED);
+
+		$this->assertSame(['display_name', 'token'], array_map(static fn (FieldDefinition $field): string => $field->field, $visible));
+	}
+
 	public function testSanitizeConfigKeepsOnlyRuntimeNonSecretFieldsForRuntimeView(): void {
 		$fields = [
 			new FieldDefinition(field: 'device_name', prompt: 'Device name', sensitivity: FieldSensitivity::NORMAL, exposure: FieldExposure::RUNTIME),
@@ -69,5 +81,26 @@ class GatewayFieldSanitizerTest extends TestCase {
 		$sanitized = $this->sanitizer->sanitizeConfig($config, $fields, GatewayViewScope::RUNTIME);
 
 		$this->assertSame(['device_name' => 'GW-1'], $sanitized);
+	}
+
+	public function testSanitizeConfigKeepsDelegatedXmppFieldsForDelegatedView(): void {
+		$fields = [
+			new FieldDefinition(field: 'sender', prompt: 'Sender', exposure: FieldExposure::DELEGATED),
+			new FieldDefinition(field: 'password', prompt: 'Password', exposure: FieldExposure::DELEGATED),
+			new FieldDefinition(field: 'server', prompt: 'Server', exposure: FieldExposure::DELEGATED),
+			new FieldDefinition(field: 'username', prompt: 'Username', exposure: FieldExposure::DELEGATED),
+			new FieldDefinition(field: 'method', prompt: 'Method', exposure: FieldExposure::DELEGATED),
+		];
+		$config = [
+			'sender' => 'bot@example.com',
+			'password' => 'secret-password',
+			'server' => 'https://xmpp.example.com/messages/',
+			'username' => 'bot',
+			'method' => '2',
+		];
+
+		$sanitized = $this->sanitizer->sanitizeConfig($config, $fields, GatewayViewScope::DELEGATED);
+
+		$this->assertSame($config, $sanitized);
 	}
 }

@@ -14,6 +14,7 @@ use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\Channel\Telegram\Service\TelegramClientSessionMonitorJobManager;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Provider\Gateway\AGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
@@ -74,6 +75,7 @@ class Gateway extends AGateway implements IProviderCatalogGateway, IInteractiveS
 			default: 'telegram_bot',
 			optional: false,
 			hidden: true,
+			exposure: FieldExposure::DELEGATED,
 		);
 	}
 
