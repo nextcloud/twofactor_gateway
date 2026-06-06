@@ -4,7 +4,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent } from 'vue'
-import GatewayRoutingModal from '../../components/GatewayRoutingModal.vue'
+import { GatewayRoutingModal } from '@lib/twofactor-gateway/components/gatewayRoutingModal'
 
 Object.defineProperty(window, 'matchMedia', {
 	writable: true,
