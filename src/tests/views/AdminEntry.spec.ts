@@ -17,7 +17,7 @@ vi.mock('vue', () => ({
 	createApp: createAppMock,
 }))
 
-vi.mock('@lib/twofactor-gateway/components', () => ({
+vi.mock('@lib/twofactor-gateway/components/adminSettings', () => ({
 	GatewayAdminSettings: gatewayAdminSettingsStub,
 }))
 
