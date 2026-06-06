@@ -138,10 +138,6 @@ import AlertCircleIcon from 'vue-material-design-icons/AlertCircle.vue'
 import DragIcon from 'vue-material-design-icons/Drag.vue'
 import draggable from 'vuedraggable'
 import { t } from '@nextcloud/l10n'
-import GatewayInstanceCard from '../components/GatewayInstanceCard.vue'
-import GatewayInstanceModal from '../components/GatewayInstanceModal.vue'
-import GatewayRoutingModal from '../components/GatewayRoutingModal.vue'
-import GatewayTestModal from '../components/GatewayTestModal.vue'
 import {
 	createInstance,
 	deleteInstance,
@@ -158,6 +154,10 @@ import {
 	type GatewayGroup,
 	type GatewayInfo,
 } from '@lib/twofactor-gateway'
+import { GatewayInstanceCard } from '@lib/twofactor-gateway/components/gatewayInstanceCard'
+import { GatewayInstanceModal } from '@lib/twofactor-gateway/components/gatewayInstanceModal'
+import { GatewayRoutingModal } from '@lib/twofactor-gateway/components/gatewayRoutingModal'
+import { GatewayTestModal } from '@lib/twofactor-gateway/components/gatewayTestModal'
 
 export default defineComponent({
 	name: 'AdminSettings',
