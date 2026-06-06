@@ -77,7 +77,6 @@ class Client extends AProvider {
 					optional: true,
 					type: FieldType::BOOLEAN,
 					helper: 'Disabled by default. Enable only when debugging Telegram Client issues.',
-					exposure: FieldExposure::ADMIN,
 				),
 				new FieldDefinition(
 					field: 'madeline_log_path',
@@ -86,7 +85,6 @@ class Client extends AProvider {
 					optional: true,
 					type: FieldType::TEXT,
 					helper: 'When empty, uses session directory inside Nextcloud data/appdata. Relative paths are resolved inside the session directory.',
-					exposure: FieldExposure::ADMIN,
 				),
 			]
 		);
