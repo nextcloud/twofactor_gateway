@@ -22,6 +22,7 @@ OC.L10N.register(
     "Label" : "برچسب",
     "Cancel" : "انصراف",
     "Reference" : "Reference",
+    "Deleting …" : "در حال حذف …",
     "Collapse" : "فروکش  کردن",
     "Expand" : "بسط دادن",
     "Close" : "بستن",
