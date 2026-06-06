@@ -50,6 +50,29 @@ class GatewayInstanceViewFactoryTest extends TestCase {
 		$this->assertSame(['admins'], $view['groupIds']);
 	}
 
+	public function testCreateInstanceViewKeepsDelegatedSignalAccountButNotAdminUrl(): void {
+		$gateway = $this->makeGatewayMock('signal', [
+			new FieldDefinition(field: 'url', prompt: 'Gateway URL', exposure: FieldExposure::ADMIN),
+			new FieldDefinition(field: 'account', prompt: 'Signal account', exposure: FieldExposure::DELEGATED),
+		]);
+
+		$view = $this->factory->createInstanceView($gateway, [
+			'id' => 'inst-signal',
+			'label' => 'Signal team A',
+			'default' => true,
+			'createdAt' => '2026-01-01T00:00:00+00:00',
+			'config' => [
+				'url' => 'http://signal.example.com',
+				'account' => '+5511999999999',
+			],
+			'isComplete' => true,
+			'groupIds' => ['team-a'],
+			'priority' => 20,
+		], GatewayViewScope::DELEGATED);
+
+		$this->assertSame(['account' => '+5511999999999'], $view['config']);
+	}
+
 	public function testCreateGatewayEntrySanitizesCatalogFieldsForDelegatedView(): void {
 		/** @var IGateway&IProviderCatalogGateway&MockObject $gateway */
 		$gateway = $this->createMockForIntersectionOfInterfaces([IGateway::class, IProviderCatalogGateway::class]);
@@ -80,7 +103,7 @@ class GatewayInstanceViewFactoryTest extends TestCase {
 		]], GatewayViewScope::DELEGATED);
 
 		$this->assertArrayNotHasKey('providerSelector', $entry);
-		$this->assertSame(['display_name'], array_map(static fn (array $field): string => $field['field'], $entry['providerCatalog'][0]['fields']));
+		$this->assertSame(['display_name', 'token'], array_map(static fn (array $field): string => $field['field'], $entry['providerCatalog'][0]['fields']));
 		$this->assertSame(['display_name' => 'WA Prod'], $entry['instances'][0]['config']);
 	}
 

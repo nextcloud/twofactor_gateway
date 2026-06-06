@@ -13,6 +13,10 @@ use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
 
+/**
+ * @psalm-import-type GatewayInstanceArray from GatewayInstanceRecord
+ * @psalm-import-type GatewayInstanceViewArray from GatewayInstanceRecord
+ */
 class GatewayInstanceViewFactory {
 	public function __construct(
 		private GatewayFieldSanitizer $fieldSanitizer,
@@ -20,7 +24,7 @@ class GatewayInstanceViewFactory {
 	}
 
 	/**
-	 * @param list<array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}> $instances
+	 * @param list<GatewayInstanceArray> $instances
 	 * @return array<string, mixed>
 	 */
 	public function createGatewayEntry(IGateway $gateway, array $instances, GatewayViewScope $scope): array {
@@ -65,8 +69,8 @@ class GatewayInstanceViewFactory {
 	}
 
 	/**
-	 * @param array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int} $instance
-	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}
+	 * @param GatewayInstanceArray $instance
+	 * @return GatewayInstanceViewArray
 	 */
 	public function createInstanceView(IGateway $gateway, array $instance, GatewayViewScope $scope): array {
 		$record = GatewayInstanceRecord::fromArray($instance);

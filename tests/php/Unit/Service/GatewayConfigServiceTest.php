@@ -101,6 +101,26 @@ class GatewayConfigServiceTest extends AppTestCase {
 		$this->assertArrayHasKey('createdAt', $instance);
 	}
 
+	public function testCreateInstanceStoresCreatorUserIdWhenProvided(): void {
+		$gateway = $this->makeGatewayMock('telegram', 'Telegram', [
+			['field' => 'token', 'prompt' => 'Bot Token'],
+		]);
+
+		$instance = $this->service->createInstance(
+			$gateway,
+			'Production',
+			['token' => 'abc123'],
+			[],
+			0,
+			'delegated-admin',
+		);
+
+		$this->assertSame('delegated-admin', $instance['createdByUserId']);
+
+		$fetched = $this->service->getInstance($gateway, $instance['id']);
+		$this->assertSame('delegated-admin', $fetched['createdByUserId']);
+	}
+
 	public function testFirstCreatedInstanceBecomesDefault(): void {
 		$gateway = $this->makeGatewayMock('signal', 'Signal', [
 			['field' => 'number', 'prompt' => 'Number'],
@@ -169,6 +189,21 @@ class GatewayConfigServiceTest extends AppTestCase {
 
 		$this->assertSame('New Label', $updated['label']);
 		$this->assertSame(['token' => 'new-token'], $updated['config']);
+	}
+
+	public function testUpdateInstanceKeepsExistingSecretWhenSubmittedBlank(): void {
+		$gateway = $this->makeGatewayMock('telegram', 'Telegram', [
+			['field' => 'token', 'prompt' => 'Token', 'type' => 'secret'],
+		]);
+		$created = $this->service->createInstance($gateway, 'Production', ['token' => 'keep-me']);
+
+		$updated = $this->service->updateInstance($gateway, $created['id'], 'Production', ['token' => '']);
+
+		$this->assertSame('keep-me', $updated['config']['token']);
+		$this->assertSame(
+			'keep-me',
+			$this->appConfig->getValueString('twofactor_gateway', 'telegram:' . $created['id'] . ':token', '__missing__'),
+		);
 	}
 
 	public function testUpdateCatalogInstanceDeletesOldProviderSpecificFieldsWhenProviderChanges(): void {

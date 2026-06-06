@@ -90,7 +90,7 @@ class GatewayCatalogServiceTest extends TestCase {
 
 		$gateway = $this->makeGatewayMock('sms', [
 			new FieldDefinition(field: 'display_name', prompt: 'Display name', exposure: FieldExposure::DELEGATED),
-			new FieldDefinition(field: 'api_token', prompt: 'API token', type: FieldType::SECRET),
+			new FieldDefinition(field: 'api_token', prompt: 'API token', type: FieldType::SECRET, exposure: FieldExposure::DELEGATED),
 		]);
 		$this->gatewayFactory->method('getFqcnList')->willReturn(['sms']);
 		$this->gatewayFactory->method('get')->with('sms')->willReturn($gateway);
@@ -130,7 +130,7 @@ class GatewayCatalogServiceTest extends TestCase {
 		$list = $this->service->listGateways($actor);
 
 		$this->assertCount(1, $list);
-		$this->assertSame(['display_name'], array_map(static fn (array $field): string => $field['field'], $list[0]['fields']));
+		$this->assertSame(['display_name', 'api_token'], array_map(static fn (array $field): string => $field['field'], $list[0]['fields']));
 		$this->assertCount(1, $list[0]['instances']);
 		$this->assertSame('inst-a', $list[0]['instances'][0]['id']);
 		$this->assertSame(['display_name' => 'Client A'], $list[0]['instances'][0]['config']);

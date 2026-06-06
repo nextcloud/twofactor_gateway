@@ -13,6 +13,7 @@ use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\XMPP\CurlFunctionStubs;
 use OCA\TwoFactorGateway\Provider\Channel\XMPP\Gateway;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
+use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCP\IAppConfig;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -69,6 +70,15 @@ class GatewayTest extends TestCase {
 		);
 
 		$this->assertCount(0, $emptyPromptFields);
+	}
+
+	public function testCreateSettingsMarksFieldsAsDelegated(): void {
+		$gateway = new Gateway($this->appConfig, $this->logger);
+		$settings = $gateway->getSettings();
+
+		foreach ($settings->fields as $field) {
+			$this->assertSame(FieldExposure::DELEGATED->value, $field->getExposure());
+		}
 	}
 
 	public function testSendMasksIdentifierAndDoesNotLogMessageContent(): void {

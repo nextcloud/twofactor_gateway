@@ -80,6 +80,7 @@
 		<GatewayInstanceModal
 			:show="showModal"
 			:gateways="gateways"
+			:groups="groups"
 			:gateway-id="editingGatewayId"
 			:instance-id="editingInstanceId"
 			:initial-label="editingLabel"
@@ -347,7 +348,7 @@ export default defineComponent({
 			}
 		},
 
-		async onSaved(payload: { gatewayId: string; instanceId: string; label: string; config: Record<string, string> }) {
+		async onSaved(payload: { gatewayId: string; instanceId: string; label: string; config: Record<string, string>; groupIds?: string[] }) {
 			try {
 				if (payload.instanceId) {
 					const existingItem = findFlatInstanceEntry(this.allInstances, payload.gatewayId, payload.instanceId)
@@ -360,7 +361,7 @@ export default defineComponent({
 						existingItem?.instance.priority ?? 0,
 					)
 				} else {
-					await createInstance(payload.gatewayId, payload.label, payload.config, [], 0)
+					await createInstance(payload.gatewayId, payload.label, payload.config, payload.groupIds ?? [], 0)
 				}
 				this.showModal = false
 				await this.loadGateways()

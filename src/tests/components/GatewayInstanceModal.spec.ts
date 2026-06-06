@@ -173,9 +173,21 @@ const goWhatsAppGateway: GatewayInfo = {
 	instances: [],
 }
 
+const delegatedGoWhatsAppGateway: GatewayInfo = {
+	...goWhatsAppGateway,
+	providerCatalog: [{
+		id: 'gowhatsapp',
+		name: 'WhatsApp',
+		fields: [
+			{ field: 'phone', prompt: 'Phone number for WhatsApp Web access:', default: '', optional: false },
+		],
+	}],
+}
+
 const defaultProps = {
 	show: true,
 	gateways: [signalGateway],
+	groups: [],
 	gatewayId: '',
 	instanceId: '',
 	initialLabel: '',
@@ -310,6 +322,60 @@ describe('GatewayInstanceModal (create mode)', () => {
 
 		const fields = (wrapper.vm as unknown as { fieldsToValidate: Array<{ field: string }> }).fieldsToValidate
 		expect(fields).toHaveLength(0)
+	})
+
+	it('falls back to standard delegated fields when guided setup needs admin-only inputs', async () => {
+		const wrapper = mount(GatewayInstanceModal, {
+			props: {
+				show: true,
+				gateways: [delegatedGoWhatsAppGateway],
+				groups: [],
+				gatewayId: '',
+				instanceId: '',
+				initialLabel: '',
+				initialConfig: {},
+			},
+		})
+
+		await wrapper.find('select').setValue('whatsapp')
+		await flushPromises()
+
+		expect(wrapper.find('.mock-gateway-setup-panel').exists()).toBe(false)
+		expect(wrapper.findAll('button').some((button) => button.text().includes('tr:Save'))).toBe(true)
+	})
+
+	it('emits selected create groupIds in sorted order', async () => {
+		const wrapper = mount(GatewayInstanceModal, {
+			props: {
+				show: true,
+				gateways: [signalGateway],
+				groups: [
+					{ id: 'staff', displayName: 'Staff' },
+					{ id: 'admins', displayName: 'Admins' },
+				],
+				gatewayId: '',
+				instanceId: '',
+				initialLabel: '',
+				initialConfig: {},
+			},
+		})
+
+		await wrapper.find('select').setValue('signal')
+		await flushPromises()
+
+		const selects = wrapper.findAll('.nc-select-mock select')
+		await selects[1].setValue(['staff', 'admins'])
+
+		const textInputs = wrapper.findAll('input[type="text"]')
+		const labelInput = textInputs[0]
+		await labelInput.setValue('Team Signal')
+		await textInputs[1].setValue('http://signal.example.com')
+
+		const saveButton = wrapper.findAll('button').find((button) => button.text().includes('tr:Save'))
+		await saveButton?.trigger('click')
+
+		const savedPayload = wrapper.emitted('saved')?.[0]?.[0] as { groupIds: string[] } | undefined
+		expect(savedPayload?.groupIds).toEqual(['admins', 'staff'])
 	})
 
 	it('hides Provider selector and Label when wizard session becomes active', async () => {
@@ -818,6 +884,7 @@ describe('GatewayInstanceModal (edit mode)', () => {
 			props: {
 				show: true,
 				gateways: [signalGateway],
+				groups: [],
 				gatewayId: 'signal',
 				instanceId: 'abc123',
 				initialLabel: 'Production',

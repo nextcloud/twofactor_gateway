@@ -15,6 +15,7 @@ use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUser;
 
+/** @psalm-import-type GatewayInstanceArray from GatewayInstanceRecord */
 class GatewayPermissionService {
 	public function __construct(
 		private IGroupManager $groupManager,
@@ -95,8 +96,8 @@ class GatewayPermissionService {
 	}
 
 	/**
-	 * @param list<array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}> $instances
-	 * @return list<array{id: string, label: string, default: bool, createdAt: string, config: array<string, string>, isComplete: bool, groupIds: list<string>, priority: int}>
+	 * @param list<GatewayInstanceArray> $instances
+	 * @return list<GatewayInstanceArray>
 	 */
 	public function filterVisibleInstances(?IUser $actor, array $instances): array {
 		return array_values(array_filter(
