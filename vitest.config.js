@@ -8,7 +8,7 @@ import { fileURLToPath, URL } from 'node:url'
 export default mergeConfig({
 	resolve: {
 		alias: {
-			'@lib/twofactor-gateway': fileURLToPath(new URL('./src/lib/twofactor-gateway/index.ts', import.meta.url)),
+			'@lib/twofactor-gateway': fileURLToPath(new URL('./src/lib/twofactor-gateway', import.meta.url)),
 		},
 	},
 	plugins: [vue()],
