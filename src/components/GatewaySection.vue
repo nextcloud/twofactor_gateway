@@ -102,9 +102,6 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import ChevronDownIcon from 'vue-material-design-icons/ChevronDown.vue'
 import PlusIcon from 'vue-material-design-icons/Plus.vue'
 import { t } from '@nextcloud/l10n'
-import GatewayInstanceCard from './GatewayInstanceCard.vue'
-import GatewayInstanceModal from './GatewayInstanceModal.vue'
-import GatewayTestModal from './GatewayTestModal.vue'
 import {
 	createInstance,
 	deleteInstance,
@@ -113,6 +110,9 @@ import {
 	type GatewayInfo,
 	type GatewayInstance,
 } from '@lib/twofactor-gateway'
+import { GatewayInstanceCard } from '@lib/twofactor-gateway/components/gatewayInstanceCard'
+import { GatewayInstanceModal } from '@lib/twofactor-gateway/components/gatewayInstanceModal'
+import { GatewayTestModal } from '@lib/twofactor-gateway/components/gatewayTestModal'
 
 export default defineComponent({
 	name: 'GatewaySection',
