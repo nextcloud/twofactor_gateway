@@ -140,6 +140,7 @@ OC.L10N.register(
     "Check login status" : "Anmeldestatus prüfen",
     "Submit password" : "Passwort übermitteln",
     "Paste the token once. The wizard will query Meta and list the available phone numbers and approved templates automatically." : "Das Token einmal einfügen. Der Assistent fragt Meta ab und listet automatisch die verfügbaren Telefonnummern und genehmigten Vorlagen auf.",
+    "e.g. {templateName}" : "z.B. {templateName}",
     "Starting guided setup ..." : "Starte geführte Einrichtung …",
     "Discover available resources" : "Verfügbare Ressourcen erkennen",
     "Not selectable" : "Nicht wählbar",
