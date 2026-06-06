@@ -61,24 +61,14 @@ class Client extends AProvider {
 					field: 'api_id',
 					prompt: 'Please enter your Telegram api_id:',
 					helper: 'Get one at https://my.telegram.org/apps',
-<<<<<<< HEAD
-					exposure: FieldExposure::ADMIN,
-||||||| parent of f51b06b0 (fix: delegate telegram client credentials)
-=======
 					exposure: FieldExposure::DELEGATED,
->>>>>>> f51b06b0 (fix: delegate telegram client credentials)
 				),
 				new FieldDefinition(
 					field: 'api_hash',
 					prompt: 'Please enter your Telegram api_hash:',
 					helper: 'Get one at https://my.telegram.org/apps',
 					type: FieldType::SECRET,
-<<<<<<< HEAD
-					exposure: FieldExposure::ADMIN,
-||||||| parent of f51b06b0 (fix: delegate telegram client credentials)
-=======
 					exposure: FieldExposure::DELEGATED,
->>>>>>> f51b06b0 (fix: delegate telegram client credentials)
 				),
 				new FieldDefinition(
 					field: 'madeline_log_enabled',
