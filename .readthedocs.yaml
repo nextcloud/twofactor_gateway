@@ -15,6 +15,10 @@ build:
     post_install:
       - npm ci
 
+python:
+  install:
+    - requirements: requirements-docs.txt
+
 mkdocs:
   configuration: mkdocs.yml
   fail_on_warning: true

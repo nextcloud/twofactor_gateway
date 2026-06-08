@@ -45,6 +45,7 @@ jobs:
               - 'openapi*.json'
               - 'package.json'
               - 'package-lock.json'
+              - 'requirements-docs.txt'
               - 'tsconfig.json'
               - '**.js'
               - '**.ts'
@@ -77,6 +78,11 @@ jobs:
 
       - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
         run: npm i -g 'npm@${{ steps.versions.outputs.npmVersion }}'
+
+      - name: Install docs tooling
+        run: |
+          python3 -m pip install --user -r requirements-docs.txt
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
       - name: Install dependencies & build
         env:
