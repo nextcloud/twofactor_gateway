@@ -11,8 +11,8 @@ namespace OCA\TwoFactorGateway\Settings;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
 use OCA\TwoFactorGateway\Service\GatewayAdminInitialStateService;
-use OCP\AppFramework\Services\IInitialState;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\Settings\IDelegatedSettings;
 
 class AdminSettings implements IDelegatedSettings {

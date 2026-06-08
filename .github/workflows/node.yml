@@ -37,7 +37,7 @@ jobs:
               - '.github/workflows/**'
               - 'src/**'
               - 'doc/**'
-              - 'build/tools/**'
+              - 'tools/**'
               - '.readthedocs.yaml'
               - 'mkdocs.yml'
               - 'styleguide.config.cjs'

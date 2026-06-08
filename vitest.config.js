@@ -4,7 +4,7 @@
 import { mergeConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
-import { vueDocsBlockPlugin } from './build/tools/vueDocsBlockPlugin.js'
+import { vueDocsBlockPlugin } from './tools/vueDocsBlockPlugin.js'
 
 export default mergeConfig({
 	resolve: {

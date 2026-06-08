@@ -7,7 +7,7 @@ theme:
   name: mkdocs
   navigation_depth: 3
 hooks:
-  - build/tools/mkdocs_hooks.py
+  - tools/mkdocs_hooks.py
 extra_javascript:
   - assets/openapi-explorer.js
 nav:

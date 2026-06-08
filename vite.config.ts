@@ -7,7 +7,7 @@ import { createAppConfig } from '@nextcloud/vite-config'
 import eslint from 'vite-plugin-eslint'
 import stylelint from 'vite-plugin-stylelint'
 import path from 'path'
-import { vueDocsBlockPlugin } from './build/tools/vueDocsBlockPlugin.js'
+import { vueDocsBlockPlugin } from './tools/vueDocsBlockPlugin.js'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
