@@ -61,6 +61,7 @@ OC.L10N.register(
     "Label" : "Kennzeichnung",
     "e.g. Production, Client A …" : "z. B. Produktion, Kunde A …",
     "Restrict to groups …" : "Auf Gruppen beschränken …",
+    "Choose the initial group scope for this instance. Delegated admins must select at least one managed group." : "Den anfänglichen Gruppenbereich für diese Instanz auswählen. Die delegierte Administration muss mindestens eine verwaltete Gruppe auswählen.",
     "optional" : "Optional",
     "Cancel" : "Abbrechen",
     "Routing settings" : "Routing-Einstellungen",
