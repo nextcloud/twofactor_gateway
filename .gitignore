@@ -16,4 +16,8 @@ composer.phar
 
 /build/
 
+# Python caches from docs/tooling hooks
+__pycache__/
+*.py[cod]
+
 .php-cs-fixer.cache

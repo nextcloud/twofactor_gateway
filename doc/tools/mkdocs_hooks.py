@@ -20,7 +20,13 @@ _STYLEGUIDE_BUILT = False
 
 
 def _project_root() -> Path:
-    return Path(__file__).resolve().parents[1]
+    current_path = Path(__file__).resolve()
+
+    for parent in current_path.parents:
+        if (parent / 'mkdocs.yml').exists() and (parent / 'package.json').exists():
+            return parent
+
+    raise RuntimeError(f'Unable to resolve project root from {current_path}')
 
 
 def _copy_directory(source: Path, target: Path) -> None:
