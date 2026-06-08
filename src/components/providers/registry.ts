@@ -12,10 +12,54 @@ type ViteImportMeta = ImportMeta & {
 	) => Record<string, T>
 }
 
-const discoveredSetupPanels = (import.meta as ViteImportMeta).glob<Component>('./*/SetupPanel.vue', {
-	eager: true,
-	import: 'default',
-})
+type WebpackModule<T> = {
+	default: T
+}
+
+type WebpackRequireContext<T> = {
+	(key: string): T
+	keys(): string[]
+}
+
+type WebpackImportMeta = ImportMeta & {
+	webpackContext?: <T = unknown>(
+		request: string,
+		options?: {
+			recursive?: boolean
+			regExp?: RegExp
+			mode?: 'sync' | 'eager' | 'weak' | 'lazy' | 'lazy-once'
+		},
+	) => WebpackRequireContext<T>
+}
+
+function discoverSetupPanels(): Record<string, Component> {
+	const viteGlob = (import.meta as Partial<ViteImportMeta>).glob
+	if (typeof viteGlob === 'function') {
+		return viteGlob<Component>('./*/SetupPanel.vue', {
+			eager: true,
+			import: 'default',
+		})
+	}
+
+	const webpackContext = (import.meta as Partial<WebpackImportMeta>).webpackContext
+	if (typeof webpackContext === 'function') {
+		const context = webpackContext<WebpackModule<Component>>('./', {
+			recursive: true,
+			regExp: /^\.\/[^/]+\/SetupPanel\.vue$/,
+			mode: 'sync',
+		})
+		return Object.fromEntries(
+			context.keys().map((key) => {
+				const module = context(key)
+				return [key, module.default] as const
+			}),
+		)
+	}
+
+	return {}
+}
+
+const discoveredSetupPanels = discoverSetupPanels()
 
 const providerSetupPanels: Record<string, Component> = Object.fromEntries(
 	Object.entries(discoveredSetupPanels)

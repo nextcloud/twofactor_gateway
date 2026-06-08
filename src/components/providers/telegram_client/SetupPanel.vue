@@ -165,11 +165,7 @@ import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
-import {
-	cancelInteractiveSetup,
-	interactiveSetupStep,
-	startInteractiveSetup,
-} from '@lib/twofactor-gateway'
+import { useGatewayAdminApi } from '@lib/twofactor-gateway'
 import type { InteractiveSetupResponse } from '@lib/twofactor-gateway'
 
 export default defineComponent({
@@ -192,7 +188,10 @@ export default defineComponent({
 	},
 	emits: ['merge-config', 'setup-completed', 'update:wizardActive'],
 	setup() {
-		return { t }
+		return {
+			t,
+			gatewayAdminApi: useGatewayAdminApi(),
+		}
 	},
 	data() {
 		return {
@@ -313,7 +312,7 @@ export default defineComponent({
 			}
 			this.pollAttempt++
 			try {
-				const response = await interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'poll_login')
+				const response = await this.gatewayAdminApi.interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'poll_login')
 				this.applyWizardResponse(response)
 				if (this.wizardSessionId && (this.wizardStep === 'scan_qr' || this.wizardStep === 'password_polling') && response.status !== 'error') {
 					this.schedulePoll()
@@ -403,7 +402,7 @@ export default defineComponent({
 				// TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide.
 				this.wizardMessage = t('twofactor_gateway', 'Starting guided setup\u00A0…')
 				this.wizardMessageType = 'info'
-				const response = await startInteractiveSetup(this.gatewayId, {
+				const response = await this.gatewayAdminApi.startInteractiveSetup(this.gatewayId, {
 					provider: this.providerId,
 					api_id: sanitizedApiId,
 					api_hash: sanitizedApiHash,
@@ -431,7 +430,7 @@ export default defineComponent({
 				// TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide.
 				this.wizardMessage = t('twofactor_gateway', 'Processing guided setup step\u00A0…')
 				this.wizardMessageType = 'info'
-				const response = await interactiveSetupStep(this.gatewayId, this.wizardSessionId, action, input)
+				const response = await this.gatewayAdminApi.interactiveSetupStep(this.gatewayId, this.wizardSessionId, action, input)
 				this.applyWizardResponse(response)
 			} catch (error) {
 				this.wizardMessage = this.normalizeErrorMessage(error)
@@ -450,7 +449,7 @@ export default defineComponent({
 
 			this.wizardLoading = true
 			try {
-				await cancelInteractiveSetup(this.gatewayId, this.wizardSessionId)
+				await this.gatewayAdminApi.cancelInteractiveSetup(this.gatewayId, this.wizardSessionId)
 				this.wizardSessionId = ''
 				this.wizardStep = ''
 				this.wizardQrSvg = ''

@@ -3,4 +3,7 @@
 
 export * from './adminGatewayApi.ts'
 export * from './adminGatewayViewModel.ts'
+export * from './gatewayAdminAllowedActions.ts'
+export * from './gatewayAdminSnapshot.ts'
 export * from './gatewayInstanceModalModel.ts'
+export * from './localGatewayAdminApi.ts'

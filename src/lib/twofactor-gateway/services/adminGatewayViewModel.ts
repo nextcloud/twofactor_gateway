@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import type { FieldDefinition, GatewayInfo, GatewayInstance } from '../types/gateway.ts'
+import type { FieldDefinition, GatewayGroup, GatewayInfo, GatewayInstance } from '../types/gateway.ts'
 
 export interface FlatInstanceEntry {
 	orderKey: string
@@ -9,10 +9,21 @@ export interface FlatInstanceEntry {
 	providerName: string
 	fields: FieldDefinition[]
 	instance: GatewayInstance
+	groupNames?: string[]
 	showRoutingAction: boolean
 }
 
-export function buildFlatInstances(gateways: GatewayInfo[]): FlatInstanceEntry[] {
+function resolveGroupNames(groupIds: string[], groups: GatewayGroup[]): string[] {
+	if (groupIds.length === 0) {
+		return []
+	}
+
+	return groupIds
+		.map((groupId) => groups.find((group) => group.id === groupId)?.displayName ?? groupId)
+		.filter((groupName, index, groupNames) => groupName !== '' && groupNames.indexOf(groupName) === index)
+}
+
+export function buildFlatInstances(gateways: GatewayInfo[], groups: GatewayGroup[] = []): FlatInstanceEntry[] {
 	const rows: FlatInstanceEntry[] = []
 	for (const gateway of gateways) {
 		const instances = Array.isArray(gateway.instances) ? gateway.instances : []
@@ -34,6 +45,7 @@ export function buildFlatInstances(gateways: GatewayInfo[]): FlatInstanceEntry[]
 					groupIds,
 					priority,
 				},
+				groupNames: resolveGroupNames(groupIds, groups),
 				showRoutingAction: true,
 			})
 		}

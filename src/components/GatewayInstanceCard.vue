@@ -22,8 +22,13 @@
 
 			<div class="card-actions">
 				<!-- Set as default (only when not already default) -->
+				<!--
+				  Requests promotion of the current instance as the default instance.
+				  @event set-default
+				  @property {string} instanceId Stable instance identifier.
+				-->
 				<NcButton
-					v-if="!instance.default"
+					v-if="showSetDefaultAction && !instance.default"
 					type="tertiary"
 					:title="t('twofactor_gateway', 'Set as default')"
 					:aria-label="t('twofactor_gateway', 'Set as default')"
@@ -33,7 +38,7 @@
 					</template>
 				</NcButton>
 				<NcButton
-					v-else
+					v-else-if="instance.default"
 					class="card-action-default"
 					type="tertiary"
 					:title="t('twofactor_gateway', 'This is the default instance')"
@@ -45,7 +50,13 @@
 				</NcButton>
 
 				<!-- Test -->
+				<!--
+				  Requests a test-send flow for the current instance.
+				  @event test
+				  @property {string} instanceId Stable instance identifier.
+				-->
 				<NcButton
+					v-if="showTestAction"
 					class="card-action-test"
 					type="tertiary"
 					:title="t('twofactor_gateway', 'Test this instance')"
@@ -57,6 +68,11 @@
 					</template>
 				</NcButton>
 
+				<!--
+				  Requests editing of group-based routing for the current instance.
+				  @event routing
+				  @property {string} instanceId Stable instance identifier.
+				-->
 				<NcButton
 					v-if="showRoutingAction"
 					type="tertiary"
@@ -69,7 +85,13 @@
 				</NcButton>
 
 				<!-- Edit -->
+				<!--
+				  Requests edition of the current instance.
+				  @event edit
+				  @property {string} instanceId Stable instance identifier.
+				-->
 				<NcButton
+					v-if="showEditAction"
 					type="tertiary"
 					:title="t('twofactor_gateway', 'Edit')"
 					:aria-label="t('twofactor_gateway', 'Edit')"
@@ -80,7 +102,13 @@
 				</NcButton>
 
 				<!-- Delete -->
+				<!--
+				  Requests deletion of the current instance.
+				  @event delete
+				  @property {string} instanceId Stable instance identifier.
+				-->
 				<NcButton
+					v-if="showDeleteAction"
 					type="tertiary"
 					:title="t('twofactor_gateway', 'Delete')"
 					:aria-label="t('twofactor_gateway', 'Delete')"
@@ -124,6 +152,83 @@
 	</div>
 </template>
 
+<docs>
+
+Lowest-coupling presentational block in the stable frontend reuse surface.
+
+`GatewayInstanceCard` receives normalized data through props and emits user intent back to the parent, which makes it the safest public UI block to reuse from another app.
+
+When a host wants a more restrictive UI policy, it can hide individual actions through props instead of passing raw role semantics into the card.
+
+Non-primitive prop types used here — especially `GatewayInstance`, `FieldDefinition` and `GatewayGroup` — are documented centrally in [`Shared frontend types`](#/Shared%20frontend%20types).
+
+### Preview
+
+```vue
+<template>
+	<div class="demo-shell">
+		<GatewayInstanceCard
+			:instance="instance"
+			:fields="fields"
+			:groups="groups"
+			provider-name="Acme SMS"
+			@edit="remember('edit', $event)"
+			@delete="remember('delete', $event)"
+			@routing="remember('routing', $event)"
+			@set-default="remember('set-default', $event)"
+			@test="remember('test', $event)" />
+		<p class="demo-log">
+			Last emitted event: <code>{{ lastEvent }}</code>
+		</p>
+	</div>
+</template>
+
+<script>
+import { GatewayInstanceCard } from '@lib/twofactor-gateway/components/gatewayInstanceCard'
+import { cloneGatewayById, cloneStyleguideGroups } from '../styleguide/mocks/data'
+
+export default {
+	components: {
+		GatewayInstanceCard,
+	},
+	data() {
+		const gateway = cloneGatewayById('acme_sms')
+		return {
+			fields: gateway.fields,
+			groups: cloneStyleguideGroups(),
+			instance: gateway.instances[0],
+			lastEvent: 'none',
+		}
+	},
+	methods: {
+		remember(action, instanceId) {
+			this.lastEvent = `${action}(${instanceId})`
+		},
+	},
+}
+</script>
+
+<style scoped>
+.demo-shell {
+	display: grid;
+	gap: 0.75rem;
+}
+
+.demo-log {
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+}
+
+code {
+	padding: 0.15rem 0.35rem;
+	border-radius: var(--border-radius-element);
+	background: var(--color-background-dark);
+}
+</style>
+```
+
+</docs>
+
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -143,16 +248,57 @@ import type {
 
 const MASKED_FIELDS = ['token', 'password', 'secret', 'api_key', 'key', 'pass', 'credential']
 
+/**
+ * Data-driven card that renders a normalized gateway instance and emits user actions to the parent.
+ */
 export default defineComponent({
 	name: 'GatewayInstanceCard',
 	components: { NcButton, NcChip, DeleteIcon, PencilIcon, StarIcon, StarOutlineIcon, TestTubeIcon, AccountMultipleIcon },
 
 	props: {
+		/**
+		 * Normalized gateway instance to render.
+		 * See [Shared frontend types](#/Shared%20frontend%20types) → `GatewayInstance`.
+		 */
 		instance: { type: Object as PropType<GatewayInstance>, required: true },
+		/**
+		 * Field schema used to label values and mask hidden or secret fields.
+		 * See [Shared frontend types](#/Shared%20frontend%20types) → `FieldDefinition`.
+		 */
 		fields: { type: Array as PropType<FieldDefinition[]>, default: () => [] },
+		/**
+		 * Human-readable provider name badge shown near the instance label.
+		 */
 		providerName: { type: String, default: '' },
+		/**
+		 * Optional host/backend-resolved group names. When provided, the card does not need to resolve ids via `groups`.
+		 */
+		groupNames: { type: Array as PropType<string[]>, default: () => [] },
+		/**
+		 * Available routing groups used to resolve group ids into display names.
+		 * See [Shared frontend types](#/Shared%20frontend%20types) → `GatewayGroup`.
+		 */
 		groups: { type: Array as PropType<GatewayGroup[]>, default: () => [] },
+		/**
+		 * Toggles visibility of the set-default action button for non-default instances.
+		 */
+		showSetDefaultAction: { type: Boolean, default: true },
+		/**
+		 * Toggles visibility of the test action button.
+		 */
+		showTestAction: { type: Boolean, default: true },
+		/**
+		 * Toggles visibility of the routing action when the parent does not want to expose group-based routing edits.
+		 */
 		showRoutingAction: { type: Boolean, default: true },
+		/**
+		 * Toggles visibility of the edit action button.
+		 */
+		showEditAction: { type: Boolean, default: true },
+		/**
+		 * Toggles visibility of the delete action button.
+		 */
+		showDeleteAction: { type: Boolean, default: true },
 	},
 
 	emits: ['edit', 'delete', 'set-default', 'test', 'routing'],
@@ -207,6 +353,11 @@ export default defineComponent({
 		},
 
 		routingGroupNames(): string[] {
+			if (Array.isArray(this.groupNames) && this.groupNames.length > 0) {
+				return this.groupNames
+					.filter((groupName, index, groupNames) => groupName !== '' && groupNames.indexOf(groupName) === index)
+			}
+
 			const groupIds = Array.isArray(this.instance.groupIds) ? this.instance.groupIds : []
 			if (groupIds.length === 0) {
 				return []

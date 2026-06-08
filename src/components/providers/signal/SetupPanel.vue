@@ -77,11 +77,7 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
-import {
-	cancelInteractiveSetup,
-	interactiveSetupStep,
-	startInteractiveSetup,
-} from '@lib/twofactor-gateway'
+import { useGatewayAdminApi } from '@lib/twofactor-gateway'
 import type { InteractiveSetupResponse } from '@lib/twofactor-gateway'
 
 export default defineComponent({
@@ -101,7 +97,10 @@ export default defineComponent({
 	},
 	emits: ['merge-config', 'setup-completed', 'update:wizardActive'],
 	setup() {
-		return { t }
+		return {
+			t,
+			gatewayAdminApi: useGatewayAdminApi(),
+		}
 	},
 	data() {
 		return {
@@ -203,7 +202,7 @@ export default defineComponent({
 			}
 			this.pollAttempt++
 			try {
-				const response = await interactiveSetupStep(
+				const response = await this.gatewayAdminApi.interactiveSetupStep(
 					this.gatewayId,
 					this.wizardSessionId,
 					'poll_link',
@@ -244,7 +243,7 @@ export default defineComponent({
 		async startWizard() {
 			this.wizardLoading = true
 			try {
-				const response = await startInteractiveSetup(this.gatewayId, {
+				const response = await this.gatewayAdminApi.startInteractiveSetup(this.gatewayId, {
 					url: this.bootstrapUrl.trim(),
 				})
 				this.applyWizardResponse(response)
@@ -265,7 +264,7 @@ export default defineComponent({
 			this.wizardLoading = true
 			this.stopPolling()
 			try {
-				const response = await interactiveSetupStep(this.gatewayId, this.wizardSessionId, action, input)
+				const response = await this.gatewayAdminApi.interactiveSetupStep(this.gatewayId, this.wizardSessionId, action, input)
 				this.applyWizardResponse(response)
 				if (this.wizardStep === 'scan_qr') {
 					this.startPolling()
@@ -283,7 +282,7 @@ export default defineComponent({
 			this.stopPolling()
 			if (this.wizardSessionId) {
 				try {
-					await cancelInteractiveSetup(this.gatewayId, this.wizardSessionId)
+					await this.gatewayAdminApi.cancelInteractiveSetup(this.gatewayId, this.wizardSessionId)
 				} catch (_) {
 					// ignore
 				}

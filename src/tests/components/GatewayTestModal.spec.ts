@@ -4,6 +4,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent } from 'vue'
+import { createGatewayAdminApi, gatewayAdminApiKey, type GatewayAdminApi } from '@lib/twofactor-gateway'
 import { GatewayTestModal } from '@lib/twofactor-gateway/components/gatewayTestModal'
 
 Object.defineProperty(window, 'matchMedia', {
@@ -26,14 +27,6 @@ vi.mock('@nextcloud/l10n', () => ({
 		)
 	},
 }))
-
-vi.mock('@lib/twofactor-gateway', async (importOriginal) => {
-	const orig = await importOriginal()
-	return {
-		...(orig as Record<string, unknown>),
-		testInstance: vi.fn(),
-	}
-})
 
 vi.mock('@nextcloud/vue/components/NcModal', () => ({
 	default: defineComponent({
@@ -77,6 +70,24 @@ const defaultProps = {
 	label: 'Production',
 }
 
+function createGatewayAdminApiMock(overrides: Partial<GatewayAdminApi> = {}): GatewayAdminApi {
+	return createGatewayAdminApi({
+		testInstance: vi.fn(),
+		...overrides,
+	})
+}
+
+function mountGatewayTestModal(api: GatewayAdminApi, props = defaultProps) {
+	return mount(GatewayTestModal, {
+		props,
+		global: {
+			provide: {
+				[gatewayAdminApiKey as symbol]: api,
+			},
+		},
+	})
+}
+
 describe('GatewayTestModal', () => {
 	beforeEach(() => {
 		vi.resetAllMocks()
@@ -87,94 +98,92 @@ describe('GatewayTestModal', () => {
 	}
 
 	it('renders when show is true', () => {
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(createGatewayAdminApiMock())
 		expect(wrapper.find('.nc-modal').exists()).toBe(true)
 	})
 
 	it('does not render when show is false', () => {
-		const wrapper = mount(GatewayTestModal, { props: { ...defaultProps, show: false } })
+		const wrapper = mountGatewayTestModal(createGatewayAdminApiMock(), { ...defaultProps, show: false })
 		expect(wrapper.find('.nc-modal').exists()).toBe(false)
 	})
 
 	it('shows description mentioning the instance label', () => {
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(createGatewayAdminApiMock())
 		expect(wrapper.text()).toContain('Production')
 	})
 
 	it('disables the Send Test button when identifier is empty', () => {
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(createGatewayAdminApiMock())
 		// No text entered → disabled
 		const sendButton = findSendButton(wrapper)
 		expect(sendButton?.attributes('disabled')).not.toBeUndefined()
 	})
 
 	it('enables the Send Test button when identifier is filled', async () => {
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(createGatewayAdminApiMock())
 		await wrapper.find('input').setValue('+1234567890')
 		const sendButton = findSendButton(wrapper)
 		expect(sendButton?.attributes('disabled')).toBeUndefined()
 	})
 
 	it('calls testInstance with the correct arguments on send', async () => {
-		const { testInstance } = await import('@lib/twofactor-gateway')
-		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(api)
 		await wrapper.find('input').setValue('+1234567890')
 		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
 
-		expect(testInstance).toHaveBeenCalledWith('signal', 'abc123', '+1234567890')
+		expect(api.testInstance).toHaveBeenCalledWith('signal', 'abc123', '+1234567890')
 	})
 
 	it('sends test when pressing Enter in identifier field', async () => {
-		const { testInstance } = await import('@lib/twofactor-gateway')
-		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(api)
 		await wrapper.find('input').setValue('+1234567890')
 		await wrapper.find('input').trigger('keydown.enter')
 		await flushPromises()
 
-		expect(testInstance).toHaveBeenCalledWith('signal', 'abc123', '+1234567890')
+		expect(api.testInstance).toHaveBeenCalledWith('signal', 'abc123', '+1234567890')
 	})
 
 	it('does not close modal when pressing Enter in identifier field', async () => {
-		const { testInstance } = await import('@lib/twofactor-gateway')
-		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(api)
 		await wrapper.find('input').setValue('+1234567890')
 		await wrapper.find('input').trigger('keydown.enter')
 		await flushPromises()
 
-		expect(testInstance).toHaveBeenCalledTimes(1)
+		expect(api.testInstance).toHaveBeenCalledTimes(1)
 		expect(wrapper.emitted('close')).toBeUndefined()
 	})
 
 	it('trims identifier before sending test request', async () => {
-		const { testInstance } = await import('@lib/twofactor-gateway')
-		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
-		const wrapper = mount(GatewayTestModal, {
-			props: {
+		const wrapper = mountGatewayTestModal(api, {
 				...defaultProps,
 				gatewayId: 'telegram',
-			},
 		})
 		await wrapper.find('input').setValue('  vitormattos  ')
 		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
 
-		expect(testInstance).toHaveBeenCalledWith('telegram', 'abc123', 'vitormattos')
+		expect(api.testInstance).toHaveBeenCalledWith('telegram', 'abc123', 'vitormattos')
 		expect(wrapper.find('input').element).toHaveProperty('value', 'vitormattos')
 	})
 
 	it('shows a success result after a successful test', async () => {
-		const { testInstance } = await import('@lib/twofactor-gateway')
-		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(api)
 		await wrapper.find('input').setValue('+1234567890')
 		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
@@ -184,10 +193,10 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('shows an error result when the test fails', async () => {
-		const { testInstance } = await import('@lib/twofactor-gateway')
-		vi.mocked(testInstance).mockResolvedValueOnce({ success: false, message: 'Connection refused.' })
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.testInstance).mockResolvedValueOnce({ success: false, message: 'Connection refused.' })
 
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(api)
 		await wrapper.find('input').setValue('+1234567890')
 		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
@@ -197,20 +206,20 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('emits "close" when the Close button is clicked', async () => {
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(createGatewayAdminApiMock())
 		await wrapper.findAll('button').at(0)?.trigger('click')
 		expect(wrapper.emitted('close')).toBeDefined()
 	})
 
 	it('shows initials fallback when accountInfo includes a remote avatar URL', async () => {
-		const { testInstance } = await import('@lib/twofactor-gateway')
-		vi.mocked(testInstance).mockResolvedValueOnce({
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.testInstance).mockResolvedValueOnce({
 			success: true,
 			message: 'Message sent successfully.',
 			accountInfo: { account_name: 'Acme Corp', account_avatar_url: 'https://wa.example/avatar.png' },
 		})
 
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(api)
 		await wrapper.find('input').setValue('+1234567890')
 		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
@@ -221,8 +230,8 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('shows account info with avatar image when accountInfo includes valid data URI', async () => {
-		const { testInstance } = await import('@lib/twofactor-gateway')
-		vi.mocked(testInstance).mockResolvedValueOnce({
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.testInstance).mockResolvedValueOnce({
 			success: true,
 			message: 'Message sent successfully.',
 			accountInfo: {
@@ -231,7 +240,7 @@ describe('GatewayTestModal', () => {
 			},
 		})
 
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(api)
 		await wrapper.find('input').setValue('+1234567890')
 		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
@@ -244,14 +253,14 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('shows initials fallback when accountInfo has no avatar URL', async () => {
-		const { testInstance } = await import('@lib/twofactor-gateway')
-		vi.mocked(testInstance).mockResolvedValueOnce({
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.testInstance).mockResolvedValueOnce({
 			success: true,
 			message: 'Message sent successfully.',
 			accountInfo: { account_name: 'Acme Corp', account_avatar_url: '' },
 		})
 
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(api)
 		await wrapper.find('input').setValue('+1234567890')
 		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
@@ -262,14 +271,14 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('shows initials fallback when accountInfo avatar data URI is truncated', async () => {
-		const { testInstance } = await import('@lib/twofactor-gateway')
-		vi.mocked(testInstance).mockResolvedValueOnce({
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.testInstance).mockResolvedValueOnce({
 			success: true,
 			message: 'Message sent successfully.',
 			accountInfo: { account_name: 'Acme Corp', account_avatar_url: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ' },
 		})
 
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(api)
 		await wrapper.find('input').setValue('+1234567890')
 		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
@@ -280,10 +289,10 @@ describe('GatewayTestModal', () => {
 	})
 
 	it('does not show account info section when no accountInfo is returned', async () => {
-		const { testInstance } = await import('@lib/twofactor-gateway')
-		vi.mocked(testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.testInstance).mockResolvedValueOnce({ success: true, message: 'Message sent successfully.' })
 
-		const wrapper = mount(GatewayTestModal, { props: defaultProps })
+		const wrapper = mountGatewayTestModal(api)
 		await wrapper.find('input').setValue('+1234567890')
 		await findSendButton(wrapper)?.trigger('click')
 		await flushPromises()
