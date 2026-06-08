@@ -29,14 +29,21 @@ class Application extends App implements IBootstrap {
 	public function register(IRegistrationContext $context): void {
 		$context->registerNotifierService(Notifier::class);
 
-		foreach (Server::get(BootstrapFactory::class)->getInstances() as $gatewayBootstrap) {
+		foreach ($this->getBootstrapFactory()->getInstances() as $gatewayBootstrap) {
 			$gatewayBootstrap->register($context);
 		}
-		$providerFactory = Server::get(Factory::class);
-		$fqcn = $providerFactory->getFqcnList();
-		foreach ($fqcn as $class) {
+
+		foreach ($this->getProviderFactory()->getFqcnList() as $class) {
 			$context->registerTwoFactorProvider($class);
 		}
+	}
+
+	protected function getBootstrapFactory(): BootstrapFactory {
+		return Server::get(BootstrapFactory::class);
+	}
+
+	protected function getProviderFactory(): Factory {
+		return Server::get(Factory::class);
 	}
 
 	#[\Override]

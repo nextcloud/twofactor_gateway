@@ -20,36 +20,6 @@
             }
         },
         "schemas": {
-            "Capabilities": {
-                "type": "object",
-                "required": [
-                    "features",
-                    "config",
-                    "version"
-                ],
-                "properties": {
-                    "features": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "config": {
-                        "type": "object"
-                    },
-                    "version": {
-                        "type": "string"
-                    }
-                }
-            },
-            "PublicCapabilities": {
-                "type": "object",
-                "properties": {
-                    "twofactorgateway": {
-                        "$ref": "#/components/schemas/Capabilities"
-                    }
-                }
-            },
             "State": {
                 "type": "object",
                 "required": [
