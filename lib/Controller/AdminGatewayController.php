@@ -37,6 +37,7 @@ use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
 
+/** @psalm-import-type TwoFactorGatewayAdminScreen from \OCA\TwoFactorGateway\ResponseDefinitions */
 class AdminGatewayController extends OCSController {
 	public function __construct(
 		IRequest $request,
@@ -72,29 +73,7 @@ class AdminGatewayController extends OCSController {
 	 *
 	 * @param int $groupLimit Maximum number of groups returned (bounded server-side)
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{
-	 *   gateways: list<array<string, mixed>>,
-	 *   groups: list<array{id: string, displayName: string}>,
-	 *   allowedActions: array{
-	 *     canView: bool,
-	 *     canCreateInstances: bool,
-	 *     canEditInstances: bool,
-	 *     canDeleteInstances: bool,
-	 *     canSetDefaultInstances: bool,
-	 *     canManageRouting: bool,
-	 *     canTestInstances: bool,
-	 *     canReorderInstances: bool
-	 *   },
-	 *   items: list<array{
-	 *     orderKey: string,
-	 *     gatewayId: string,
-	 *     providerName: string,
-	 *     fields: list<array<string, mixed>>,
-	 *     instance: array<string, mixed>,
-	 *     groupNames: list<string>,
-	 *     showRoutingAction: bool
-	 *   }>
-	 * }, array{}>
+	 * @return DataResponse<Http::STATUS_OK, TwoFactorGatewayAdminScreen, array{}>
 	 *
 	 * 200: OK
 	 */

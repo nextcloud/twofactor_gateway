@@ -20,6 +20,127 @@
             }
         },
         "schemas": {
+            "AdminScreen": {
+                "type": "object",
+                "required": [
+                    "gateways",
+                    "groups",
+                    "allowedActions",
+                    "items"
+                ],
+                "properties": {
+                    "gateways": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "groups": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Group"
+                        }
+                    },
+                    "allowedActions": {
+                        "$ref": "#/components/schemas/AllowedActions"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AdminScreenItem"
+                        }
+                    }
+                }
+            },
+            "AdminScreenItem": {
+                "type": "object",
+                "required": [
+                    "orderKey",
+                    "gatewayId",
+                    "providerName",
+                    "fields",
+                    "instance",
+                    "groupNames",
+                    "showRoutingAction"
+                ],
+                "properties": {
+                    "orderKey": {
+                        "type": "string"
+                    },
+                    "gatewayId": {
+                        "type": "string"
+                    },
+                    "providerName": {
+                        "type": "string"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "instance": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object"
+                        }
+                    },
+                    "groupNames": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "showRoutingAction": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "AllowedActions": {
+                "type": "object",
+                "required": [
+                    "canView",
+                    "canCreateInstances",
+                    "canEditInstances",
+                    "canDeleteInstances",
+                    "canSetDefaultInstances",
+                    "canManageRouting",
+                    "canTestInstances",
+                    "canReorderInstances"
+                ],
+                "properties": {
+                    "canView": {
+                        "type": "boolean"
+                    },
+                    "canCreateInstances": {
+                        "type": "boolean"
+                    },
+                    "canEditInstances": {
+                        "type": "boolean"
+                    },
+                    "canDeleteInstances": {
+                        "type": "boolean"
+                    },
+                    "canSetDefaultInstances": {
+                        "type": "boolean"
+                    },
+                    "canManageRouting": {
+                        "type": "boolean"
+                    },
+                    "canTestInstances": {
+                        "type": "boolean"
+                    },
+                    "canReorderInstances": {
+                        "type": "boolean"
+                    }
+                }
+            },
             "FieldDefinition": {
                 "type": "object",
                 "required": [
@@ -111,6 +232,21 @@
                         "items": {
                             "$ref": "#/components/schemas/ProviderCatalogEntry"
                         }
+                    }
+                }
+            },
+            "Group": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "displayName"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
                     }
                 }
             },
@@ -358,131 +494,7 @@
                                                     "$ref": "#/components/schemas/OCSMeta"
                                                 },
                                                 "data": {
-                                                    "type": "object",
-                                                    "required": [
-                                                        "gateways",
-                                                        "groups",
-                                                        "allowedActions",
-                                                        "items"
-                                                    ],
-                                                    "properties": {
-                                                        "gateways": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "type": "object",
-                                                                "additionalProperties": {
-                                                                    "type": "object"
-                                                                }
-                                                            }
-                                                        },
-                                                        "groups": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "type": "object",
-                                                                "required": [
-                                                                    "id",
-                                                                    "displayName"
-                                                                ],
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "displayName": {
-                                                                        "type": "string"
-                                                                    }
-                                                                }
-                                                            }
-                                                        },
-                                                        "allowedActions": {
-                                                            "type": "object",
-                                                            "required": [
-                                                                "canView",
-                                                                "canCreateInstances",
-                                                                "canEditInstances",
-                                                                "canDeleteInstances",
-                                                                "canSetDefaultInstances",
-                                                                "canManageRouting",
-                                                                "canTestInstances",
-                                                                "canReorderInstances"
-                                                            ],
-                                                            "properties": {
-                                                                "canView": {
-                                                                    "type": "boolean"
-                                                                },
-                                                                "canCreateInstances": {
-                                                                    "type": "boolean"
-                                                                },
-                                                                "canEditInstances": {
-                                                                    "type": "boolean"
-                                                                },
-                                                                "canDeleteInstances": {
-                                                                    "type": "boolean"
-                                                                },
-                                                                "canSetDefaultInstances": {
-                                                                    "type": "boolean"
-                                                                },
-                                                                "canManageRouting": {
-                                                                    "type": "boolean"
-                                                                },
-                                                                "canTestInstances": {
-                                                                    "type": "boolean"
-                                                                },
-                                                                "canReorderInstances": {
-                                                                    "type": "boolean"
-                                                                }
-                                                            }
-                                                        },
-                                                        "items": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "type": "object",
-                                                                "required": [
-                                                                    "orderKey",
-                                                                    "gatewayId",
-                                                                    "providerName",
-                                                                    "fields",
-                                                                    "instance",
-                                                                    "groupNames",
-                                                                    "showRoutingAction"
-                                                                ],
-                                                                "properties": {
-                                                                    "orderKey": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "gatewayId": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "providerName": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "fields": {
-                                                                        "type": "array",
-                                                                        "items": {
-                                                                            "type": "object",
-                                                                            "additionalProperties": {
-                                                                                "type": "object"
-                                                                            }
-                                                                        }
-                                                                    },
-                                                                    "instance": {
-                                                                        "type": "object",
-                                                                        "additionalProperties": {
-                                                                            "type": "object"
-                                                                        }
-                                                                    },
-                                                                    "groupNames": {
-                                                                        "type": "array",
-                                                                        "items": {
-                                                                            "type": "string"
-                                                                        }
-                                                                    },
-                                                                    "showRoutingAction": {
-                                                                        "type": "boolean"
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
+                                                    "$ref": "#/components/schemas/AdminScreen"
                                                 }
                                             }
                                         }
