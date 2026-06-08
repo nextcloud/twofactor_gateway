@@ -188,11 +188,7 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
-import {
-	cancelInteractiveSetup,
-	interactiveSetupStep,
-	startInteractiveSetup,
-} from '@lib/twofactor-gateway'
+import { useGatewayAdminApi } from '@lib/twofactor-gateway'
 import type { InteractiveSetupResponse } from '@lib/twofactor-gateway'
 
 type PhoneNumberOption = {
@@ -232,7 +228,10 @@ export default defineComponent({
 	},
 	emits: ['merge-config', 'setup-completed', 'update:wizardActive'],
 	setup() {
-		return { t }
+		return {
+			t,
+			gatewayAdminApi: useGatewayAdminApi(),
+		}
 	},
 	data() {
 		return {
@@ -402,7 +401,7 @@ export default defineComponent({
 			this.wizardMessage = t('twofactor_gateway', 'Initializing WhatsApp Business discovery\u00A0…')
 
 			try {
-				const started = this.ensureStepOk(await startInteractiveSetup(this.gatewayId, {
+				const started = this.ensureStepOk(await this.gatewayAdminApi.startInteractiveSetup(this.gatewayId, {
 					provider: this.providerId,
 				}), t('twofactor_gateway', 'Could not create the setup session.'))
 				this.wizardSessionId = started.sessionId ?? ''
@@ -410,14 +409,14 @@ export default defineComponent({
 					throw new Error(started.message ?? t('twofactor_gateway', 'Could not create the setup session.'))
 				}
 
-				this.ensureStepOk(await interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'set_credentials', {
+				this.ensureStepOk(await this.gatewayAdminApi.interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'set_credentials', {
 					provider: this.providerId,
 					token: this.bootstrapToken.trim(),
 					apiVersion: this.bootstrapApiVersion.trim() || 'v22.0',
 					whatsAppBusinessAccountId: this.bootstrapWabaId.trim(),
 				}), t('twofactor_gateway', 'Could not store WhatsApp Business credentials.'))
 
-				const phones = this.ensureStepOk(await interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'discover_phones', {
+				const phones = this.ensureStepOk(await this.gatewayAdminApi.interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'discover_phones', {
 					provider: this.providerId,
 				}), t('twofactor_gateway', 'Failed to discover WhatsApp Business resources.'))
 				this.applyResponse(phones)
@@ -442,11 +441,11 @@ export default defineComponent({
 			this.wizardMessage = t('twofactor_gateway', 'Loading approved templates\u00A0…')
 
 			try {
-				this.ensureStepOk(await interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'select_phone', {
+				this.ensureStepOk(await this.gatewayAdminApi.interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'select_phone', {
 					provider: this.providerId,
 					phoneNumberId: this.wizardSelectedPhone,
 				}), t('twofactor_gateway', 'Failed to select the phone number for template discovery.'))
-				const templates = this.ensureStepOk(await interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'discover_templates', {
+				const templates = this.ensureStepOk(await this.gatewayAdminApi.interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'discover_templates', {
 					provider: this.providerId,
 				}), t('twofactor_gateway', 'Failed to load approved templates.'))
 				this.applyResponse(templates)
@@ -478,7 +477,7 @@ export default defineComponent({
 					templateLanguage = this.wizardManualTemplateLanguage.trim()
 				}
 
-				const completed = this.ensureStepOk(await interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'finalize', {
+				const completed = this.ensureStepOk(await this.gatewayAdminApi.interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'finalize', {
 					provider: this.providerId,
 					templateName,
 					templateLanguage,
@@ -497,7 +496,7 @@ export default defineComponent({
 		async cancelWizard() {
 			if (this.wizardSessionId !== '') {
 				try {
-					await cancelInteractiveSetup(this.gatewayId, this.wizardSessionId, {
+					await this.gatewayAdminApi.cancelInteractiveSetup(this.gatewayId, this.wizardSessionId, {
 						provider: this.providerId,
 					})
 				} catch {
