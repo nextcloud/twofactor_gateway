@@ -362,6 +362,7 @@
                                                     "required": [
                                                         "gateways",
                                                         "groups",
+                                                        "allowedActions",
                                                         "items"
                                                     ],
                                                     "properties": {
@@ -392,12 +393,92 @@
                                                                 }
                                                             }
                                                         },
+                                                        "allowedActions": {
+                                                            "type": "object",
+                                                            "required": [
+                                                                "canView",
+                                                                "canCreateInstances",
+                                                                "canEditInstances",
+                                                                "canDeleteInstances",
+                                                                "canSetDefaultInstances",
+                                                                "canManageRouting",
+                                                                "canTestInstances",
+                                                                "canReorderInstances"
+                                                            ],
+                                                            "properties": {
+                                                                "canView": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "canCreateInstances": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "canEditInstances": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "canDeleteInstances": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "canSetDefaultInstances": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "canManageRouting": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "canTestInstances": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "canReorderInstances": {
+                                                                    "type": "boolean"
+                                                                }
+                                                            }
+                                                        },
                                                         "items": {
                                                             "type": "array",
                                                             "items": {
                                                                 "type": "object",
-                                                                "additionalProperties": {
-                                                                    "type": "object"
+                                                                "required": [
+                                                                    "orderKey",
+                                                                    "gatewayId",
+                                                                    "providerName",
+                                                                    "fields",
+                                                                    "instance",
+                                                                    "groupNames",
+                                                                    "showRoutingAction"
+                                                                ],
+                                                                "properties": {
+                                                                    "orderKey": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "gatewayId": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "providerName": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "fields": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "object",
+                                                                            "additionalProperties": {
+                                                                                "type": "object"
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    "instance": {
+                                                                        "type": "object",
+                                                                        "additionalProperties": {
+                                                                            "type": "object"
+                                                                        }
+                                                                    },
+                                                                    "groupNames": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "showRoutingAction": {
+                                                                        "type": "boolean"
+                                                                    }
                                                                 }
                                                             }
                                                         }
