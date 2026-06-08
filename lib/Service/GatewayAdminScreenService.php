@@ -12,6 +12,12 @@ namespace OCA\TwoFactorGateway\Service;
 use OCP\IGroupManager;
 use OCP\IUser;
 
+/**
+ * @psalm-import-type TwoFactorGatewayAdminScreen from \OCA\TwoFactorGateway\ResponseDefinitions
+ * @psalm-import-type TwoFactorGatewayAdminScreenItem from \OCA\TwoFactorGateway\ResponseDefinitions
+ * @psalm-import-type TwoFactorGatewayAllowedActions from \OCA\TwoFactorGateway\ResponseDefinitions
+ * @psalm-import-type TwoFactorGatewayGroup from \OCA\TwoFactorGateway\ResponseDefinitions
+ */
 class GatewayAdminScreenService {
 	public function __construct(
 		private GatewayCatalogService $gatewayCatalogService,
@@ -20,31 +26,7 @@ class GatewayAdminScreenService {
 	) {
 	}
 
-	/**
-	 * @return array{
-	 *   gateways: list<array<string, mixed>>,
-	 *   groups: list<array{id: string, displayName: string}>,
-	 *   allowedActions: array{
-	 *     canView: bool,
-	 *     canCreateInstances: bool,
-	 *     canEditInstances: bool,
-	 *     canDeleteInstances: bool,
-	 *     canSetDefaultInstances: bool,
-	 *     canManageRouting: bool,
-	 *     canTestInstances: bool,
-	 *     canReorderInstances: bool
-	 *   },
-	 *   items: list<array{
-	 *     orderKey: string,
-	 *     gatewayId: string,
-	 *     providerName: string,
-	 *     fields: list<array<string, mixed>>,
-	 *     instance: array<string, mixed>,
-	 *     groupNames: list<string>,
-	 *     showRoutingAction: bool
-	 *   }>
-	 * }
-	 */
+	/** @return TwoFactorGatewayAdminScreen */
 	public function build(?IUser $actor, int $groupLimit = 200): array {
 		$gateways = $this->gatewayCatalogService->listGateways($actor);
 		$groups = $this->listAssignableGroups($actor, $groupLimit);
@@ -58,17 +40,8 @@ class GatewayAdminScreenService {
 	}
 
 	/**
-	 * @param list<array{id: string, displayName: string}> $groups
-	 * @return array{
-	 *   canView: bool,
-	 *   canCreateInstances: bool,
-	 *   canEditInstances: bool,
-	 *   canDeleteInstances: bool,
-	 *   canSetDefaultInstances: bool,
-	 *   canManageRouting: bool,
-	 *   canTestInstances: bool,
-	 *   canReorderInstances: bool
-	 * }
+	 * @param list<TwoFactorGatewayGroup> $groups
+	 * @return TwoFactorGatewayAllowedActions
 	 */
 	private function buildAllowedActions(?IUser $actor, array $groups): array {
 		$scope = $this->gatewayPermissionService->resolveViewScope($actor);
@@ -93,16 +66,8 @@ class GatewayAdminScreenService {
 
 	/**
 	 * @param list<array<string, mixed>> $gateways
-	 * @param list<array{id: string, displayName: string}> $groups
-	 * @return list<array{
-	 *   orderKey: string,
-	 *   gatewayId: string,
-	 *   providerName: string,
-	 *   fields: list<array<string, mixed>>,
-	 *   instance: array<string, mixed>,
-	 *   groupNames: list<string>,
-	 *   showRoutingAction: bool
-	 * }>
+	 * @param list<TwoFactorGatewayGroup> $groups
+	 * @return list<TwoFactorGatewayAdminScreenItem>
 	 */
 	private function buildItems(array $gateways, array $groups): array {
 		$groupNamesById = [];
@@ -233,7 +198,7 @@ class GatewayAdminScreenService {
 	}
 
 	/**
-	 * @return list<array{id: string, displayName: string}>
+	 * @return list<TwoFactorGatewayGroup>
 	 */
 	private function listAssignableGroups(?IUser $actor, int $limit): array {
 		$limit = max(1, min(500, $limit));
