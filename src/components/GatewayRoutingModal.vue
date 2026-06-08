@@ -3,6 +3,10 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
+	<!--
+	  Requests closing the modal without persisting changes.
+	  @event close
+	-->
 	<NcModal
 		:name="t('twofactor_gateway', 'Routing settings')"
 		:show="show"
@@ -62,6 +66,129 @@
 	</NcModal>
 </template>
 
+<docs>
+
+Focused modal for editing group-based routing scope with low coupling.
+
+This component does not call the backend directly. It only emits the selected `groupIds`, which keeps persistence in the parent component.
+
+The main non-primitive prop type used here is `GatewayGroup[]`; see [`Shared frontend types`](#/Shared%20frontend%20types) for the canonical explanation.
+
+### Standard emitted payload
+
+When the user saves, the modal emits:
+
+```ts
+{
+	groupIds: string[]
+}
+```
+
+The `groupIds` array is always sorted before emission so parent components receive a stable payload.
+
+### Preview
+
+```vue
+<template>
+	<div class="demo-shell">
+		<p class="demo-note">
+			Save the modal to see the sorted <code>groupIds</code> payload that parents receive.
+		</p>
+		<button class="demo-open-button" type="button" @click="showModal = true">
+			Reopen routing preview
+		</button>
+		<GatewayRoutingModal
+			:show="showModal"
+			:label="instance.label"
+			:instance-id="instance.id"
+			:groups="groups"
+			:initial-group-ids="instance.groupIds"
+			@close="showModal = false"
+			@saved="onSaved" />
+		<div v-if="savedPayload" class="demo-result">
+			<strong>Last emitted payload</strong>
+			<pre>{{ serializedPayload }}</pre>
+		</div>
+	</div>
+</template>
+
+<script>
+import { GatewayRoutingModal } from '@lib/twofactor-gateway/components/gatewayRoutingModal'
+import { cloneGatewayById, cloneStyleguideGroups } from '../styleguide/mocks/data'
+
+export default {
+	components: {
+		GatewayRoutingModal,
+	},
+	data() {
+		const gateway = cloneGatewayById('acme_sms')
+		return {
+			showModal: false,
+			groups: cloneStyleguideGroups(),
+			instance: gateway.instances[0],
+			savedPayload: null,
+		}
+	},
+	computed: {
+		serializedPayload() {
+			return JSON.stringify(this.savedPayload, null, 2)
+		},
+	},
+	methods: {
+		onSaved(payload) {
+			this.savedPayload = payload
+			this.showModal = false
+		},
+	},
+}
+</script>
+
+<style scoped>
+.demo-shell {
+	display: grid;
+	gap: 1rem;
+}
+
+.demo-note {
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+}
+
+code {
+	padding: 0.15rem 0.35rem;
+	border-radius: var(--border-radius-element);
+	background: var(--color-background-dark);
+}
+
+.demo-open-button {
+	width: fit-content;
+	padding: 0.65rem 0.9rem;
+	border: 1px solid var(--color-border-dark);
+	border-radius: var(--border-radius-element);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	cursor: pointer;
+}
+
+.demo-result {
+	padding: 1rem;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-large);
+	background: var(--color-background-dark);
+	color: var(--color-text-maxcontrast);
+}
+
+pre {
+	margin: 0.75rem 0 0;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	font-size: 0.85rem;
+}
+</style>
+```
+
+</docs>
+
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -71,6 +198,9 @@ import NcSelect from '@nextcloud/vue/components/NcSelect'
 import { t } from '@nextcloud/l10n'
 import type { GatewayGroup } from '@lib/twofactor-gateway'
 
+/**
+ * Focused routing modal for editing which groups can use a given instance.
+ */
 export default defineComponent({
 	name: 'GatewayRoutingModal',
 	components: {
@@ -81,10 +211,26 @@ export default defineComponent({
 	},
 
 	props: {
+		/**
+		 * Controls whether the modal is visible.
+		 */
 		show: { type: Boolean, default: false },
+		/**
+		 * Human-readable instance label shown in the modal header.
+		 */
 		label: { type: String, default: '' },
+		/**
+		 * Stable instance identifier shown for operator reference.
+		 */
 		instanceId: { type: String, default: '' },
+		/**
+		 * Available groups that may be selected for the routing scope.
+		 * See [Shared frontend types](#/Shared%20frontend%20types) → `GatewayGroup`.
+		 */
 		groups: { type: Array as PropType<GatewayGroup[]>, default: () => [] },
+		/**
+		 * Group ids that should start selected when the modal opens.
+		 */
 		initialGroupIds: { type: Array as PropType<string[]>, default: () => [] },
 	},
 
@@ -114,6 +260,12 @@ export default defineComponent({
 		async save() {
 			this.saving = true
 			try {
+				/**
+				 * Emits the selected group ids in sorted order so the parent can persist routing scope.
+				 *
+				 * @event saved
+				 * @property {string[]} groupIds Sorted group ids selected for the instance.
+				 */
 				this.$emit('saved', {
 					groupIds: this.selectedGroups.map((group) => group.id).sort(),
 				})

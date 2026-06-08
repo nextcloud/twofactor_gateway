@@ -20,25 +20,124 @@
             }
         },
         "schemas": {
-            "Capabilities": {
+            "AdminScreen": {
                 "type": "object",
                 "required": [
-                    "features",
-                    "config",
-                    "version"
+                    "gateways",
+                    "groups",
+                    "allowedActions",
+                    "items"
                 ],
                 "properties": {
-                    "features": {
+                    "gateways": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "groups": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Group"
+                        }
+                    },
+                    "allowedActions": {
+                        "$ref": "#/components/schemas/AllowedActions"
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AdminScreenItem"
+                        }
+                    }
+                }
+            },
+            "AdminScreenItem": {
+                "type": "object",
+                "required": [
+                    "orderKey",
+                    "gatewayId",
+                    "providerName",
+                    "fields",
+                    "instance",
+                    "groupNames",
+                    "showRoutingAction"
+                ],
+                "properties": {
+                    "orderKey": {
+                        "type": "string"
+                    },
+                    "gatewayId": {
+                        "type": "string"
+                    },
+                    "providerName": {
+                        "type": "string"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "instance": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object"
+                        }
+                    },
+                    "groupNames": {
                         "type": "array",
                         "items": {
                             "type": "string"
                         }
                     },
-                    "config": {
-                        "type": "object"
+                    "showRoutingAction": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "AllowedActions": {
+                "type": "object",
+                "required": [
+                    "canView",
+                    "canCreateInstances",
+                    "canEditInstances",
+                    "canDeleteInstances",
+                    "canSetDefaultInstances",
+                    "canManageRouting",
+                    "canTestInstances",
+                    "canReorderInstances"
+                ],
+                "properties": {
+                    "canView": {
+                        "type": "boolean"
                     },
-                    "version": {
-                        "type": "string"
+                    "canCreateInstances": {
+                        "type": "boolean"
+                    },
+                    "canEditInstances": {
+                        "type": "boolean"
+                    },
+                    "canDeleteInstances": {
+                        "type": "boolean"
+                    },
+                    "canSetDefaultInstances": {
+                        "type": "boolean"
+                    },
+                    "canManageRouting": {
+                        "type": "boolean"
+                    },
+                    "canTestInstances": {
+                        "type": "boolean"
+                    },
+                    "canReorderInstances": {
+                        "type": "boolean"
                     }
                 }
             },
@@ -136,6 +235,21 @@
                     }
                 }
             },
+            "Group": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "displayName"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    }
+                }
+            },
             "Instance": {
                 "type": "object",
                 "required": [
@@ -228,14 +342,6 @@
                     }
                 }
             },
-            "PublicCapabilities": {
-                "type": "object",
-                "properties": {
-                    "twofactorgateway": {
-                        "$ref": "#/components/schemas/Capabilities"
-                    }
-                }
-            },
             "State": {
                 "type": "object",
                 "required": [
@@ -317,6 +423,78 @@
                                                             "type": "object"
                                                         }
                                                     }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/twofactor_gateway/admin/screen": {
+            "get": {
+                "operationId": "admin_gateway-get-screen",
+                "summary": "List a screen-ready admin payload with gateways, assignable groups and flattened display items",
+                "description": "This endpoint requires admin access",
+                "tags": [
+                    "admin_gateway"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "groupLimit",
+                        "in": "query",
+                        "description": "Maximum number of groups returned (bounded server-side)",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 200
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/AdminScreen"
                                                 }
                                             }
                                         }

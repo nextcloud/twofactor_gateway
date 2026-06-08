@@ -1,0 +1,74 @@
+/*
+ * SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+:root {
+	--color-main-background: #ffffff;
+	--color-main-text: #222b45;
+	--color-text-lighter: #6b7280;
+	--color-text-maxcontrast: #4b5563;
+	--color-border: #d6dde8;
+	--color-border-dark: #b8c4d6;
+	--color-background-dark: #f4f7fb;
+	--color-background-hover: #eef4fb;
+	--color-primary-element: #0082c9;
+	--color-primary-element-hover: #006ca8;
+	--color-primary-element-text: #ffffff;
+	--color-primary-element-light: #e8f4fb;
+	--color-primary-element-light-hover: #d6ebf8;
+	--color-primary-element-light-text: #0f3554;
+	--color-success: #14833b;
+	--color-success-hover: #0f6d31;
+	--color-success-text: #ffffff;
+	--color-warning: #b7791f;
+	--color-warning-hover: #975f10;
+	--color-warning-text: #ffffff;
+	--color-error: #c42d2d;
+	--color-error-hover: #a92222;
+	--color-error-text: #ffffff;
+	/* Input field tokens */
+	--input-border-color: #8c98a4;
+	--input-border-radius: 8px;
+	--input-padding-start: 8px;
+	--input-padding-end: 8px;
+	--input-label-font-size: 13px;
+	--border-width-input: 2px;
+	--border-width-input-focused: 2px;
+	--color-border-maxcontrast: #8c98a4;
+	--color-placeholder-light: #b8c4d6;
+	--color-placeholder-dark: #8c98a4;
+	--color-box-shadow: rgba(0, 130, 201, 0.4);
+	/* Typography */
+	--default-font-size: 15px;
+	--default-line-height: 1.5;
+	/* Spacing / layout */
+	--border-radius: 8px;
+	--border-radius-large: 12px;
+	--border-radius-element: 8px;
+	--default-grid-baseline: 4px;
+	--default-clickable-area: 44px;
+	--clickable-area-small: 32px;
+	--clickable-area-large: 52px;
+	--font-face: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--font-face-monospace: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+	--font-weight-default: 500;
+	--font-weight-element: 600;
+	--font-weight-heading: 700;
+}
+
+body {
+	margin: 0;
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-family: var(--font-face);
+}
+
+#rsg-root {
+	color: var(--color-main-text);
+}
+
+#rsg-root code,
+#rsg-root pre {
+	font-family: var(--font-face-monospace);
+}

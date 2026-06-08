@@ -4,6 +4,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent } from 'vue'
+import { createGatewayAdminApi, gatewayAdminApiKey } from '@lib/twofactor-gateway'
 import SetupPanel from '../../../../components/providers/signal/SetupPanel.vue'
 
 const { sanitizeMock } = vi.hoisted(() => ({
@@ -19,16 +20,6 @@ vi.mock('dompurify', () => ({
 		sanitize: sanitizeMock,
 	},
 }))
-
-vi.mock('@lib/twofactor-gateway', async (importOriginal) => {
-	const orig = await importOriginal()
-	return {
-		...(orig as Record<string, unknown>),
-		startInteractiveSetup: vi.fn(),
-		interactiveSetupStep: vi.fn(),
-		cancelInteractiveSetup: vi.fn(),
-	}
-})
 
 vi.mock('@nextcloud/vue/components/NcButton', () => ({
 	default: defineComponent({
@@ -61,6 +52,11 @@ vi.mock('@nextcloud/vue/components/NcTextField', () => ({
 describe('Signal SetupPanel', () => {
 	it('sanitizes QR SVG before rendering with v-html', async () => {
 		sanitizeMock.mockReturnValue('<svg><rect /></svg>')
+		const gatewayAdminApi = createGatewayAdminApi({
+			startInteractiveSetup: vi.fn(),
+			interactiveSetupStep: vi.fn(),
+			cancelInteractiveSetup: vi.fn(),
+		})
 
 		const wrapper = mount(SetupPanel, {
 			props: {
@@ -68,6 +64,11 @@ describe('Signal SetupPanel', () => {
 				providerId: 'signal',
 				config: {},
 				canStart: true,
+			},
+			global: {
+				provide: {
+					[gatewayAdminApiKey as symbol]: gatewayAdminApi,
+				},
 			},
 		})
 

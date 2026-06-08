@@ -4,33 +4,22 @@
 -->
 # Admin Documentation
 
-## Gateways
-
 Here you can find the configuration instructions for the currently supported gateways.
+
+## Messaging platforms
 
 ### playSMS
 URL: https://playsms.org/
 Stability: Experimental
 
-Use the Webservices provided by playSMS for sending SMS.
+This integration uses the Webservices API provided by playSMS.
 
 Interactive admin configuration:
 ```bash
 occ twofactorauth:gateway:configure sms
 ```
 
-### SMSGlobal
-URL: https://www.smsglobal.com/
-Stability: Experimental
-
-Use the Webservices provided by SMSGlobal for sending SMS.
-
-Interactive admin configuration:
-```bash
-occ twofactorauth:gateway:configure sms
-```
-
-### Signal
+## Signal
 URL: https://www.signal.org/
 Stability: Experimental
 
@@ -66,19 +55,12 @@ You will be prompted for the URL of the API provider. If the gateway is detected
 device linking — no manual account entry is required. For other gateway styles, you will
 also be prompted for the sender's Signal account (phone number).
 
-### WhatsApp
-URL: https://www.whatsapp.com
-Stability: Experimental
+## WhatsApp
 
-This gateway sends messages via WhatsApp Web through the internal service [wwebjs-api](https://github.com/avoylenko/wwebjs-api).
+The WhatsApp channel currently supports two providers:
 
-⚠️ Important: run the service only on your **internal network**. Do not expose it to the public Internet.
-
-Interactive admin configuration:
-
-```bash
-occ twofactorauth:gateway:configure whatsapp
-```
+- **WhatsApp Web (GoWhatsApp)** for browser-session based delivery
+- **WhatsApp Business** for the Cloud API / Meta Graph API flow
 
 ### WhatsApp Business
 URL: https://developers.facebook.com/docs/whatsapp/cloud-api/
@@ -225,7 +207,7 @@ If the test fails with `Unsupported post request`, check:
 | `This phone number is not configured for WhatsApp Cloud API` | Phone is registered but using legacy API only | Verify phone in WhatsApp Manager for Cloud API compatibility |
 | `Template is not approved` | Template status is PENDING, REJECTED, or DRAFT | Submit template for approval or wait 24 hours for approval processing
 
-### GoWhatsApp
+### WhatsApp Web (GoWhatsApp)
 URL: https://github.com/aldinokemal/go-whatsapp-web-multidevice
 Stability: Experimental
 
@@ -340,9 +322,9 @@ Follow these steps to activate the GoWhatsApp authentication gateway:
    * The app validates `X-Hub-Signature-256` using `sha256=<digest>`.
    * Keep HTTPS enabled and restrict ingress to trusted sources whenever possible.
 
-### Telegram
+## Telegram
 
-#### Telegram bot API
+### Telegram bot API
 URL: https://www.telegram.org/
 Stability: Unstable
 
@@ -373,7 +355,7 @@ Follow these steps to activate the Telegram authentication gateway:
    The Telegram authentication gateway has now successfully been set-up. Follow the instructions
    in the [User Documentation] to activate the Gateway for a specific user.
 
-#### Telegram client API
+### Telegram client API
 
 URL: https://www.telegram.org/
 Stability: Experimental
@@ -402,6 +384,34 @@ Follow these steps to activate the Telegram authentication gateway:
 
    The Telegram authentication gateway has now successfully been set-up. Follow the instructions
    in the [User Documentation] to activate the Gateway for a specific user.
+
+## XMPP
+URL: https://xmpp.org/
+Stability: Experimental
+
+In order to use the service, you need to have an XMPP Account.
+At this time, you'll also need an XMPP Service provider who runs a prosody XMPP-Server with either mod_rest or mod_post_msg or run your own prosody server.
+Standard api path for mod_rest: https://xmpp.example.com/rest/message/chat/
+Standard api path for mod_post_msg: https://jabber.example.net/msg/
+See [mod_rest] and/or [mod_post_msg] for details.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure xmpp
+```
+
+## SMS and telephony gateways
+
+### SMSGlobal
+URL: https://www.smsglobal.com/
+Stability: Experimental
+
+Use the Webservices provided by SMSGlobal for sending SMS.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
 
 ### websms.de
 URL: https://websms.de/
@@ -577,21 +587,6 @@ Use the SMS gateway provided by SerwerSMS.pl (HTTPS JSON API) for sending SMS. T
 Interactive admin configuration (make sure to provide the full API login including the `webapi_` prefix):
 ```bash
 occ twofactorauth:gateway:configure sms
-```
-
-### XMPP Gateway
-URL: https://xmpp.org/
-Stability: Experimental
-
-In order to use the service, you need to have an XMPP Account.
-At this time, you'll also need an XMPP Service provider who runs a prosody XMPP-Server with either mod_rest or mod_post_msg or run your own prosody server.
-Standard api path for mod_rest: https://xmpp.example.com/rest/message/chat/
-Standard api path for mod_post_msg: https://jabber.example.net/msg/
-See [mod_rest] and/or [mod_post_msg] for details.
-
-Interactive admin configuration:
-```bash
-occ twofactorauth:gateway:configure xmpp
 ```
 
 ### SMSApi.com

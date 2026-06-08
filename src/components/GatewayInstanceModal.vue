@@ -3,6 +3,10 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
+	<!--
+	  Requests closing the modal without persisting changes.
+	  @event close
+	-->
 	<NcModal
 		:name="modalTitle"
 		:show="show"
@@ -162,6 +166,134 @@
 	</NcModal>
 </template>
 
+<docs>
+
+Create/edit workflow modal for stable gateway instance configuration.
+
+This component emits a normalized save payload instead of persisting changes by itself. It is a good fit when the consumer can provide gateway catalog data and handle the final mutation in the parent app.
+
+Non-primitive types used here — especially `GatewayInfo`, `GatewayGroup` and `FieldDefinition` — are documented centrally in [`Shared frontend types`](#/Shared%20frontend%20types).
+
+### Standard emitted payload
+
+When the user saves, the modal emits the following normalized payload shape:
+
+```ts
+{
+	gatewayId: string
+	instanceId: string
+	label: string
+	config: Record<string, string>
+	groupIds?: string[]
+}
+```
+
+- `instanceId` is the existing instance id while editing, or `''` when creating.
+- `groupIds` is only emitted during creation, because routing edits are handled by `GatewayRoutingModal`.
+
+### Preview
+
+```vue
+<template>
+	<div class="demo-shell">
+		<p class="demo-note">
+			This preview uses a fixed demo gateway with text, secret, boolean and integer fields.
+		</p>
+		<button class="demo-open-button" type="button" @click="showModal = true">
+			Reopen modal preview
+		</button>
+		<GatewayInstanceModal
+			:show="showModal"
+			:gateways="gateways"
+			:groups="groups"
+			gateway-id="acme_sms"
+			:initial-config="initialConfig"
+			:initial-group-ids="['support']"
+			@close="showModal = false"
+			@saved="onSaved" />
+		<div v-if="savedPayload" class="demo-result">
+			<strong>Last emitted payload</strong>
+			<pre>{{ serializedPayload }}</pre>
+		</div>
+	</div>
+</template>
+
+<script>
+import { GatewayInstanceModal } from '@lib/twofactor-gateway/components/gatewayInstanceModal'
+import { cloneGatewayById, cloneStyleguideGroups } from '../styleguide/mocks/data'
+
+export default {
+	components: {
+		GatewayInstanceModal,
+	},
+	data() {
+		return {
+			showModal: false,
+			gateways: [cloneGatewayById('acme_sms')],
+			groups: cloneStyleguideGroups(),
+			initialConfig: {
+				sender_id: 'Preview Sender',
+				api_token: 'demo-token',
+				sandbox_mode: '1',
+				request_timeout: '20',
+			},
+			savedPayload: null,
+		}
+	},
+	computed: {
+		serializedPayload() {
+			return JSON.stringify(this.savedPayload, null, 2)
+		},
+	},
+	methods: {
+		onSaved(payload) {
+			this.savedPayload = payload
+			this.showModal = false
+		},
+	},
+}
+</script>
+
+<style scoped>
+.demo-shell {
+	display: grid;
+	gap: 1rem;
+}
+
+.demo-note {
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+}
+
+.demo-open-button {
+	width: fit-content;
+	padding: 0.65rem 0.9rem;
+	border: 1px solid var(--color-border-dark);
+	border-radius: var(--border-radius-element);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	cursor: pointer;
+}
+
+.demo-result {
+	padding: 1rem;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-large);
+	background: var(--color-background-dark);
+	color: var(--color-text-maxcontrast);
+}
+
+pre {
+	margin: 0.75rem 0 0;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	font-size: 0.85rem;
+}
+</style>
+```
+
+</docs>
+
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
 import domPurify from 'dompurify'
@@ -189,6 +321,9 @@ import {
 	type GatewayInfo,
 } from '@lib/twofactor-gateway'
 
+/**
+ * Create/edit modal for stable gateway instance configuration, including provider catalog selection and guided setup support.
+ */
 export default defineComponent({
 	name: 'GatewayInstanceModal',
 	components: {
@@ -202,13 +337,39 @@ export default defineComponent({
 	},
 
 	props: {
+		/**
+		 * Controls whether the modal is visible.
+		 */
 		show: { type: Boolean, default: false },
+		/**
+		 * Stable gateway catalog available for selection or editing.
+		 * See [Shared frontend types](#/Shared%20frontend%20types) → `GatewayInfo`.
+		 */
 		gateways: { type: Array as PropType<GatewayInfo[]>, required: true },
+		/**
+		 * Selected gateway id when the parent wants to preselect or lock a gateway.
+		 */
 		gatewayId: { type: String, default: '' },
+		/**
+		 * Existing instance id when editing an already persisted gateway instance.
+		 */
 		instanceId: { type: String, default: '' },
+		/**
+		 * Initial label value shown in the form.
+		 */
 		initialLabel: { type: String, default: '' },
+		/**
+		 * Initial configuration payload used to prefill editable fields.
+		 */
 		initialConfig: { type: Object as PropType<Record<string, string>>, default: () => ({}) },
+		/**
+		 * Available groups for initial routing scope selection when creating an instance.
+		 * See [Shared frontend types](#/Shared%20frontend%20types) → `GatewayGroup`.
+		 */
 		groups: { type: Array as PropType<GatewayGroup[]>, default: () => [] },
+		/**
+		 * Initial group ids selected by the parent for the instance.
+		 */
 		initialGroupIds: { type: Array as PropType<string[]>, default: () => [] },
 	},
 
@@ -558,6 +719,16 @@ export default defineComponent({
 				if (!this.isEditing) {
 					payload.groupIds = this.selectedGroups.map((group) => group.id).sort()
 				}
+				/**
+				 * Emits the normalized payload for the parent to persist.
+				 *
+				 * @event saved
+				 * @property {string} gatewayId Stable gateway identifier.
+				 * @property {string} instanceId Existing instance identifier or an empty string when creating.
+				 * @property {string} label User-facing instance label.
+				 * @property {Record<string, string>} config Normalized configuration payload.
+				 * @property {string[]} [groupIds] Initial routing scope selected while creating the instance.
+				 */
 				this.$emit('saved', payload)
 			} finally {
 				this.saving = false
