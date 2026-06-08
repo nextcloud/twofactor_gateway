@@ -4,52 +4,64 @@
 -->
 # User Documentation
 
-## Gateways
+Here you can find the activation instructions for the currently supported gateways.
 
-Here you can find the setup instructions for the currently supported gateways.
+## Messaging platforms
 
-### playSMS
-URL: https://playsms.org/
-Stability: Experimental
+Some installations deliver verification codes through messaging platform services such as playSMS.
+These services are configured by administrators, but the user-side activation flow is still the
+standard verification flow:
 
-Use the Webservices provided by playSMS for sending SMS.
+1. Log in to Nextcloud and open **Settings -> Personal -> Security**.
+2. Press the `Enable` button under the label provided by your administrator.
+3. Enter the phone number requested by the gateway and press `Verify`.
+4. Enter the confirmation code you receive to finish the activation.
 
-### SMSGlobal
-URL: https://www.smsglobal.com
-Stability: Experimental
+If you are not sure which gateway label to use, ask your administrator which configured instance
+you should enable.
 
-Use the Webservices provided by SMSGlobal for sending SMS.
+## Signal
 
-### WhatsApp
-URL: https://www.whatsapp.com
-Stability: Experimental
-
-This gateway allows you to send messages via WhatsApp.
-
-### Signal
 URL: https://www.signal.org/
 Stability: Experimental
 
 This gateway allows you to send messages via the Signal protocol.
 
-### GoWhatsApp
+## WhatsApp
+
+The WhatsApp channel may be presented with different provider labels in **Settings -> Personal -> Security**, depending on which provider your administrator configured.
+
+### WhatsApp Business
+URL: https://developers.facebook.com/docs/whatsapp/cloud-api/
+Stability: Experimental
+
+Once an administrator has configured a WhatsApp Business instance, follow these steps to activate it for your account:
+
+1. Log in to Nextcloud and open **Settings -> Personal -> Security**.
+2. Press the `Enable` button under the WhatsApp Business label, or the custom label provided by your administrator.
+3. Enter the requested WhatsApp phone number and press `Verify`.
+4. Enter the verification code received via WhatsApp to complete the setup.
+
+### WhatsApp Web (GoWhatsApp)
 URL: https://github.com/aldinokemal/go-whatsapp-web-multidevice
 Stability: Experimental
 
 This gateway allows you to send messages via WhatsApp.
 
 1. Log in to Nextcloud and open **Settings -> Personal -> Security**.
-2. Press the `Enable` button under the GoWhatsApp label.
+2. Press the `Enable` button under the WhatsApp Web label, or the custom label provided by your administrator.
 3. Enter your WhatsApp phone number with country code (e.g., `5511999998888`) and press `Verify`.
 4. Approve the incoming WhatsApp message with the verification code and enter it in Nextcloud.
+
+## Telegram
 
 ### Telegram bot API
 URL: https://www.telegram.org/
 Stability: Unstable
 
 This gateway allows you to send messages via the Telegram protocol. Once the administrator
-has finished the general Telegram authentication gateway setup (Check out the [Administrator
-Documentation] for further details), you need to follow these instructions to activate the
+has finished the general Telegram authentication gateway setup (Check out the
+[Administrator Documentation](<Admin Documentation.md>) for further details), you need to follow these instructions to activate the
 use of the gateway for a user:
 
 1. Find out your own Telegram user id
@@ -90,20 +102,21 @@ Stability: Experimental
 
 This gateway allows you to send messages via the Telegram protocol using the Telegram
 client API. Once the administrator has finished the general Telegram authentication gateway
-setup in the native Nextcloud administration wizard (Check out the [Administrator Documentation]
+setup in the native Nextcloud administration wizard (Check out the [Administrator Documentation](<Admin Documentation.md>)
 for further details), you need to follow these instructions to activate the use of the gateway
 for a user:
 
 1. Use your full phone number including country code (e.g. +491751234567) as
    identifier or your Telegram user name preceded by an `@` (e.g. `@myusername`).
 
-### XMPP
+## XMPP
+
 URL: https://xmpp.org/
 Stability: Unstable
 
 This gateway allows you to send messages via the XMPP over HTTP protocol. Once the administrator
-has finished the general XMPP authentication gateway setup (Check out the [Administrator
-Documentation] for further details), you need to follow these instructions to activate the
+has finished the general XMPP authentication gateway setup (Check out the
+[Administrator Documentation](<Admin Documentation.md>) for further details), you need to follow these instructions to activate the
 use of the gateway for a user:
 
 Activate the authentication gateway for a user
@@ -124,4 +137,17 @@ Activate the authentication gateway for a user
    **Remember:** As a next step you should immediately generate Two-Factor Authentication
    backup codes to be able to login, in case the XMPP service fails.
 
-[Administrator Documentation]: https://nextcloud-twofactor-gateway.readthedocs.io/en/latest/Admin%20Documentation/
+## SMS and telephony gateways
+
+SMS and telephony providers such as SMSGlobal, websms.de, VoIP.ms, ClickSend, and similar
+backends are selected by administrators. For end users, the activation steps are the same
+regardless of the provider behind the scenes:
+
+1. Log in to Nextcloud and open **Settings -> Personal -> Security**.
+2. Press the `Enable` button under the SMS or telephony gateway label provided by your administrator.
+3. Enter the phone number requested by the gateway and press `Verify`.
+4. Enter the confirmation code you receive to complete the setup.
+
+If your organization uses a custom label for the gateway instance, follow the label communicated
+by your administrator.
+
