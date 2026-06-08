@@ -4,6 +4,7 @@
 import { mergeConfig } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
+import { vueDocsBlockPlugin } from './src/styleguide/vueDocsBlockPlugin.js'
 
 export default mergeConfig({
 	resolve: {
@@ -11,7 +12,7 @@ export default mergeConfig({
 			'@lib/twofactor-gateway': fileURLToPath(new URL('./src/lib/twofactor-gateway', import.meta.url)),
 		},
 	},
-	plugins: [vue()],
+	plugins: [vue(), vueDocsBlockPlugin()],
 }, {
 	test: {
 		include: ['src/tests/**/*.{test,spec}.ts'],

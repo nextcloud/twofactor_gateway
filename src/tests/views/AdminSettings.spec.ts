@@ -4,13 +4,13 @@
 import { describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent } from 'vue'
-import type { GatewayInfo } from '@lib/twofactor-gateway'
+import { createGatewayAdminApi, gatewayAdminApiKey, type GatewayAdminApi, type GatewayInfo } from '@lib/twofactor-gateway'
 import { GatewayAdminSettings as AdminSettings } from '@lib/twofactor-gateway/components/adminSettings'
 
 const GatewayInstanceCardStub = vi.hoisted(() => ({
 	name: 'GatewayInstanceCard',
-	props: ['instance', 'providerName', 'showRoutingAction'],
-	template: '<div class="gateway-instance-card" :data-provider="providerName" :data-routing="showRoutingAction">{{ instance.label }}</div>',
+	props: ['instance', 'providerName', 'groupNames', 'showRoutingAction', 'showEditAction', 'showDeleteAction', 'showTestAction', 'showSetDefaultAction'],
+	template: '<div class="gateway-instance-card" :data-provider="providerName" :data-routing="showRoutingAction" :data-edit="showEditAction" :data-delete="showDeleteAction" :data-test="showTestAction" :data-default="showSetDefaultAction">{{ instance.label }}</div>',
 }))
 
 const GatewayInstanceModalStub = vi.hoisted(() => ({
@@ -52,19 +52,6 @@ vi.mock('@nextcloud/l10n', () => ({
 	},
 }))
 
-vi.mock('@lib/twofactor-gateway', async (importOriginal) => {
-	const orig = await importOriginal()
-	return {
-		...(orig as Record<string, unknown>),
-		listGateways: vi.fn().mockResolvedValue([]),
-		listGroups: vi.fn().mockResolvedValue([]),
-		createInstance: vi.fn(),
-		updateInstance: vi.fn(),
-		deleteInstance: vi.fn(),
-		setDefaultInstance: vi.fn(),
-	}
-})
-
 const makeInstance = (overrides: Record<string, unknown> = {}) => ({
 	id: 'instance-1',
 	providerId: 'signal',
@@ -77,6 +64,34 @@ const makeInstance = (overrides: Record<string, unknown> = {}) => ({
 	priority: 0,
 	...overrides,
 })
+
+function createGatewayAdminApiMock(overrides: Partial<GatewayAdminApi> = {}): GatewayAdminApi {
+	return createGatewayAdminApi({
+		listGateways: vi.fn().mockResolvedValue([]),
+		listGroups: vi.fn().mockResolvedValue([]),
+		createInstance: vi.fn().mockResolvedValue(makeInstance()),
+		updateInstance: vi.fn().mockResolvedValue(makeInstance()),
+		deleteInstance: vi.fn().mockResolvedValue(undefined),
+		setDefaultInstance: vi.fn().mockResolvedValue(undefined),
+		getInstance: vi.fn().mockResolvedValue(makeInstance()),
+		testInstance: vi.fn().mockResolvedValue({ success: true, message: '' }),
+		startInteractiveSetup: vi.fn(),
+		interactiveSetupStep: vi.fn(),
+		cancelInteractiveSetup: vi.fn(),
+		...overrides,
+	})
+}
+
+function mountAdminSettings(api: GatewayAdminApi, props: Record<string, unknown> = {}) {
+	return mount(AdminSettings, {
+		props,
+		global: {
+			provide: {
+				[gatewayAdminApiKey as symbol]: api,
+			},
+		},
+	})
+}
 
 vi.mock('@nextcloud/vue/components/NcButton', () => ({
 	default: defineComponent({
@@ -153,13 +168,13 @@ vi.mock('@lib/twofactor-gateway/components/gatewayTestModal', () => ({
 
 describe('AdminSettings', () => {
 	it('shows a loading indicator while fetching gateways', async () => {
-		const { listGateways } = await import('@lib/twofactor-gateway')
+		const api = createGatewayAdminApiMock()
 		let resolveGateways: (value: GatewayInfo[]) => void = () => {}
-		vi.mocked(listGateways).mockReturnValueOnce(
+		vi.mocked(api.listGateways).mockReturnValueOnce(
 			new Promise<GatewayInfo[]>((resolve) => { resolveGateways = resolve }),
 		)
 
-		const wrapper = mount(AdminSettings)
+		const wrapper = mountAdminSettings(api)
 
 		// Loading icon should be visible before data arrives
 		expect(wrapper.find('.nc-loading-icon').exists()).toBe(true)
@@ -169,8 +184,8 @@ describe('AdminSettings', () => {
 	})
 
 	it('renders a unified instance list without provider rows', async () => {
-		const { listGateways } = await import('@lib/twofactor-gateway')
-		vi.mocked(listGateways).mockResolvedValueOnce([
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.listGateways).mockResolvedValueOnce([
 			{
 				id: 'signal',
 				name: 'Signal',
@@ -189,7 +204,7 @@ describe('AdminSettings', () => {
 			},
 		])
 
-		const wrapper = mount(AdminSettings)
+		const wrapper = mountAdminSettings(api)
 		await flushPromises()
 
 		const cards = wrapper.findAll('.gateway-instance-card')
@@ -198,11 +213,103 @@ describe('AdminSettings', () => {
 		expect(cards[1].attributes('data-provider')).toBe('Telegram')
 	})
 
-	it('shows an error state when the API call fails', async () => {
-		const { listGateways } = await import('@lib/twofactor-gateway')
-		vi.mocked(listGateways).mockRejectedValueOnce(new Error('Network error'))
+	it('hydrates from initial data without an extra bootstrap fetch', async () => {
+		const api = createGatewayAdminApiMock()
+		const wrapper = mountAdminSettings(api, {
+			initialData: {
+				gateways: [
+					{
+						id: 'signal',
+						name: 'Signal',
+						instructions: '',
+						allowMarkdown: false,
+						fields: [],
+						instances: [makeInstance({ id: 'hydrated-1', providerId: 'signal', label: 'Hydrated Signal' })],
+					},
+				],
+				groups: [
+					{ id: 'admins', displayName: 'Admins' },
+				],
+				items: [
+					{
+						orderKey: 'signal:hydrated-1',
+						gatewayId: 'signal',
+						providerName: 'Signal',
+						fields: [],
+						instance: makeInstance({ id: 'hydrated-1', providerId: 'signal', label: 'Hydrated Signal' }),
+						groupNames: [],
+						showRoutingAction: true,
+					},
+				],
+			},
+		})
 
-		const wrapper = mount(AdminSettings)
+		await flushPromises()
+
+		expect(api.listGateways).not.toHaveBeenCalled()
+		expect(api.listGroups).not.toHaveBeenCalled()
+		expect(wrapper.findAll('.gateway-instance-card')).toHaveLength(1)
+		expect(wrapper.text()).toContain('Hydrated Signal')
+	})
+
+	it('lets the host narrow visible actions through allowedActions', async () => {
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.listGateways).mockResolvedValueOnce([
+			{
+				id: 'signal',
+				name: 'Signal',
+				instructions: '',
+				allowMarkdown: false,
+				fields: [],
+				instances: [makeInstance({ id: 's1', providerId: 'signal', label: 'Signal Prod', default: false })],
+			},
+		])
+
+		const wrapper = mountAdminSettings(api, {
+			allowedActions: {
+				canCreateInstances: false,
+				canEditInstances: false,
+				canDeleteInstances: false,
+				canSetDefaultInstances: false,
+				canManageRouting: false,
+				canTestInstances: false,
+				canReorderInstances: false,
+			},
+		})
+
+		await flushPromises()
+
+		expect(wrapper.text()).not.toContain('tr:Add provider configuration')
+		expect(wrapper.find('.drag-handle').exists()).toBe(false)
+
+		const card = wrapper.find('.gateway-instance-card')
+		expect(card.attributes('data-routing')).toBe('false')
+		expect(card.attributes('data-edit')).toBe('false')
+		expect(card.attributes('data-delete')).toBe('false')
+		expect(card.attributes('data-test')).toBe('false')
+		expect(card.attributes('data-default')).toBe('false')
+	})
+
+	it('renders nothing and skips loading when view action is disabled', async () => {
+		const api = createGatewayAdminApiMock()
+		const wrapper = mountAdminSettings(api, {
+			allowedActions: {
+				canView: false,
+			},
+		})
+
+		await flushPromises()
+
+		expect(api.listGateways).not.toHaveBeenCalled()
+		expect(api.listGroups).not.toHaveBeenCalled()
+		expect(wrapper.find('.settings-section').exists()).toBe(false)
+	})
+
+	it('shows an error state when the API call fails', async () => {
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.listGateways).mockRejectedValueOnce(new Error('Network error'))
+
+		const wrapper = mountAdminSettings(api)
 		await flushPromises()
 
 		expect(wrapper.find('.nc-empty-content').exists()).toBe(true)
@@ -210,8 +317,8 @@ describe('AdminSettings', () => {
 	})
 
 	it('retries loading when the retry button is clicked after an error', async () => {
-		const { listGateways } = await import('@lib/twofactor-gateway')
-		vi.mocked(listGateways)
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.listGateways)
 			.mockRejectedValueOnce(new Error('First error'))
 			.mockResolvedValueOnce([
 				{
@@ -224,7 +331,7 @@ describe('AdminSettings', () => {
 				},
 			])
 
-		const wrapper = mount(AdminSettings)
+		const wrapper = mountAdminSettings(api)
 		await flushPromises()
 
 		// Error state shown
@@ -240,10 +347,10 @@ describe('AdminSettings', () => {
 	})
 
 	it('opens create modal from the single add button', async () => {
-		const { listGateways } = await import('@lib/twofactor-gateway')
-		vi.mocked(listGateways).mockResolvedValueOnce([])
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.listGateways).mockResolvedValueOnce([])
 
-		const wrapper = mount(AdminSettings)
+		const wrapper = mountAdminSettings(api)
 		await flushPromises()
 
 		const addButton = wrapper.findAll('button').find((button) => button.text().includes('tr:Add provider configuration'))
@@ -254,7 +361,7 @@ describe('AdminSettings', () => {
 	})
 
 	it('preserves routing metadata when saving general edits', async () => {
-		const api = await import('@lib/twofactor-gateway')
+		const api = createGatewayAdminApiMock()
 		vi.mocked(api.listGateways).mockResolvedValueOnce([
 			{
 				id: 'signal',
@@ -266,7 +373,7 @@ describe('AdminSettings', () => {
 			},
 		])
 
-		const wrapper = mount(AdminSettings)
+		const wrapper = mountAdminSettings(api)
 		await flushPromises()
 
 		await (wrapper.vm as unknown as {
@@ -282,7 +389,7 @@ describe('AdminSettings', () => {
 	})
 
 	it('passes selected groups when creating a new instance', async () => {
-		const api = await import('@lib/twofactor-gateway')
+		const api = createGatewayAdminApiMock()
 		vi.mocked(api.listGateways).mockResolvedValueOnce([
 			{
 				id: 'signal',
@@ -298,7 +405,7 @@ describe('AdminSettings', () => {
 			{ id: 'admins', displayName: 'Admins' },
 		])
 
-		const wrapper = mount(AdminSettings)
+		const wrapper = mountAdminSettings(api)
 		await flushPromises()
 
 		await (wrapper.vm as unknown as {
@@ -321,8 +428,8 @@ describe('AdminSettings', () => {
 	})
 
 	it('uses catalog provider name for flattened instances', async () => {
-		const { listGateways } = await import('@lib/twofactor-gateway')
-		vi.mocked(listGateways).mockResolvedValueOnce([
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.listGateways).mockResolvedValueOnce([
 			{
 				id: 'whatsapp',
 				name: 'WhatsApp',
@@ -338,7 +445,7 @@ describe('AdminSettings', () => {
 			},
 		])
 
-		const wrapper = mount(AdminSettings)
+		const wrapper = mountAdminSettings(api)
 		await flushPromises()
 
 		const cards = wrapper.findAll('.gateway-instance-card')
@@ -347,8 +454,8 @@ describe('AdminSettings', () => {
 	})
 
 	it('resolves edit target by emitted instance id', async () => {
-		const { listGateways } = await import('@lib/twofactor-gateway')
-		vi.mocked(listGateways).mockResolvedValueOnce([
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.listGateways).mockResolvedValueOnce([
 			{
 				id: 'whatsapp',
 				name: 'WhatsApp',
@@ -364,7 +471,7 @@ describe('AdminSettings', () => {
 			},
 		])
 
-		const wrapper = mount(AdminSettings)
+		const wrapper = mountAdminSettings(api)
 		await flushPromises()
 
 		;(wrapper.vm as unknown as {
@@ -380,8 +487,8 @@ describe('AdminSettings', () => {
 	})
 
 	it('resolves routing target by emitted instance id', async () => {
-		const { listGateways } = await import('@lib/twofactor-gateway')
-		vi.mocked(listGateways).mockResolvedValueOnce([
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.listGateways).mockResolvedValueOnce([
 			{
 				id: 'whatsapp',
 				name: 'WhatsApp',
@@ -392,7 +499,7 @@ describe('AdminSettings', () => {
 			},
 		])
 
-		const wrapper = mount(AdminSettings)
+		const wrapper = mountAdminSettings(api)
 		await flushPromises()
 
 		;(wrapper.vm as unknown as {
@@ -406,8 +513,8 @@ describe('AdminSettings', () => {
 	})
 
 	it('shows routing action when a gateway has only one instance and no routing metadata', async () => {
-		const { listGateways } = await import('@lib/twofactor-gateway')
-		vi.mocked(listGateways).mockResolvedValueOnce([
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.listGateways).mockResolvedValueOnce([
 			{
 				id: 'whatsapp',
 				name: 'WhatsApp',
@@ -418,15 +525,15 @@ describe('AdminSettings', () => {
 			},
 		])
 
-		const wrapper = mount(AdminSettings)
+		const wrapper = mountAdminSettings(api)
 		await flushPromises()
 
 		expect(wrapper.find('.gateway-instance-card').attributes('data-routing')).toBe('true')
 	})
 
 	it('keeps routing action visible when routing metadata already exists', async () => {
-		const { listGateways } = await import('@lib/twofactor-gateway')
-		vi.mocked(listGateways).mockResolvedValueOnce([
+		const api = createGatewayAdminApiMock()
+		vi.mocked(api.listGateways).mockResolvedValueOnce([
 			{
 				id: 'whatsapp',
 				name: 'WhatsApp',
@@ -437,14 +544,14 @@ describe('AdminSettings', () => {
 			},
 		])
 
-		const wrapper = mount(AdminSettings)
+		const wrapper = mountAdminSettings(api)
 		await flushPromises()
 
 		expect(wrapper.find('.gateway-instance-card').attributes('data-routing')).toBe('true')
 	})
 
 	it('updates priorities when instances are reordered via drag and drop', async () => {
-		const api = await import('@lib/twofactor-gateway')
+		const api = createGatewayAdminApiMock()
 		vi.mocked(api.listGateways)
 			.mockResolvedValueOnce([
 				{
@@ -487,7 +594,7 @@ describe('AdminSettings', () => {
 				},
 			])
 
-		const wrapper = mount(AdminSettings)
+		const wrapper = mountAdminSettings(api)
 		await flushPromises()
 
 		const vm = wrapper.vm as unknown as {

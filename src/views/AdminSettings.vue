@@ -2,8 +2,10 @@
   - SPDX-FileCopyrightText: 2026 LibreCode coop and contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
+
 <template>
 	<NcSettingsSection
+		v-if="effectiveAllowedActions.canView"
 		class="admin-settings"
 		:name="t('twofactor_gateway', 'Two-Factor Gateway')"
 		:description="t('twofactor_gateway', 'Configure messaging gateways used to send two-factor authentication codes. Each gateway can have multiple named configurations (instances), which enables multi-tenant setups.')">
@@ -32,12 +34,12 @@
 
 		<div v-else class="admin-settings__content">
 			<div class="admin-settings__actions">
-				<NcButton type="primary" @click="openCreate">
+				<NcButton v-if="effectiveAllowedActions.canCreateInstances" type="primary" @click="openCreate">
 					{{ t('twofactor_gateway', 'Add provider configuration') }}
 				</NcButton>
 			</div>
 
-			<p v-if="allInstances.length > 1" class="admin-settings__hint">
+			<p v-if="effectiveAllowedActions.canReorderInstances && allInstances.length > 1" class="admin-settings__hint">
 				{{ t('twofactor_gateway', 'Drag and drop instances to define routing priority across providers. Higher items run first.') }}
 			</p>
 
@@ -49,11 +51,12 @@
 				item-key="orderKey"
 				handle=".drag-handle"
 				ghost-class="admin-settings__drag-ghost"
-				:disabled="savingOrder"
+				:disabled="savingOrder || !effectiveAllowedActions.canReorderInstances"
 				@end="onInstancesReordered">
 				<template #item="{ element: item }">
 					<div class="admin-settings__instance-row">
 						<button
+							v-if="effectiveAllowedActions.canReorderInstances"
 							class="drag-handle"
 							type="button"
 							:title="t('twofactor_gateway', 'Drag to reorder priority')"
@@ -65,8 +68,12 @@
 							:instance="item.instance"
 							:fields="item.fields"
 							:provider-name="item.providerName"
-							:groups="groups"
-							:show-routing-action="item.showRoutingAction"
+							:group-names="item.groupNames ?? []"
+							:show-set-default-action="effectiveAllowedActions.canSetDefaultInstances"
+							:show-test-action="effectiveAllowedActions.canTestInstances"
+							:show-routing-action="item.showRoutingAction && effectiveAllowedActions.canManageRouting"
+							:show-edit-action="effectiveAllowedActions.canEditInstances"
+							:show-delete-action="effectiveAllowedActions.canDeleteInstances"
 							@edit="openEditById(item.gatewayId, $event)"
 							@routing="openRoutingById(item.gatewayId, $event)"
 							@delete="confirmDelete(item)"
@@ -78,6 +85,7 @@
 		</div>
 
 		<GatewayInstanceModal
+			v-if="effectiveAllowedActions.canCreateInstances || effectiveAllowedActions.canEditInstances"
 			:show="showModal"
 			:gateways="gateways"
 			:groups="groups"
@@ -89,7 +97,7 @@
 			@saved="onSaved" />
 
 		<GatewayRoutingModal
-			v-if="routingItem"
+			v-if="routingItem && effectiveAllowedActions.canManageRouting"
 			:show="showRoutingModal"
 			:label="routingItem.instance.label"
 			:instance-id="routingItem.instance.id"
@@ -99,7 +107,7 @@
 			@saved="onRoutingSaved" />
 
 		<GatewayTestModal
-			v-if="showTestModal"
+			v-if="showTestModal && effectiveAllowedActions.canTestInstances"
 			:show="showTestModal"
 			:gateway-id="testingGatewayId"
 			:instance-id="testingInstanceId"
@@ -107,6 +115,7 @@
 			@close="closeTestModal" />
 
 		<NcDialog
+			v-if="effectiveAllowedActions.canDeleteInstances"
 			:name="t('twofactor_gateway', 'Delete instance')"
 			:open="showDeleteDialog"
 			:message="deleteConfirmMessage"
@@ -127,8 +136,192 @@
 	</NcSettingsSection>
 </template>
 
+<docs>
+
+Full app-level container for the complete Two-Factor Gateway admin management experience.
+
+Use this component when another app intentionally wants to embed the full gateway-management screen instead of orchestrating lower-level building blocks itself.
+
+Named non-primitive frontend types used by this page — such as `GatewayInfo`, `GatewayGroup`, `FlatInstanceEntry`, `GatewayAdminInitialData` and `GatewayAdminAllowedActions` — are documented centrally in [`Shared frontend types`](#/Shared%20frontend%20types).
+
+### Where this payload comes from
+
+This component can receive its first payload from two places:
+
+1. **Nextcloud initial state on first render**
+	 - `lib/Settings/AdminSettings.php` injects backend data with `provideInitialState('admin-settings', ...)`
+	 - `src/admin.ts` reads that value with `loadState(...)`
+	 - `normalizeGatewayAdminSnapshot(...)` converts it into the prop shape consumed by `GatewayAdminSettings`
+
+2. **Live admin API during reloads and refreshes**
+	 - `GatewayAdminApi.listAdminScreen()` calls `GET /ocs/v2.php/apps/twofactor_gateway/admin/screen`
+	 - the response is normalized into the same frontend shape used by this component
+
+So, in practice, there are two closely related payload layers:
+
+- **transport payload**: what comes from initial state or the `/admin/screen` endpoint
+- **normalized component payload**: what `GatewayAdminSettings` actually receives in `initialData`
+
+### What the component actually expects
+
+If you are integrating this component, think in terms of the following top-level object:
+
+```json
+{
+	"gateways": [
+		{
+			"id": "whatsapp",
+			"name": "WhatsApp",
+			"instructions": "Provider-specific help text",
+			"allowMarkdown": false,
+			"fields": [
+				{ "field": "base_url", "prompt": "Base URL", "default": "", "optional": false }
+			],
+			"providerSelector": {
+				"field": "provider",
+				"prompt": "Provider",
+				"default": "",
+				"optional": false
+			},
+			"providerCatalog": [
+				{
+					"id": "whatsapp",
+					"name": "WhatsApp Cloud",
+					"fields": [
+						{ "field": "token", "prompt": "Token", "default": "", "optional": false }
+					]
+				}
+			],
+			"instances": [
+				{
+					"id": "wa-1",
+					"providerId": "whatsapp",
+					"label": "Production",
+					"default": true,
+					"createdAt": "2026-06-07T12:00:00+00:00",
+					"config": { "provider": "whatsapp", "token": "..." },
+					"isComplete": true,
+					"groupIds": ["admins"],
+					"priority": 10
+				}
+			]
+		}
+	],
+	"groups": [
+		{ "id": "admins", "displayName": "Admins" }
+	],
+	"items": [
+		{
+			"orderKey": "whatsapp:wa-1",
+			"gatewayId": "whatsapp",
+			"providerName": "WhatsApp Cloud",
+			"fields": [
+				{ "field": "token", "prompt": "Token", "default": "", "optional": false }
+			],
+			"instance": {
+				"id": "wa-1",
+				"providerId": "whatsapp",
+				"label": "Production",
+				"default": true,
+				"createdAt": "2026-06-07T12:00:00+00:00",
+				"config": { "provider": "whatsapp", "token": "..." },
+				"isComplete": true,
+				"groupIds": ["admins"],
+				"priority": 10
+			},
+			"groupNames": ["Admins"],
+			"showRoutingAction": true
+		}
+	],
+	"allowedActions": {
+		"canView": true,
+		"canCreateInstances": true,
+		"canEditInstances": true,
+		"canDeleteInstances": true,
+		"canSetDefaultInstances": true,
+		"canManageRouting": true,
+		"canTestInstances": true,
+		"canReorderInstances": true
+	}
+}
+```
+
+### What each top-level key means
+
+- `gateways`: the raw gateway catalog plus configured instances.
+- `groups`: the selectable Nextcloud groups that can be used for routing.
+- `items`: the ready-to-render list used by this component. If you want to simplify the frontend, this is usually the most important key.
+- `allowedActions`: optional UI action flags used to hide or show actions in the container.
+
+### Where the structure is documented
+
+- **HTTP / backend contract**
+	- OpenAPI documents the transport endpoints:
+		- `GET /ocs/v2.php/apps/twofactor_gateway/admin/gateways`
+		- `GET /ocs/v2.php/apps/twofactor_gateway/admin/groups`
+		- `GET /ocs/v2.php/apps/twofactor_gateway/admin/screen`
+- **Frontend normalized contract**
+	- this page documents what `GatewayAdminSettings` expects after normalization
+	- `doc/Frontend Reusable Surface.md` gives the same overview in narrative form
+- **Exact code definitions**
+	- `src/lib/twofactor-gateway/types/gateway.ts`
+	- `src/lib/twofactor-gateway/services/gatewayAdminSnapshot.ts`
+	- `src/lib/twofactor-gateway/services/adminGatewayViewModel.ts`
+
+### OpenAPI vs frontend docs
+
+- OpenAPI is the right place for backend HTTP contracts such as `/admin/gateways`, `/admin/groups` and `/admin/screen`.
+- The dedicated [`Shared frontend types`](#/Shared%20frontend%20types) page is the right place for frontend-only normalized contracts such as `FlatInstanceEntry` and the final `initialData` shape.
+- In other words: OpenAPI documents what the server sends over HTTP; the styleguide/docs explain how reusable frontend components expect to consume that data.
+
+The preview below runs against in-memory styleguide data so you can inspect the full flow without touching a real backend.
+
+### Preview
+
+```vue
+<template>
+	<div class="demo-shell">
+		<p class="demo-note">
+			This preview runs against a styleguide-only in-memory backend, so you can inspect loading,
+			modal and reorder flows without touching a real Nextcloud instance.
+		</p>
+		<GatewayAdminSettings />
+	</div>
+</template>
+
+<script>
+import { GatewayAdminSettings } from '@lib/twofactor-gateway/components/adminSettings'
+import { resetStyleguideDemoState } from '../styleguide/demoHelpers'
+
+export default {
+	components: {
+		GatewayAdminSettings,
+	},
+	created: resetStyleguideDemoState,
+}
+</script>
+
+<style scoped>
+.demo-shell {
+	display: grid;
+	gap: 1rem;
+}
+
+.demo-note {
+	margin: 0;
+	padding: 0.9rem 1rem;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-large);
+	background: var(--color-background-dark);
+	color: var(--color-text-maxcontrast);
+}
+</style>
+```
+
+</docs>
+
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, type PropType } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
@@ -139,17 +332,14 @@ import DragIcon from 'vue-material-design-icons/Drag.vue'
 import draggable from 'vuedraggable'
 import { t } from '@nextcloud/l10n'
 import {
-	createInstance,
-	deleteInstance,
-	listGateways,
-	listGroups,
-	setDefaultInstance,
-	updateInstance,
-	buildFlatInstances,
 	buildPriorityUpdates,
 	findFlatInstanceEntry,
 	mergeOrderKeys,
 	orderInstances,
+	resolveGatewayAdminAllowedActions,
+	useGatewayAdminApi,
+	type GatewayAdminAllowedActions,
+	type GatewayAdminInitialData,
 	type FlatInstanceEntry,
 	type GatewayGroup,
 	type GatewayInfo,
@@ -159,6 +349,15 @@ import { GatewayInstanceModal } from '@lib/twofactor-gateway/components/gatewayI
 import { GatewayRoutingModal } from '@lib/twofactor-gateway/components/gatewayRoutingModal'
 import { GatewayTestModal } from '@lib/twofactor-gateway/components/gatewayTestModal'
 
+/**
+ * Full app-level container for managing gateway instances, routing priority and related modal workflows.
+ *
+ * External hosts should inject an actor-aware backend/API adapter and may further
+	* narrow the visible UI through the `allowedActions` prop instead of leaking raw host role semantics
+	* into this component.
+ *
+ * @displayName GatewayAdminSettings
+ */
 export default defineComponent({
 	name: 'AdminSettings',
 	components: {
@@ -176,8 +375,34 @@ export default defineComponent({
 		draggable,
 	},
 
+	props: {
+		/**
+		 * Optional normalized bootstrap payload for the first render.
+		 * See [Shared frontend types](#/Shared%20frontend%20types) → `GatewayAdminInitialData`.
+		 */
+		initialData: {
+			// App entrypoints can hydrate the first render from backend-provided initial state.
+			// Subsequent mutations still use the live GatewayAdminApi and refresh from the backend.
+			type: Object as PropType<GatewayAdminInitialData | null>,
+			default: null,
+		},
+		/**
+		 * Optional UI action overrides passed by the host integration.
+		 * See [Shared frontend types](#/Shared%20frontend%20types) → `GatewayAdminAllowedActions`.
+		 */
+		allowedActions: {
+			// Host apps should pass UI action visibility instead of raw role names,
+			// user ids or group lists. The backend/API remains the source of truth for enforcement.
+			type: Object as PropType<Partial<GatewayAdminAllowedActions> | null>,
+			default: null,
+		},
+	},
+
 	setup() {
-		return { t }
+		return {
+			t,
+			gatewayAdminApi: useGatewayAdminApi(),
+		}
 	},
 
 	data() {
@@ -186,6 +411,7 @@ export default defineComponent({
 			error: '',
 			gateways: [] as GatewayInfo[],
 			groups: [] as GatewayGroup[],
+			items: [] as FlatInstanceEntry[],
 
 			showModal: false,
 			editingGatewayId: '',
@@ -209,8 +435,15 @@ export default defineComponent({
 	},
 
 	computed: {
+		effectiveAllowedActions(): GatewayAdminAllowedActions {
+			return resolveGatewayAdminAllowedActions({
+				...(this.initialData?.allowedActions ?? {}),
+				...(this.allowedActions ?? {}),
+			})
+		},
+
 		allInstances(): FlatInstanceEntry[] {
-			return buildFlatInstances(this.gateways)
+			return this.items
 		},
 
 		orderedInstances: {
@@ -250,11 +483,32 @@ export default defineComponent({
 	},
 
 	async created() {
+		if (!this.effectiveAllowedActions.canView) {
+			return
+		}
+
+		if (this.initialData !== null) {
+			this.applyInitialData(this.initialData)
+			return
+		}
+
 		await this.loadGateways()
 	},
 
 	methods: {
+		applyInitialData(initialData: GatewayAdminInitialData) {
+			this.gateways = JSON.parse(JSON.stringify(initialData.gateways)) as GatewayInfo[]
+			this.groups = JSON.parse(JSON.stringify(initialData.groups)) as GatewayGroup[]
+			this.items = JSON.parse(JSON.stringify(initialData.items)) as FlatInstanceEntry[]
+			this.error = ''
+			this.loading = false
+		},
+
 		openEditById(gatewayId: string, instanceId: string) {
+			if (!this.effectiveAllowedActions.canEditInstances) {
+				return
+			}
+
 			const item = findFlatInstanceEntry(this.allInstances, gatewayId, instanceId)
 			if (!item) {
 				return
@@ -263,6 +517,10 @@ export default defineComponent({
 		},
 
 		openCreate() {
+			if (!this.effectiveAllowedActions.canCreateInstances) {
+				return
+			}
+
 			this.editingGatewayId = ''
 			this.editingInstanceId = ''
 			this.editingLabel = ''
@@ -271,6 +529,10 @@ export default defineComponent({
 		},
 
 		openEdit(item: FlatInstanceEntry) {
+			if (!this.effectiveAllowedActions.canEditInstances) {
+				return
+			}
+
 			this.editingGatewayId = item.gatewayId
 			this.editingInstanceId = item.instance.id
 			this.editingLabel = item.instance.label
@@ -285,6 +547,10 @@ export default defineComponent({
 		},
 
 		openRoutingById(gatewayId: string, instanceId: string) {
+			if (!this.effectiveAllowedActions.canManageRouting) {
+				return
+			}
+
 			const item = findFlatInstanceEntry(this.allInstances, gatewayId, instanceId)
 			if (!item) {
 				return
@@ -304,6 +570,10 @@ export default defineComponent({
 		},
 
 		openTest(item: FlatInstanceEntry) {
+			if (!this.effectiveAllowedActions.canTestInstances) {
+				return
+			}
+
 			this.testingGatewayId = item.gatewayId
 			this.testingInstanceId = item.instance.id
 			this.testingLabel = item.instance.label
@@ -318,17 +588,21 @@ export default defineComponent({
 		},
 
 		confirmDelete(item: FlatInstanceEntry) {
+			if (!this.effectiveAllowedActions.canDeleteInstances) {
+				return
+			}
+
 			this.pendingDelete = item
 			this.showDeleteDialog = true
 		},
 
 		async doDelete() {
-			if (!this.pendingDelete) {
+			if (!this.effectiveAllowedActions.canDeleteInstances || !this.pendingDelete) {
 				return
 			}
 			this.deleting = true
 			try {
-				await deleteInstance(this.pendingDelete.gatewayId, this.pendingDelete.instance.id)
+				await this.gatewayAdminApi.deleteInstance(this.pendingDelete.gatewayId, this.pendingDelete.instance.id)
 				this.showDeleteDialog = false
 				this.pendingDelete = null
 				await this.loadGateways()
@@ -340,8 +614,12 @@ export default defineComponent({
 		},
 
 		async onSetDefault(item: FlatInstanceEntry) {
+			if (!this.effectiveAllowedActions.canSetDefaultInstances) {
+				return
+			}
+
 			try {
-				await setDefaultInstance(item.gatewayId, item.instance.id)
+				await this.gatewayAdminApi.setDefaultInstance(item.gatewayId, item.instance.id)
 				await this.loadGateways()
 			} catch (err) {
 				console.error('Failed to set default gateway instance', err)
@@ -349,10 +627,18 @@ export default defineComponent({
 		},
 
 		async onSaved(payload: { gatewayId: string; instanceId: string; label: string; config: Record<string, string>; groupIds?: string[] }) {
+			if (payload.instanceId && !this.effectiveAllowedActions.canEditInstances) {
+				return
+			}
+
+			if (!payload.instanceId && !this.effectiveAllowedActions.canCreateInstances) {
+				return
+			}
+
 			try {
 				if (payload.instanceId) {
 					const existingItem = findFlatInstanceEntry(this.allInstances, payload.gatewayId, payload.instanceId)
-					await updateInstance(
+					await this.gatewayAdminApi.updateInstance(
 						payload.gatewayId,
 						payload.instanceId,
 						payload.label,
@@ -361,7 +647,7 @@ export default defineComponent({
 						existingItem?.instance.priority ?? 0,
 					)
 				} else {
-					await createInstance(payload.gatewayId, payload.label, payload.config, payload.groupIds ?? [], 0)
+					await this.gatewayAdminApi.createInstance(payload.gatewayId, payload.label, payload.config, payload.groupIds ?? [], 0)
 				}
 				this.showModal = false
 				await this.loadGateways()
@@ -371,12 +657,12 @@ export default defineComponent({
 		},
 
 		async onRoutingSaved(payload: { groupIds: string[] }) {
-			if (!this.routingItem) {
+			if (!this.effectiveAllowedActions.canManageRouting || !this.routingItem) {
 				return
 			}
 
 			try {
-				await updateInstance(
+				await this.gatewayAdminApi.updateInstance(
 					this.routingItem.gatewayId,
 					this.routingItem.instance.id,
 					this.routingItem.instance.label,
@@ -392,7 +678,7 @@ export default defineComponent({
 		},
 
 		async onInstancesReordered(evt: { oldIndex?: number; newIndex?: number }) {
-			if (this.savingOrder || evt.oldIndex === undefined || evt.newIndex === undefined || evt.oldIndex === evt.newIndex) {
+			if (!this.effectiveAllowedActions.canReorderInstances || this.savingOrder || evt.oldIndex === undefined || evt.newIndex === undefined || evt.oldIndex === evt.newIndex) {
 				return
 			}
 
@@ -406,7 +692,7 @@ export default defineComponent({
 				const updates = buildPriorityUpdates(orderedItems)
 
 				for (const { item, priority } of updates) {
-					await updateInstance(
+					await this.gatewayAdminApi.updateInstance(
 						item.gatewayId,
 						item.instance.id,
 						item.instance.label,
@@ -425,12 +711,22 @@ export default defineComponent({
 		},
 
 		async loadGateways() {
+			if (!this.effectiveAllowedActions.canView) {
+				this.loading = false
+				this.error = ''
+				this.gateways = []
+				this.groups = []
+				this.items = []
+				return
+			}
+
 			this.loading = true
 			this.error = ''
 			try {
-				const [gateways, groups] = await Promise.all([listGateways(), listGroups()])
-				this.gateways = gateways
-				this.groups = groups
+				const screen = await this.gatewayAdminApi.listAdminScreen()
+				this.gateways = screen.gateways
+				this.groups = screen.groups
+				this.items = screen.items
 			} catch (err) {
 				console.error('Failed to load gateways', err)
 				this.error = t('twofactor_gateway', 'Could not load gateway list. Please check your connection and try again.')

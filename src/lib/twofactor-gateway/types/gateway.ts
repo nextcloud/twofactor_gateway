@@ -30,6 +30,17 @@ export interface GatewayGroup {
 	displayName: string
 }
 
+export interface GatewayAdminAllowedActions {
+	canView: boolean
+	canCreateInstances: boolean
+	canEditInstances: boolean
+	canDeleteInstances: boolean
+	canSetDefaultInstances: boolean
+	canManageRouting: boolean
+	canTestInstances: boolean
+	canReorderInstances: boolean
+}
+
 export interface GatewayProviderDefinition {
 	id: string
 	name: string

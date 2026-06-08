@@ -2,6 +2,19 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 site_name: Two-Factor Gateway
 docs_dir: doc
+site_dir: build/site
+theme:
+  name: mkdocs
+  navigation_depth: 3
+hooks:
+  - doc/tools/mkdocs_hooks.py
+extra_javascript:
+  - assets/openapi-explorer.js
 nav:
-  - Admin Documentation: 'Admin Documentation.md'
-  - User Documentation: 'User Documentation.md'
+  - Home: 'index.md'
+  - Admin: 'Admin Documentation.md'
+  - User: 'User Documentation.md'
+  - Developer:
+      - Backend: 'Backend Development.md'
+      - API: 'API.md'
+      - Frontend: 'Frontend Reusable Surface.md'

@@ -94,6 +94,62 @@
 	</div>
 </template>
 
+<docs>
+
+App-level container for one gateway definition and its configured instances.
+
+This component owns the create, update, delete and set-default workflows through the stable Two-Factor Gateway admin API helpers, so it is best used when the consumer wants a per-gateway management block rather than a backend-agnostic primitive.
+
+The main non-primitive prop type used here is `GatewayInfo`; see [`Shared frontend types`](#/Shared%20frontend%20types) for the canonical explanation.
+
+### Preview
+
+```vue
+<template>
+	<div class="demo-shell">
+		<p class="demo-note">
+			Use the header button to open the create/edit flow. Mutations stay local to this styleguide preview.
+		</p>
+		<GatewaySection :gateway="gateway" @updated="updatedCount += 1" />
+		<p class="demo-log">
+			Updated events emitted: <strong>{{ updatedCount }}</strong>
+		</p>
+	</div>
+</template>
+
+<script>
+import { GatewaySection } from '@lib/twofactor-gateway/components/gatewaySection'
+import { createStyleguideGatewayDemo } from '../styleguide/demoHelpers'
+
+export default {
+	components: {
+		GatewaySection,
+	},
+	data() {
+		return {
+			gateway: createStyleguideGatewayDemo('acme_sms'),
+			updatedCount: 0,
+		}
+	},
+}
+</script>
+
+<style scoped>
+.demo-shell {
+	display: grid;
+	gap: 1rem;
+}
+
+.demo-note,
+.demo-log {
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+}
+</style>
+```
+
+</docs>
+
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -103,10 +159,7 @@ import ChevronDownIcon from 'vue-material-design-icons/ChevronDown.vue'
 import PlusIcon from 'vue-material-design-icons/Plus.vue'
 import { t } from '@nextcloud/l10n'
 import {
-	createInstance,
-	deleteInstance,
-	setDefaultInstance,
-	updateInstance,
+	useGatewayAdminApi,
 	type GatewayInfo,
 	type GatewayInstance,
 } from '@lib/twofactor-gateway'
@@ -114,6 +167,9 @@ import { GatewayInstanceCard } from '@lib/twofactor-gateway/components/gatewayIn
 import { GatewayInstanceModal } from '@lib/twofactor-gateway/components/gatewayInstanceModal'
 import { GatewayTestModal } from '@lib/twofactor-gateway/components/gatewayTestModal'
 
+/**
+ * Per-gateway management container for the public reusable frontend surface.
+ */
 export default defineComponent({
 	name: 'GatewaySection',
 	components: {
@@ -128,13 +184,20 @@ export default defineComponent({
 	},
 
 	props: {
+		/**
+		 * Gateway definition together with its current instances and editable field metadata.
+		 * See [Shared frontend types](#/Shared%20frontend%20types) → `GatewayInfo`.
+		 */
 		gateway: { type: Object as PropType<GatewayInfo>, required: true },
 	},
 
 	emits: ['updated'],
 
 	setup() {
-		return { t }
+		return {
+			t,
+			gatewayAdminApi: useGatewayAdminApi(),
+		}
 	},
 
 	data() {
@@ -229,16 +292,21 @@ export default defineComponent({
 			try {
 				let updated: GatewayInstance
 				if (payload.instanceId) {
-					updated = await updateInstance(payload.gatewayId, payload.instanceId, payload.label, payload.config)
+					updated = await this.gatewayAdminApi.updateInstance(payload.gatewayId, payload.instanceId, payload.label, payload.config)
 					const idx = this.instances.findIndex((i) => i.id === payload.instanceId)
 					if (idx >= 0) {
 						this.instances[idx] = updated
 					}
 				} else {
-					updated = await createInstance(payload.gatewayId, payload.label, payload.config)
+					updated = await this.gatewayAdminApi.createInstance(payload.gatewayId, payload.label, payload.config)
 					this.instances.push(updated)
 				}
 				this.showModal = false
+				/**
+				 * Signals that the underlying gateway instances changed and the parent may need to refresh derived state.
+				 *
+				 * @event updated
+				 */
 				this.$emit('updated')
 			} catch (err) {
 				console.error('Failed to save gateway instance', err)
@@ -255,7 +323,7 @@ export default defineComponent({
 		async doDelete() {
 			this.deleting = true
 			try {
-				await deleteInstance(this.gateway.id, this.deletingInstanceId)
+				await this.gatewayAdminApi.deleteInstance(this.gateway.id, this.deletingInstanceId)
 				this.instances = this.instances.filter((i) => i.id !== this.deletingInstanceId)
 				this.showDeleteDialog = false
 				this.$emit('updated')
@@ -270,7 +338,7 @@ export default defineComponent({
 
 		async onSetDefault(instanceId: string) {
 			try {
-				await setDefaultInstance(this.gateway.id, instanceId)
+				await this.gatewayAdminApi.setDefaultInstance(this.gateway.id, instanceId)
 				this.instances = this.instances.map((inst) => ({
 					...inst,
 					default: inst.id === instanceId,
