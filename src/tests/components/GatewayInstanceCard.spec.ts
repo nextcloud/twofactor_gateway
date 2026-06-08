@@ -239,6 +239,27 @@ describe('GatewayInstanceCard', () => {
 		expect(groupChips[1].text()).toBe('Admins')
 	})
 
+	it('prefers backend-provided group names when available', () => {
+		const instance = makeInstance({ groupIds: ['client-a', 'admins'], priority: 20 })
+		const wrapper = mount(GatewayInstanceCard, {
+			props: {
+				instance,
+				fields,
+				groupNames: ['Operations', 'Admins'],
+				groups: [
+					{ id: 'client-a', displayName: 'Client A' },
+					{ id: 'admins', displayName: 'Admins' },
+				],
+			},
+		})
+
+		const groupChips = wrapper.findAll('.routing-group-chip')
+		expect(groupChips).toHaveLength(2)
+		expect(groupChips[0].text()).toBe('Operations')
+		expect(groupChips[1].text()).toBe('Admins')
+		expect(wrapper.text()).not.toContain('Client A')
+	})
+
 	it('renders boolean fields with readable labels', () => {
 		const instance = makeInstance({
 			config: {

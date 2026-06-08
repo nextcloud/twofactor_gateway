@@ -3,6 +3,10 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
+	<!--
+	  Requests closing the test modal.
+	  @event close
+	-->
 	<NcModal
 		:name="t('twofactor_gateway', 'Test Gateway Instance')"
 		:show="show"
@@ -61,6 +65,81 @@
 	</NcModal>
 </template>
 
+<docs>
+
+Instance test workflow modal for sending a verification message through the stable Two-Factor Gateway test endpoint.
+
+This component is useful when the consumer intentionally delegates test-send behavior to Two-Factor Gateway instead of implementing its own transport-specific test flow.
+
+### Preview
+
+```vue
+<template>
+	<div class="demo-shell">
+		<p class="demo-note">
+			Use any identifier to simulate success. Include the word <code>fail</code> to preview the error state.
+		</p>
+		<button class="demo-open-button" type="button" @click="showModal = true">
+			Reopen test preview
+		</button>
+		<GatewayTestModal
+			:show="showModal"
+			gateway-id="acme_sms"
+			:instance-id="instance.id"
+			:label="instance.label"
+			@close="showModal = false" />
+	</div>
+</template>
+
+<script>
+import { GatewayTestModal } from '@lib/twofactor-gateway/components/gatewayTestModal'
+import { createStyleguideGatewayInstanceDemo } from '../styleguide/demoHelpers'
+
+export default {
+	components: {
+		GatewayTestModal,
+	},
+	data() {
+		const { instance } = createStyleguideGatewayInstanceDemo('acme_sms')
+		return {
+			showModal: false,
+			instance,
+		}
+	},
+}
+</script>
+
+<style scoped>
+.demo-shell {
+	display: grid;
+	gap: 1rem;
+}
+
+.demo-note {
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+}
+
+code {
+	padding: 0.15rem 0.35rem;
+	border-radius: var(--border-radius-element);
+	background: var(--color-background-dark);
+}
+
+.demo-open-button {
+	width: fit-content;
+	padding: 0.65rem 0.9rem;
+	border: 1px solid var(--color-border-dark);
+	border-radius: var(--border-radius-element);
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	cursor: pointer;
+}
+</style>
+```
+
+</docs>
+
 <script lang="ts">
 import { defineComponent } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -69,23 +148,41 @@ import NcModal from '@nextcloud/vue/components/NcModal'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
-import { testInstance, type TestResult } from '@lib/twofactor-gateway'
+import { useGatewayAdminApi, type TestResult } from '@lib/twofactor-gateway'
 
+/**
+ * Test workflow modal for sending a verification message through the stable admin test endpoint.
+ */
 export default defineComponent({
 	name: 'GatewayTestModal',
 	components: { NcButton, NcLoadingIcon, NcModal, NcNoteCard, NcTextField },
 
 	props: {
+		/**
+		 * Controls whether the modal is visible.
+		 */
 		show: { type: Boolean, default: false },
+		/**
+		 * Stable gateway identifier used for the test request.
+		 */
 		gatewayId: { type: String, required: true },
+		/**
+		 * Stable instance identifier used for the test request.
+		 */
 		instanceId: { type: String, required: true },
+		/**
+		 * Human-readable label shown in the modal copy.
+		 */
 		label: { type: String, required: true },
 	},
 
 	emits: ['close'],
 
 	setup() {
-		return { t }
+		return {
+			t,
+			gatewayAdminApi: useGatewayAdminApi(),
+		}
 	},
 
 	data() {
@@ -163,7 +260,7 @@ export default defineComponent({
 			this.testing = true
 			this.result = null
 			try {
-				this.result = await testInstance(this.gatewayId, this.instanceId, identifier)
+				this.result = await this.gatewayAdminApi.testInstance(this.gatewayId, this.instanceId, identifier)
 			} catch (err: unknown) {
 				const message = (err as { response?: { data?: { ocs?: { data?: { message?: string } } } } })
 					?.response?.data?.ocs?.data?.message

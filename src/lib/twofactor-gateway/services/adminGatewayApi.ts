@@ -15,6 +15,11 @@ import {
 	type InteractiveSetupResponse,
 	type TestResult,
 } from '../types/gateway.ts'
+import {
+	normalizeGatewayAdminSnapshot,
+	type GatewayAdminInitialData,
+	type GatewayAdminSnapshot,
+} from './gatewayAdminSnapshot.ts'
 
 function ocsData<T>(response: { data: unknown }): T {
 	const d = response.data as Record<string, Record<string, T>>
@@ -41,6 +46,20 @@ export async function listGroups(query = '', limit = 200): Promise<GatewayGroup[
 		params: { query, limit },
 	})
 	return ocsData<GatewayGroup[]>(response)
+}
+
+export async function listAdminScreen(groupLimit = 200): Promise<GatewayAdminInitialData> {
+	const response = await axios.get(generateOcsUrl('/apps/twofactor_gateway/admin/screen'), {
+		params: { groupLimit },
+	})
+
+	const snapshot = ocsData<GatewayAdminSnapshot>(response)
+	const normalized = normalizeGatewayAdminSnapshot(snapshot)
+	if (normalized === null) {
+		throw new Error('Unexpected empty admin screen payload')
+	}
+
+	return normalized
 }
 
 export async function createInstance(

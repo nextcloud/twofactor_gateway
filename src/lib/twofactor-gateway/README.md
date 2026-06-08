@@ -7,6 +7,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 Internal module under `src/lib/` for TwoFactor Gateway frontend logic.
 
+For the high-level consumer overview, see `doc/Frontend Reusable Surface.md`.
+For the unified documentation site, run `npm run docs:build` or `npm run docs:serve`.
+For focused component-level frontend work, `npm run styleguide` still starts the standalone preview.
+
 It currently provides:
 - Shared gateway types
 - Admin gateway service layer

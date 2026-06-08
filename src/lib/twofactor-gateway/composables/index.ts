@@ -2,4 +2,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 export * from './useGatewayApi.ts'
+export * from './useGatewayAdminApi.ts'
 export * from './useGatewayForm.ts'

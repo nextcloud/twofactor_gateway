@@ -4,16 +4,11 @@
 import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent } from 'vue'
+import { createGatewayAdminApi, gatewayAdminApiKey } from '@lib/twofactor-gateway'
 import SetupPanel from '../../../../components/providers/whatsappbusiness/SetupPanel.vue'
 
 vi.mock('@nextcloud/l10n', () => ({
 	t: (_app: string, text: string, vars?: Record<string, string>) => text.replace(/\{(\w+)\}/g, (_match, key: string) => vars?.[key] ?? `{${key}}`),
-}))
-
-vi.mock('@lib/twofactor-gateway', () => ({
-	startInteractiveSetup: vi.fn(),
-	interactiveSetupStep: vi.fn(),
-	cancelInteractiveSetup: vi.fn(),
 }))
 
 vi.mock('@nextcloud/vue/components/NcButton', () => ({
@@ -50,12 +45,23 @@ vi.mock('@nextcloud/vue/components/NcTextField', () => ({
 
 describe('WhatsApp Business SetupPanel', () => {
 	it('uses a parameterized manual template placeholder', async () => {
+		const gatewayAdminApi = createGatewayAdminApi({
+			startInteractiveSetup: vi.fn(),
+			interactiveSetupStep: vi.fn(),
+			cancelInteractiveSetup: vi.fn(),
+		})
+
 		const wrapper = mount(SetupPanel, {
 			props: {
 				gatewayId: 'whatsapp',
 				providerId: 'whatsappbusiness',
 				config: {},
 				canStart: true,
+			},
+			global: {
+				provide: {
+					[gatewayAdminApiKey as symbol]: gatewayAdminApi,
+				},
 			},
 		})
 
