@@ -55,7 +55,7 @@
     "process": "^0.11.10",
     "sass": "^1.100.0",
     "sass-loader": "^17.0.0",
-    "style-loader": "^2.0.0",
+    "style-loader": "^4.0.0",
     "ts-loader": "^8.4.0",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-stylelint": "^6.1.0",
