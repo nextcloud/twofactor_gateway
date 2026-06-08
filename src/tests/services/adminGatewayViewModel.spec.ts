@@ -26,7 +26,7 @@ const makeInstance = (overrides: Partial<GatewayInstance> = {}): GatewayInstance
 })
 
 describe('adminGatewayViewModel', () => {
-	it('buildFlatInstances normalizes provider display and priority sorting', () => {
+	it('buildFlatInstances normalizes provider display, group names and priority sorting', () => {
 		const gateways: GatewayInfo[] = [
 			{
 				id: 'whatsapp',
@@ -41,16 +41,17 @@ describe('adminGatewayViewModel', () => {
 				],
 				instances: [
 					makeInstance({ id: 'gw-2', label: 'Second', priority: 1, providerId: 'gowhatsapp', config: { provider: 'gowhatsapp' } }),
-					makeInstance({ id: 'gw-1', label: 'First', priority: 2, providerId: 'whatsapp', config: { provider: 'whatsapp' } }),
+					makeInstance({ id: 'gw-1', label: 'First', priority: 2, providerId: 'whatsapp', config: { provider: 'whatsapp' }, groupIds: ['admins'] }),
 				],
 			},
 		]
 
-		const rows = buildFlatInstances(gateways)
+		const rows = buildFlatInstances(gateways, [{ id: 'admins', displayName: 'Admins' }])
 
 		expect(rows).toHaveLength(2)
 		expect(rows[0].orderKey).toBe('whatsapp:gw-1')
 		expect(rows[0].providerName).toBe('WhatsApp Cloud')
+		expect(rows[0].groupNames).toEqual(['Admins'])
 		expect(rows[1].providerName).toBe('Go WhatsApp')
 	})
 

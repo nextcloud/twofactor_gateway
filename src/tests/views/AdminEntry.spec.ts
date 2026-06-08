@@ -35,7 +35,7 @@ describe('admin entrypoint', () => {
 
 		const adminRoot = document.getElementById('twofactor-gateway-admin')
 
-		expect(createAppMock).toHaveBeenCalledWith(gatewayAdminSettingsStub)
+		expect(createAppMock).toHaveBeenCalledWith(gatewayAdminSettingsStub, { initialData: null })
 		expect(mountMock).toHaveBeenCalledWith(adminRoot)
 	})
 

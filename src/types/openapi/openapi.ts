@@ -77,14 +77,6 @@ export type paths = {
 export type webhooks = Record<string, never>;
 export type components = {
     schemas: {
-        Capabilities: {
-            features: string[];
-            config: Record<string, never>;
-            version: string;
-        };
-        PublicCapabilities: {
-            twofactorgateway?: components["schemas"]["Capabilities"];
-        };
         State: {
             gatewayName: string;
             /** Format: int64 */

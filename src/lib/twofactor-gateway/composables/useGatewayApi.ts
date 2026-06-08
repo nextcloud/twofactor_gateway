@@ -3,25 +3,27 @@
 
 import { ref } from 'vue'
 import {
-	listGateways,
-	listGroups,
 	type GatewayGroup,
 	type GatewayInfo,
+	type FlatInstanceEntry,
 } from '../index.ts'
+import { useGatewayAdminApi, type GatewayAdminApi } from './useGatewayAdminApi.ts'
 
-export function useGatewayApi() {
+export function useGatewayApi(gatewayAdminApi: GatewayAdminApi = useGatewayAdminApi()) {
 	const loading = ref(false)
 	const error = ref('')
 	const gateways = ref<GatewayInfo[]>([])
 	const groups = ref<GatewayGroup[]>([])
+	const items = ref<FlatInstanceEntry[]>([])
 
 	async function load() {
 		loading.value = true
 		error.value = ''
 		try {
-			const [nextGateways, nextGroups] = await Promise.all([listGateways(), listGroups()])
-			gateways.value = nextGateways
-			groups.value = nextGroups
+			const screen = await gatewayAdminApi.listAdminScreen()
+			gateways.value = screen.gateways
+			groups.value = screen.groups
+			items.value = screen.items
 		} catch (e) {
 			error.value = e instanceof Error ? e.message : 'Failed to load gateways'
 		} finally {
@@ -34,6 +36,7 @@ export function useGatewayApi() {
 		error,
 		gateways,
 		groups,
+		items,
 		load,
 	}
 }

@@ -19,6 +19,7 @@ use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestIdentifierNormalizer;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
+use OCA\TwoFactorGateway\Service\GatewayAdminScreenService;
 use OCA\TwoFactorGateway\Service\GatewayCatalogService;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
@@ -36,9 +37,11 @@ use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
 
+/** @psalm-import-type TwoFactorGatewayAdminScreen from \OCA\TwoFactorGateway\ResponseDefinitions */
 class AdminGatewayController extends OCSController {
 	public function __construct(
 		IRequest $request,
+		private GatewayAdminScreenService $gatewayAdminScreenService,
 		private GatewayCatalogService $gatewayCatalogService,
 		private GatewayConfigService $configService,
 		private GatewayFactory $gatewayFactory,
@@ -63,6 +66,21 @@ class AdminGatewayController extends OCSController {
 	#[ApiRoute(verb: 'GET', url: '/admin/gateways')]
 	public function listGateways(): DataResponse {
 		return new DataResponse($this->gatewayCatalogService->listGateways($this->currentActor()));
+	}
+
+	/**
+	 * List a screen-ready admin payload with gateways, assignable groups and flattened display items
+	 *
+	 * @param int $groupLimit Maximum number of groups returned (bounded server-side)
+	 *
+	 * @return DataResponse<Http::STATUS_OK, TwoFactorGatewayAdminScreen, array{}>
+	 *
+	 * 200: OK
+	 */
+	#[AuthorizedAdminSetting(\OCA\TwoFactorGateway\Settings\AdminSettings::class)]
+	#[ApiRoute(verb: 'GET', url: '/admin/screen')]
+	public function getScreen(int $groupLimit = 200): DataResponse {
+		return new DataResponse($this->gatewayAdminScreenService->build($this->currentActor(), $groupLimit));
 	}
 
 	/**

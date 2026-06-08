@@ -177,11 +177,7 @@ import NcProgressBar from '@nextcloud/vue/components/NcProgressBar'
 import NcPasswordField from '@nextcloud/vue/components/NcPasswordField'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { t } from '@nextcloud/l10n'
-import {
-	cancelInteractiveSetup,
-	interactiveSetupStep,
-	startInteractiveSetup,
-} from '@lib/twofactor-gateway'
+import { useGatewayAdminApi } from '@lib/twofactor-gateway'
 import type { InteractiveSetupResponse } from '@lib/twofactor-gateway'
 
 type WizardDevice = {
@@ -210,7 +206,10 @@ export default defineComponent({
 	},
 	emits: ['merge-config', 'setup-completed', 'update:wizardActive'],
 	setup() {
-		return { t }
+		return {
+			t,
+			gatewayAdminApi: useGatewayAdminApi(),
+		}
 	},
 	data() {
 		return {
@@ -290,7 +289,7 @@ export default defineComponent({
 			}
 			this.pairingAttempt++
 			try {
-				const response = await interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'poll_pairing')
+				const response = await this.gatewayAdminApi.interactiveSetupStep(this.gatewayId, this.wizardSessionId, 'poll_pairing')
 				this.applyWizardResponse(response)
 				if (this.wizardStep === 'pairing' && response.status !== 'error') {
 					this.schedulePairingPoll()
@@ -414,7 +413,7 @@ export default defineComponent({
 				// TRANSLATORS: Keep U+00A0 before the ellipsis so it never wraps to a new line, per Nextcloud translation style guide.
 				this.wizardMessage = t('twofactor_gateway', 'Starting guided setup\u00A0…')
 				this.wizardMessageType = 'info'
-				const response = await startInteractiveSetup(this.gatewayId, {
+				const response = await this.gatewayAdminApi.startInteractiveSetup(this.gatewayId, {
 					base_url: this.bootstrapBaseUrl,
 					provider: this.providerId,
 					username: this.bootstrapUsername,
@@ -440,7 +439,7 @@ export default defineComponent({
 			try {
 				this.wizardMessage = t('twofactor_gateway', 'Processing guided setup step\u00A0…')
 				this.wizardMessageType = 'info'
-				const response = await interactiveSetupStep(this.gatewayId, this.wizardSessionId, action, input)
+				const response = await this.gatewayAdminApi.interactiveSetupStep(this.gatewayId, this.wizardSessionId, action, input)
 				this.applyWizardResponse(response)
 			} catch (error) {
 				this.wizardMessage = this.normalizeErrorMessage(error)
@@ -460,7 +459,7 @@ export default defineComponent({
 
 			this.wizardLoading = true
 			try {
-				await cancelInteractiveSetup(this.gatewayId, this.wizardSessionId)
+				await this.gatewayAdminApi.cancelInteractiveSetup(this.gatewayId, this.wizardSessionId)
 				this.resetWizardState()
 			} catch (error) {
 				this.wizardMessage = this.normalizeErrorMessage(error)

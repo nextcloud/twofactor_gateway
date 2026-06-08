@@ -36,9 +36,15 @@ jobs:
             src:
               - '.github/workflows/**'
               - 'src/**'
+              - 'doc/**'
+              - '.readthedocs.yaml'
+              - 'mkdocs.yml'
+              - 'styleguide.config.cjs'
               - 'appinfo/info.xml'
+              - 'openapi*.json'
               - 'package.json'
               - 'package-lock.json'
+              - 'requirements-docs.txt'
               - 'tsconfig.json'
               - '**.js'
               - '**.ts'
@@ -50,7 +56,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.src != 'false'
 
-    name: NPM build
+    name: NPM build and docs
     steps:
       - name: Checkout
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -72,6 +78,11 @@ jobs:
       - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
         run: npm i -g 'npm@${{ steps.versions.outputs.npmVersion }}'
 
+      - name: Install docs tooling
+        run: |
+          python3 -m pip install --user -r requirements-docs.txt
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
       - name: Install dependencies & build
         env:
           CYPRESS_INSTALL_BINARY: 0
@@ -79,6 +90,7 @@ jobs:
         run: |
           npm ci
           npm run build --if-present
+          npm run docs:build --if-present
 
       - name: Check build changes
         run: |
