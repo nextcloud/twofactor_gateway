@@ -30,6 +30,10 @@ namespace OCA\TwoFactorGateway;
  *     name: string,
  *     fields: list<TwoFactorGatewayFieldDefinition>,
  * }
+ * @psalm-type TwoFactorGatewayGroup = array{
+ *     id: string,
+ *     displayName: string,
+ * }
  * @psalm-type TwoFactorGatewayInstance = array{
  *     id: string,
  *     label: string,
@@ -49,6 +53,31 @@ namespace OCA\TwoFactorGateway;
  *     instances: list<TwoFactorGatewayInstance>,
  *     providerSelector?: TwoFactorGatewayFieldDefinition,
  *     providerCatalog?: list<TwoFactorGatewayProviderCatalogEntry>,
+ * }
+ * @psalm-type TwoFactorGatewayAllowedActions = array{
+ *     canView: bool,
+ *     canCreateInstances: bool,
+ *     canEditInstances: bool,
+ *     canDeleteInstances: bool,
+ *     canSetDefaultInstances: bool,
+ *     canManageRouting: bool,
+ *     canTestInstances: bool,
+ *     canReorderInstances: bool,
+ * }
+ * @psalm-type TwoFactorGatewayAdminScreenItem = array{
+ *     orderKey: string,
+ *     gatewayId: string,
+ *     providerName: string,
+ *     fields: list<array<string, mixed>>,
+ *     instance: array<string, mixed>,
+ *     groupNames: list<string>,
+ *     showRoutingAction: bool,
+ * }
+ * @psalm-type TwoFactorGatewayAdminScreen = array{
+ *     gateways: list<array<string, mixed>>,
+ *     groups: list<TwoFactorGatewayGroup>,
+ *     allowedActions: TwoFactorGatewayAllowedActions,
+ *     items: list<TwoFactorGatewayAdminScreenItem>,
  * }
  */
 final class ResponseDefinitions {
