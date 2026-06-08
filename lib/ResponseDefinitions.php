@@ -14,12 +14,6 @@ namespace OCA\TwoFactorGateway;
  *     state: int,
  *     phoneNumber: ?string,
  * }
- * @psalm-type TwoFactorGatewayCapabilities = array{
- *     features: list<string>,
- *     config: array{
- *     },
- *     version: string,
- * }
  * @psalm-type TwoFactorGatewayFieldDefinition = array{
  *     field: string,
  *     prompt: string,

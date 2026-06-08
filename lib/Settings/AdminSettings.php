@@ -10,10 +10,18 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Settings;
 
 use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Service\GatewayAdminInitialStateService;
+use OCP\AppFramework\Services\IInitialState;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\Settings\IDelegatedSettings;
 
 class AdminSettings implements IDelegatedSettings {
+	public function __construct(
+		private IInitialState $initialState,
+		private GatewayAdminInitialStateService $gatewayAdminInitialStateService,
+	) {
+	}
+
 	/**
 	 * Restrict delegated AppConfig access to instance registries and per-instance fields.
 	 *
@@ -36,6 +44,7 @@ class AdminSettings implements IDelegatedSettings {
 
 	#[\Override]
 	public function getForm(): TemplateResponse {
+		$this->initialState->provideInitialState('admin-settings', $this->gatewayAdminInitialStateService->build());
 		return new TemplateResponse(Application::APP_ID, 'admin_settings');
 	}
 

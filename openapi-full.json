@@ -20,28 +20,6 @@
             }
         },
         "schemas": {
-            "Capabilities": {
-                "type": "object",
-                "required": [
-                    "features",
-                    "config",
-                    "version"
-                ],
-                "properties": {
-                    "features": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "config": {
-                        "type": "object"
-                    },
-                    "version": {
-                        "type": "string"
-                    }
-                }
-            },
             "FieldDefinition": {
                 "type": "object",
                 "required": [
@@ -228,14 +206,6 @@
                     }
                 }
             },
-            "PublicCapabilities": {
-                "type": "object",
-                "properties": {
-                    "twofactorgateway": {
-                        "$ref": "#/components/schemas/Capabilities"
-                    }
-                }
-            },
             "State": {
                 "type": "object",
                 "required": [
@@ -315,6 +285,121 @@
                                                         "type": "object",
                                                         "additionalProperties": {
                                                             "type": "object"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/twofactor_gateway/admin/screen": {
+            "get": {
+                "operationId": "admin_gateway-get-screen",
+                "summary": "List a screen-ready admin payload with gateways, assignable groups and flattened display items",
+                "description": "This endpoint requires admin access",
+                "tags": [
+                    "admin_gateway"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "groupLimit",
+                        "in": "query",
+                        "description": "Maximum number of groups returned (bounded server-side)",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 200
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "gateways",
+                                                        "groups",
+                                                        "items"
+                                                    ],
+                                                    "properties": {
+                                                        "gateways": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "additionalProperties": {
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "groups": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "required": [
+                                                                    "id",
+                                                                    "displayName"
+                                                                ],
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "displayName": {
+                                                                        "type": "string"
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        "items": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "additionalProperties": {
+                                                                    "type": "object"
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
