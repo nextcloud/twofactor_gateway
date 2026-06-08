@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Service;
 
-use OCA\TwoFactorGateway\Service\GatewayAdminScreenService;
 use OCP\IUser;
 use OCP\IUserSession;
 

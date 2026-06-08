@@ -19,13 +19,13 @@ use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestIdentifierNormalizer;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
+use OCA\TwoFactorGateway\Service\GatewayAdminScreenService;
 use OCA\TwoFactorGateway\Service\GatewayCatalogService;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
 use OCA\TwoFactorGateway\Service\GatewayFieldSanitizer;
 use OCA\TwoFactorGateway\Service\GatewayInteractiveSetupSessionService;
 use OCA\TwoFactorGateway\Service\GatewayPermissionService;
-use OCA\TwoFactorGateway\Service\GatewayAdminScreenService;
 use OCA\TwoFactorGateway\Service\GatewayViewScope;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -72,7 +72,29 @@ class AdminGatewayController extends OCSController {
 	 *
 	 * @param int $groupLimit Maximum number of groups returned (bounded server-side)
 	 *
-	 * @return DataResponse<Http::STATUS_OK, array{gateways: list<array<string, mixed>>, groups: list<array{id: string, displayName: string}>, items: list<array<string, mixed>>}, array{}>
+	 * @return DataResponse<Http::STATUS_OK, array{
+	 *   gateways: list<array<string, mixed>>,
+	 *   groups: list<array{id: string, displayName: string}>,
+	 *   allowedActions: array{
+	 *     canView: bool,
+	 *     canCreateInstances: bool,
+	 *     canEditInstances: bool,
+	 *     canDeleteInstances: bool,
+	 *     canSetDefaultInstances: bool,
+	 *     canManageRouting: bool,
+	 *     canTestInstances: bool,
+	 *     canReorderInstances: bool
+	 *   },
+	 *   items: list<array{
+	 *     orderKey: string,
+	 *     gatewayId: string,
+	 *     providerName: string,
+	 *     fields: list<array<string, mixed>>,
+	 *     instance: array<string, mixed>,
+	 *     groupNames: list<string>,
+	 *     showRoutingAction: bool
+	 *   }>
+	 * }, array{}>
 	 *
 	 * 200: OK
 	 */
