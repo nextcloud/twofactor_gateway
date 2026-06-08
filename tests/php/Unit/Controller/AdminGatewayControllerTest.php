@@ -25,6 +25,7 @@ use OCA\TwoFactorGateway\Provider\Settings;
 use OCA\TwoFactorGateway\Service\GatewayCatalogService;
 use OCA\TwoFactorGateway\Service\GatewayConfigService;
 use OCA\TwoFactorGateway\Service\GatewayConfigurationSyncService;
+use OCA\TwoFactorGateway\Service\GatewayAdminScreenService;
 use OCA\TwoFactorGateway\Service\GatewayFieldSanitizer;
 use OCA\TwoFactorGateway\Service\GatewayInteractiveSetupSessionService;
 use OCA\TwoFactorGateway\Service\GatewayPermissionService;
@@ -43,6 +44,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AdminGatewayControllerTest extends TestCase {
 	private AdminGatewayController $controller;
+	private GatewayAdminScreenService&MockObject $gatewayAdminScreenService;
 	private GatewayCatalogService&MockObject $gatewayCatalogService;
 	private GatewayConfigService&MockObject $configService;
 	private GatewayFactory&MockObject $gatewayFactory;
@@ -58,6 +60,7 @@ class AdminGatewayControllerTest extends TestCase {
 		parent::setUp();
 		$request = $this->createMock(IRequest::class);
 		$this->actor = $this->createMock(IUser::class);
+		$this->gatewayAdminScreenService = $this->createMock(GatewayAdminScreenService::class);
 		$this->gatewayCatalogService = $this->createMock(GatewayCatalogService::class);
 		$this->configService = $this->createMock(GatewayConfigService::class);
 		$this->gatewayFactory = $this->createMock(GatewayFactory::class);
@@ -82,6 +85,7 @@ class AdminGatewayControllerTest extends TestCase {
 
 		$this->controller = new AdminGatewayController(
 			$request,
+			$this->gatewayAdminScreenService,
 			$this->gatewayCatalogService,
 			$this->configService,
 			$this->gatewayFactory,
@@ -92,6 +96,42 @@ class AdminGatewayControllerTest extends TestCase {
 			$this->gatewayInteractiveSetupSessionService,
 			$this->userSession,
 		);
+	}
+
+	public function testGetScreenReturnsScreenReadyPayload(): void {
+		$screen = [
+			'gateways' => [['id' => 'signal', 'name' => 'Signal', 'fields' => [], 'instances' => []]],
+			'groups' => [['id' => 'admins', 'displayName' => 'Admins']],
+			'allowedActions' => [
+				'canView' => true,
+				'canCreateInstances' => true,
+				'canEditInstances' => true,
+				'canDeleteInstances' => true,
+				'canSetDefaultInstances' => true,
+				'canManageRouting' => true,
+				'canTestInstances' => true,
+				'canReorderInstances' => true,
+			],
+			'items' => [[
+				'orderKey' => 'signal:s1',
+				'gatewayId' => 'signal',
+				'providerName' => 'Signal',
+				'fields' => [],
+				'instance' => ['id' => 's1', 'label' => 'Signal Prod', 'priority' => 1],
+				'groupNames' => ['Admins'],
+				'showRoutingAction' => true,
+			]],
+		];
+
+		$this->gatewayAdminScreenService->expects($this->once())
+			->method('build')
+			->with($this->actor, 200)
+			->willReturn($screen);
+
+		$response = $this->controller->getScreen();
+
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
+		$this->assertSame($screen, $response->getData());
 	}
 
 	/**
