@@ -15,6 +15,7 @@ OC.L10N.register(
     "Continue" : "Kemmel",
     "Retry" : "Ɛreḍ tikkelt-nniḍen",
     "Confirm" : "Serggeg",
-    "Disable" : "Désactiver"
+    "Disable" : "Désactiver",
+    "Submit" : "Azen"
 },
 "nplurals=2; plural=(n != 1);");
