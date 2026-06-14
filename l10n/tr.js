@@ -61,7 +61,7 @@ OC.L10N.register(
     "Label" : "Etiket",
     "e.g. Production, Client A …" : "örnek: Üretim, Müşteri A …",
     "Restrict to groups …" : "Gruplarla sınırla…",
-    "Choose the initial group scope for this instance. Delegated admins must select at least one managed group." : "Bu kopyanın ilk grup kapsamını seçin. Atanmış yöneticiler en az bir yönetilen grup seçmelidir.",
+    "Choose the initial group scope for this instance. Delegated admins must select at least one managed group." : "Bu kopyanın ilk grup kapsamını seçin. Yetki devredilmiş yöneticiler en az bir yönetilen grup seçmelidir.",
     "optional" : "isteğe bağlı",
     "Cancel" : "İptal",
     "Routing settings" : "Yönlendirme ayarları",
