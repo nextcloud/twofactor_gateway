@@ -7,6 +7,7 @@
     "Authenticate via Signal" : "S'authentifier via Signal",
     "Telegram verification" : "Vérification pour Telegram",
     "Authenticate via Telegram" : "S'authentifier via Telegram",
+    "Failed to send message" : "Impossible d'envoyer le message",
     "WhatsApp verification" : "Vérification WhatsApp",
     "XMPP verification" : "Vérification XMPP",
     "Authenticate via XMPP" : "S'authentifier par XMPP",
