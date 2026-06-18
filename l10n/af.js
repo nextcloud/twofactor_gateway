@@ -8,6 +8,7 @@ OC.L10N.register(
     "Provider" : "Verskaffer",
     "Cancel" : "Cancel",
     "Collapse" : "Vou In",
+    "Close" : "Close",
     "Device" : "Toestel",
     "Phone number" : "Foonnommer",
     "Continue" : "Gaan voort",

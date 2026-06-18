@@ -10,6 +10,7 @@ OC.L10N.register(
     "Save" : "Guardar",
     "Cancel" : "Cancel",
     "Collapse" : "Colapsar",
+    "Close" : "Close",
     "Device" : "Dispositivo",
     "Phone number" : "Número telefónico",
     "Header" : "Encabezado",
