@@ -4,6 +4,7 @@ OC.L10N.register(
     "%s is your Nextcloud authentication code" : "%s é o seu código de autenticação Nextcloud",
     "Enabled" : "Ativado",
     "Disabled" : "Desativado",
+    "Configured" : "Configurado",
     "Edit" : "Editar",
     "Delete" : "Eliminar",
     "Groups" : "Grupos",
