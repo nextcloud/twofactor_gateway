@@ -20,6 +20,8 @@ OC.L10N.register(
     "Back" : "Voltar",
     "Continue" : "Continuar",
     "Language:" : "Idioma:",
+    "Status:" : "Status:",
+    "Header" : "Cabeçalho",
     "Body" : "Corpo",
     "Template" : "Modelo",
     "Language" : "Idioma",
