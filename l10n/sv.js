@@ -42,6 +42,7 @@ OC.L10N.register(
     "Phone number" : "Telefonnummer",
     "Back" : "Tillbaka",
     "Continue" : "Fortsätt",
+    "Template:" : "Mall:",
     "Language:" : "Språk:",
     "Status:" : "Status:",
     "Header" : "Rubrik",
