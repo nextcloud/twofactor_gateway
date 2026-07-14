@@ -44,6 +44,7 @@ OC.L10N.register(
     "Body" : "Corps",
     "Template" : "Modèle",
     "Language" : "Langue",
+    "Start over" : "Recommencer",
     "Retry" : "Réessayer",
     "You are not using {displayName} for two-factor authentication at the moment." : "Vous n'utilisez pas {displayName} pour l'authentification à double facteurs pour le moment.",
     "Enable" : "Activer",
