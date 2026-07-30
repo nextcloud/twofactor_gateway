@@ -3,7 +3,7 @@ OC.L10N.register(
     {
     "Two-Factor Gateway" : "Dviejų veiksnių autentifikavimo saitas",
     "`%s` is your Nextcloud authentication code" : "„%s“ yra jūsų „Nextcloud“ autentifikavimo kodas",
-    "%s is your Nextcloud authentication code" : "%s yra jūsų Nextcloud tapatybės nustatymo kodas",
+    "%s is your Nextcloud authentication code" : "%s yra jūsų „Nextcloud“ tapatybės nustatymo kodas",
     "Message gateway verification" : "Pranešimų saito patvirtinimas",
     "Authenticate via SMS" : "Autentifikuotis per SMS",
     "Signal verification" : "„Signal“ tikrinimas",
