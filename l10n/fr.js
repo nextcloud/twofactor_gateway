@@ -38,6 +38,7 @@ OC.L10N.register(
     "Phone number" : "Téléphone",
     "Back" : "Retour",
     "Continue" : "Continuer",
+    "Template:" : "Modèle :",
     "Language:" : "Langue :",
     "Status:" : "Statut :",
     "Header" : "En-tête",
