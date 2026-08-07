@@ -65,6 +65,7 @@
     "Only users in these groups can use this instance. Leave empty to allow normal fallback." : "Μόνο οι χρήστες σε αυτές τις ομάδες μπορούν να χρησιμοποιήσουν αυτήν την παρουσία. Αφήστε το κενό για να επιτρέψετε την κανονική εφεδρική επιλογή (fallback).",
     "Save routing" : "Αποθήκευση δρομολόγησης",
     "Are you sure you want to delete the instance \"{label}\"? This action cannot be undone." : "Είστε βέβαιοι ότι θέλετε να διαγράψετε την παρουσία \"{label}\"; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
+    "Deleting …" : "Γίνεται διαγραφή …",
     "Collapse" : "Σύμπτυξη",
     "Expand" : "Επέκταση",
     "{n} instance" : "{n} παρουσία",

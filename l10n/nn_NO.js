@@ -12,6 +12,7 @@ OC.L10N.register(
     "Cancel" : "Cancel",
     "Close" : "Lat att",
     "Device" : "Eining",
+    "Back" : "Tilbake",
     "Continue" : "Gå vidare",
     "Language" : "Språk",
     "Retry" : "Forsøk att",
