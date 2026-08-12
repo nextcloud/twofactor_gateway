@@ -62,6 +62,8 @@ OC.L10N.register(
     "Base URL to your WhatsApp API endpoint:" : "URL de base de votre point de terminaison d'API WhatsApp :",
     "https://your-gowhatsapp-instance" : "https://votre-instance-gowhatsapp",
     "TwoFactor Gateway" : "Passerelle à deux facteurs",
+    "API Username:" : "Nom d'utilisateur d'API :",
+    "API Password:" : "Mot de passe d'API :",
     "Use existing device" : "Utiliser un appareil existant",
     "Device" : "Appareil",
     "Phone number" : "Téléphone",
