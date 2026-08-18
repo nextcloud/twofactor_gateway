@@ -14,6 +14,7 @@ use OCA\TwoFactorGateway\Service\SetupService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoTwoFactorRequired;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
@@ -44,6 +45,7 @@ class SettingsController extends OCSController {
 	 * 503: Gateway wasn't configured yed
 	 */
 	#[NoAdminRequired]
+	#[NoTwoFactorRequired]
 	#[ApiRoute(verb: 'GET', url: '/settings/{gateway}/verification')]
 	public function getVerificationState(string $gateway): JSONResponse {
 		$user = $this->userSession->getUser();
@@ -71,6 +73,7 @@ class SettingsController extends OCSController {
 	 * 400: User not found
 	 */
 	#[NoAdminRequired]
+	#[NoTwoFactorRequired]
 	#[ApiRoute(verb: 'POST', url: '/settings/{gateway}/verification/start')]
 	public function startVerification(string $gateway, string $identifier): JSONResponse {
 		$user = $this->userSession->getUser();
@@ -102,6 +105,7 @@ class SettingsController extends OCSController {
 	 * 400: User not found
 	 */
 	#[NoAdminRequired]
+	#[NoTwoFactorRequired]
 	#[ApiRoute(verb: 'POST', url: '/settings/{gateway}/verification/finish')]
 	public function finishVerification(string $gateway, string $verificationCode): JSONResponse {
 		$user = $this->userSession->getUser();
@@ -112,8 +116,8 @@ class SettingsController extends OCSController {
 
 		try {
 			$this->setup->finishSetup($user, $gateway, $verificationCode);
-		} catch (VerificationException) {
-			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+		} catch (VerificationException $e) {
+			return new JSONResponse(['message' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new JSONResponse([]);
