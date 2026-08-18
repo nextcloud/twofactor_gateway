@@ -17,7 +17,9 @@ use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCA\TwoFactorGateway\Settings\PersonalSettings;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\Authentication\TwoFactorAuth\IActivatableAtLogin;
 use OCP\Authentication\TwoFactorAuth\IDeactivatableByAdmin;
+use OCP\Authentication\TwoFactorAuth\ILoginSetupProvider;
 use OCP\Authentication\TwoFactorAuth\IPersonalProviderSettings;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\Authentication\TwoFactorAuth\IProvidesIcons;
@@ -31,7 +33,7 @@ use OCP\Server;
 use OCP\Template\ITemplate;
 use OCP\Template\ITemplateManager;
 
-abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByAdmin, IProvidesPersonalSettings {
+abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByAdmin, IProvidesPersonalSettings, IActivatableAtLogin {
 
 	protected string $gatewayName = '';
 	protected IGateway $gateway;
@@ -125,6 +127,15 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 	public function getPersonalSettings(IUser $user): IPersonalProviderSettings {
 		$this->initialState->provideInitialState('settings-' . $this->gateway->getProviderId(), $this->gateway->getSettings());
 		return new PersonalSettings(
+			$this->getGatewayName(),
+			$this->gateway->isComplete(),
+		);
+	}
+
+	#[\Override]
+	public function getLoginSetup(IUser $user): ILoginSetupProvider {
+		$this->initialState->provideInitialState('settings-' . $this->gateway->getProviderId(), $this->gateway->getSettings());
+		return new AtLoginProvider(
 			$this->getGatewayName(),
 			$this->gateway->isComplete(),
 		);
