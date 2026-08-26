@@ -1,5 +1,6 @@
 { "translations": {
     "%s is your Nextcloud authentication code" : "%s er din Nextcloud godkendelses kode",
+    "Failed to send message" : "Kunne ikke sende brev",
     "Enabled" : "Aktiveret",
     "Disabled" : "Deaktiveret",
     "Configured" : "Konfigureret",
@@ -14,8 +15,11 @@
     "optional" : "valgfri",
     "Cancel" : "Annullér",
     "Instance" : "Retten",
+    "Reference" : "Henvisning",
+    "Deleting …" : "Sletning...",
     "Collapse" : "Sammenfold",
     "Expand" : "Udvid",
+    "Sending …" : "At sende...",
     "Close" : "Luk",
     "Device" : "Enhed",
     "Phone number" : "Telefonnummer",
