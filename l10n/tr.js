@@ -113,7 +113,7 @@ OC.L10N.register(
     "Pairing code" : "Eşleştirme kodu",
     "Waiting for pairing confirmation …" : "Eşleştirme onayı bekleniyor…",
     "Back" : "Geri",
-    "Continue" : "Sürdür",
+    "Continue" : "İlerle",
     "Request pairing code" : "Eşleştirme kodu iste",
     "Enter the Signal gateway URL and follow the instructions to link a Signal account via QR code." : "Signal aracısı adresini yazın ve kare kod ile bir Signal hesabını bağlamak için yönergeleri izleyin.",
     "Timed out waiting for Signal confirmation. Restart setup to get a fresh QR code." : "Signal onayı beklenirken zaman aşımı gerçekleşti. Yeni bir kare kod almak için kurulumu yeniden başlatın.",
