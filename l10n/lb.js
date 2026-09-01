@@ -7,12 +7,17 @@ OC.L10N.register(
     "Delete" : "Läschen",
     "Groups" : "Gruppen",
     "Save" : "Späicheren",
+    "Label" : "Beschrëftung",
     "Cancel" : "Cancel",
+    "Reference" : "Referenz",
     "Collapse" : "Zesumme falen",
     "Close" : "Zoumaachen",
     "Continue" : "Weider",
     "Language" : "Sprooch",
+    "Retry" : "Widderhuelen",
+    "Verify" : "Iwwerpréiwen",
     "Confirm" : "Konfirméieren",
-    "Disable" : "Ofschalten"
+    "Disable" : "Ofschalten",
+    "Submit" : "Iwwermëttelen"
 },
 "nplurals=2; plural=(n != 1);");
