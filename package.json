@@ -60,7 +60,7 @@
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-stylelint": "^6.1.0",
     "vitest": "^4.1.8",
-    "vue-loader": "^16.8.3",
+    "vue-loader": "^17.4.2",
     "vue-styleguidist": "^4.72.4",
     "webpack": "^5.107.2"
   },
