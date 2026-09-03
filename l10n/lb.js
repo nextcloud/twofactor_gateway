@@ -15,6 +15,7 @@ OC.L10N.register(
     "Continue" : "Weider",
     "Language" : "Sprooch",
     "Retry" : "Widderhuelen",
+    "Enable" : "Aktivéieren",
     "Verify" : "Iwwerpréiwen",
     "Confirm" : "Konfirméieren",
     "Disable" : "Ofschalten",
