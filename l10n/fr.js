@@ -59,6 +59,7 @@ OC.L10N.register(
     "Select an option …" : "Sélectionnez une option…",
     "Label" : "Libellé",
     "e.g. Production, Client A …" : "par ex. Production, Client A …",
+    "Choose the initial group scope for this instance. Delegated admins must select at least one managed group." : "Choisissez la portée de groupe initiale pour cette instance. Les administrateurs délégués doivent sélectionner au moins un groupe géré.",
     "optional" : "Optionnel",
     "Cancel" : "Annuler",
     "Routing settings" : "Paramètres de routage",
