@@ -54,6 +54,7 @@ OC.L10N.register(
     "Phone number" : "電話號碼",
     "Back" : "返回",
     "Continue" : "繼續",
+    "e.g. {templateName}" : "例如 {templateName}",
     "Language:" : "語言：",
     "Status:" : "狀態：",
     "Header" : "檔案標頭",
