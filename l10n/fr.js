@@ -66,6 +66,7 @@ OC.L10N.register(
     "Choose when this instance should be used." : "Choisissez quand cette instance doit être utilisée.",
     "Instance" : "Instance",
     "Reference" : "Référence",
+    "Only users in these groups can use this instance. Leave empty to allow normal fallback." : "Seuls les utilisateurs de ces groupes peuvent utiliser cette instance. Laissez vide pour permettre le comportement normal par défaut.",
     "Are you sure you want to delete the instance \"{label}\"? This action cannot be undone." : "Êtes-vous sûr de vouloir supprimer l'instance « {label} » ? Cette action est irréversible.",
     "Deleting …" : "Suppression …",
     "Collapse" : "Replier",
