@@ -12,8 +12,9 @@ import { vueDocsBlockPlugin } from './src/styleguide/vueDocsBlockPlugin.js'
 const isProduction = process.env.NODE_ENV === 'production'
 
 export default createAppConfig({
-	main: path.join(__dirname, 'src', 'main.js'),
+	main: path.join(__dirname, 'src', 'main.ts'),
 	admin: path.join(__dirname, 'src', 'admin.ts'),
+	'login-setup': path.join(__dirname, 'src', 'login-setup.ts'),
 }, {
 	config: {
 		resolve: {
