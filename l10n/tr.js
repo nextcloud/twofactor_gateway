@@ -199,6 +199,7 @@ OC.L10N.register(
     "Confirm" : "Onayla",
     "Your account was successfully configured to receive messages via {displayName}." : "Hesabınız, {displayName} ile ileti alacak şekilde yapılandırıldı.",
     "Disable" : "Kullanımdan kaldır",
+    "{displayName} is not available. Please ask your administrator to finish setting it up." : "{displayName} kullanılamıyor. Lütfen yöneticinizden kurulumu tamamlamasını isteyin.",
     "Authentication code" : "Doğrulama kodu",
     "Submit" : "Gönder",
     "An access code has been sent to %s" : "%s için erişim kodu gönderildi",
