@@ -199,6 +199,7 @@ OC.L10N.register(
     "Confirm" : "Bestätigen",
     "Your account was successfully configured to receive messages via {displayName}." : "Dein Konto wurde für den Empfang von Nachrichten über {displayName} eingerichtet.",
     "Disable" : "Deaktivieren",
+    "{displayName} is not available. Please ask your administrator to finish setting it up." : "{displayName} ist nicht verfügbar. Bitte deine Administration zum Abzuschließen der Einrichtung fragen.",
     "Authentication code" : "Authentifizierungscode",
     "Submit" : "Übermitteln",
     "An access code has been sent to %s" : "Ein Zugriffscode wurde an %s gesendet",

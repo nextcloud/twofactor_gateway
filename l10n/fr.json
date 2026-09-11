@@ -197,6 +197,7 @@
     "Confirm" : "Confirmer",
     "Your account was successfully configured to receive messages via {displayName}." : "Votre compte a été configuré avec succès pour recevoir les messages via {displayName}.",
     "Disable" : "Désactiver",
+    "{displayName} is not available. Please ask your administrator to finish setting it up." : "{displayName} n'est pas disponible. Veuillez demander à votre administrateur de finir sa configuration.",
     "Authentication code" : "Code d'authentification",
     "Submit" : "Envoyer",
     "An access code has been sent to %s" : "Un code d'accès a été envoyé à %s",
