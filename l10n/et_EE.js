@@ -199,6 +199,7 @@ OC.L10N.register(
     "Confirm" : "Kinnita",
     "Your account was successfully configured to receive messages via {displayName}." : "Sinu kasutajakonto on nüüd seadistatud saama sõnumeid „{displayName}“ teenuse vahendusel.",
     "Disable" : "Lülita välja",
+    "{displayName} is not available. Please ask your administrator to finish setting it up." : "{displayName} pole saadaval. Palu oma server haldajat või peakasutajat lõpetada selle seadistamine.",
     "Authentication code" : "Autentimiskood",
     "Submit" : "Saada",
     "An access code has been sent to %s" : "Autentimiskood saadeti %s",

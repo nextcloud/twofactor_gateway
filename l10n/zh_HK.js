@@ -199,6 +199,7 @@ OC.L10N.register(
     "Confirm" : "確認",
     "Your account was successfully configured to receive messages via {displayName}." : "您的帳號已成功設定為透過 {displayName} 接收訊息。",
     "Disable" : "停用",
+    "{displayName} is not available. Please ask your administrator to finish setting it up." : "{displayName} 無法使用。請聯絡你的管理員完成設定。",
     "Authentication code" : "驗證碼",
     "Submit" : "遞交",
     "An access code has been sent to %s" : "驗証碼已經發送到 %s",

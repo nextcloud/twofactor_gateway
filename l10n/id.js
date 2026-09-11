@@ -14,6 +14,7 @@ OC.L10N.register(
     "Label" : "Label",
     "optional" : "opsional",
     "Cancel" : "Batal",
+    "Instance" : "Instance",
     "Deleting …" : "Menghapus …",
     "Collapse" : "Tutup",
     "Expand" : "Perluas",
