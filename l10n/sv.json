@@ -197,6 +197,7 @@
     "Confirm" : "Bekräfta",
     "Your account was successfully configured to receive messages via {displayName}." : "Ditt konto har konfigurerats för att ta emot meddelanden via {displayName}.",
     "Disable" : "Inaktivera",
+    "{displayName} is not available. Please ask your administrator to finish setting it up." : "{displayName} är inte tillgänglig. Be administratören att slutföra konfigureringen.",
     "Authentication code" : "Autentiseringskod",
     "Submit" : "Skicka",
     "An access code has been sent to %s" : "En autentiseringskod har skickats till %s",
