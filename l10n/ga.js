@@ -199,6 +199,7 @@ OC.L10N.register(
     "Confirm" : "Deimhnigh",
     "Your account was successfully configured to receive messages via {displayName}." : "D'éirigh le do chuntas a chumrú chun teachtaireachtaí a fháil ó {displayName}.",
     "Disable" : "Díchumasaigh",
+    "{displayName} is not available. Please ask your administrator to finish setting it up." : "Níl {displayName} ar fáil. Iarr ar do riarthóir é a chur ar bun go hiomlán.",
     "Authentication code" : "Cód fíordheimhnithe",
     "Submit" : "Cuir isteach",
     "An access code has been sent to %s" : "Tá cód rochtana seolta chuig%s",
