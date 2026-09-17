@@ -199,6 +199,7 @@ OC.L10N.register(
     "Confirm" : "Potvrdiť",
     "Your account was successfully configured to receive messages via {displayName}." : "Váš účet bol úspešne nakonfigurovaný na prijímanie správ cez {displayName}.",
     "Disable" : "Zakázať",
+    "{displayName} is not available. Please ask your administrator to finish setting it up." : "{displayName} nie je k dispozícii. Požiadajte svojho správcu, aby dokončil jeho nastavenie.",
     "Authentication code" : "Overovací kód",
     "Submit" : "Odoslať",
     "An access code has been sent to %s" : "Prístupový kód bol odoslaný na %s",
