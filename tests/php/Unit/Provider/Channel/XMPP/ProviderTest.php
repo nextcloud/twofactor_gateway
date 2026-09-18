@@ -54,7 +54,6 @@ class ProviderTest extends TestCase {
 		);
 	}
 
-
 	public function testGetDescription() {
 		$translated = 'trans';
 		$this->l10n->expects($this->once())
