@@ -15,6 +15,22 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 3.4.0 - 2026-09-18
+### Added
+- extract reusable gateway frontend library [#1091](https://github.com/nextcloud/twofactor_gateway/pull/1091)
+- add runtime gateway availability service [#1127](https://github.com/nextcloud/twofactor_gateway/pull/1127)
+- add ownership session guard and exposure [#1133](https://github.com/nextcloud/twofactor_gateway/pull/1133)
+- add reusable frontend component surface [#1136](https://github.com/nextcloud/twofactor_gateway/pull/1136)
+- add direct gateway integration service [#1155](https://github.com/nextcloud/twofactor_gateway/pull/1155)
+
+### Changed
+- harden gateway logging and configuration cleanup [#1111](https://github.com/nextcloud/twofactor_gateway/pull/1111)
+- refactor gateway routing and admin gateway foundations [#1114](https://github.com/nextcloud/twofactor_gateway/pull/1114)
+- restrict assignable admin groups to actor scope [#1121](https://github.com/nextcloud/twofactor_gateway/pull/1121)
+- centralize actor-aware gateway catalog views [#1125](https://github.com/nextcloud/twofactor_gateway/pull/1125)
+- expand gateway admin surface and documentation [#1139](https://github.com/nextcloud/twofactor_gateway/pull/1139)
+- bump dependencies
+
 ## 3.3.0 - 2026-05-11
 ### Added
 - implement WhatsApp Business setup and UX [#1055](https://github.com/nextcloud/twofactor_gateway/pull/1055)
