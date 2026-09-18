@@ -404,7 +404,6 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 		$output->writeln('<info>Checking for existing devices...</info>');
 		$allDevices = $this->fetchDevices();
 
-
 		if (empty($allDevices)) {
 			$output->writeln('<info>No devices found. Creating a new device...</info>');
 			return self::CONFIG_CONTINUE;
@@ -457,7 +456,6 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			}
 			return self::CONFIG_CONTINUE;
 		}
-
 
 		return self::CONFIG_CONTINUE;
 	}

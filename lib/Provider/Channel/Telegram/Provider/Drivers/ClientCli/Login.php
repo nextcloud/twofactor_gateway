@@ -49,7 +49,6 @@ class Login extends AbstractMadelineCommand {
 
 				MESSAGE);
 
-
 			return Command::SUCCESS;
 		} catch (\Throwable $e) {
 			$output->writeln('<error>Error: ' . $e->getMessage() . '</error>');
