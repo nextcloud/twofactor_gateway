@@ -15,6 +15,11 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 5.0.0 - 2026-09-18
+### Changed
+- Updated translations
+- Updated dependencies
+
 ## 3.3.0 - 2026-05-11
 ### Added
 - implement WhatsApp Business setup and UX [#1055](https://github.com/nextcloud/twofactor_gateway/pull/1055)
