@@ -201,7 +201,7 @@
     "Authentication code" : "Authentifizierungscode",
     "Submit" : "Übermitteln",
     "An access code has been sent to %s" : "Ein Zugriffscode wurde an %s gesendet",
-    "Error while sending the Message. Please try again later or contact the administrator." : "Fehler beim Senden der Nachricht. Bitte versuche es noch einmal oder kontaktiere deine Administration.",
+    "Error while sending the Message. Please try again later or contact the administrator." : "Fehler beim Senden der Nachricht. Bitte es noch einmal versuchen oder die Administration kontaktieren.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Deine Telefonnummer hat sich geändert und wurde nicht erneut verifiziert. Nutze einen anderen Zwei-Faktor-Mechanismus oder wende dich an die Administration."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
