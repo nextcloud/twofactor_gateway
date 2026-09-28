@@ -31,6 +31,7 @@ OC.L10N.register(
     "Phone number" : "电话号码",
     "Back" : "返回",
     "Continue" : "继续",
+    "e.g. {templateName}" : "例如 {templateName}",
     "Language:" : "语言：",
     "Status:" : "状态：",
     "Header" : "页眉",
