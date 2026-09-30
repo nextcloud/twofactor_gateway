@@ -51,6 +51,7 @@ class Gateway extends AGateway {
 		$selectedIndex = array_search($name, $names);
 
 		$provider = $providers[$selectedIndex];
+		$this->setProvider($provider->getSettings()->id);
 
 		foreach ($provider->getSettings()->fields as $field) {
 			$id = $field->field;
