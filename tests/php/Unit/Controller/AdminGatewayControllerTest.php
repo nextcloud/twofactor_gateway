@@ -503,6 +503,57 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 	}
 
+	public function testUpdateSmsInstanceUsesChannelGatewayWithProviderConfig(): void {
+		$gateway = $this->makeCatalogGatewayMock('sms', 'provider', ['sms77io', 'smsapi']);
+		$this->gatewayFactory->method('get')->with('sms')->willReturn($gateway);
+
+		$existing = [
+			'id' => 'abc',
+			'label' => 'Seven',
+			'default' => true,
+			'createdAt' => '2026-01-01T00:00:00+00:00',
+			'config' => ['provider' => 'sms77io', 'api_key' => 'old-secret'],
+			'isComplete' => true,
+			'groupIds' => [],
+			'priority' => 0,
+		];
+		$updated = [
+			...$existing,
+			'config' => ['provider' => 'sms77io', 'api_key' => 'new-secret'],
+		];
+
+		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn($existing);
+		$this->configService->expects($this->once())
+			->method('updateInstance')
+			->with($gateway, 'abc', 'Seven', ['provider' => 'sms77io', 'api_key' => 'new-secret'], [], 0)
+			->willReturn($updated);
+
+		$response = $this->controller->updateInstance(
+			'sms',
+			'abc',
+			'Seven',
+			['provider' => 'sms77io', 'api_key' => 'new-secret'],
+		);
+
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
+	}
+
+	public function testUpdateInstanceReturns400WhenRouteResolvesToProviderDriver(): void {
+		$this->gatewayFactory->method('get')->with('sms77io')->willReturn(new \stdClass());
+		$this->configService->expects($this->never())->method('getInstance');
+		$this->configService->expects($this->never())->method('updateInstance');
+
+		$response = $this->controller->updateInstance(
+			'sms77io',
+			'abc',
+			'Seven',
+			['api_key' => 'secret'],
+		);
+
+		$this->assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus());
+		$this->assertSame('Invalid gateway <sms77io>', $response->getData()['message']);
+	}
+
 	public function testUpdateInstanceReturns404WhenNotFound(): void {
 		$gateway = $this->makeGatewayMock('signal');
 		$this->gatewayFactory->method('get')->with('signal')->willReturn($gateway);
