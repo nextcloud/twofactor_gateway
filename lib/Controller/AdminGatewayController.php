@@ -550,7 +550,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	private function resolveGatewayForPayload(string $gateway, array $config): IGateway {
-		$resolvedGateway = $this->gatewayFactory->get($gateway);
+		$resolvedGateway = $this->resolveGateway($gateway);
 		if (!($resolvedGateway instanceof \OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway)) {
 			if (method_exists($resolvedGateway, 'withRuntimeConfig')) {
 				$runtimeGateway = $resolvedGateway->withRuntimeConfig($config);
@@ -588,7 +588,7 @@ class AdminGatewayController extends OCSController {
 	}
 
 	private function resolveGatewayForInstance(string $gateway, string &$instanceId): IGateway {
-		$resolvedGateway = $this->gatewayFactory->get($gateway);
+		$resolvedGateway = $this->resolveGateway($gateway);
 		if (!($resolvedGateway instanceof \OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway)) {
 			return $resolvedGateway;
 		}
@@ -617,12 +617,21 @@ class AdminGatewayController extends OCSController {
 	}
 
 	private function resolveGatewayForConfigurationPayload(string $gateway, array $config): IGateway {
-		$resolvedGateway = $this->gatewayFactory->get($gateway);
+		$resolvedGateway = $this->resolveGateway($gateway);
 		if (method_exists($resolvedGateway, 'withRuntimeConfig')) {
 			$runtimeGateway = $resolvedGateway->withRuntimeConfig($config);
 			if ($runtimeGateway instanceof IGateway) {
 				return $runtimeGateway;
 			}
+		}
+
+		return $resolvedGateway;
+	}
+
+	private function resolveGateway(string $gateway): IGateway {
+		$resolvedGateway = $this->gatewayFactory->get($gateway);
+		if (!($resolvedGateway instanceof IGateway)) {
+			throw new \InvalidArgumentException("Invalid gateway <$gateway>");
 		}
 
 		return $resolvedGateway;
