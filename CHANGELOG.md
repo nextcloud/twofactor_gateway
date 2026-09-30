@@ -15,6 +15,11 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 3.4.1 - 2026-09-30
+### Fixed
+- persist the selected SMS provider during CLI configuration [#1215](https://github.com/nextcloud/twofactor_gateway/pull/1215)
+- reject provider drivers in admin gateway routes [#1218](https://github.com/nextcloud/twofactor_gateway/pull/1218)
+
 ## 3.4.0 - 2026-09-18
 ### Added
 - extract reusable gateway frontend library [#1091](https://github.com/nextcloud/twofactor_gateway/pull/1091)
