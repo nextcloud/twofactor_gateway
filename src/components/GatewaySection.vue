@@ -8,7 +8,7 @@
 		<div class="gateway-section__header" @click="expanded = !expanded">
 			<div class="header-left">
 				<NcButton
-					type="tertiary"
+					variant="tertiary"
 					class="expand-btn"
 					:aria-label="expanded ? t('twofactor_gateway', 'Collapse') : t('twofactor_gateway', 'Expand')">
 					<template #icon>
@@ -22,7 +22,7 @@
 			</div>
 
 			<NcButton
-				type="secondary"
+				variant="secondary"
 				@click.stop="openCreate">
 				<template #icon>
 					<PlusIcon :size="20" />
@@ -45,7 +45,7 @@
 					:fields="gateway.fields"
 					@edit="openEdit(instance.id)"
 					@delete="confirmDelete(instance.id)"
-					@set-default="onSetDefault(instance.id)"
+					@setDefault="onSetDefault(instance.id)"
 					@test="openTest(instance.id)" />
 			</div>
 		</div>
@@ -54,10 +54,10 @@
 		<GatewayInstanceModal
 			:show="showModal"
 			:gateways="[gateway]"
-			:gateway-id="gateway.id"
-			:instance-id="editingInstanceId"
-			:initial-label="editingLabel"
-			:initial-config="editingConfig"
+			:gatewayId="gateway.id"
+			:instanceId="editingInstanceId"
+			:initialLabel="editingLabel"
+			:initialConfig="editingConfig"
 			@close="closeModal"
 			@saved="onSaved" />
 
@@ -65,8 +65,8 @@
 		<GatewayTestModal
 			v-if="testingInstanceId"
 			:show="showTestModal"
-			:gateway-id="gateway.id"
-			:instance-id="testingInstanceId"
+			:gatewayId="gateway.id"
+			:instanceId="testingInstanceId"
 			:label="testingLabel"
 			@close="closeTestModal" />
 
@@ -81,7 +81,7 @@
 					{{ t('twofactor_gateway', 'Cancel') }}
 				</NcButton>
 				<NcButton
-					type="error"
+					variant="error"
 					:disabled="deleting"
 					@click="doDelete">
 					<template #icon>
@@ -235,7 +235,7 @@ export default defineComponent({
 	},
 
 	watch: {
-		'gateway.instances'(val: GatewayInstance[]) {
+		'gateway.instances': function(val: GatewayInstance[]) {
 			this.instances = [...val]
 		},
 	},
@@ -253,7 +253,9 @@ export default defineComponent({
 
 		openEdit(instanceId: string) {
 			const inst = this.instances.find((i) => i.id === instanceId)
-			if (!inst) return
+			if (!inst) {
+				return
+			}
 			this.editingInstanceId = instanceId
 			this.editingLabel = inst.label
 			this.editingConfig = { ...inst.config }
@@ -266,7 +268,9 @@ export default defineComponent({
 
 		openTest(instanceId: string) {
 			const inst = this.instances.find((i) => i.id === instanceId)
-			if (!inst) return
+			if (!inst) {
+				return
+			}
 			this.testingInstanceId = instanceId
 			this.testingLabel = inst.label
 			this.showTestModal = true

@@ -226,7 +226,7 @@ export default defineComponent({
 		config: { type: Object as PropType<Record<string, string>>, required: true },
 		canStart: { type: Boolean, default: true },
 	},
-	emits: ['merge-config', 'setup-completed', 'update:wizardActive'],
+	emits: ['mergeConfig', 'setupCompleted', 'update:wizardActive'],
 	setup() {
 		return {
 			t,
@@ -288,7 +288,7 @@ export default defineComponent({
 
 		startWizardButtonLabel(): string {
 			if (this.wizardLoading) {
-				return t('twofactor_gateway', 'Starting guided setup\u00A0...')
+				return t('twofactor_gateway', 'Starting guided setup\u00A0…')
 			}
 
 			return t('twofactor_gateway', 'Discover available resources')
@@ -483,8 +483,8 @@ export default defineComponent({
 					templateLanguage,
 				}), t('twofactor_gateway', 'Failed to finalize WhatsApp Business setup.'))
 				this.applyResponse(completed)
-				this.$emit('merge-config', this.wizardResult)
-				this.$emit('setup-completed', this.wizardResult)
+				this.$emit('mergeConfig', this.wizardResult)
+				this.$emit('setupCompleted', this.wizardResult)
 			} catch (error) {
 				this.wizardMessageType = 'error'
 				this.wizardMessage = error instanceof Error ? error.message : t('twofactor_gateway', 'Failed to finalize WhatsApp Business setup.')

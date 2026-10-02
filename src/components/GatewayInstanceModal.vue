@@ -25,9 +25,9 @@
 					:options="gatewayOptions"
 					:placeholder="t('twofactor_gateway', 'Select a provider\u00A0…')"
 					label="label"
-					track-by="value"
+					trackBy="value"
 					:reduce="selectOptionValue"
-					@update:model-value="onGatewayChange" />
+					@update:modelValue="onGatewayChange" />
 			</div>
 
 			<div v-if="!instanceId && selectedGatewayId && !wizardPanelActive" class="modal-divider" />
@@ -41,9 +41,9 @@
 					:options="providerCatalogOptions"
 					:placeholder="t('twofactor_gateway', 'Select an option\u00A0…')"
 					label="label"
-					track-by="value"
+					trackBy="value"
 					:reduce="selectOptionValue"
-					@update:model-value="onProviderCatalogChange" />
+					@update:modelValue="onProviderCatalogChange" />
 			</div>
 
 			<!-- Label (hidden when wizard session is active to keep focus on wizard steps) -->
@@ -55,24 +55,23 @@
 					:placeholder="t('twofactor_gateway', 'e.g. Production, Client A\u00A0…')"
 					:required="true"
 					:error="!!errors.label"
-					:helper-text="errors.label ?? ''" />
+					:helperText="errors.label ?? ''" />
 			</div>
 
 			<div v-if="!isEditing && canRenderProviderFields && !wizardPanelActive && groups.length > 0" class="modal-field">
 				<label for="instance-groups-select">{{ t('twofactor_gateway', 'Groups') }}</label>
 				<!-- TRANSLATORS "\u00A0" keeps the ellipsis attached to the previous word and avoids awkward line breaks. -->
 				<NcSelect
-					input-id="instance-groups-select"
+					inputId="instance-groups-select"
 					v-model="selectedGroups"
 					:options="groups"
 					:placeholder="t('twofactor_gateway', 'Restrict to groups\u00A0…')"
 					label="displayName"
-					track-by="id"
-					:no-wrap="false"
+					trackBy="id"
+					:noWrap="false"
 					:multiple="true"
-					:keep-open="true"
-					:deselect-from-dropdown="true"
-					:close-on-select="false" />
+					:keepOpen="true"
+					:deselectFromDropdown="true" />
 				<small class="modal-help-text">
 					{{ t('twofactor_gateway', 'Choose the initial group scope for this instance. Delegated admins must select at least one managed group.') }}
 				</small>
@@ -91,14 +90,14 @@
 							:placeholder="fieldPlaceholder(field)"
 							:required="!field.optional"
 							:error="!!errors[field.field]"
-							:helper-text="errors[field.field] ?? ''" />
+							:helperText="errors[field.field] ?? ''" />
 						<small v-if="!errors[field.field] && field.helper" class="modal-field-helper">{{ field.helper }}</small>
 					</template>
 					<template v-else-if="field.type === 'boolean'">
 						<div class="modal-switch-field">
 							<NcCheckboxRadioSwitch
 								type="switch"
-								:model-value="booleanFieldValue(field)"
+								:modelValue="booleanFieldValue(field)"
 								@update:modelValue="onBooleanFieldChange(field, $event)">
 								{{ field.prompt + (field.optional ? ' (' + t('twofactor_gateway', 'optional') + ')' : '') }}
 							</NcCheckboxRadioSwitch>
@@ -108,12 +107,12 @@
 					</template>
 					<template v-else-if="field.type === 'integer'">
 						<NcTextField
-							:model-value="integerFieldValue(field)"
+							:modelValue="integerFieldValue(field)"
 							:label="field.prompt + (field.optional ? ' (' + t('twofactor_gateway', 'optional') + ')' : '')"
 							:placeholder="fieldPlaceholder(field)"
 							:required="!field.optional"
 							:error="!!errors[field.field]"
-							:helper-text="errors[field.field] ?? ''"
+							:helperText="errors[field.field] ?? ''"
 							@update:modelValue="onIntegerFieldChange(field, $event)" />
 						<small v-if="!errors[field.field] && field.helper" class="modal-field-helper">{{ field.helper }}</small>
 					</template>
@@ -124,7 +123,7 @@
 							:placeholder="fieldPlaceholder(field)"
 							:required="!field.optional"
 							:error="!!errors[field.field]"
-							:helper-text="errors[field.field] ?? ''" />
+							:helperText="errors[field.field] ?? ''" />
 						<small v-if="!errors[field.field] && field.helper" class="modal-field-helper">{{ field.helper }}</small>
 					</template>
 				</div>
@@ -133,13 +132,13 @@
 			<component
 				:is="gatewaySetupPanel"
 				v-if="gatewaySetupPanel"
-				:gateway-id="resolvedGatewayId"
-				:provider-id="selectedProviderId"
+				:gatewayId="resolvedGatewayId"
+				:providerId="selectedProviderId"
 				:config="form.config"
-				:can-start="canStartGuidedSetup"
-				@merge-config="mergeConfigFromSetup"
-				@setup-completed="onGuidedSetupCompleted"
-				@update:wizard-active="wizardPanelActive = $event" />
+				:canStart="canStartGuidedSetup"
+				@mergeConfig="mergeConfigFromSetup"
+				@setupCompleted="onGuidedSetupCompleted"
+				@update:wizardActive="wizardPanelActive = $event" />
 
 			<!-- Instructions -->
 			<div v-if="currentInstructions" class="modal-instructions">
@@ -153,7 +152,7 @@
 				</NcButton>
 				<NcButton
 					v-if="shouldShowSaveButton"
-					type="primary"
+					variant="primary"
 					:disabled="saving || !canSave"
 					@click="save">
 					<template #icon>
@@ -207,7 +206,7 @@ When the user saves, the modal emits the following normalized payload shape:
 			:gateways="gateways"
 			:groups="groups"
 			gateway-id="acme_sms"
-			:initial-config="initialConfig"
+			:initialConfig="initialConfig"
 			:initial-group-ids="['support']"
 			@close="showModal = false"
 			@saved="onSaved" />

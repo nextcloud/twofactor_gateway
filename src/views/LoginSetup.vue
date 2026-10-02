@@ -22,7 +22,7 @@
 							class="input"
 							:spellcheck="false"
 							:error="verificationError.length > 0"
-							:helper-text="verificationError" />
+							:helperText="verificationError" />
 						<NcButton type="submit" :disabled="submitting">
 							<template #icon>
 								<NcLoadingIcon v-if="submitting" :size="20" />

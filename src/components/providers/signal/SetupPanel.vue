@@ -95,7 +95,7 @@ export default defineComponent({
 		config: { type: Object as PropType<Record<string, string>>, required: true },
 		canStart: { type: Boolean, default: true },
 	},
-	emits: ['merge-config', 'setup-completed', 'update:wizardActive'],
+	emits: ['mergeConfig', 'setupCompleted', 'update:wizardActive'],
 	setup() {
 		return {
 			t,
@@ -233,9 +233,9 @@ export default defineComponent({
 			if (response.status === 'done') {
 				this.stopPolling()
 				if (response.config) {
-					this.$emit('merge-config', response.config)
+					this.$emit('mergeConfig', response.config)
 				}
-				this.$emit('setup-completed')
+				this.$emit('setupCompleted')
 				this.wizardSessionId = ''
 			}
 		},
@@ -260,7 +260,9 @@ export default defineComponent({
 		},
 
 		async runWizardStep(action: string, input: Record<string, string> = {}) {
-			if (!this.wizardSessionId) return
+			if (!this.wizardSessionId) {
+				return
+			}
 			this.wizardLoading = true
 			this.stopPolling()
 			try {

@@ -32,17 +32,16 @@
 			<div v-if="groups.length > 0" class="modal-field">
 				<label for="routing-groups-select">{{ t('twofactor_gateway', 'Groups') }}</label>
 				<NcSelect
-					input-id="routing-groups-select"
+					inputId="routing-groups-select"
 					v-model="selectedGroups"
 					:options="groups"
 					:placeholder="t('twofactor_gateway', 'Restrict to groups\u00A0\u2026')"
 					label="displayName"
-					track-by="id"
-					:no-wrap="false"
+					trackBy="id"
+					:noWrap="false"
 					:multiple="true"
-					:keep-open="true"
-					:deselect-from-dropdown="true"
-					:close-on-select="false" />
+					:keepOpen="true"
+					:deselectFromDropdown="true" />
 				<small class="modal-help-text">
 					{{ t('twofactor_gateway', 'Only users in these groups can use this instance. Leave empty to allow normal fallback.') }}
 				</small>
@@ -53,7 +52,7 @@
 					{{ t('twofactor_gateway', 'Cancel') }}
 				</NcButton>
 				<NcButton
-					type="primary"
+					variant="primary"
 					:disabled="saving"
 					@click="save">
 					<template #icon>
@@ -100,7 +99,7 @@ The `groupIds` array is always sorted before emission so parent components recei
 		<GatewayRoutingModal
 			:show="showModal"
 			:label="instance.label"
-			:instance-id="instance.id"
+			:instanceId="instance.id"
 			:groups="groups"
 			:initial-group-ids="instance.groupIds"
 			@close="showModal = false"

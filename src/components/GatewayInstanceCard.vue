@@ -10,12 +10,12 @@
 				<NcChip
 					v-if="providerName"
 					variant="tertiary"
-					no-close>
+					noClose>
 					{{ providerName }}
 				</NcChip>
 				<NcChip
 					:variant="instance.isComplete ? 'success' : 'warning'"
-					no-close>
+					noClose>
 					{{ instance.isComplete ? t('twofactor_gateway', 'Configured') : t('twofactor_gateway', 'Incomplete') }}
 				</NcChip>
 			</div>
@@ -29,10 +29,10 @@
 				-->
 				<NcButton
 					v-if="showSetDefaultAction && !instance.default"
-					type="tertiary"
+					variant="tertiary"
 					:title="t('twofactor_gateway', 'Set as default')"
 					:aria-label="t('twofactor_gateway', 'Set as default')"
-					@click="$emit('set-default', instance.id)">
+					@click="$emit('setDefault', instance.id)">
 					<template #icon>
 						<StarOutlineIcon :size="20" />
 					</template>
@@ -40,7 +40,7 @@
 				<NcButton
 					v-else-if="instance.default"
 					class="card-action-default"
-					type="tertiary"
+					variant="tertiary"
 					:title="t('twofactor_gateway', 'This is the default instance')"
 					:aria-label="t('twofactor_gateway', 'This is the default instance')"
 					@click.prevent>
@@ -58,7 +58,7 @@
 				<NcButton
 					v-if="showTestAction"
 					class="card-action-test"
-					type="tertiary"
+					variant="tertiary"
 					:title="t('twofactor_gateway', 'Test this instance')"
 					:aria-label="t('twofactor_gateway', 'Test this instance')"
 					:disabled="!instance.isComplete"
@@ -75,7 +75,7 @@
 				-->
 				<NcButton
 					v-if="showRoutingAction"
-					type="tertiary"
+					variant="tertiary"
 					:title="t('twofactor_gateway', 'Routing')"
 					:aria-label="t('twofactor_gateway', 'Routing')"
 					@click="$emit('routing', instance.id)">
@@ -92,7 +92,7 @@
 				-->
 				<NcButton
 					v-if="showEditAction"
-					type="tertiary"
+					variant="tertiary"
 					:title="t('twofactor_gateway', 'Edit')"
 					:aria-label="t('twofactor_gateway', 'Edit')"
 					@click="$emit('edit', instance.id)">
@@ -109,7 +109,7 @@
 				-->
 				<NcButton
 					v-if="showDeleteAction"
-					type="tertiary"
+					variant="tertiary"
 					:title="t('twofactor_gateway', 'Delete')"
 					:aria-label="t('twofactor_gateway', 'Delete')"
 					@click="$emit('delete', instance.id)">
@@ -140,7 +140,7 @@
 						:key="groupName"
 						class="routing-group-chip"
 						variant="tertiary"
-						no-close>
+						noClose>
 						{{ groupName }}
 					</NcChip>
 				</div>
@@ -175,7 +175,7 @@ Non-primitive prop types used here — especially `GatewayInstance`, `FieldDefin
 			@edit="remember('edit', $event)"
 			@delete="remember('delete', $event)"
 			@routing="remember('routing', $event)"
-			@set-default="remember('set-default', $event)"
+			@setDefault="remember('setDefault', $event)"
 			@test="remember('test', $event)" />
 		<p class="demo-log">
 			Last emitted event: <code>{{ lastEvent }}</code>
@@ -301,7 +301,7 @@ export default defineComponent({
 		showDeleteAction: { type: Boolean, default: true },
 	},
 
-	emits: ['edit', 'delete', 'set-default', 'test', 'routing'],
+	emits: ['edit', 'delete', 'setDefault', 'test', 'routing'],
 
 	setup() {
 		return { t }

@@ -25,7 +25,7 @@
 					class="input"
 					:spellcheck="false"
 					:error="verificationError.length > 0"
-					:helper-text="verificationError" />
+					:helperText="verificationError" />
 				<NcButton :disabled="submitting" @click="verify">
 					<template #icon>
 						<NcLoadingIcon v-if="submitting" :size="20" />

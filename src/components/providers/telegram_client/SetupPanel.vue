@@ -15,9 +15,9 @@
 			class="wizard-account-card">
 			<div class="wizard-account-summary">
 				<NcAvatar
-					:display-name="wizardAccountName"
+					:displayName="wizardAccountName"
 					:url="wizardAccountAvatarUrl || undefined"
-					:is-no-user="true"
+					:isNoUser="true"
 					:size="36" />
 				<div class="wizard-account-summary__text">
 					<strong>{{ t('twofactor_gateway', 'Connected account') }}</strong>
@@ -43,7 +43,7 @@
 			</div>
 			<div class="modal-field">
 				<NcCheckboxRadioSwitch
-					:model-value="bootstrapLogEnabled"
+					:modelValue="bootstrapLogEnabled"
 					@update:modelValue="bootstrapLogEnabled = !!$event">
 					{{ t('twofactor_gateway', 'Save Madeline diagnostic logs') }}
 				</NcCheckboxRadioSwitch>
@@ -186,7 +186,7 @@ export default defineComponent({
 		config: { type: Object as PropType<Record<string, string>>, required: true },
 		canStart: { type: Boolean, default: true },
 	},
-	emits: ['merge-config', 'setup-completed', 'update:wizardActive'],
+	emits: ['mergeConfig', 'setupCompleted', 'update:wizardActive'],
 	setup() {
 		return {
 			t,
@@ -366,8 +366,8 @@ export default defineComponent({
 				this.wizardStep = ''
 				this.wizardPassword = ''
 				if (response.config) {
-					this.$emit('merge-config', response.config)
-					this.$emit('setup-completed', response.config)
+					this.$emit('mergeConfig', response.config)
+					this.$emit('setupCompleted', response.config)
 				}
 			}
 
@@ -390,7 +390,7 @@ export default defineComponent({
 			this.bootstrapApiHash = sanitizedApiHash
 			this.bootstrapLogPath = normalizedLogPath
 
-			this.$emit('merge-config', {
+			this.$emit('mergeConfig', {
 				api_id: sanitizedApiId,
 				api_hash: sanitizedApiHash,
 				provider: this.providerId,

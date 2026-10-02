@@ -34,7 +34,7 @@
 
 		<div v-else class="admin-settings__content">
 			<div class="admin-settings__actions">
-				<NcButton v-if="effectiveAllowedActions.canCreateInstances" type="primary" @click="openCreate">
+				<NcButton v-if="effectiveAllowedActions.canCreateInstances" variant="primary" @click="openCreate">
 					{{ t('twofactor_gateway', 'Add provider configuration') }}
 				</NcButton>
 			</div>
@@ -48,9 +48,9 @@
 				v-model="orderedInstances"
 				class="admin-settings__instances"
 				tag="div"
-				item-key="orderKey"
+				itemKey="orderKey"
 				handle=".drag-handle"
-				ghost-class="admin-settings__drag-ghost"
+				ghostClass="admin-settings__drag-ghost"
 				:disabled="savingOrder || !effectiveAllowedActions.canReorderInstances"
 				@end="onInstancesReordered">
 				<template #item="{ element: item }">
@@ -67,17 +67,17 @@
 						<GatewayInstanceCard
 							:instance="item.instance"
 							:fields="item.fields"
-							:provider-name="item.providerName"
-							:group-names="item.groupNames ?? []"
-							:show-set-default-action="effectiveAllowedActions.canSetDefaultInstances"
-							:show-test-action="effectiveAllowedActions.canTestInstances"
-							:show-routing-action="item.showRoutingAction && effectiveAllowedActions.canManageRouting"
-							:show-edit-action="effectiveAllowedActions.canEditInstances"
-							:show-delete-action="effectiveAllowedActions.canDeleteInstances"
+							:providerName="item.providerName"
+							:groupNames="item.groupNames ?? []"
+							:showSetDefaultAction="effectiveAllowedActions.canSetDefaultInstances"
+							:showTestAction="effectiveAllowedActions.canTestInstances"
+							:showRoutingAction="item.showRoutingAction && effectiveAllowedActions.canManageRouting"
+							:showEditAction="effectiveAllowedActions.canEditInstances"
+							:showDeleteAction="effectiveAllowedActions.canDeleteInstances"
 							@edit="openEditById(item.gatewayId, $event)"
 							@routing="openRoutingById(item.gatewayId, $event)"
 							@delete="confirmDelete(item)"
-							@set-default="onSetDefault(item)"
+							@setDefault="onSetDefault(item)"
 							@test="openTest(item)" />
 					</div>
 				</template>
@@ -89,10 +89,10 @@
 			:show="showModal"
 			:gateways="gateways"
 			:groups="groups"
-			:gateway-id="editingGatewayId"
-			:instance-id="editingInstanceId"
-			:initial-label="editingLabel"
-			:initial-config="editingConfig"
+			:gatewayId="editingGatewayId"
+			:instanceId="editingInstanceId"
+			:initialLabel="editingLabel"
+			:initialConfig="editingConfig"
 			@close="closeModal"
 			@saved="onSaved" />
 
@@ -100,17 +100,17 @@
 			v-if="routingItem && effectiveAllowedActions.canManageRouting"
 			:show="showRoutingModal"
 			:label="routingItem.instance.label"
-			:instance-id="routingItem.instance.id"
+			:instanceId="routingItem.instance.id"
 			:groups="groups"
-			:initial-group-ids="routingItem.instance.groupIds"
+			:initialGroupIds="routingItem.instance.groupIds"
 			@close="closeRoutingModal"
 			@saved="onRoutingSaved" />
 
 		<GatewayTestModal
 			v-if="showTestModal && effectiveAllowedActions.canTestInstances"
 			:show="showTestModal"
-			:gateway-id="testingGatewayId"
-			:instance-id="testingInstanceId"
+			:gatewayId="testingGatewayId"
+			:instanceId="testingInstanceId"
 			:label="testingLabel"
 			@close="closeTestModal" />
 
@@ -124,7 +124,7 @@
 				<NcButton @click="showDeleteDialog = false">
 					{{ t('twofactor_gateway', 'Cancel') }}
 				</NcButton>
-				<NcButton type="error" :disabled="deleting" @click="doDelete">
+				<NcButton variant="error" :disabled="deleting" @click="doDelete">
 					<template #icon>
 						<NcLoadingIcon v-if="deleting" :size="20" />
 					</template>
@@ -356,7 +356,6 @@ import { GatewayTestModal } from '@lib/twofactor-gateway/components/gatewayTestM
 	* narrow the visible UI through the `allowedActions` prop instead of leaking raw host role semantics
 	* into this component.
  *
- * @displayName GatewayAdminSettings
  */
 export default defineComponent({
 	name: 'AdminSettings',
