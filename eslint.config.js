@@ -5,8 +5,14 @@
 
 import { recommended } from '@nextcloud/eslint-config'
 
+const plugins = Object.assign({}, ...recommended.map((config) => config.plugins ?? {}))
+
 export default [
 	...recommended,
+	{
+		name: 'twofactor_gateway/plugins',
+		plugins,
+	},
 	{
 		name: 'twofactor_gateway/ignores',
 		ignores: [
