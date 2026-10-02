@@ -26,4 +26,5 @@ export default [
 			'vue/first-attribute-linebreak': 'off',
 			'vue/max-attributes-per-line': 'off',
 		},
-	},]
+	},
+]
