@@ -356,7 +356,6 @@ import { GatewayTestModal } from '@lib/twofactor-gateway/components/gatewayTestM
 	* narrow the visible UI through the `allowedActions` prop instead of leaking raw host role semantics
 	* into this component.
  *
- * @displayName GatewayAdminSettings
  */
 export default defineComponent({
 	name: 'AdminSettings',

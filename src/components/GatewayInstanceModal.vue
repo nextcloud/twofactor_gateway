@@ -71,8 +71,7 @@
 					:noWrap="false"
 					:multiple="true"
 					:keepOpen="true"
-					:deselectFromDropdown="true"
-					:close-on-select="false" />
+					:deselectFromDropdown="true" />
 				<small class="modal-help-text">
 					{{ t('twofactor_gateway', 'Choose the initial group scope for this instance. Delegated admins must select at least one managed group.') }}
 				</small>

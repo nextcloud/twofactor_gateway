@@ -288,7 +288,7 @@ export default defineComponent({
 
 		startWizardButtonLabel(): string {
 			if (this.wizardLoading) {
-				return t('twofactor_gateway', 'Starting guided setup\u00A0...')
+				return t('twofactor_gateway', 'Starting guided setup\u00A0…')
 			}
 
 			return t('twofactor_gateway', 'Discover available resources')

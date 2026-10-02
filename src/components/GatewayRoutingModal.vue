@@ -41,8 +41,7 @@
 					:noWrap="false"
 					:multiple="true"
 					:keepOpen="true"
-					:deselectFromDropdown="true"
-					:close-on-select="false" />
+					:deselectFromDropdown="true" />
 				<small class="modal-help-text">
 					{{ t('twofactor_gateway', 'Only users in these groups can use this instance. Leave empty to allow normal fallback.') }}
 				</small>
