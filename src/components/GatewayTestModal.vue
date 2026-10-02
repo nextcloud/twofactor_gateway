@@ -48,11 +48,11 @@
 			</div>
 
 			<div class="modal-actions">
-				<NcButton type="secondary" @click="$emit('close')">
+				<NcButton variant="secondary" @click="$emit('close')">
 					{{ t('twofactor_gateway', 'Close') }}
 				</NcButton>
 				<NcButton
-					type="primary"
+					variant="primary"
 					:disabled="testing || !identifier.trim()"
 					@click="runTest">
 					<template #icon>
@@ -85,7 +85,7 @@ This component is useful when the consumer intentionally delegates test-send beh
 		<GatewayTestModal
 			:show="showModal"
 			gateway-id="acme_sms"
-			:instance-id="instance.id"
+			:instanceId="instance.id"
 			:label="instance.label"
 			@close="showModal = false" />
 	</div>

@@ -15,9 +15,9 @@
 			class="wizard-account-card">
 			<div class="wizard-account-summary">
 				<NcAvatar
-					:display-name="wizardAccountName"
+					:displayName="wizardAccountName"
 					:url="wizardAccountAvatarUrl || undefined"
-					:is-no-user="true"
+					:isNoUser="true"
 					:size="36" />
 				<div class="wizard-account-summary__text">
 					<strong>{{ t('twofactor_gateway', 'Connected account') }}</strong>
@@ -84,7 +84,7 @@
 
 		<div v-if="wizardStep === 'already_logged_in'" class="wizard-actions-inline">
 			<NcButton
-				type="secondary"
+				variant="secondary"
 				:disabled="wizardLoading"
 				@click="runWizardStep('submit_phone', { phone: wizardPhone, continue_existing: true })">
 				<template #icon>
@@ -93,7 +93,7 @@
 				{{ t('twofactor_gateway', 'Continue existing session') }}
 			</NcButton>
 			<NcButton
-				type="warning"
+				variant="warning"
 				:disabled="wizardLoading"
 				@click="runWizardStep('submit_phone', { phone: wizardPhone, continue_existing: false })">
 				<template #icon>
@@ -204,7 +204,7 @@ export default defineComponent({
 		config: { type: Object as PropType<Record<string, string>>, required: true },
 		canStart: { type: Boolean, default: true },
 	},
-	emits: ['merge-config', 'setup-completed', 'update:wizardActive'],
+	emits: ['mergeConfig', 'setupCompleted', 'update:wizardActive'],
 	setup() {
 		return {
 			t,
@@ -382,8 +382,8 @@ export default defineComponent({
 				this.wizardStep = ''
 				this.wizardSessionId = ''
 				if (response.config) {
-					this.$emit('merge-config', response.config)
-					this.$emit('setup-completed', response.config)
+					this.$emit('mergeConfig', response.config)
+					this.$emit('setupCompleted', response.config)
 					if (response.config.phone) {
 						this.wizardPhone = response.config.phone
 					}
@@ -402,7 +402,7 @@ export default defineComponent({
 		},
 
 		async startWizard() {
-			this.$emit('merge-config', {
+			this.$emit('mergeConfig', {
 				base_url: this.bootstrapBaseUrl,
 				device_name: this.bootstrapDeviceName,
 				username: this.bootstrapUsername,
