@@ -5,14 +5,8 @@
 
 import { recommended } from '@nextcloud/eslint-config'
 
-const plugins = Object.assign({}, ...recommended.map((config) => config.plugins ?? {}))
-
 export default [
 	...recommended,
-	{
-		name: 'twofactor_gateway/plugins',
-		plugins,
-	},
 	{
 		name: 'twofactor_gateway/ignores',
 		ignores: [
@@ -21,18 +15,21 @@ export default [
 		],
 	},
 	{
-		name: 'twofactor_gateway/base',
-		files: ['**/*.{js,mjs,cjs,ts,mts,cts,tsx,vue}'],
+		name: 'twofactor_gateway/config',
 		languageOptions: {
 			globals: {
 				appName: 'writable',
 			},
 		},
 		rules: {
-			// Preserve the effective v8 console behavior.
+			// Existing project choices from the legacy configuration.
+			'jsdoc/require-jsdoc': 'off',
+			'jsdoc/tag-lines': 'off',
 			'no-console': ['error', { allow: ['error', 'warn', 'info', 'debug'] }],
+			'vue/first-attribute-linebreak': 'off',
+			'vue/max-attributes-per-line': 'off',
 
-			// New v9 style rules are migrated separately from this dependency bump.
+			// TODO: Migrate these new v9 style rules in a dedicated cleanup.
 			'import-extensions/extensions': 'off',
 			'import-extensions/ban-inline-type-imports': 'off',
 			'perfectionist/sort-imports': 'off',
@@ -42,49 +39,18 @@ export default [
 			'@stylistic/function-call-argument-newline': 'off',
 			'@stylistic/function-paren-newline': 'off',
 			'@stylistic/member-delimiter-style': 'off',
+			'vue/attributes-order': 'off',
+			'vue/new-line-between-multi-line-property': 'off',
 			'@stylistic/max-statements-per-line': 'off',
 			'@stylistic/indent': 'off',
+			'@typescript-eslint/no-unused-vars': 'off',
+			'vue/order-in-components': 'off',
 			'@stylistic/no-extra-semi': 'off',
 			'@stylistic/eol-last': 'off',
 			'@stylistic/implicit-arrow-linebreak': 'off',
-			'@stylistic/arrow-parens': 'off',
-			'jsdoc/require-jsdoc': 'off',
-			'jsdoc/tag-lines': 'off',
-			'jsdoc/check-tag-names': 'warn',
-		},
-	},
-	{
-		name: 'twofactor_gateway/typescript',
-		files: ['**/*.{ts,mts,cts,tsx,vue}'],
-		rules: {
-			'@typescript-eslint/no-unused-vars': 'off',
-			'@typescript-eslint/ban-types': 'off',
-		},
-	},
-	{
-		name: 'twofactor_gateway/vue',
-		files: ['**/*.vue'],
-		rules: {
-			'vue/first-attribute-linebreak': 'off',
-			'vue/max-attributes-per-line': 'off',
-
-			// Preserve the v8 kebab-case conventions.
-			'vue/attribute-hyphenation': ['error', 'always'],
-			'vue/custom-event-name-casing': ['error', 'kebab-case', {
-				ignores: ['/^[a-z]+(?:-[a-z]+)*:[a-z]+(?:-[a-z]+)*$/u'],
-			}],
-			'vue/v-on-event-hyphenation': ['error', 'always'],
-
-			// New v9 Vue style rules are migrated separately.
-			'vue/attributes-order': 'off',
-			'vue/new-line-between-multi-line-property': 'off',
-			'vue/order-in-components': 'off',
 			'vue/component-options-name-casing': 'off',
+			'@stylistic/arrow-parens': 'off',
 			'vue/padding-line-between-blocks': 'off',
-
-			// Keep newly detected deprecations visible without blocking this bump.
-			'@nextcloud/no-deprecated-library-props': 'warn',
-			'@nextcloud/l10n-enforce-ellipsis': 'warn',
 		},
 	},
 	{
