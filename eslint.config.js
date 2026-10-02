@@ -26,14 +26,4 @@ export default [
 			'vue/first-attribute-linebreak': 'off',
 			'vue/max-attributes-per-line': 'off',
 		},
-	},
-	{
-		name: 'twofactor_gateway/tests',
-		files: ['src/tests/**/*.spec.ts'],
-		rules: {
-			'n/no-unpublished-import': ['error', {
-				allowModules: ['vitest', '@vue/test-utils', '@testing-library/vue'],
-			}],
-		},
-	},
-]
+	},]
