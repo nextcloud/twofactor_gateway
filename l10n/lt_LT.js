@@ -142,7 +142,6 @@ OC.L10N.register(
     "Submit password" : "Pateikti slaptažodį",
     "Paste the token once. The wizard will query Meta and list the available phone numbers and approved templates automatically." : "Įklijuokite žymenį vieną kartą. Vedlys užklauss „Meta“ ir automatiškai pateiks galimų telefono numerių bei patvirtintų šablonų sąrašą.",
     "e.g. {templateName}" : "pvz. {templateName}",
-    "Starting guided setup ..." : "Pradedama vadovaujama sąranka ...",
     "Discover available resources" : "Atraskite turimus išteklius",
     "Not selectable" : "Nepasirenkama",
     "Initializing WhatsApp Business discovery …" : "Inicijuojama „WhatsApp Business“ paieška …",
@@ -203,6 +202,7 @@ OC.L10N.register(
     "Submit" : "Pateikti",
     "An access code has been sent to %s" : "Prieigos kodas buvo išsiųstas į %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Klaida, siunčiant žinutę. Prašome bandyti vėliau arba susisiekti su administratoriumi.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Jūsų telefono numeris pasikeitė ir nebuvo iš naujo patvirtintas. Naudokite kitą dviejų faktorių mechanizmą arba susisiekite su savo administratoriumi."
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Jūsų telefono numeris pasikeitė ir nebuvo iš naujo patvirtintas. Naudokite kitą dviejų faktorių mechanizmą arba susisiekite su savo administratoriumi.",
+    "Starting guided setup ..." : "Pradedama vadovaujama sąranka ..."
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");
