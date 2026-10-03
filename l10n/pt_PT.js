@@ -131,7 +131,6 @@ OC.L10N.register(
     "Check login status" : "Verificar status de login",
     "Paste the token once. The wizard will query Meta and list the available phone numbers and approved templates automatically." : "Cole o token uma vez. O assistente consultará o Meta e listará automaticamente os números de telefone disponíveis e os modelos aprovados.",
     "e.g. {templateName}" : "p. ex., {templateName}",
-    "Starting guided setup ..." : "Iniciando a configuração guiada …",
     "Discover available resources" : "Descubra os recursos disponíveis",
     "Not selectable" : "Não selecionável",
     "Initializing WhatsApp Business discovery …" : "Inicializando a descoberta do WhatsApp Business …",
@@ -188,6 +187,7 @@ OC.L10N.register(
     "Submit" : "Submeter",
     "An access code has been sent to %s" : "Um código de acesso foi enviado para %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Erro ao enviar a mensagem. Tente novamente mais tarde ou entre em contato com o administrador.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Seu número de telefone foi alterado e não foi reverificado. Use um mecanismo de dois fatores diferente ou entre em contato com o administrador."
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Seu número de telefone foi alterado e não foi reverificado. Use um mecanismo de dois fatores diferente ou entre em contato com o administrador.",
+    "Starting guided setup ..." : "Iniciando a configuração guiada …"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

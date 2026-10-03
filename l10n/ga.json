@@ -140,7 +140,6 @@
     "Submit password" : "Cuir isteach focal faire",
     "Paste the token once. The wizard will query Meta and list the available phone numbers and approved templates automatically." : "Greamaigh an comhartha uair amháin. Déanfaidh an draoi fiosrúchán ar Meta agus liostálfaidh sé na huimhreacha gutháin atá ar fáil agus na teimpléid cheadaithe go huathoibríoch.",
     "e.g. {templateName}" : "m.sh. {templateName}",
-    "Starting guided setup ..." : "Ag tosú ar an socrú treoraithe...",
     "Discover available resources" : "Faigh amach acmhainní atá ar fáil",
     "Not selectable" : "Ní féidir a roghnú",
     "Initializing WhatsApp Business discovery …" : "Ag tosú fionnachtain WhatsApp Business …",
@@ -202,6 +201,7 @@
     "Submit" : "Cuir isteach",
     "An access code has been sent to %s" : "Tá cód rochtana seolta chuig%s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Earráid agus an Teachtaireacht á seoladh. Bain triail eile as ar ball le do thoil nó déan teagmháil leis an riarthóir.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Athraíodh d'uimhir theileafóin agus níor athfhíoraíodh í. Bain úsáid as meicníocht dhifriúil dhá fhachtóir nó déan teagmháil le do riarthóir."
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Athraíodh d'uimhir theileafóin agus níor athfhíoraíodh í. Bain úsáid as meicníocht dhifriúil dhá fhachtóir nó déan teagmháil le do riarthóir.",
+    "Starting guided setup ..." : "Ag tosú ar an socrú treoraithe..."
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }
