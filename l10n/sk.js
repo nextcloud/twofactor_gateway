@@ -142,7 +142,6 @@ OC.L10N.register(
     "Submit password" : "Odoslať heslo",
     "Paste the token once. The wizard will query Meta and list the available phone numbers and approved templates automatically." : "Vložte token raz. Sprievodca sa opýta rozhrania Meta API a automaticky zobrazí dostupné telefónne čísla a schválené šablóny.",
     "e.g. {templateName}" : "napr. {templateName}",
-    "Starting guided setup ..." : "Spúšťa sa sprievodca nastavením ...",
     "Discover available resources" : "Zistiť dostupné zdroje",
     "Not selectable" : "Nie je možné vybrať",
     "Initializing WhatsApp Business discovery …" : "Inicializuje sa zisťovanie WhatsApp Business …",
@@ -204,6 +203,7 @@ OC.L10N.register(
     "Submit" : "Odoslať",
     "An access code has been sent to %s" : "Prístupový kód bol odoslaný na %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Chyba počas odosielania správy. Skúste to znovu alebo kontaktujte správcu.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Prešli ste na iné telefónne číslo a znovu ho neoverili. Použite prosím iný mechanizmus dvojfaktorového overovania alebo sa obráťte na správcu systému."
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Prešli ste na iné telefónne číslo a znovu ho neoverili. Použite prosím iný mechanizmus dvojfaktorového overovania alebo sa obráťte na správcu systému.",
+    "Starting guided setup ..." : "Spúšťa sa sprievodca nastavením ..."
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

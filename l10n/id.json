@@ -140,7 +140,6 @@
     "Submit password" : "Kirim kata sandi",
     "Paste the token once. The wizard will query Meta and list the available phone numbers and approved templates automatically." : "Tempel token satu kali. Wizard akan mengkueri Meta dan secara otomatis mencantumkan nomor telepon serta template yang disetujui.",
     "e.g. {templateName}" : "misalnya {templateName}",
-    "Starting guided setup ..." : "Memulai penyiapan terpandu ...",
     "Discover available resources" : "Temukan sumber daya yang tersedia",
     "Not selectable" : "Tidak dapat dipilih",
     "Initializing WhatsApp Business discovery …" : "Menginisialisasi penemuan WhatsApp Business …",
@@ -202,6 +201,7 @@
     "Submit" : "Kirim",
     "An access code has been sent to %s" : "Kode akses telah dikirim ke %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Terjadi kesalahan saat mengirim pesan. Harap coba lagi nanti atau hubungi administrator.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Nomor telepon Anda telah berubah dan belum diverifikasi ulang. Gunakan mekanisme autentikasi dua faktor lain atau hubungi administrator Anda."
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Nomor telepon Anda telah berubah dan belum diverifikasi ulang. Gunakan mekanisme autentikasi dua faktor lain atau hubungi administrator Anda.",
+    "Starting guided setup ..." : "Memulai penyiapan terpandu ..."
 },"pluralForm" :"nplurals=1; plural=0;"
 }
