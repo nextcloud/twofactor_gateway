@@ -142,7 +142,6 @@ OC.L10N.register(
     "Submit password" : "Edasta salasõna",
     "Paste the token once. The wizard will query Meta and list the available phone numbers and approved templates automatically." : "Aseta tunnusluba üks kord. Viisad teeb päringu Meta teenustele ja kuvab saadaval telefoninumbrid koos kinnitatud mallidega automaatselt.",
     "e.g. {templateName}" : "nt. {templateName}",
-    "Starting guided setup ..." : "Käivitan juhitud seadistust...",
     "Discover available resources" : "Tuvasta saadaval ressursid",
     "Not selectable" : "Pole valitav",
     "Initializing WhatsApp Business discovery …" : "Käivitan WhatsApp Business teenuse tuvastamist…",
@@ -204,6 +203,7 @@ OC.L10N.register(
     "Submit" : "Saada",
     "An access code has been sent to %s" : "Autentimiskood saadeti %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Viga sõnumi saatmisel. Palun proovi hiljem uuesti või võta ühendust peakasutajaga.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Sinu telefoninumber on muutunud ja pole uuesti verifitseeritud. Kasuta mõnda muud kaheastmelise autentimise meetodit või võta ühendust oma peakasutajaga."
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Sinu telefoninumber on muutunud ja pole uuesti verifitseeritud. Kasuta mõnda muud kaheastmelise autentimise meetodit või võta ühendust oma peakasutajaga.",
+    "Starting guided setup ..." : "Käivitan juhitud seadistust..."
 },
 "nplurals=2; plural=(n != 1);");

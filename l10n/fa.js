@@ -142,7 +142,6 @@ OC.L10N.register(
     "Submit password" : "ارسال رمز عبور",
     "Paste the token once. The wizard will query Meta and list the available phone numbers and approved templates automatically." : "توکن را یکبار جای‌گذاری کنید. جادوگر به‌طور خودکار شماره تلفن‌ها و قالب‌های تأییدشده موجود را از Meta پرس‌وجو می‌کند.",
     "e.g. {templateName}" : "مثلاً {templateName}",
-    "Starting guided setup ..." : "شروع راه‌اندازی هدایت‌شده…",
     "Discover available resources" : "کشف منابع موجود",
     "Not selectable" : "غیرقابل انتخاب",
     "Initializing WhatsApp Business discovery …" : "در حال مقداردهی اولیه کشف واتساپ بیزینس…",
@@ -203,6 +202,7 @@ OC.L10N.register(
     "Submit" : "ارسال",
     "An access code has been sent to %s" : "یک کد دسترسی به %s ارسال شده است",
     "Error while sending the Message. Please try again later or contact the administrator." : "خطا در ارسال پیام. لطفاً بعداً دوباره تلاش کنید یا با مدیر تماس بگیرید.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "شماره تلفن شما تغییر کرده و دوباره تأیید نشده است. از یک مکانیزم دو مرحله‌ای دیگر استفاده کنید یا با مدیر خود تماس بگیرید."
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "شماره تلفن شما تغییر کرده و دوباره تأیید نشده است. از یک مکانیزم دو مرحله‌ای دیگر استفاده کنید یا با مدیر خود تماس بگیرید.",
+    "Starting guided setup ..." : "شروع راه‌اندازی هدایت‌شده…"
 },
 "nplurals=2; plural=(n > 1);");

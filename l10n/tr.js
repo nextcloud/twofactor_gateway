@@ -142,7 +142,6 @@ OC.L10N.register(
     "Submit password" : "Parolayı gönder",
     "Paste the token once. The wizard will query Meta and list the available phone numbers and approved templates automatically." : "Kodu bir kez yapıştırın. Yardımcı Meta üzerinde bir sorgulama yaparak var olan telefon numaralarını ve onaylanmış kalıpları otomatik olarak listeleyecek.",
     "e.g. {templateName}" : "Örnek: {templateName}",
-    "Starting guided setup ..." : "Rehberli kurulum başlatılıyor…",
     "Discover available resources" : "Kullanılabilecek kaynakları keşfedin",
     "Not selectable" : "Seçilebilir değil",
     "Initializing WhatsApp Business discovery …" : "WhatsApp Business keşfi başlatılıyor…",
@@ -204,6 +203,7 @@ OC.L10N.register(
     "Submit" : "Gönder",
     "An access code has been sent to %s" : "%s için erişim kodu gönderildi",
     "Error while sending the Message. Please try again later or contact the administrator." : "İleti gönderilirken bir sorun çıktı. Lütfen bir süre sonra yeniden deneyin ya da BT yöneticiniz ile görüşün.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Telefon numaranız değişmiş ve yeniden doğrulanmamış. Farklı bir iki adımlı doğrulama yöntemi kullanın ya da yöneticiniz ile görüşün."
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Telefon numaranız değişmiş ve yeniden doğrulanmamış. Farklı bir iki adımlı doğrulama yöntemi kullanın ya da yöneticiniz ile görüşün.",
+    "Starting guided setup ..." : "Rehberli kurulum başlatılıyor…"
 },
 "nplurals=2; plural=(n > 1);");
