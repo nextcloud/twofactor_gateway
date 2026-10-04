@@ -27,6 +27,7 @@ OC.L10N.register(
     "Phone number" : "Telefonnummer",
     "Back" : "Tilbage",
     "Continue" : "Fortsæt",
+    "e.g. {templateName}" : "fx {templateName}",
     "Template:" : "Skabelon:",
     "Language:" : "Sprog:",
     "Status:" : "Status:",
