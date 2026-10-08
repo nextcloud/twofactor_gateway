@@ -181,7 +181,7 @@
     "Use this template" : "Brug denne skabelon",
     "Start over" : "Start forfra",
     "Could not load gateway list. Please check your connection and try again." : "Listen over gateways kunne ikke indlæses. Tjek din forbindelse, og prøv igen.",
-    "Configure messaging gateways used to send two-factor authentication codes. Each gateway can have multiple named configurations (instances), which enables multi-tenant setups." : "Konfigurer de beskedgateways, der bruges til at sende koder til to-faktor-godkendelse. Hver gateway kan have flere navngivne konfigurationer (instanser), så den kan bruges til flere lejere.",
+    "Configure messaging gateways used to send two-factor authentication codes. Each gateway can have multiple named configurations (instances), which enables multi-tenant setups." : "Konfigurer de beskedgateways, der bruges til at sende koder til to-faktor-godkendelse. Hver gateway kan have flere navngivne konfigurationer (instanser), så den kan bruges i opsætninger med flere tenants.",
     "Loading gateway configurations …" : "Indlæser gatewaykonfigurationer …",
     "Failed to load gateways" : "Gateways kunne ikke indlæses",
     "Retry" : "Prøv igen",
