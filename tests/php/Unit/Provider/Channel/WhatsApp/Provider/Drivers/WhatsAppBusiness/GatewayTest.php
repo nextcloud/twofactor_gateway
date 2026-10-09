@@ -61,6 +61,7 @@ class GatewayTest extends AppTestCase {
 		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['access_token']->getExposure());
 		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_name']->getExposure());
 		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_language']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_category']->getExposure());
 	}
 
 	public function testSendUsesTemplateAndDefaultApiVersionWhenNotConfigured(): void {
@@ -136,7 +137,7 @@ class GatewayTest extends AppTestCase {
 				'WhatsApp Business send failed.',
 				$this->callback(static function (array $context) use ($maskedIdentifier): bool {
 					return ($context['identifier'] ?? null) === $maskedIdentifier
-						&& ($context['exception'] ?? null) instanceof MessageTransmissionException;
+						&& ($context['errorClass'] ?? null) === MessageTransmissionException::class;
 				}),
 			);
 
@@ -168,7 +169,7 @@ class GatewayTest extends AppTestCase {
 				'WhatsApp Business send failed.',
 				$this->callback(static function (array $context) use ($maskedIdentifier): bool {
 					return ($context['identifier'] ?? null) === $maskedIdentifier
-						&& ($context['exception'] ?? null) instanceof \RuntimeException;
+						&& ($context['errorClass'] ?? null) === \RuntimeException::class;
 				}),
 			);
 
@@ -238,6 +239,61 @@ class GatewayTest extends AppTestCase {
 				'template_language' => 'pt_BR',
 			],
 		);
+	}
+
+	public function testAuthenticationTemplateUsesConfiguredNameAndOtpButton(): void {
+		$this->gateway->setPhoneNumberId('test_999');
+		$this->gateway->setAccessToken('private-token');
+		$this->gateway->setTemplateName('user_configured_otp');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->gateway->setTemplateCategory('AUTHENTICATION');
+		$this->client->expects($this->once())->method('post')->with(
+			'https://graph.facebook.com/v22.0/test_999/messages',
+			$this->callback(static function (array $options): bool {
+				$template = $options['json']['template'];
+				return $template['name'] === 'user_configured_otp'
+					&& $template['components'][0]['parameters'][0]['text'] === '482931'
+					&& $template['components'][1]['sub_type'] === 'url'
+					&& $template['components'][1]['index'] === '0'
+					&& $template['components'][1]['parameters'][0]['text'] === '482931';
+			}),
+		)->willReturn($this->createJsonResponse(['messages' => [['id' => 'wamid.test']]]));
+		$this->gateway->send('+5511999990000', 'Explanatory login message', ['code' => '482931']);
+	}
+
+	public function testAuthenticationTemplateRejectsNonOtpMessages(): void {
+		$this->gateway->setPhoneNumberId('test_999');
+		$this->gateway->setAccessToken('private-token');
+		$this->gateway->setTemplateName('user_configured_otp');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->gateway->setTemplateCategory('AUTHENTICATION');
+		$this->client->expects($this->never())->method('post');
+		$this->expectException(MessageTransmissionException::class);
+		$this->gateway->send('+5511999990000', 'Two Factor Gateway test message');
+	}
+
+	public function testAdministrativeTestMessageGeneratesSixDigitCode(): void {
+		$payload = $this->gateway->createTestMessage();
+		$this->assertMatchesRegularExpression('/^[0-9]{6}$/', $payload['message']);
+		$this->assertSame(['code' => $payload['message']], $payload['extra']);
+		$this->assertArrayNotHasKey('template_name', $payload['extra']);
+	}
+
+	public function testClientExceptionDoesNotLogBearerToken(): void {
+		$this->gateway->setPhoneNumberId('test_999');
+		$this->gateway->setAccessToken('sensitive-token-do-not-log');
+		$this->gateway->setTemplateName('configured_template');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->client->method('post')->willThrowException(new \RuntimeException('Bearer sensitive-token-do-not-log'));
+		$this->logger->expects($this->once())->method('warning')->with(
+			'WhatsApp Business send failed.',
+			$this->callback(static function (array $context): bool {
+				return !str_contains(json_encode($context, JSON_THROW_ON_ERROR), 'sensitive-token-do-not-log')
+					&& !isset($context['exception']);
+			}),
+		);
+		$this->expectException(MessageTransmissionException::class);
+		$this->gateway->send('+5511999990000', 'test');
 	}
 
 	private function createJsonResponse(array $payload): IResponse {

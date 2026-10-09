@@ -77,6 +77,10 @@
 					<span class="meta-label">{{ t('twofactor_gateway', 'Status:') }}</span>
 					<span class="meta-value meta-status-approved">{{ selectedTemplatePreview.status }}</span>
 				</div>
+				<div v-if="selectedTemplatePreview.category" class="meta-row">
+					<span class="meta-label">{{ t('twofactor_gateway', 'Category:') }}</span>
+					<span class="meta-value">{{ selectedTemplatePreview.category }}</span>
+				</div>
 			</div>
 
 			<div v-if="getTemplateHeader(selectedTemplatePreview)" class="template-preview__section">
@@ -204,6 +208,7 @@ type TemplateOption = {
 	name: string
 	language: string
 	status?: string
+	category?: string
 	body?: string
 	header?: string
 	footer?: string
