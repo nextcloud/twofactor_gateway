@@ -77,6 +77,10 @@
 					<span class="meta-label">{{ t('twofactor_gateway', 'Status:') }}</span>
 					<span class="meta-value meta-status-approved">{{ selectedTemplatePreview.status }}</span>
 				</div>
+				<div v-if="selectedTemplatePreview.category" class="meta-row">
+					<span class="meta-label">{{ t('twofactor_gateway', 'Category:') }}</span>
+					<span class="meta-value">{{ selectedTemplatePreview.category }}</span>
+				</div>
 			</div>
 
 			<div v-if="getTemplateHeader(selectedTemplatePreview)" class="template-preview__section">
@@ -204,6 +208,7 @@ type TemplateOption = {
 	name: string
 	language: string
 	status?: string
+	category?: string
 	body?: string
 	header?: string
 	footer?: string
@@ -422,6 +427,17 @@ export default defineComponent({
 				this.applyResponse(phones)
 				this.focusWizardRoot()
 			} catch (error) {
+				// Discovery may fail after the server stored a sensitive token in
+				// the temporary setup session. Always release that session.
+				if (this.wizardSessionId !== '') {
+					try {
+						await this.gatewayAdminApi.cancelInteractiveSetup(this.gatewayId, this.wizardSessionId, {
+							provider: this.providerId,
+						})
+					} catch {
+						// Preserve the original setup error.
+					}
+				}
 				this.wizardMessageType = 'error'
 				this.wizardMessage = error instanceof Error ? error.message : t('twofactor_gateway', 'Failed to discover WhatsApp Business resources.')
 				this.wizardSessionId = ''

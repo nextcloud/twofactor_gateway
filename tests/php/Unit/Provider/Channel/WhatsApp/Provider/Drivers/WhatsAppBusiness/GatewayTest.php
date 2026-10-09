@@ -61,6 +61,7 @@ class GatewayTest extends AppTestCase {
 		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['access_token']->getExposure());
 		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_name']->getExposure());
 		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_language']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_category']->getExposure());
 	}
 
 	public function testSendUsesTemplateAndDefaultApiVersionWhenNotConfigured(): void {
@@ -136,7 +137,7 @@ class GatewayTest extends AppTestCase {
 				'WhatsApp Business send failed.',
 				$this->callback(static function (array $context) use ($maskedIdentifier): bool {
 					return ($context['identifier'] ?? null) === $maskedIdentifier
-						&& ($context['exception'] ?? null) instanceof MessageTransmissionException;
+						&& ($context['errorClass'] ?? null) === MessageTransmissionException::class;
 				}),
 			);
 
@@ -149,7 +150,7 @@ class GatewayTest extends AppTestCase {
 			]));
 
 		$this->expectException(MessageTransmissionException::class);
-		$this->expectExceptionMessage('Unsupported post request');
+		$this->expectExceptionMessage('Meta rejected the WhatsApp template message.');
 
 		$this->gateway->send('+55 (11) 99999-0000', 'Two Factor Gateway test message');
 	}
@@ -168,7 +169,7 @@ class GatewayTest extends AppTestCase {
 				'WhatsApp Business send failed.',
 				$this->callback(static function (array $context) use ($maskedIdentifier): bool {
 					return ($context['identifier'] ?? null) === $maskedIdentifier
-						&& ($context['exception'] ?? null) instanceof \RuntimeException;
+						&& ($context['errorClass'] ?? null) === \RuntimeException::class;
 				}),
 			);
 
@@ -237,6 +238,124 @@ class GatewayTest extends AppTestCase {
 				'template_name' => 'test_twofactor_custom_message',
 				'template_language' => 'pt_BR',
 			],
+		);
+	}
+
+	public function testAuthenticationTemplateUsesConfiguredNameAndOtpButton(): void {
+		$this->gateway->setPhoneNumberId('test_999');
+		$this->gateway->setAccessToken('private-token');
+		$this->gateway->setTemplateName('user_configured_otp');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->gateway->setTemplateCategory('AUTHENTICATION');
+		$this->client->expects($this->once())->method('post')->with(
+			'https://graph.facebook.com/v22.0/test_999/messages',
+			$this->callback(static function (array $options): bool {
+				$template = $options['json']['template'];
+				return $template['name'] === 'user_configured_otp'
+					&& $template['components'][0]['parameters'][0]['text'] === '482931'
+					&& $template['components'][1]['sub_type'] === 'url'
+					&& $template['components'][1]['index'] === '0'
+					&& $template['components'][1]['parameters'][0]['text'] === '482931';
+			}),
+		)->willReturn($this->createJsonResponse(['messages' => [['id' => 'wamid.test']]]));
+		$this->gateway->send('+5511999990000', 'Explanatory login message', ['code' => '482931']);
+	}
+
+	public function testAuthenticationTemplateRejectsNonOtpMessages(): void {
+		$this->gateway->setPhoneNumberId('test_999');
+		$this->gateway->setAccessToken('private-token');
+		$this->gateway->setTemplateName('user_configured_otp');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->gateway->setTemplateCategory('AUTHENTICATION');
+		$this->client->expects($this->never())->method('post');
+		$this->expectException(MessageTransmissionException::class);
+		$this->gateway->send('+5511999990000', 'Two Factor Gateway test message');
+	}
+
+	public function testAdministrativeTestMessageGeneratesSixDigitCode(): void {
+		$payload = $this->gateway->createTestMessage();
+		$this->assertMatchesRegularExpression('/^[0-9]{6}$/', $payload['message']);
+		$this->assertSame(['code' => $payload['message']], $payload['extra']);
+		$this->assertArrayNotHasKey('template_name', $payload['extra']);
+	}
+
+	public function testClientExceptionDoesNotLogBearerToken(): void {
+		$this->gateway->setPhoneNumberId('test_999');
+		$this->gateway->setAccessToken('sensitive-token-do-not-log');
+		$this->gateway->setTemplateName('configured_template');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->client->method('post')->willThrowException(new \RuntimeException('Bearer sensitive-token-do-not-log'));
+		$this->logger->expects($this->once())->method('warning')->with(
+			'WhatsApp Business send failed.',
+			$this->callback(static function (array $context): bool {
+				return !str_contains(json_encode($context, JSON_THROW_ON_ERROR), 'sensitive-token-do-not-log')
+					&& !isset($context['exception']);
+			}),
+		);
+		$this->expectException(MessageTransmissionException::class);
+		$this->gateway->send('+5511999990000', 'test');
+	}
+
+	public function testGuidedSetupUsesCatalogPolicyAndRetainsSelectedCategory(): void {
+		$this->client->expects($this->exactly(2))->method('get')
+			->willReturnCallback(function (string $url): IResponse {
+				if (str_ends_with($url, '/phone_numbers')) {
+					return $this->createJsonResponse(['data' => [[
+						'id' => 'phone-123',
+						'display_phone_number' => '+55 11 99999-0000',
+						'platform_type' => 'CLOUD_API',
+					]]]);
+				}
+				if (str_contains($url, '/message_templates?fields=')) {
+					return $this->createJsonResponse(['data' => [
+						[
+							'name' => 'configured_auth_code', 'language' => 'pt_BR',
+							'status' => 'APPROVED', 'category' => 'AUTHENTICATION',
+							'components' => [
+								['type' => 'BODY', 'text' => 'Your code is {{1}}'],
+								['type' => 'BUTTONS', 'buttons' => [
+									['type' => 'OTP', 'otp_type' => 'COPY_CODE'],
+								]],
+							],
+						],
+					]]);
+				}
+				throw new \LogicException('Unexpected Graph API URL: ' . $url);
+			});
+
+		$started = $this->gateway->interactiveSetupStart([]);
+		$sessionId = $started['sessionId'];
+		$credentials = $this->gateway->interactiveSetupStep($sessionId, 'set_credentials', [
+			'token' => 'sensitive-token',
+			'apiVersion' => 'v22.0',
+			'whatsAppBusinessAccountId' => 'business-123',
+		]);
+		$this->assertSame('phones_discovery', $credentials['step']);
+
+		$phones = $this->gateway->interactiveSetupStep($sessionId, 'discover_phones');
+		$this->assertSame('phone_selection', $phones['step']);
+		$this->assertTrue($phones['phoneNumbers'][0]['is_selectable']);
+
+		$selected = $this->gateway->interactiveSetupStep($sessionId, 'select_phone', [
+			'phoneNumberId' => 'phone-123',
+		]);
+		$this->assertSame('templates_discovery', $selected['step']);
+
+		$catalog = $this->gateway->interactiveSetupStep($sessionId, 'discover_templates');
+		$this->assertSame('template_selection', $catalog['step']);
+		$this->assertSame('AUTHENTICATION', $catalog['templates'][0]['category']);
+		$this->assertTrue($catalog['templates'][0]['is_selectable']);
+
+		$finished = $this->gateway->interactiveSetupStep($sessionId, 'finalize', [
+			'templateName' => 'configured_auth_code',
+			'templateLanguage' => 'pt_BR',
+		]);
+		$this->assertSame('complete', $finished['step']);
+		$this->assertSame('AUTHENTICATION', $finished['result']['template_category']);
+		$this->assertSame('configured_auth_code', $finished['result']['template_name']);
+		$this->assertSame(
+			'missing',
+			$this->gateway->appConfig->getValueString('twofactor_gateway', 'whatsappbusiness_setup_' . $sessionId, 'missing'),
 		);
 	}
 
