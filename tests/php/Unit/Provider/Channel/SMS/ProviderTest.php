@@ -13,6 +13,8 @@ use OCA\TwoFactorGateway\Provider\Channel\SMS\Provider;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\State;
+use OCA\TwoFactorGateway\Service\GatewayDispatchService;
+use OCA\TwoFactorGateway\Service\GatewayRuntimeAvailabilityService;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IL10N;
@@ -53,6 +55,8 @@ class ProviderTest extends TestCase {
 			$this->l10n,
 			$this->templateManager,
 			$this->initialState,
+			$this->createMock(GatewayDispatchService::class),
+			$this->createMock(GatewayRuntimeAvailabilityService::class),
 		);
 	}
 
