@@ -11,15 +11,15 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
 use Exception;
 use OCA\TwoFactorGateway\AppInfo\Application;
-use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
+use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\Factory as ProviderFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\State;
-use OCA\TwoFactorGateway\Service\SetupService;
 use OCA\TwoFactorGateway\Service\GatewayDispatchService;
+use OCA\TwoFactorGateway\Service\SetupService;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\Authentication\TwoFactorAuth\IRegistry;
 use OCP\IL10N;
