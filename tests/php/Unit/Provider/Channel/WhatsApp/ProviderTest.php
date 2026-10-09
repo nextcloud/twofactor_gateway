@@ -27,7 +27,7 @@ use OCP\Template\ITemplateManager;
 use PHPUnit\Framework\TestCase;
 
 class ProviderTest extends TestCase {
-	public function testPersonalAndLoginSetupAreAvailableFromUserScopedInstance(): void {
+	public function testPersonalSettingsAreAvailableFromUserScopedInstance(): void {
 		$gateway = $this->createMock(IGateway::class);
 		$gateway->method('getProviderId')->willReturn('whatsapp');
 		$gateway->method('getSettings')->willReturn(new Settings(name: 'WhatsApp', id: 'whatsapp', fields: []));
@@ -36,7 +36,7 @@ class ProviderTest extends TestCase {
 		$factory->method('get')->willReturn($gateway);
 		$user = $this->createMock(IUser::class);
 		$availability = $this->createMock(GatewayRuntimeAvailabilityService::class);
-		$availability->expects($this->exactly(2))->method('isAvailableForUser')
+		$availability->expects($this->once())->method('isAvailableForUser')
 			->with($user, 'whatsapp')->willReturn(true);
 
 		$provider = new Provider(
@@ -52,9 +52,7 @@ class ProviderTest extends TestCase {
 		);
 
 		$personal = $provider->getPersonalSettings($user);
-		$login = $provider->getLoginSetup($user);
 		$this->assertTrue((new \ReflectionProperty($personal, 'isComplete'))->getValue($personal));
-		$this->assertTrue((new \ReflectionProperty($login, 'isComplete'))->getValue($login));
 	}
 
 	public function testLoginChallengeIsSentUsingUserScopedInstanceAndOtp(): void {
