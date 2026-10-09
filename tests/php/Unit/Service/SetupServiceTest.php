@@ -11,12 +11,14 @@ namespace OCA\TwoFactorGateway\Tests\Unit\Service;
 
 use Exception;
 use OCA\TwoFactorGateway\AppInfo\Application;
+use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Provider\AProvider;
 use OCA\TwoFactorGateway\Provider\Factory as ProviderFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\State;
+use OCA\TwoFactorGateway\Service\GatewayDispatchService;
 use OCA\TwoFactorGateway\Service\SetupService;
 use OCA\TwoFactorGateway\Service\StateStorage;
 use OCP\Authentication\TwoFactorAuth\IRegistry;
@@ -34,6 +36,7 @@ class SetupServiceTest extends TestCase {
 	private ProviderFactory&MockObject $providerFactory;
 	private IRegistry&MockObject $registry;
 	private SetupService $setupService;
+	private GatewayDispatchService&MockObject $gatewayDispatchService;
 	private IL10N $l10n;
 
 	protected function setUp(): void {
@@ -44,6 +47,7 @@ class SetupServiceTest extends TestCase {
 		$this->providerFactory = $this->createMock(ProviderFactory::class);
 		$this->random = $this->createMock(ISecureRandom::class);
 		$this->registry = $this->createMock(IRegistry::class);
+		$this->gatewayDispatchService = $this->createMock(GatewayDispatchService::class);
 		$this->l10n = \OCP\Server::get(IL10NFactory::class)->get(Application::APP_ID);
 
 		$this->setupService = new SetupService(
@@ -53,6 +57,7 @@ class SetupServiceTest extends TestCase {
 			$this->random,
 			$this->registry,
 			$this->l10n,
+			$this->gatewayDispatchService,
 		);
 	}
 
@@ -64,9 +69,10 @@ class SetupServiceTest extends TestCase {
 			->method('get')
 			->with('sms')
 			->willReturn($gateway);
-		$gateway->expects($this->once())
-			->method('send')
-			->willThrowException(new VerificationException());
+		$gateway->expects($this->never())->method('send');
+		$this->gatewayDispatchService->expects($this->once())->method('sendForUser')
+			->with($user, 'sms', $identifier, $this->anything(), $this->anything())
+			->willThrowException(new MessageTransmissionException('Gateway unavailable'));
 		$this->expectException(VerificationException::class);
 
 		$this->setupService->startSetup($user, 'sms', $identifier);
@@ -81,8 +87,9 @@ class SetupServiceTest extends TestCase {
 			->with($gatewayName)
 			->willReturn($gateway);
 		$user = $this->createMock(IUser::class);
-		$gateway->expects($this->once())
-			->method('send');
+		$gateway->expects($this->never())->method('send');
+		$this->gatewayDispatchService->expects($this->once())->method('sendForUser')
+			->with($this->anything(), $gatewayName, $identifier, $this->anything(), ['code' => '963852']);
 		$this->random->expects($this->once())
 			->method('generate')
 			->willReturn('963852');

@@ -34,6 +34,19 @@ class GatewayRuntimeAvailabilityService {
 		return $this->gatewayRoutingService->resolveCandidatesForUser($user, $gatewayId);
 	}
 
+	/** Group-aware availability for personal setup and login. */
+	public function isAvailableForUser(IUser $user, string $gatewayId): bool {
+		try {
+			if ($this->resolveCandidatesForUser($user, $gatewayId) !== []) {
+				return true;
+			}
+		} catch (MessageTransmissionException) {
+			// Instances may exist but none are accessible to this user.
+			return false;
+		}
+		return $this->hasDirectGatewayFallback($gatewayId);
+	}
+
 	public function hasDirectGatewayFallback(string $gatewayId): bool {
 		return $this->getGateway($gatewayId)->isComplete();
 	}

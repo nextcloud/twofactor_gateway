@@ -30,6 +30,7 @@ class SetupService {
 		private ISecureRandom $random,
 		private IRegistry $providerRegistry,
 		private IL10N $l10n,
+		private GatewayDispatchService $gatewayDispatchService,
 	) {
 	}
 
@@ -63,7 +64,9 @@ class SetupService {
 				true => $this->l10n->t('`%s` is your verification code.', [$verificationNumber]),
 				default => $this->l10n->t('%s is your verification code.', [$verificationNumber]),
 			};
-			$gateway->send(
+			$this->gatewayDispatchService->sendForUser(
+				$user,
+				$gatewayName,
 				$identifier,
 				$message,
 				['code' => $verificationNumber],

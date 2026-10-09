@@ -8,7 +8,7 @@ const GUIDED_SETUP_REQUIRED_FIELDS: Record<string, string[]> = {
 	signal: ['url'],
 	gowhatsapp: ['base_url', 'device_name', 'username', 'password'],
 	telegram_client: ['api_id', 'api_hash', 'madeline_log_enabled', 'madeline_log_path'],
-	whatsappbusiness: ['access_token', 'api_version', 'waba_id'],
+	whatsappbusiness: ['access_token', 'api_version'],
 }
 
 type TranslateFn = (text: string, parameters?: Record<string, string | number>) => string

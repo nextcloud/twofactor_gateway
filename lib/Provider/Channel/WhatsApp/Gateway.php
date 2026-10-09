@@ -17,13 +17,14 @@ use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IDefaultInstanceAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
+use OCA\TwoFactorGateway\Provider\Gateway\ITestMessageProvider;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\IAppConfig;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IProviderCatalogGateway, IInteractiveSetupGateway, IDefaultInstanceAwareGateway, ITestResultEnricher {
+class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IProviderCatalogGateway, IInteractiveSetupGateway, IDefaultInstanceAwareGateway, ITestResultEnricher, ITestMessageProvider {
 	public function __construct(
 		public IAppConfig $appConfig,
 		private Factory $whatsAppProviderFactory,
@@ -63,6 +64,14 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IPro
 	#[\Override]
 	public function send(string $identifier, string $message, array $extra = []): void {
 		$this->getProvider()->send($identifier, $message, $extra);
+	}
+
+	#[\Override]
+	public function createTestMessage(): array {
+		$provider = $this->getProvider();
+		return $provider instanceof ITestMessageProvider
+			? $provider->createTestMessage()
+			: ['message' => 'Two Factor Gateway test message', 'extra' => []];
 	}
 
 	#[\Override]
