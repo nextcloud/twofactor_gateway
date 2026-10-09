@@ -150,7 +150,7 @@ class GatewayTest extends AppTestCase {
 			]));
 
 		$this->expectException(MessageTransmissionException::class);
-		$this->expectExceptionMessage('Unsupported post request');
+		$this->expectExceptionMessage('Meta rejected the WhatsApp template message.');
 
 		$this->gateway->send('+55 (11) 99999-0000', 'Two Factor Gateway test message');
 	}
