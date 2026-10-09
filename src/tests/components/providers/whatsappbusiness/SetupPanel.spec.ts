@@ -44,6 +44,31 @@ vi.mock('@nextcloud/vue/components/NcTextField', () => ({
 }))
 
 describe('WhatsApp Business SetupPanel', () => {
+	it('cleans up the temporary token session after discovery fails', async () => {
+		const cancelInteractiveSetup = vi.fn().mockResolvedValue({ status: 'ok' })
+		const gatewayAdminApi = createGatewayAdminApi({
+			startInteractiveSetup: vi.fn().mockResolvedValue({
+				status: 'ok',
+				sessionId: 'session-with-sensitive-token',
+			}),
+			interactiveSetupStep: vi.fn()
+				.mockResolvedValueOnce({ status: 'ok' })
+				.mockRejectedValueOnce(new Error('Discovery failed')),
+			cancelInteractiveSetup,
+		})
+		const wrapper = mount(SetupPanel, {
+			props: { gatewayId: 'whatsapp', providerId: 'whatsappbusiness', config: {}, canStart: true },
+			global: { provide: { [gatewayAdminApiKey as symbol]: gatewayAdminApi } },
+		})
+		const vm = wrapper.vm as unknown as { bootstrapToken: string, startWizard: () => Promise<void>, wizardSessionId: string }
+		vm.bootstrapToken = 'token-not-logged'
+		await vm.startWizard()
+		expect(cancelInteractiveSetup).toHaveBeenCalledWith('whatsapp', 'session-with-sensitive-token', {
+			provider: 'whatsappbusiness',
+		})
+		expect(vm.wizardSessionId).toBe('')
+	})
+
 	it('uses a parameterized manual template placeholder', async () => {
 		const gatewayAdminApi = createGatewayAdminApi({
 			startInteractiveSetup: vi.fn(),
