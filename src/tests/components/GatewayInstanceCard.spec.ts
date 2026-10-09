@@ -156,13 +156,13 @@ describe('GatewayInstanceCard', () => {
 		expect(wrapper.emitted('delete')).toEqual([['abc123']])
 	})
 
-	it('emits "set-default" with instance id when the set-default button is clicked', async () => {
+	it('emits "setDefault" with instance id when the set-default button is clicked', async () => {
 		const wrapper = mount(GatewayInstanceCard, {
 			props: { instance: makeInstance({ id: 'abc123', default: false }), fields },
 		})
 		const setDefaultButton = wrapper.findAll('button').find((b) => b.attributes('title') === 'tr:Set as default')
 		await setDefaultButton?.trigger('click')
-		expect(wrapper.emitted('set-default')).toEqual([['abc123']])
+		expect(wrapper.emitted('setDefault')).toEqual([['abc123']])
 	})
 
 	it('emits "test" with instance id when the test button is clicked', async () => {
