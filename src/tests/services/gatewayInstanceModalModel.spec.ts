@@ -150,7 +150,7 @@ describe('gatewayInstanceModalModel', () => {
 		expect(canUseGuidedSetupPanel('whatsappbusiness', [
 			{ field: 'access_token', prompt: 'Access token', default: '', optional: false },
 			{ field: 'api_version', prompt: 'API version', default: 'v22.0', optional: true },
-			{ field: 'waba_id', prompt: 'WABA ID', default: '', optional: true },
+			// WABA ID is discovered by the guided setup, not stored as a gateway field.
 		])).toBe(true)
 
 		expect(canUseGuidedSetupPanel('gowhatsapp', [
