@@ -104,7 +104,7 @@ vi.mock('@nextcloud/vue/components/NcCheckboxRadioSwitch', () => ({
 
 vi.mock('../../components/providers/registry', () => ({
 	resolveGatewaySetupPanel: (providerId: string) => {
-		if (providerId === 'gowhatsapp') {
+		if (providerId === 'gowhatsapp' || providerId === 'whatsappbusiness') {
 			return defineComponent({
 				name: 'MockGatewaySetupPanel',
 				props: ['gatewayId', 'providerId', 'config', 'canStart'],
@@ -171,6 +171,21 @@ const goWhatsAppGateway: GatewayInfo = {
 		],
 	}],
 	instances: [],
+}
+
+const whatsAppBusinessGateway: GatewayInfo = {
+	...goWhatsAppGateway,
+	providerCatalog: [{
+		id: 'whatsappbusiness',
+		name: 'WhatsApp Business',
+		fields: [
+			{ field: 'api_version', prompt: 'Graph API version', default: 'v22.0', optional: true },
+			{ field: 'phone_number_id', prompt: 'Phone number ID', default: '', optional: false },
+			{ field: 'access_token', prompt: 'Access token', default: '', optional: false, type: 'secret' },
+			{ field: 'template_name', prompt: 'Template name', default: '', optional: false },
+			{ field: 'template_language', prompt: 'Template language', default: '', optional: false },
+		],
+	}],
 }
 
 const delegatedGoWhatsAppGateway: GatewayInfo = {
@@ -303,6 +318,18 @@ describe('GatewayInstanceModal (create mode)', () => {
 		// In wizard-first create flow, Save is hidden to avoid conflict with guided setup action.
 		const saveButton = wrapper.findAll('button').find((button) => button.text().includes('tr:Save'))
 		expect(saveButton).toBeUndefined()
+	})
+
+	it('opens guided WhatsApp Business setup instead of the full credentials form', async () => {
+		const wrapper = mount(GatewayInstanceModal, {
+			props: { show: true, gateways: [whatsAppBusinessGateway], gatewayId: '', instanceId: '', initialLabel: '', initialConfig: {} },
+		})
+		await wrapper.find('select').setValue('whatsapp')
+		await flushPromises()
+		const panel = wrapper.findComponent({ name: 'MockGatewaySetupPanel' })
+		expect(panel.exists()).toBe(true)
+		expect(panel.props('providerId')).toBe('whatsappbusiness')
+		expect(wrapper.findAll('input[type="password"]')).toHaveLength(0)
 	})
 
 	it('fieldsToValidate is empty in wizard-first create mode', async () => {
