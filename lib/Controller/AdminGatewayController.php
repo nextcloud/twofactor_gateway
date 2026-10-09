@@ -18,6 +18,7 @@ use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestIdentifierNormalizer;
+use OCA\TwoFactorGateway\Provider\Gateway\ITestMessageProvider;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Service\GatewayAdminScreenService;
 use OCA\TwoFactorGateway\Service\GatewayCatalogService;
@@ -370,7 +371,10 @@ class AdminGatewayController extends OCSController {
 		}
 
 		try {
-			$gatewayForTest->send($identifier, 'Two Factor Gateway test message');
+			$testMessage = $gatewayForTest instanceof ITestMessageProvider
+				? $gatewayForTest->createTestMessage()
+				: ['message' => 'Two Factor Gateway test message', 'extra' => []];
+			$gatewayForTest->send($identifier, $testMessage['message'], $testMessage['extra']);
 			$data = ['success' => true, 'message' => 'Test message sent successfully.'];
 
 			$gatewayForEnrichment = null;

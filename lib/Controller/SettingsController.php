@@ -10,6 +10,7 @@ namespace OCA\TwoFactorGateway\Controller;
 use OCA\TwoFactorGateway\Exception\VerificationException;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\ResponseDefinitions;
+use OCA\TwoFactorGateway\Service\GatewayRuntimeAvailabilityService;
 use OCA\TwoFactorGateway\Service\SetupService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
@@ -29,6 +30,7 @@ class SettingsController extends OCSController {
 		private IUserSession $userSession,
 		private SetupService $setup,
 		private GatewayFactory $gatewayFactory,
+		private GatewayRuntimeAvailabilityService $gatewayRuntimeAvailabilityService,
 	) {
 		parent::__construct('twofactor_gateway', $request);
 	}
@@ -52,7 +54,7 @@ class SettingsController extends OCSController {
 			return new JSONResponse(['message' => 'User not found'], Http::STATUS_BAD_REQUEST);
 		}
 
-		if (!$this->gatewayFactory->get($gateway)->isComplete()) {
+		if (!$this->gatewayRuntimeAvailabilityService->isAvailableForUser($user, $gateway)) {
 			return new JSONResponse([], Http::STATUS_SERVICE_UNAVAILABLE);
 		}
 
