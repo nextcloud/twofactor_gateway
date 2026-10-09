@@ -20,6 +20,7 @@ use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IProviderCatalogGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestIdentifierNormalizer;
+use OCA\TwoFactorGateway\Provider\Gateway\ITestMessageProvider;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCA\TwoFactorGateway\Service\GatewayAdminScreenService;
@@ -669,6 +670,24 @@ class AdminGatewayControllerTest extends TestCase {
 		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 		$this->assertTrue($response->getData()['success']);
 		$this->assertArrayNotHasKey('accountInfo', $response->getData());
+	}
+
+	public function testTestInstanceUsesOtpPayloadForBusinessGateway(): void {
+		/** @var IGateway&ITestMessageProvider&MockObject $gateway */
+		$gateway = $this->createMockForIntersectionOfInterfaces([IGateway::class, ITestMessageProvider::class]);
+		$gateway->method('getProviderId')->willReturn('whatsapp');
+		$gateway->method('getSettings')->willReturn(new Settings(name: 'WhatsApp', id: 'whatsapp', fields: []));
+		$this->gatewayFactory->method('get')->with('whatsapp')->willReturn($gateway);
+		$this->configService->method('getInstance')->with($gateway, 'abc')->willReturn([
+			'id' => 'abc', 'label' => 'OTP', 'default' => true, 'createdAt' => '2026-01-01T00:00:00+00:00',
+			'config' => ['provider' => 'whatsappbusiness'], 'isComplete' => true,
+		]);
+		$gateway->expects($this->once())->method('createTestMessage')->willReturn([
+			'message' => '123456', 'extra' => ['code' => '123456'],
+		]);
+		$gateway->expects($this->once())->method('send')->with('+5511999990000', '123456', ['code' => '123456']);
+		$response = $this->controller->testInstance('whatsapp', 'abc', '+5511999990000');
+		$this->assertSame(Http::STATUS_OK, $response->getStatus());
 	}
 
 	public function testTestInstanceIncludesAccountInfoWhenEnricherReturnsData(): void {

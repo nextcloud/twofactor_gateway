@@ -19,6 +19,7 @@ use OCA\TwoFactorGateway\Provider\Gateway\IConfigurationChangeAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IDefaultInstanceAwareGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\IInteractiveSetupGateway;
 use OCA\TwoFactorGateway\Provider\Gateway\ITestResultEnricher;
+use OCA\TwoFactorGateway\Provider\Gateway\ITestMessageProvider;
 use OCA\TwoFactorGateway\Provider\Settings;
 use OCP\Http\Client\IClientService;
 use OCP\IAppConfig;
@@ -42,8 +43,10 @@ use Symfony\Component\Console\Question\Question;
  * @method static setTemplateName(string $templateName)
  * @method string getTemplateLanguage()
  * @method static setTemplateLanguage(string $templateLanguage)
+ * @method string getTemplateCategory()
+ * @method static setTemplateCategory(string $templateCategory)
  */
-class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInteractiveSetupGateway, IDefaultInstanceAwareGateway, ITestResultEnricher {
+class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInteractiveSetupGateway, IDefaultInstanceAwareGateway, ITestResultEnricher, ITestMessageProvider {
 	public function __construct(
 		public IAppConfig $appConfig,
 		private IClientService $clientService,
@@ -96,6 +99,13 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 					helper: 'Language code used when sending the configured template, e.g. pt_BR or en_US.',
 					exposure: FieldExposure::DELEGATED,
 				),
+				new FieldDefinition(
+					field: 'template_category',
+					prompt: 'Template category (optional):',
+					helper: 'Detected by the wizard. Use AUTHENTICATION for an approved Copy Code OTP template.',
+					optional: true,
+					exposure: FieldExposure::DELEGATED,
+				),
 			],
 		);
 	}
@@ -113,11 +123,6 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 		}
 		$maskedIdentifier = PhoneNumberMask::maskIdentifier($identifier);
 
-		$apiVersion = $this->resolveApiVersion();
-		$phoneNumberId = $this->getPhoneNumberId();
-		$accessToken = $this->getAccessToken();
-		$url = sprintf('https://graph.facebook.com/%s/%s/messages', trim($apiVersion), trim($phoneNumberId));
-
 		$templateName = $this->resolveTemplateName($extra);
 		if ($templateName === '') {
 			throw new MessageTransmissionException($this->l10n->t('Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}.'));
@@ -126,55 +131,77 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 		if ($templateLanguage === '') {
 			throw new MessageTransmissionException($this->l10n->t('Template language code is required for WhatsApp Business.'));
 		}
+
+		$category = $this->resolveTemplateCategory($extra);
+		$code = trim((string)($extra['code'] ?? ''));
+		if ($category === 'AUTHENTICATION' && preg_match('/^[0-9]{4,15}$/D', $code) !== 1) {
+			throw new MessageTransmissionException($this->l10n->t('Authentication template requires a numeric OTP code.'));
+		}
+
+		// The template is always selected from this instance's configuration.
+		// In 2FA flows only the OTP goes into the body parameter, not the
+		// free-form message used by other gateways.
+		$bodyParameter = $code !== '' ? $code : $message;
+		$components = [
+			[
+				'type' => 'body',
+				'parameters' => [['type' => 'text', 'text' => $bodyParameter]],
+			],
+		];
+		if ($category === 'AUTHENTICATION') {
+			// Copy Code buttons use a URL-type parameter at index zero.
+			$components[] = [
+				'type' => 'button',
+				'sub_type' => 'url',
+				'index' => '0',
+				'parameters' => [['type' => 'text', 'text' => $code]],
+			];
+		}
+
+		$url = sprintf('https://graph.facebook.com/%s/%s/messages', trim($this->resolveApiVersion()), trim($this->getPhoneNumberId()));
 		$payload = [
 			'messaging_product' => 'whatsapp',
 			'to' => $to,
-		];
-
-		$payload['type'] = 'template';
-		$payload['template'] = [
-			'name' => $templateName,
-			'language' => [
-				'code' => $templateLanguage,
-			],
-			'components' => [
-				[
-					'type' => 'body',
-					'parameters' => [
-						[
-							'type' => 'text',
-							'text' => $message,
-						],
-					],
-				],
+			'type' => 'template',
+			'template' => [
+				'name' => $templateName,
+				'language' => ['code' => $templateLanguage],
+				'components' => $components,
 			],
 		];
 
 		try {
 			$response = $this->clientService->newClient()->post($url, [
-				'headers' => [
-					'Authorization' => 'Bearer ' . $accessToken,
-				],
+				'headers' => ['Authorization' => 'Bearer ' . $this->getAccessToken()],
 				'json' => $payload,
 			]);
 
-			$payload = json_decode((string)$response->getBody(), true);
-			if (is_array($payload) && isset($payload['error']['message'])) {
-				throw new MessageTransmissionException((string)$payload['error']['message']);
+			$result = json_decode((string)$response->getBody(), true);
+			if (is_array($result) && isset($result['error'])) {
+				throw new MessageTransmissionException($this->l10n->t('Meta rejected the WhatsApp template message.'));
 			}
 		} catch (MessageTransmissionException $e) {
 			$this->logger->warning('WhatsApp Business send failed.', [
 				'identifier' => $maskedIdentifier,
-				'exception' => $e,
+				'errorClass' => $e::class,
 			]);
 			throw $e;
 		} catch (\Throwable $e) {
+			// Guzzle exceptions retain the original request including the
+			// Authorization header. Neither the exception nor its message
+			// may be included in a logging context.
 			$this->logger->warning('WhatsApp Business send failed.', [
 				'identifier' => $maskedIdentifier,
-				'exception' => $e,
+				...$this->safeMetaErrorMetadata($e),
 			]);
 			throw new MessageTransmissionException($this->l10n->t('Failed to send message through WhatsApp Business.'));
 		}
+	}
+
+	#[\Override]
+	public function createTestMessage(): array {
+		$code = sprintf('%06d', random_int(0, 999999));
+		return ['message' => $code, 'extra' => ['code' => $code]];
 	}
 
 	#[\Override]
@@ -260,11 +287,17 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 				true
 			) ?? [];
 
-			return $this->buildStepResponse($updatedState);
+			$response = $this->buildStepResponse($updatedState);
+			if (($updatedState['step'] ?? '') === 'complete') {
+				// The setup session contains a sensitive token. Never leave it
+				// in app configuration after sending the final response.
+				$this->appConfig->deleteKey('twofactor_gateway', $stateKey);
+			}
+			return $response;
 		} catch (\Throwable $e) {
 			$this->logger->warning('WhatsApp Business setup step failed', [
 				'action' => $action,
-				'exception' => $e,
+				...$this->safeMetaErrorMetadata($e),
 			]);
 
 			return [
@@ -412,6 +445,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			throw new \InvalidArgumentException('Template language is required.');
 		}
 
+		$selectedTemplate = null;
 		$knownTemplates = $state['templates'] ?? [];
 		if (is_array($knownTemplates) && $knownTemplates !== []) {
 			$selectedTemplate = null;
@@ -438,6 +472,9 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			}
 		}
 
+		$templateCategory = is_array($selectedTemplate)
+			? strtoupper(trim((string)($selectedTemplate['category'] ?? '')))
+			: '';
 		$state['step'] = 'complete';
 		$state['result'] = [
 			'phone_number_id' => $state['selectedPhoneNumberId'] ?? '',
@@ -446,6 +483,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			'api_version' => $state['apiVersion'] ?? 'v22.0',
 			'template_name' => $templateName,
 			'template_language' => $templateLanguage,
+			'template_category' => $templateCategory,
 		];
 
 		$this->appConfig->setValueString(
@@ -717,9 +755,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			}
 		}
 
-		if ($e->getMessage() !== '') {
-			return $e->getMessage();
-		}
+		// A transport exception message can contain sensitive request details.
 
 		return $default;
 	}
@@ -727,45 +763,76 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 	private function fetchTemplates(string $whatsAppBusinessAccountId, string $token, string $apiVersion): array {
 		try {
 			$url = sprintf(
-				'https://graph.facebook.com/%s/%s/message_templates?fields=name,language,status,components',
+				'https://graph.facebook.com/%s/%s/message_templates?fields=name,language,status,category,components',
 				trim($apiVersion),
 				trim($whatsAppBusinessAccountId)
 			);
 			$payload = $this->graphGet($url, $token);
-			if (!is_array($payload) || !isset($payload['data'])) {
+			if (!is_array($payload) || !isset($payload['data']) || !is_array($payload['data'])) {
 				throw new \RuntimeException('Invalid response from Meta Graph API.');
 			}
 
 			return array_values(array_map(
 				static function (array $template): array {
 					$status = strtoupper(trim((string)($template['status'] ?? '')));
-
-					// Extract template body, header, and footer from components
+					$category = strtoupper(trim((string)($template['category'] ?? '')));
 					$body = '';
 					$header = '';
 					$footer = '';
-					if (isset($template['components']) && is_array($template['components'])) {
-						foreach ($template['components'] as $component) {
-							$type = strtoupper(trim((string)($component['type'] ?? '')));
-							if ($type === 'BODY' && isset($component['text'])) {
-								$body = (string)$component['text'];
-							} elseif ($type === 'HEADER' && isset($component['text'])) {
-								$header = (string)$component['text'];
-							} elseif ($type === 'FOOTER' && isset($component['text'])) {
-								$footer = (string)$component['text'];
+					$hasCopyCodeButton = false;
+					$hasOtherOtpButton = false;
+					$hasDynamicHeader = false;
+					$hasDynamicButton = false;
+					foreach (($template['components'] ?? []) as $component) {
+						if (!is_array($component)) {
+							continue;
+						}
+						$type = strtoupper(trim((string)($component['type'] ?? '')));
+						if ($type === 'BODY') {
+							$body = (string)($component['text'] ?? '');
+						} elseif ($type === 'HEADER') {
+							$header = (string)($component['text'] ?? '');
+							$hasDynamicHeader = preg_match('/\{\{\s*\d+\s*\}\}/', $header) === 1
+								|| strtoupper((string)($component['format'] ?? 'TEXT')) !== 'TEXT';
+						} elseif ($type === 'FOOTER') {
+							$footer = (string)($component['text'] ?? '');
+						} elseif ($type === 'BUTTONS') {
+							foreach (($component['buttons'] ?? []) as $button) {
+								if (!is_array($button)) {
+									continue;
+								}
+								$buttonType = strtoupper((string)($button['type'] ?? ''));
+								if ($buttonType === 'OTP') {
+									if (strtoupper((string)($button['otp_type'] ?? '')) === 'COPY_CODE') {
+										$hasCopyCodeButton = true;
+									} else {
+										$hasOtherOtpButton = true;
+									}
+								} elseif (preg_match('/\{\{\s*\d+\s*\}\}/', (string)($button['url'] ?? '')) === 1) {
+									$hasDynamicButton = true;
+								}
 							}
 						}
 					}
+					preg_match_all('/\{\{\s*(\d+)\s*\}\}/', $body, $matches);
+					$compatible = $category === 'AUTHENTICATION'
+						? $hasCopyCodeButton && !$hasOtherOtpButton && !$hasDynamicHeader
+						: ($matches[1] ?? []) === ['1'] && !$hasDynamicHeader && !$hasDynamicButton;
+					$selectable = $status === 'APPROVED' && $compatible;
+					$reason = $status !== 'APPROVED'
+						? 'Template is not approved.'
+						: ($compatible ? '' : 'Template is incompatible with OTP delivery (requires Copy Code or a single body variable {{1}}).');
 
 					return [
 						'name' => (string)($template['name'] ?? ''),
 						'language' => (string)($template['language'] ?? ''),
 						'status' => $status,
+						'category' => $category,
 						'body' => $body,
 						'header' => $header,
 						'footer' => $footer,
-						'is_selectable' => $status === 'APPROVED',
-						'unselectable_reason' => $status === 'APPROVED' ? '' : 'Template is not approved.',
+						'is_selectable' => $selectable,
+						'unselectable_reason' => $reason,
 					];
 				},
 				array_filter(
@@ -819,6 +886,46 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 		}
 
 		return 'v22.0';
+	}
+
+	/**
+	 * Never include raw HTTP exceptions, request objects or response bodies
+	 * in logs. They can contain Bearer credentials and personal information.
+	 *
+	 * @return array<string, string|int>
+	 */
+	private function safeMetaErrorMetadata(\Throwable $e): array {
+		$metadata = ['errorClass' => $e::class];
+		if (!method_exists($e, 'getResponse')) {
+			return $metadata;
+		}
+		$response = $e->getResponse();
+		if ($response === null) {
+			return $metadata;
+		}
+		$metadata['httpStatus'] = (int)$response->getStatusCode();
+		$decoded = json_decode((string)$response->getBody(), true);
+		if (is_array($decoded) && isset($decoded['error']) && is_array($decoded['error'])) {
+			foreach (['code' => 'metaErrorCode', 'error_subcode' => 'metaErrorSubcode'] as $key => $name) {
+				if (isset($decoded['error'][$key]) && is_numeric($decoded['error'][$key])) {
+					$metadata[$name] = (int)$decoded['error'][$key];
+				}
+			}
+		}
+		return $metadata;
+	}
+
+	private function resolveTemplateCategory(array $extra): string {
+		$override = strtoupper(trim((string)($extra['template_category'] ?? '')));
+		if ($override !== '') {
+			return $override;
+		}
+		try {
+			return strtoupper(trim($this->getTemplateCategory()));
+		} catch (\Throwable) {
+			// Older instances do not persist a category.
+			return '';
+		}
 	}
 
 	private function resolveTemplateName(array $extra): string {

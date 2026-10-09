@@ -88,7 +88,7 @@ class GatewayDispatchService {
 					'providerId' => $candidate->providerId,
 					'instanceId' => $candidate->instance->id,
 					'publicInstanceId' => $candidate->publicInstanceId,
-					'exception' => $e,
+					'errorClass' => $e::class,
 				]);
 			}
 		}
