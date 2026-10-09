@@ -15,6 +15,30 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 4.0.2 - 2026-10-09
+### Fixed
+- restore WhatsApp Business setup wizard and Meta template discovery [#1251](https://github.com/nextcloud/twofactor_gateway/pull/1251)
+- send login and test OTPs through the configured template and Copy Code button, respecting user-scoped gateway routing [#1251](https://github.com/nextcloud/twofactor_gateway/pull/1251)
+- reject unsupported Meta template parameters [#1251](https://github.com/nextcloud/twofactor_gateway/pull/1251)
+
+### Security
+- prevent Meta access tokens from appearing in Nextcloud HTTP exception logs [#1251](https://github.com/nextcloud/twofactor_gateway/pull/1251)
+
+### Changed
+- improve template compatibility tests and update translations
+
+## 3.4.2 - 2026-10-09
+### Fixed
+- restore WhatsApp Business setup wizard and Meta template discovery [#1252](https://github.com/nextcloud/twofactor_gateway/pull/1252)
+- send login and test OTPs through the configured template and Copy Code button, respecting user-scoped gateway routing [#1252](https://github.com/nextcloud/twofactor_gateway/pull/1252)
+- reject unsupported Meta template parameters [#1252](https://github.com/nextcloud/twofactor_gateway/pull/1252)
+
+### Security
+- prevent Meta access tokens from appearing in Nextcloud HTTP exception logs [#1252](https://github.com/nextcloud/twofactor_gateway/pull/1252)
+
+### Changed
+- improve template compatibility tests and update translations
+
 ## 4.0.1 - 2026-10-01
 ### Fixed
 - persist the selected SMS provider during CLI configuration [#1214](https://github.com/nextcloud/twofactor_gateway/pull/1214)
