@@ -768,78 +768,11 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 				trim($whatsAppBusinessAccountId)
 			);
 			$payload = $this->graphGet($url, $token);
-			if (!is_array($payload) || !isset($payload['data']) || !is_array($payload['data'])) {
+			if (!isset($payload['data']) || !is_array($payload['data'])) {
 				throw new \RuntimeException('Invalid response from Meta Graph API.');
 			}
 
-			return array_values(array_map(
-				static function (array $template): array {
-					$status = strtoupper(trim((string)($template['status'] ?? '')));
-					$category = strtoupper(trim((string)($template['category'] ?? '')));
-					$body = '';
-					$header = '';
-					$footer = '';
-					$hasCopyCodeButton = false;
-					$hasOtherOtpButton = false;
-					$hasDynamicHeader = false;
-					$hasDynamicButton = false;
-					foreach (($template['components'] ?? []) as $component) {
-						if (!is_array($component)) {
-							continue;
-						}
-						$type = strtoupper(trim((string)($component['type'] ?? '')));
-						if ($type === 'BODY') {
-							$body = (string)($component['text'] ?? '');
-						} elseif ($type === 'HEADER') {
-							$header = (string)($component['text'] ?? '');
-							$hasDynamicHeader = preg_match('/\{\{\s*\d+\s*\}\}/', $header) === 1
-								|| strtoupper((string)($component['format'] ?? 'TEXT')) !== 'TEXT';
-						} elseif ($type === 'FOOTER') {
-							$footer = (string)($component['text'] ?? '');
-						} elseif ($type === 'BUTTONS') {
-							foreach (($component['buttons'] ?? []) as $button) {
-								if (!is_array($button)) {
-									continue;
-								}
-								$buttonType = strtoupper((string)($button['type'] ?? ''));
-								if ($buttonType === 'OTP') {
-									if (strtoupper((string)($button['otp_type'] ?? '')) === 'COPY_CODE') {
-										$hasCopyCodeButton = true;
-									} else {
-										$hasOtherOtpButton = true;
-									}
-								} elseif (preg_match('/\{\{\s*\d+\s*\}\}/', (string)($button['url'] ?? '')) === 1) {
-									$hasDynamicButton = true;
-								}
-							}
-						}
-					}
-					preg_match_all('/\{\{\s*(\d+)\s*\}\}/', $body, $matches);
-					$compatible = $category === 'AUTHENTICATION'
-						? $hasCopyCodeButton && !$hasOtherOtpButton && !$hasDynamicHeader
-						: ($matches[1] ?? []) === ['1'] && !$hasDynamicHeader && !$hasDynamicButton;
-					$selectable = $status === 'APPROVED' && $compatible;
-					$reason = $status !== 'APPROVED'
-						? 'Template is not approved.'
-						: ($compatible ? '' : 'Template is incompatible with OTP delivery (requires Copy Code or a single body variable {{1}}).');
-
-					return [
-						'name' => (string)($template['name'] ?? ''),
-						'language' => (string)($template['language'] ?? ''),
-						'status' => $status,
-						'category' => $category,
-						'body' => $body,
-						'header' => $header,
-						'footer' => $footer,
-						'is_selectable' => $selectable,
-						'unselectable_reason' => $reason,
-					];
-				},
-				array_filter(
-					$payload['data'],
-					static fn (array $template): bool => trim((string)($template['name'] ?? '')) !== '' && trim((string)($template['language'] ?? '')) !== ''
-				)
-			));
+			return (new TemplateCatalogNormalizer())->normalize($payload['data']);
 		} catch (\Throwable $e) {
 			throw new \RuntimeException('Failed to fetch templates: ' . $e->getMessage());
 		}
