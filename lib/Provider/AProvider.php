@@ -15,6 +15,8 @@ use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Gateway\Factory as GatewayFactory;
 use OCA\TwoFactorGateway\Provider\Gateway\IGateway;
 use OCA\TwoFactorGateway\Service\StateStorage;
+use OCA\TwoFactorGateway\Service\GatewayDispatchService;
+use OCA\TwoFactorGateway\Service\GatewayRuntimeAvailabilityService;
 use OCA\TwoFactorGateway\Settings\PersonalSettings;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Authentication\TwoFactorAuth\IActivatableAtLogin;
@@ -50,6 +52,8 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		protected IL10N $l10n,
 		protected ITemplateManager $templateManager,
 		protected IInitialState $initialState,
+		private GatewayDispatchService $gatewayDispatchService,
+		private GatewayRuntimeAvailabilityService $gatewayRuntimeAvailabilityService,
 	) {
 		$this->gateway = $this->gatewayFactory->get($this->getGatewayName());
 	}
@@ -92,7 +96,9 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 				? $this->l10n->t('`%s` is your Nextcloud authentication code', [$secret])
 				: $this->l10n->t('%s is your Nextcloud authentication code', [$secret]);
 
-			$this->gateway->send(
+			$this->gatewayDispatchService->sendForUser(
+				$user,
+				$this->getGatewayName(),
 				$identifier,
 				$message,
 				['code' => $secret],
@@ -128,7 +134,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		$this->initialState->provideInitialState('settings-' . $this->gateway->getProviderId(), $this->gateway->getSettings());
 		return new PersonalSettings(
 			$this->getGatewayName(),
-			$this->gateway->isComplete(),
+			$this->gatewayRuntimeAvailabilityService->isAvailableForUser($user, $this->getGatewayName()),
 		);
 	}
 
@@ -137,7 +143,7 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		$this->initialState->provideInitialState('settings-' . $this->gateway->getProviderId(), $this->gateway->getSettings());
 		return new AtLoginProvider(
 			$this->getGatewayName(),
-			$this->gateway->isComplete(),
+			$this->gatewayRuntimeAvailabilityService->isAvailableForUser($user, $this->getGatewayName()),
 		);
 	}
 
