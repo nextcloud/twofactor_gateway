@@ -96,6 +96,13 @@ class TemplateCatalogNormalizerTest extends TestCase {
 			'duplicate body definitions' => ['APPROVED', 'UTILITY', [$body, $body], false, $badComponent],
 			'invalid buttons structure' => ['APPROVED', 'UTILITY', [$body, ['type' => 'BUTTONS', 'buttons' => 'invalid']], false, $badComponent],
 			'missing components' => ['APPROVED', 'UTILITY', null, false, $badComponent],
+			'duplicate BUTTONS components' => ['APPROVED', 'AUTHENTICATION', [
+				$body, $copyButtons, $copyButtons,
+			], false, $badComponent],
+			'missing BODY component' => ['APPROVED', 'UTILITY', [$staticUrl], false, $badComponent],
+			'malformed non-array button' => ['APPROVED', 'UTILITY', [
+				$body, ['type' => 'BUTTONS', 'buttons' => [null]],
+			], false, $badComponent],
 		];
 	}
 

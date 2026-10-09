@@ -11,11 +11,14 @@ namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsA
 
 /**
  * A transport-independent description of the parameters a Meta template needs.
- * The gateway currently supplies one body parameter and, for AUTHENTICATION,
- * the Copy Code button at index zero.
+ * This gateway supplies one body parameter and, for AUTHENTICATION, a Copy Code
+ * button at index zero.
  */
 final readonly class TemplateComponentSummary {
-	/** @param list<string> $bodyVariables */
+	/**
+	 * @param list<string> $bodyVariables
+	 * @param list<int> $copyCodeButtonIndexes
+	 */
 	private function __construct(
 		public string $body,
 		public string $header,
@@ -34,66 +37,16 @@ final readonly class TemplateComponentSummary {
 			return new self('', '', '', [], [], false, false, false, true);
 		}
 
-		$body = '';
-		$header = '';
-		$footer = '';
-		$bodyCount = 0;
-		$buttonComponentCount = 0;
-		$copyCodeIndexes = [];
-		$hasUnsupportedOtpButton = false;
-		$hasDynamicHeader = false;
-		$hasDynamicButton = false;
-		$hasUnsupportedComponent = false;
+		[$components, $invalidComponents] = self::indexComponents($rawComponents);
+		$body = self::text($components['BODY']['text'] ?? null);
+		$header = self::text($components['HEADER']['text'] ?? null);
+		$footer = self::text($components['FOOTER']['text'] ?? null);
 
-		foreach ($rawComponents as $component) {
-			if (!is_array($component)) {
-				$hasUnsupportedComponent = true;
-				continue;
-			}
-
-			switch (self::upper($component['type'] ?? null)) {
-				case 'BODY':
-					$bodyCount++;
-					$body = self::text($component['text'] ?? null);
-					break;
-				case 'HEADER':
-					$header = self::text($component['text'] ?? null);
-					$hasDynamicHeader = $hasDynamicHeader
-						|| self::hasVariable($header)
-						|| self::upper($component['format'] ?? 'TEXT') !== 'TEXT';
-					break;
-				case 'FOOTER':
-					$footer = self::text($component['text'] ?? null);
-					$hasUnsupportedComponent = $hasUnsupportedComponent || self::hasVariable($footer);
-					break;
-				case 'BUTTONS':
-					$buttonComponentCount++;
-					$buttons = $component['buttons'] ?? null;
-					if (!is_array($buttons)) {
-						$hasUnsupportedComponent = true;
-						break;
-					}
-					foreach ($buttons as $index => $button) {
-						if (!is_array($button)) {
-							$hasUnsupportedComponent = true;
-							continue;
-						}
-						if (self::upper($button['type'] ?? null) === 'OTP') {
-							if (self::upper($button['otp_type'] ?? null) === 'COPY_CODE') {
-								$copyCodeIndexes[] = (int)$index;
-							} else {
-								$hasUnsupportedOtpButton = true;
-							}
-						} else {
-							$hasDynamicButton = $hasDynamicButton
-								|| self::hasVariable(self::text($button['url'] ?? null));
-						}
-					}
-					break;
-				default:
-					$hasUnsupportedComponent = true;
-			}
-		}
+		$hasDynamicHeader = isset($components['HEADER'])
+			&& (self::hasVariable($header)
+				|| self::upper($components['HEADER']['format'] ?? 'TEXT') !== 'TEXT');
+		$rawButtons = isset($components['BUTTONS']) ? ($components['BUTTONS']['buttons'] ?? null) : [];
+		[$copyCodeIndexes, $unsupportedOtp, $dynamicButton, $invalidButtons] = self::inspectButtons($rawButtons);
 
 		preg_match_all('/\{\{\s*(\d+)\s*\}\}/', $body, $matches);
 		return new self(
@@ -102,11 +55,62 @@ final readonly class TemplateComponentSummary {
 			$footer,
 			$matches[1] ?? [],
 			$copyCodeIndexes,
-			$hasUnsupportedOtpButton,
+			$unsupportedOtp,
 			$hasDynamicHeader,
-			$hasDynamicButton,
-			$hasUnsupportedComponent || $bodyCount !== 1 || $buttonComponentCount > 1,
+			$dynamicButton,
+			$invalidComponents || !isset($components['BODY']) || self::hasVariable($footer) || $invalidButtons,
 		);
+	}
+
+	/** @return array{array<string, array<string, mixed>>, bool} */
+	private static function indexComponents(array $rawComponents): array {
+		$indexed = [];
+		$invalid = false;
+		foreach ($rawComponents as $component) {
+			if (!is_array($component)) {
+				$invalid = true;
+				continue;
+			}
+
+			$type = self::upper($component['type'] ?? null);
+			if (!in_array($type, ['BODY', 'HEADER', 'FOOTER', 'BUTTONS'], true) || isset($indexed[$type])) {
+				$invalid = true;
+				continue;
+			}
+			$indexed[$type] = $component;
+		}
+		return [$indexed, $invalid];
+	}
+
+	/**
+	 * @return array{list<int>, bool, bool, bool}
+	 */
+	private static function inspectButtons(mixed $rawButtons): array {
+		if (!is_array($rawButtons)) {
+			return [[], false, false, true];
+		}
+
+		$copyCodeIndexes = [];
+		$unsupportedOtp = false;
+		$dynamicButton = false;
+		$invalid = false;
+		foreach ($rawButtons as $index => $button) {
+			if (!is_array($button)) {
+				$invalid = true;
+				continue;
+			}
+			if (self::upper($button['type'] ?? null) !== 'OTP') {
+				$dynamicButton = $dynamicButton
+					|| self::hasVariable(self::text($button['url'] ?? null));
+				continue;
+			}
+			if (self::upper($button['otp_type'] ?? null) !== 'COPY_CODE') {
+				$unsupportedOtp = true;
+				continue;
+			}
+			$copyCodeIndexes[] = (int)$index;
+		}
+		return [$copyCodeIndexes, $unsupportedOtp, $dynamicButton, $invalid];
 	}
 
 	public function hasSingleBodyVariable(): bool {
