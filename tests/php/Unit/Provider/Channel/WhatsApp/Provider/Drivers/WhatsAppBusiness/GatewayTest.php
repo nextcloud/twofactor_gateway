@@ -296,35 +296,67 @@ class GatewayTest extends AppTestCase {
 		$this->gateway->send('+5511999990000', 'test');
 	}
 
-	public function testApprovedCopyCodeTemplateDiscoveryIncludesCategoryAndRejectsUnsupportedTemplates(): void {
-		$this->client->expects($this->once())->method('get')
-			->willReturn($this->createJsonResponse(['data' => [
-				[
-					'name' => 'nextcloud_2fa_otp', 'language' => 'pt_BR',
-					'status' => 'APPROVED', 'category' => 'AUTHENTICATION',
-					'components' => [
-						['type' => 'BODY', 'text' => '{{1}} is your verification code'],
-						['type' => 'BUTTONS', 'buttons' => [['type' => 'OTP', 'otp_type' => 'COPY_CODE']]],
-					],
-				],
-				[
-					'name' => 'unsupported_otp', 'language' => 'pt_BR',
-					'status' => 'APPROVED', 'category' => 'AUTHENTICATION',
-					'components' => [['type' => 'BUTTONS', 'buttons' => [['type' => 'OTP', 'otp_type' => 'ONE_TAP']]]],
-				],
-				[
-					'name' => 'two_variables', 'language' => 'pt_BR',
-					'status' => 'APPROVED', 'category' => 'UTILITY',
-					'components' => [['type' => 'BODY', 'text' => '{{1}} and {{2}}']],
-				],
-			]]));
-		$fetchTemplates = new \ReflectionMethod(Gateway::class, 'fetchTemplates');
-		$templates = $fetchTemplates->invoke($this->gateway, 'waba-id', 'token', 'v22.0');
-		$this->assertCount(3, $templates);
-		$this->assertSame('AUTHENTICATION', $templates[0]['category']);
-		$this->assertTrue($templates[0]['is_selectable']);
-		$this->assertFalse($templates[1]['is_selectable']);
-		$this->assertFalse($templates[2]['is_selectable']);
+	public function testGuidedSetupUsesCatalogPolicyAndRetainsSelectedCategory(): void {
+		$this->client->expects($this->exactly(2))->method('get')
+			->willReturnCallback(function (string $url): IResponse {
+				if (str_ends_with($url, '/phone_numbers')) {
+					return $this->createJsonResponse(['data' => [[
+						'id' => 'phone-123',
+						'display_phone_number' => '+55 11 99999-0000',
+						'platform_type' => 'CLOUD_API',
+					]]]);
+				}
+				if (str_contains($url, '/message_templates?fields=')) {
+					return $this->createJsonResponse(['data' => [
+						[
+							'name' => 'configured_auth_code', 'language' => 'pt_BR',
+							'status' => 'APPROVED', 'category' => 'AUTHENTICATION',
+							'components' => [
+								['type' => 'BODY', 'text' => 'Your code is {{1}}'],
+								['type' => 'BUTTONS', 'buttons' => [
+									['type' => 'OTP', 'otp_type' => 'COPY_CODE'],
+								]],
+							],
+						],
+					]]);
+				}
+				throw new \LogicException('Unexpected Graph API URL: ' . $url);
+			});
+
+		$started = $this->gateway->interactiveSetupStart([]);
+		$sessionId = $started['sessionId'];
+		$credentials = $this->gateway->interactiveSetupStep($sessionId, 'set_credentials', [
+			'token' => 'sensitive-token',
+			'apiVersion' => 'v22.0',
+			'whatsAppBusinessAccountId' => 'business-123',
+		]);
+		$this->assertSame('phones_discovery', $credentials['step']);
+
+		$phones = $this->gateway->interactiveSetupStep($sessionId, 'discover_phones');
+		$this->assertSame('phone_selection', $phones['step']);
+		$this->assertTrue($phones['phoneNumbers'][0]['is_selectable']);
+
+		$selected = $this->gateway->interactiveSetupStep($sessionId, 'select_phone', [
+			'phoneNumberId' => 'phone-123',
+		]);
+		$this->assertSame('templates_discovery', $selected['step']);
+
+		$catalog = $this->gateway->interactiveSetupStep($sessionId, 'discover_templates');
+		$this->assertSame('template_selection', $catalog['step']);
+		$this->assertSame('AUTHENTICATION', $catalog['templates'][0]['category']);
+		$this->assertTrue($catalog['templates'][0]['is_selectable']);
+
+		$finished = $this->gateway->interactiveSetupStep($sessionId, 'finalize', [
+			'templateName' => 'configured_auth_code',
+			'templateLanguage' => 'pt_BR',
+		]);
+		$this->assertSame('complete', $finished['step']);
+		$this->assertSame('AUTHENTICATION', $finished['result']['template_category']);
+		$this->assertSame('configured_auth_code', $finished['result']['template_name']);
+		$this->assertSame(
+			'missing',
+			$this->gateway->appConfig->getValueString('twofactor_gateway', 'whatsappbusiness_setup_' . $sessionId, 'missing'),
+		);
 	}
 
 	private function createJsonResponse(array $payload): IResponse {
