@@ -135,6 +135,37 @@ class GatewayRuntimeAvailabilityServiceTest extends TestCase {
 		$this->assertSame([], $this->service->listGatewaysForUser($user));
 	}
 
+	public function testAvailableForUserWhenAuthorizedInstanceExists(): void {
+		$user = $this->makeUser('alice');
+		$this->gatewayRoutingService->method('resolveCandidatesForUser')
+			->with($user, 'whatsapp')
+			->willReturn([$this->makeCandidate(
+				$this->makeGatewayMock('whatsapp', []), 'whatsapp', 'inst1',
+				['id' => 'inst1', 'label' => 'Business', 'default' => true,
+					'createdAt' => '2026-01-01T00:00:00+00:00',
+					'config' => [], 'isComplete' => true, 'groupIds' => ['team'], 'priority' => 0],
+			)]);
+		$this->gatewayFactory->expects($this->never())->method('get');
+		$this->assertTrue($this->service->isAvailableForUser($user, 'whatsapp'));
+	}
+
+	public function testUnavailableForUserWhenAllInstancesAreRestricted(): void {
+		$user = $this->makeUser('outsider');
+		$this->gatewayRoutingService->method('resolveCandidatesForUser')
+			->with($user, 'whatsapp')
+			->willThrowException(new MessageTransmissionException('No accessible gateway.'));
+		$this->gatewayFactory->expects($this->never())->method('get');
+		$this->assertFalse($this->service->isAvailableForUser($user, 'whatsapp'));
+	}
+
+	public function testLegacyGatewayFallbackRemainsAvailableWhenNoInstancesExist(): void {
+		$user = $this->makeUser('legacy');
+		$this->gatewayRoutingService->method('resolveCandidatesForUser')->with($user, 'sms')->willReturn([]);
+		$this->gatewayFactory->method('get')->with('sms')
+			->willReturn($this->makeGatewayMock('sms', [], true));
+		$this->assertTrue($this->service->isAvailableForUser($user, 'sms'));
+	}
+
 	public function testListAvailableInstancesForUserReturnsEmptyWhenRoutingHasNoAccessibleCandidate(): void {
 		$user = $this->makeUser('dave');
 		$this->gatewayRoutingService->method('resolveCandidatesForUser')
