@@ -15,6 +15,42 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 5.0.2 - 2026-10-09
+### Fixed
+- restore WhatsApp Business guided setup and approved Meta template discovery [#1250](https://github.com/nextcloud/twofactor_gateway/pull/1250)
+- deliver login and test OTPs using the configured template and Copy Code button with user-scoped routing [#1250](https://github.com/nextcloud/twofactor_gateway/pull/1250)
+- reject unsupported template parameters [#1250](https://github.com/nextcloud/twofactor_gateway/pull/1250)
+
+### Security
+- prevent Meta access tokens from appearing in Nextcloud HTTP exception logs [#1250](https://github.com/nextcloud/twofactor_gateway/pull/1250)
+
+### Changed
+- expand compatibility tests and update translations
+
+## 4.0.2 - 2026-10-09
+### Fixed
+- restore WhatsApp Business guided setup and approved Meta template discovery [#1251](https://github.com/nextcloud/twofactor_gateway/pull/1251)
+- deliver login and test OTPs using the configured template and Copy Code button with user-scoped routing [#1251](https://github.com/nextcloud/twofactor_gateway/pull/1251)
+- reject unsupported template parameters [#1251](https://github.com/nextcloud/twofactor_gateway/pull/1251)
+
+### Security
+- prevent Meta access tokens from appearing in Nextcloud HTTP exception logs [#1251](https://github.com/nextcloud/twofactor_gateway/pull/1251)
+
+### Changed
+- expand compatibility tests and update translations
+
+## 3.4.2 - 2026-10-09
+### Fixed
+- restore WhatsApp Business guided setup and approved Meta template discovery [#1252](https://github.com/nextcloud/twofactor_gateway/pull/1252)
+- deliver login and test OTPs using the configured template and Copy Code button with user-scoped routing [#1252](https://github.com/nextcloud/twofactor_gateway/pull/1252)
+- reject unsupported template parameters [#1252](https://github.com/nextcloud/twofactor_gateway/pull/1252)
+
+### Security
+- prevent Meta access tokens from appearing in Nextcloud HTTP exception logs [#1252](https://github.com/nextcloud/twofactor_gateway/pull/1252)
+
+### Changed
+- expand compatibility tests and update translations
+
 ## 5.0.1 - 2026-10-01
 ### Fixed
 - persist the selected SMS provider during CLI configuration [#1213](https://github.com/nextcloud/twofactor_gateway/pull/1213)
