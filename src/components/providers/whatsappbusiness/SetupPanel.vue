@@ -427,6 +427,17 @@ export default defineComponent({
 				this.applyResponse(phones)
 				this.focusWizardRoot()
 			} catch (error) {
+				// Discovery may fail after the server stored a sensitive token in
+				// the temporary setup session. Always release that session.
+				if (this.wizardSessionId !== '') {
+					try {
+						await this.gatewayAdminApi.cancelInteractiveSetup(this.gatewayId, this.wizardSessionId, {
+							provider: this.providerId,
+						})
+					} catch {
+						// Preserve the original setup error.
+					}
+				}
 				this.wizardMessageType = 'error'
 				this.wizardMessage = error instanceof Error ? error.message : t('twofactor_gateway', 'Failed to discover WhatsApp Business resources.')
 				this.wizardSessionId = ''
