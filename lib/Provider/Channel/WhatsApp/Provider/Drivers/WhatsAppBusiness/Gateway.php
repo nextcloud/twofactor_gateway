@@ -749,8 +749,8 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			if ($response !== null && method_exists($response, 'getBody')) {
 				$rawBody = (string)$response->getBody();
 				$decoded = json_decode($rawBody, true);
-				if (is_array($decoded) && isset($decoded['error']['message']) && is_string($decoded['error']['message'])) {
-					return 'Meta Graph API error: ' . $decoded['error']['message'];
+				if (is_array($decoded) && isset($decoded['error']['code']) && is_numeric($decoded['error']['code'])) {
+					return sprintf('Meta Graph API request failed (code %d).', (int)$decoded['error']['code']);
 				}
 			}
 		}

@@ -296,6 +296,37 @@ class GatewayTest extends AppTestCase {
 		$this->gateway->send('+5511999990000', 'test');
 	}
 
+	public function testApprovedCopyCodeTemplateDiscoveryIncludesCategoryAndRejectsUnsupportedTemplates(): void {
+		$this->client->expects($this->once())->method('get')
+			->willReturn($this->createJsonResponse(['data' => [
+				[
+					'name' => 'nextcloud_2fa_otp', 'language' => 'pt_BR',
+					'status' => 'APPROVED', 'category' => 'AUTHENTICATION',
+					'components' => [
+						['type' => 'BODY', 'text' => '{{1}} is your verification code'],
+						['type' => 'BUTTONS', 'buttons' => [['type' => 'OTP', 'otp_type' => 'COPY_CODE']]],
+					],
+				],
+				[
+					'name' => 'unsupported_otp', 'language' => 'pt_BR',
+					'status' => 'APPROVED', 'category' => 'AUTHENTICATION',
+					'components' => [['type' => 'BUTTONS', 'buttons' => [['type' => 'OTP', 'otp_type' => 'ONE_TAP']]]],
+				],
+				[
+					'name' => 'two_variables', 'language' => 'pt_BR',
+					'status' => 'APPROVED', 'category' => 'UTILITY',
+					'components' => [['type' => 'BODY', 'text' => '{{1}} and {{2}}']],
+				],
+			]]));
+		$fetchTemplates = new \ReflectionMethod(Gateway::class, 'fetchTemplates');
+		$templates = $fetchTemplates->invoke($this->gateway, 'waba-id', 'token', 'v22.0');
+		$this->assertCount(3, $templates);
+		$this->assertSame('AUTHENTICATION', $templates[0]['category']);
+		$this->assertTrue($templates[0]['is_selectable']);
+		$this->assertFalse($templates[1]['is_selectable']);
+		$this->assertFalse($templates[2]['is_selectable']);
+	}
+
 	private function createJsonResponse(array $payload): IResponse {
 		$stream = $this->createStub(StreamInterface::class);
 		$stream->method('__toString')->willReturn((string)json_encode($payload));
