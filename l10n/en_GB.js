@@ -170,6 +170,7 @@ OC.L10N.register(
     "Template:" : "Template:",
     "Language:" : "Language:",
     "Status:" : "Status:",
+    "Category:" : "Category:",
     "Header" : "Header",
     "Body" : "Body",
     "The verification code will be inserted at" : "The verification code will be inserted at",

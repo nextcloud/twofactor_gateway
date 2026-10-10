@@ -32,6 +32,7 @@ OC.L10N.register(
     "Continue" : "Продължаване",
     "Language:" : "Език:",
     "Status:" : "Състояние:",
+    "Category:" : "Категория:",
     "Header" : "Заглавка",
     "Body" : "Съдържание",
     "Template" : "Шаблон",

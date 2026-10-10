@@ -45,6 +45,7 @@ OC.L10N.register(
     "Continue" : "Настави",
     "Language:" : "Језик:",
     "Status:" : "Статус:",
+    "Category:" : "Категорија:",
     "Header" : "Заглавље",
     "Body" : "Тело",
     "Template" : "Шаблон",

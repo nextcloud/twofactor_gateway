@@ -31,6 +31,7 @@ OC.L10N.register(
     "Back" : "Natrag",
     "Continue" : "Nastavi",
     "Language:" : "Jezik:",
+    "Category:" : "Kategorija:",
     "Header" : "Zaglavlje",
     "Body" : "Tijelo",
     "Template" : "Predložak",

@@ -50,6 +50,7 @@ OC.L10N.register(
     "Template:" : "Шаблон:",
     "Language:" : "Язык:",
     "Status:" : "Статус:",
+    "Category:" : "Категория:",
     "Header" : "Заголовок",
     "Body" : "Тело",
     "Template" : "Шаблон",

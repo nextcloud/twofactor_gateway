@@ -35,6 +35,7 @@ OC.L10N.register(
     "Continue" : "Doorgaan",
     "Language:" : "Taal:",
     "Status:" : "Status:",
+    "Category:" : "Categorie:",
     "Header" : "Koptekst",
     "Body" : "Body",
     "Template" : "Sjabloon",

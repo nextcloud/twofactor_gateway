@@ -170,6 +170,7 @@ OC.L10N.register(
     "Template:" : "Teimpléad:",
     "Language:" : "Teanga:",
     "Status:" : "Stádas:",
+    "Category:" : "Catagóir:",
     "Header" : "Ceanntásc",
     "Body" : "Corp",
     "The verification code will be inserted at" : "Cuirfear an cód fíoraithe isteach ag",
