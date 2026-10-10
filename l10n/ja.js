@@ -32,6 +32,7 @@ OC.L10N.register(
     "Continue" : "続ける",
     "Language:" : "言語: ",
     "Status:" : "ステータス:",
+    "Category:" : "カテゴリ：",
     "Header" : "ヘッダー",
     "Body" : "本文",
     "Template" : "テンプレート",

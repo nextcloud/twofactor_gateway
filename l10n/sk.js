@@ -170,6 +170,7 @@ OC.L10N.register(
     "Template:" : "Šablóna:",
     "Language:" : "Jazyk:",
     "Status:" : "Stav:",
+    "Category:" : "Kategória:",
     "Header" : "Hlavička",
     "Body" : "Telo",
     "The verification code will be inserted at" : "Overovací kód sa vloží na pozíciu",

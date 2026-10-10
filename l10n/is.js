@@ -30,6 +30,7 @@ OC.L10N.register(
     "Back" : "Til baka",
     "Continue" : "Halda áfram",
     "Language:" : "Tungumál:",
+    "Category:" : "Category:",
     "Header" : "Haus",
     "Body" : "Meginmál",
     "Template" : "Sniðmát",

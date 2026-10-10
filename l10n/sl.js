@@ -31,6 +31,7 @@ OC.L10N.register(
     "Continue" : "Nadaljuj",
     "Language:" : "Jezik:",
     "Status:" : "Stanje:",
+    "Category:" : "Kategorija:",
     "Header" : "Glava",
     "Body" : "Besedilo",
     "Template" : "Predloga",

@@ -170,6 +170,7 @@ OC.L10N.register(
     "Template:" : "Mall:",
     "Language:" : "Keel:",
     "Status:" : "Olek",
+    "Category:" : "Kategooria:",
     "Header" : "Päis",
     "Body" : "Sisu",
     "The verification code will be inserted at" : "Kinnituskoodi lisamise asukoht",

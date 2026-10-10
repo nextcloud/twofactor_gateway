@@ -32,6 +32,7 @@ OC.L10N.register(
     "Continue" : "Continua",
     "Language:" : "Lingua:",
     "Status:" : "Stato:",
+    "Category:" : "Categoria:",
     "Header" : "Intestazione",
     "Body" : "Corpo",
     "Template" : "Modello",

@@ -48,6 +48,7 @@ OC.L10N.register(
     "Continue" : "Continuar",
     "Language:" : "Idioma:",
     "Status:" : "Estado:",
+    "Category:" : "Categoría:",
     "Header" : "Encabezado",
     "Body" : "Cuerpo",
     "Template" : "Plantilla",
