@@ -153,6 +153,7 @@ OC.L10N.register(
     "Template:" : "Πρότυπο:",
     "Language:" : "Γλώσσα:",
     "Status:" : "Κατάσταση:",
+    "Category:" : "Κατηγορία:",
     "Header" : "Επικεφαλίδα",
     "Body" : "Σώμα",
     "The verification code will be inserted at" : "Ο κωδικός επαλήθευσης θα εισαχθεί στο",

@@ -27,6 +27,7 @@ OC.L10N.register(
     "Continue" : "Jatka",
     "Language:" : "Kieli:",
     "Status:" : "Tila:",
+    "Category:" : "Luokka:",
     "Header" : "Otsikko",
     "Body" : "Sisältö",
     "Template" : "Malli",

@@ -83,6 +83,7 @@ OC.L10N.register(
     "Template:" : "Šablona:",
     "Language:" : "Jazyk:",
     "Status:" : "Stav:",
+    "Category:" : "Kategorie:",
     "Header" : "Záhlaví",
     "Body" : "Těle textu",
     "Footer" : "Zápatí",
