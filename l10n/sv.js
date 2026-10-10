@@ -170,6 +170,7 @@ OC.L10N.register(
     "Template:" : "Mall:",
     "Language:" : "Språk:",
     "Status:" : "Status:",
+    "Category:" : "Kategori:",
     "Header" : "Rubrik",
     "Body" : "Brödtext",
     "The verification code will be inserted at" : "Verifieringskoden infogas vid",

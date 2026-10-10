@@ -33,6 +33,7 @@ OC.L10N.register(
     "Continue" : "Jarraitu",
     "Language:" : "Hizkuntza:",
     "Status:" : "Egoera:",
+    "Category:" : "Kategoria:",
     "Header" : "Goiburua",
     "Body" : "Gorputza",
     "Template" : "Txantiloia",

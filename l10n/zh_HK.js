@@ -170,6 +170,7 @@ OC.L10N.register(
     "Template:" : "範本：",
     "Language:" : "語言：",
     "Status:" : "狀態：",
+    "Category:" : "分類：",
     "Header" : "檔案標頭",
     "Body" : "內文",
     "The verification code will be inserted at" : "驗證碼將插入於",
