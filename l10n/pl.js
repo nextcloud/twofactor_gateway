@@ -46,6 +46,7 @@ OC.L10N.register(
     "Continue" : "Kontynuuj",
     "Language:" : "Język:",
     "Status:" : "Status:",
+    "Category:" : "Kategoria:",
     "Header" : "Nagłówek",
     "Body" : "Treść",
     "Template" : "Szablon",

@@ -26,6 +26,7 @@ OC.L10N.register(
     "Phone number" : "Nùmeru de telèfonu",
     "Back" : "In segus",
     "Language:" : "Limba",
+    "Category:" : "Categoria:",
     "Header" : "Intestatzione",
     "Body" : "Corpus",
     "Template" : "Modellu",

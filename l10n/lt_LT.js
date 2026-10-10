@@ -170,6 +170,7 @@ OC.L10N.register(
     "Template:" : "Šablonas:",
     "Language:" : "Kalba:",
     "Status:" : "Būsena:",
+    "Category:" : "Kategorija:",
     "Header" : "Antraštė",
     "Body" : "Teksto dalis",
     "The verification code will be inserted at" : "Patvirtinimo kodas bus įterptas adresu",

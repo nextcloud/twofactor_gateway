@@ -34,6 +34,7 @@ OC.L10N.register(
     "e.g. {templateName}" : "例如 {templateName}",
     "Language:" : "语言：",
     "Status:" : "状态：",
+    "Category:" : "类别：",
     "Header" : "页眉",
     "Body" : "主体",
     "Template" : "模板",

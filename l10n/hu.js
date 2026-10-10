@@ -46,6 +46,7 @@ OC.L10N.register(
     "Continue" : "Folytatás",
     "Language:" : "Nyelv:",
     "Status:" : "Állapot:",
+    "Category:" : "Kategória:",
     "Header" : "Fejléc",
     "Body" : "Törzs",
     "Template" : "Sablon",

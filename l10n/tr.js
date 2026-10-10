@@ -170,6 +170,7 @@ OC.L10N.register(
     "Template:" : "Kalıp:",
     "Language:" : "Dil:",
     "Status:" : "Durum:",
+    "Category:" : "Kategori:",
     "Header" : "Üst bilgi",
     "Body" : "İçerik",
     "The verification code will be inserted at" : "Doğrulama kodu şuraya eklenecek:",

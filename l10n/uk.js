@@ -170,6 +170,7 @@ OC.L10N.register(
     "Template:" : "Шаблон:",
     "Language:" : "Мова:",
     "Status:" : "Стан:",
+    "Category:" : "Категорія:",
     "Header" : "Заголовок",
     "Body" : "Тіло",
     "The verification code will be inserted at" : "Код перевірки буде вставлено",
