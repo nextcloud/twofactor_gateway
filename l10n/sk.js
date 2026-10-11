@@ -28,6 +28,8 @@ OC.L10N.register(
     "Invalid phone number for WhatsApp Business." : "Neplatné telefónne číslo pre WhatsApp Business.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "Pre WhatsApp Business je potrebný názov šablóny. Nakonfigurujte schválenú šablónu s premennou tela {{1}}.",
     "Template language code is required for WhatsApp Business." : "Pre WhatsApp Business je potrebný kód jazyka šablóny.",
+    "Authentication template requires a numeric OTP code." : "Overovacia šablóna vyžaduje číselný kód OTP.",
+    "Meta rejected the WhatsApp template message." : "Meta odmietla šablónu správy WhatsApp.",
     "Failed to send message through WhatsApp Business." : "Odoslanie správy prostredníctvom WhatsApp Business zlyhalo.",
     "XMPP verification" : "Overenie XMPP",
     "Authenticate via XMPP" : "Overiť pomocou XMPP",
