@@ -28,6 +28,8 @@ OC.L10N.register(
     "Invalid phone number for WhatsApp Business." : "WhatsApp Business için telefon numarası geçersiz.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "WhatsApp Business için kalıp adı gereklidir. Onaylanmış bir kalıbı {{1}} gövde değişkeni ile yapılandırın.",
     "Template language code is required for WhatsApp Business." : "WhatsApp Business için kalıp dil kodu gereklidir.",
+    "Authentication template requires a numeric OTP code." : "Kimlik doğrulama kalıbında sayısal bir tek kullanımlık kod gereklidir.",
+    "Meta rejected the WhatsApp template message." : "Meta WhatsApp kalıbı iletisini reddetti.",
     "Failed to send message through WhatsApp Business." : "WhatsApp Business üzerinden ileti gönderilemedi.",
     "XMPP verification" : "XMPP doğrulaması",
     "Authenticate via XMPP" : "XMPP ile kimlik doğrulama",
