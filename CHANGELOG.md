@@ -15,6 +15,18 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 5.0.3 - 2026-10-12
+### Fixed
+- [stable35] fix: skip legacy catalog drivers in gateway instance routing [#1260](https://github.com/nextcloud/twofactor_gateway/pull/1260)
+
+## 4.0.3 - 2026-10-12
+### Fixed
+- [stable34] fix: skip legacy catalog drivers in gateway instance routing [#1259](https://github.com/nextcloud/twofactor_gateway/pull/1259)
+
+## 3.4.3 - 2026-10-12
+### Fixed
+- [stable33] fix: skip legacy catalog drivers in gateway instance routing [#1258](https://github.com/nextcloud/twofactor_gateway/pull/1258)
+
 ## 5.0.2 - 2026-10-09
 ### Fixed
 - [stable35] fix: WhatsApp Business OTP test, guided setup, secure logging and 2FA instance routing [#1250](https://github.com/nextcloud/twofactor_gateway/pull/1250)
