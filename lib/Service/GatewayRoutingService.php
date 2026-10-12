@@ -74,6 +74,12 @@ class GatewayRoutingService {
 				continue;
 			}
 
+			// Legacy catalog drivers (e.g. Telegram Bot/Client) do not own
+			// independent instance registries; their parent gateway handles them.
+			if (!$providerGateway instanceof IGateway) {
+				continue;
+			}
+
 			$candidates = [
 				...$candidates,
 				...$this->buildGatewayCandidates($providerGateway, true),
