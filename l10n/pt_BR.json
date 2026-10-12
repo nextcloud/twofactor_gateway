@@ -26,6 +26,8 @@
     "Invalid phone number for WhatsApp Business." : "Número de telefone inválido para o WhatsApp Business.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "O nome do modelo é obrigatório para o WhatsApp Business. Configure um modelo aprovado com a variável de corpo {{1}}.",
     "Template language code is required for WhatsApp Business." : "O código do idioma do modelo é obrigatório para o WhatsApp Business.",
+    "Authentication template requires a numeric OTP code." : "O modelo de autenticação exige um código OTP numérico.",
+    "Meta rejected the WhatsApp template message." : "A Meta rejeitou a mensagem de modelo do WhatsApp.",
     "Failed to send message through WhatsApp Business." : "Não foi possível enviar a mensagem pelo WhatsApp Business.",
     "XMPP verification" : "Verificação XMPP",
     "Authenticate via XMPP" : "Autenticação via XMPP",
