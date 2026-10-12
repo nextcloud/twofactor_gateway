@@ -162,6 +162,40 @@ class GatewayRoutingServiceTest extends AppTestCase {
 		$this->assertSame(['inst-root', 'gowhatsapp:inst-child'], array_map(static fn ($candidate): string => $candidate->publicInstanceId, $candidates));
 	}
 
+	public function testResolveCandidatesForUserSkipsLegacyTelegramCatalogDrivers(): void {
+		$catalogGateway = $this->createMockForIntersectionOfInterfaces([\OCA\TwoFactorGateway\Provider\Gateway\IGateway::class, IProviderCatalogGateway::class]);
+		$catalogGateway->method('getProviderId')->willReturn('telegram');
+		$catalogGateway->method('getProviderCatalog')->willReturn([
+			['id' => 'telegram_bot', 'name' => 'Telegram Bot', 'fields' => []],
+			['id' => 'telegram_client', 'name' => 'Telegram Client', 'fields' => []],
+		]);
+		$legacyBot = $this->createMock(\OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\Bot::class);
+		$legacyClient = $this->createMock(\OCA\TwoFactorGateway\Provider\Channel\Telegram\Provider\Drivers\Client::class);
+		$this->assertNotInstanceOf(\OCA\TwoFactorGateway\Provider\Gateway\IGateway::class, $legacyBot);
+		$this->assertNotInstanceOf(\OCA\TwoFactorGateway\Provider\Gateway\IGateway::class, $legacyClient);
+
+		$this->gatewayFactory->method('get')->willReturnMap([
+			['telegram', $catalogGateway],
+			['telegram_bot', $legacyBot],
+			['telegram_client', $legacyClient],
+		]);
+		$this->gatewayConfigService->expects($this->once())
+			->method('listInstances')
+			->with($catalogGateway)
+			->willReturn([
+				$this->makeInstance('telegram-instance', 'Bot', true, '2026-01-01T00:00:00+00:00', ['otp-users'], 10),
+			]);
+		$user = $this->createMock(IUser::class);
+		$this->groupManager->method('getUserGroupIds')->with($user)->willReturn(['otp-users']);
+
+		$candidates = $this->service->resolveCandidatesForUser($user, 'telegram');
+
+		$this->assertCount(1, $candidates);
+		$this->assertSame($catalogGateway, $candidates[0]->gateway);
+		$this->assertSame('telegram', $candidates[0]->providerId);
+		$this->assertSame('telegram-instance', $candidates[0]->publicInstanceId);
+	}
+
 	/**
 	 * @param list<string> $groupIds
 	 * @return array{id: string, label: string, default: bool, createdAt: string, config: array{base_url: string}, isComplete: bool, groupIds: list<string>, priority: int}
