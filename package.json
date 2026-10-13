@@ -44,7 +44,7 @@
     "@nextcloud/stylelint-config": "^3.2.2",
     "@nextcloud/vite-config": "^2.5.4",
     "@playwright/test": "^1.63.0",
-    "@vitejs/plugin-vue": "^6.0.9",
+    "@vitejs/plugin-vue": "^6.0.10",
     "@vue/test-utils": "^2.5.1",
     "@vue/tsconfig": "^0.9.1",
     "css-loader": "^7.1.5",
