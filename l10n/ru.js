@@ -47,6 +47,7 @@ OC.L10N.register(
     "Phone number" : "Телефон",
     "Back" : "Назад",
     "Continue" : "Продолжить",
+    "e.g. {templateName}" : "например, {templateName}",
     "Template:" : "Шаблон:",
     "Language:" : "Язык:",
     "Status:" : "Статус:",
