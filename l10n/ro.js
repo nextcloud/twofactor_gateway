@@ -3,9 +3,11 @@ OC.L10N.register(
     {
     "Enabled" : "Activat",
     "Disabled" : "Dezactivați",
+    "Configured" : "Configurat",
     "Edit" : "Editează",
     "Delete" : "Șterge",
     "Groups" : "Grupuri",
+    "Saving …" : "Se salvează …",
     "Save" : "Salvează",
     "Label" : "Etichetă",
     "Cancel" : "Cancel",
