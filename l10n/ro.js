@@ -18,6 +18,7 @@ OC.L10N.register(
     "Phone number" : "Număr telefon",
     "Back" : "Înapoi",
     "Continue" : "Continuă",
+    "e.g. {templateName}" : "de ex. {templateName}",
     "Header" : "Antet",
     "Body" : "Corp",
     "Language" : "Limba",
