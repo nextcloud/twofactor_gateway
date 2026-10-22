@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Failed to send message" : "Mesajul nu a putut fi trimis",
     "Enabled" : "Activat",
     "Disabled" : "Dezactivați",
     "Configured" : "Configurat",
@@ -11,6 +12,7 @@ OC.L10N.register(
     "Save" : "Salvează",
     "Label" : "Etichetă",
     "Cancel" : "Cancel",
+    "Deleting …" : "Se șterge…",
     "Collapse" : "Restrânge",
     "Expand" : "Extinde",
     "Close" : "Închide",
