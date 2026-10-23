@@ -72,8 +72,8 @@
     "Save routing" : "Gem routing",
     "Are you sure you want to delete the instance \"{label}\"? This action cannot be undone." : "Er du sikker på, at du vil slette instansen \"{label}\"? Handlingen kan ikke fortrydes.",
     "Deleting …" : "Sletter …",
-    "Collapse" : "Sammenfold",
-    "Expand" : "Udvid",
+    "Collapse" : "Fold sammen",
+    "Expand" : "Fold ud",
     "{n} instance" : "{n} instans",
     "Add instance" : "Tilføj instans",
     "No instances configured yet. Add one to get started." : "Der er endnu ikke konfigureret nogen instanser. Tilføj en for at komme i gang.",
@@ -203,7 +203,7 @@
     "Authentication code" : "Godkendelses kode",
     "Submit" : "Send",
     "An access code has been sent to %s" : "En adgangskode er blevet sendt til %s",
-    "Error while sending the Message. Please try again later or contact the administrator." : "Fejl ved afsendelse af besked. Prøv venligst igen senere eller kontakt administratoren.",
+    "Error while sending the Message. Please try again later or contact the administrator." : "Fejl ved afsendelse af beskeden. Prøv igen senere, eller kontakt administratoren.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Dit telefonnummer er ændret og er ikke blevet bekræftet igen. Brug en anden metode til to-faktor-godkendelse, eller kontakt din administrator.",
     "Starting guided setup ..." : "Starter guidet opsætning …"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
