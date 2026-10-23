@@ -715,16 +715,16 @@
         },
         {
             "name": "amphp/http-server",
-            "version": "v3.4.6",
+            "version": "v3.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/http-server.git",
-                "reference": "8a971bf92cf8cf2bc511f37a75b39126d5305315"
+                "reference": "aa96ca38c5f822a827236543d5417d0c2a782ef0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http-server/zipball/8a971bf92cf8cf2bc511f37a75b39126d5305315",
-                "reference": "8a971bf92cf8cf2bc511f37a75b39126d5305315",
+                "url": "https://api.github.com/repos/amphp/http-server/zipball/aa96ca38c5f822a827236543d5417d0c2a782ef0",
+                "reference": "aa96ca38c5f822a827236543d5417d0c2a782ef0",
                 "shasum": ""
             },
             "require": {
@@ -800,7 +800,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/http-server/issues",
-                "source": "https://github.com/amphp/http-server/tree/v3.4.6"
+                "source": "https://github.com/amphp/http-server/tree/v3.4.7"
             },
             "funding": [
                 {
@@ -808,7 +808,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-27T10:31:48+00:00"
+            "time": "2026-10-04T15:14:17+00:00"
         },
         {
             "name": "amphp/log",
@@ -1945,17 +1945,77 @@
             "time": "2026-04-05T21:06:35+00:00"
         },
         {
-            "name": "danog/async-orm",
-            "version": "1.1.4",
+            "name": "brick/math",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/danog/AsyncOrm.git",
-                "reference": "495f335d8ddb9dae8b773025911191f31c45e9ea"
+                "url": "https://github.com/brick/math.git",
+                "reference": "2effe05d2177c451b86c6a073196a4034c02f211"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/AsyncOrm/zipball/495f335d8ddb9dae8b773025911191f31c45e9ea",
-                "reference": "495f335d8ddb9dae8b773025911191f31c45e9ea",
+                "url": "https://api.github.com/repos/brick/math/zipball/2effe05d2177c451b86c6a073196a4034c02f211",
+                "reference": "2effe05d2177c451b86c6a073196a4034c02f211",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "2.2.13",
+                "phpstan/phpstan-phpunit": "2.0.18",
+                "phpunit/phpunit": "^11.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Brick\\Math\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Arbitrary-precision arithmetic library",
+            "keywords": [
+                "Arbitrary-precision",
+                "BigInteger",
+                "BigRational",
+                "arithmetic",
+                "bigdecimal",
+                "bignum",
+                "bignumber",
+                "brick",
+                "decimal",
+                "integer",
+                "math",
+                "mathematics",
+                "rational"
+            ],
+            "support": {
+                "issues": "https://github.com/brick/math/issues",
+                "source": "https://github.com/brick/math/tree/1.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/BenMorel",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-09-12T10:28:18+00:00"
+        },
+        {
+            "name": "danog/async-orm",
+            "version": "1.1.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/AsyncOrm.git",
+                "reference": "4a2a7a54c5002bef6cdf80b338085e9e131bf719"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/AsyncOrm/zipball/4a2a7a54c5002bef6cdf80b338085e9e131bf719",
+                "reference": "4a2a7a54c5002bef6cdf80b338085e9e131bf719",
                 "shasum": ""
             },
             "require": {
@@ -1999,7 +2059,7 @@
             "description": "Async ORM based on AMPHP v3 and fibers.",
             "support": {
                 "issues": "https://github.com/danog/AsyncOrm/issues",
-                "source": "https://github.com/danog/AsyncOrm/tree/1.1.4"
+                "source": "https://github.com/danog/AsyncOrm/tree/1.1.6"
             },
             "funding": [
                 {
@@ -2007,7 +2067,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-07-12T18:39:01+00:00"
+            "time": "2026-10-19T18:46:06+00:00"
         },
         {
             "name": "danog/better-prometheus",
@@ -2151,16 +2211,16 @@
         },
         {
             "name": "danog/ipc",
-            "version": "1.0.1",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/ipc.git",
-                "reference": "505e672b76af6ec623f7ef78efb2416f62ef8e29"
+                "reference": "eea6de6a57273f32a4f90a652ae1409786be18a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/ipc/zipball/505e672b76af6ec623f7ef78efb2416f62ef8e29",
-                "reference": "505e672b76af6ec623f7ef78efb2416f62ef8e29",
+                "url": "https://api.github.com/repos/danog/ipc/zipball/eea6de6a57273f32a4f90a652ae1409786be18a0",
+                "reference": "eea6de6a57273f32a4f90a652ae1409786be18a0",
                 "shasum": ""
             },
             "require": {
@@ -2175,6 +2235,9 @@
                 "amphp/phpunit-util": "v3.x-dev",
                 "phpunit/phpunit": "^9.6.22",
                 "psalm/phar": "^5.26.1"
+            },
+            "suggest": {
+                "ext-sockets": "Required for UNIX socket support on Windows (TCP is used otherwise)"
             },
             "type": "library",
             "autoload": {
@@ -2214,9 +2277,9 @@
             ],
             "support": {
                 "issues": "https://github.com/danog/ipc/issues",
-                "source": "https://github.com/danog/ipc/tree/1.0.1"
+                "source": "https://github.com/danog/ipc/tree/1.1.0"
             },
-            "time": "2025-04-18T14:42:00+00:00"
+            "time": "2026-10-18T18:06:10+00:00"
         },
         {
             "name": "danog/libdns-json",
@@ -2342,41 +2405,61 @@
         },
         {
             "name": "danog/madelineproto",
-            "version": "8.7.0",
+            "version": "8.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/MadelineProto.git",
-                "reference": "7b99dd0f2d964a492c377912ffce9f5ce61aa9ed"
+                "reference": "5d0cad93327dffeab05254bb6cac0f2c97d985b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/7b99dd0f2d964a492c377912ffce9f5ce61aa9ed",
-                "reference": "7b99dd0f2d964a492c377912ffce9f5ce61aa9ed",
+                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/5d0cad93327dffeab05254bb6cac0f2c97d985b3",
+                "reference": "5d0cad93327dffeab05254bb6cac0f2c97d985b3",
                 "shasum": ""
             },
             "require": {
-                "amphp/amp": "^3.1.1",
+                "amphp/amp": "^3.1.3",
                 "amphp/byte-stream": "^2.1.2",
-                "amphp/dns": "^2.4.0",
+                "amphp/dns": "^2.4.1",
                 "amphp/file": "^3.2.0",
                 "amphp/http": "^2.1.2",
-                "amphp/http-client": "^5.3.4",
+                "amphp/http-client": "^5.3.6",
                 "amphp/http-client-cookies": "^2",
-                "amphp/http-server": "^3.4.3",
+                "amphp/http-server": "^3.4.6",
                 "amphp/log": "^2",
-                "amphp/mysql": "^3",
-                "amphp/postgres": "^2.1.1",
-                "amphp/redis": "^2.0.3",
-                "amphp/socket": "^2.3.1",
+                "amphp/mysql": "^3.1.1",
+                "amphp/postgres": "^2.2.1",
+                "amphp/process": "^2.1",
+                "amphp/redis": "^2.0.4",
+                "amphp/socket": "^2.4.1",
                 "amphp/websocket-client": "^2.0.2",
-                "bacon/bacon-qr-code": "^3.0.1",
-                "danog/async-orm": "^1.1.4",
+                "bacon/bacon-qr-code": "^3.1.1",
+                "danog/async-orm": "^1.1.6",
                 "danog/better-prometheus": "^0.1.1",
                 "danog/dns-over-https": "^1.0.1",
-                "danog/ipc": "^1.0.1",
+                "danog/ipc": "^1.1.0",
                 "danog/loop": "^1.1.1",
+                "danog/php-rtc-av": "^1.1.11",
+                "danog/php-rtc-codecs": "^1.1.19",
+                "danog/php-rtc-datachannel": "^1.1.10",
+                "danog/php-rtc-dtls": "^2.0.19",
+                "danog/php-rtc-exception": "^1.1.10",
+                "danog/php-rtc-ice": "^2.0.18",
+                "danog/php-rtc-mdns": "^1.1.12",
+                "danog/php-rtc-mixin": "^2.0.9",
+                "danog/php-rtc-ntp": "^1.1.14",
+                "danog/php-rtc-rtcp": "^1.1.11",
+                "danog/php-rtc-rtp": "^2.0.23",
+                "danog/php-rtc-rtp-parameter": "^1.1.8",
+                "danog/php-rtc-sctp": "^2.0.14",
+                "danog/php-rtc-sdp": "^1.1.12",
+                "danog/php-rtc-srtp": "^1.1.16",
+                "danog/php-rtc-stats": "^1.1.7",
+                "danog/php-rtc-stun": "^2.0.18",
+                "danog/php-rtc-turn": "^2.0.9",
+                "danog/php-rtc-webrtc": "^2.0.19",
                 "danog/primemodule": "^1.0.13",
-                "danog/telegram-entities": "^1.0.5",
+                "danog/telegram-entities": "^1.1.0",
                 "danog/tg-dialog-id": "^2",
                 "danog/tg-file-decoder": "^1.0.2",
                 "ext-dom": "*",
@@ -2386,16 +2469,20 @@
                 "ext-json": "*",
                 "ext-xml": "*",
                 "ext-zlib": "*",
-                "league/uri": "^7.5.1",
-                "nikic/php-parser": "^5.6.2",
+                "league/uri": "^7.8.1",
+                "nikic/php-parser": "^5.9.0",
                 "php-64bit": ">=8.2",
-                "phpseclib/phpseclib": "^3.0.47",
+                "phpseclib/phpseclib": "^4.0.1",
                 "psr/http-factory": "^1.1.0",
                 "psr/log": "^3.0.2",
-                "revolt/event-loop": "^1.0.7",
-                "symfony/polyfill-mbstring": ">=1.32",
-                "symfony/polyfill-php83": "^1.32",
-                "webmozart/assert": "^1.12.1"
+                "revolt/event-loop": "^1.0.9",
+                "symfony/polyfill-iconv": "^1.37",
+                "symfony/polyfill-mbstring": ">=1.38.2",
+                "symfony/polyfill-php83": "^1.41",
+                "symfony/polyfill-php84": "^1.38",
+                "symfony/polyfill-php85": "^1.41",
+                "symfony/polyfill-php86": "^1.41",
+                "webmozart/assert": "^2.4.1"
             },
             "conflict": {
                 "ext-pthreads": "*",
@@ -2403,25 +2490,25 @@
             },
             "require-dev": {
                 "amphp/phpunit-util": "^3",
-                "bamarni/composer-bin-plugin": "1.8.2",
+                "bamarni/composer-bin-plugin": "1.9.1",
                 "brianium/paratest": "^6.11.1",
                 "danog/phpdoc": "^0.1.24",
                 "dg/bypass-finals": "dev-master",
                 "ext-ctype": "*",
-                "phpunit/phpunit": "^9.6.29",
-                "quasarstream/webrtc": "^1.0",
-                "revolt/event-loop-adapter-react": "^1.1.1",
-                "sebastian/diff": "^4.0",
-                "symfony/yaml": "^6.4.26",
+                "phpunit/phpunit": "^9.6.36",
+                "sebastian/diff": "^4.0.6",
+                "symfony/yaml": "^6.4.45",
                 "vimeo/psalm": "dev-master"
             },
             "suggest": {
                 "ext-bcmath": "Install the bcmath extension to speed up authorization",
-                "ext-ffi": "Install the primemodule and FFI extensions to speed up MadelineProto (https://prime.madelineproto.xyz)",
+                "ext-ffi": "Install the FFI extension (with libopus, libvpx and ffmpeg) to transcode audio and video in realtime; not required to play back pre-converted files",
                 "ext-gmp": "Install the gmp extension to speed up authorization",
                 "ext-openssl": "Install the openssl extension for faster crypto",
                 "ext-pdo": "Install the pdo extension to store session data on MySQL",
                 "ext-primemodule": "Install the primemodule and FFI extensions to speed up MadelineProto (https://prime.madelineproto.xyz)",
+                "ext-sockets": "Install the sockets extension on Windows to use UNIX sockets for IPC (otherwise TCP on 127.0.0.1 is used, which any local user can connect to)",
+                "ext-sodium": "Install the sodium extension for faster crypto",
                 "ext-uv": "Install the uv extension to greatly speed up MadelineProto!"
             },
             "type": "library",
@@ -2461,7 +2548,7 @@
             ],
             "support": {
                 "issues": "https://github.com/danog/MadelineProto/issues",
-                "source": "https://github.com/danog/MadelineProto/tree/8.7.0"
+                "source": "https://github.com/danog/MadelineProto/tree/8.11.1"
             },
             "funding": [
                 {
@@ -2469,7 +2556,1386 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-12T07:44:57+00:00"
+            "time": "2026-10-19T20:33:16+00:00"
+        },
+        {
+            "name": "danog/php-rtc-av",
+            "version": "1.1.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-av.git",
+                "reference": "f328e6b5682d7e885dcfab425839921312162008"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-av/zipball/f328e6b5682d7e885dcfab425839921312162008",
+                "reference": "f328e6b5682d7e885dcfab425839921312162008",
+                "shasum": ""
+            },
+            "require": {
+                "danog/php-rtc-exception": "^1.1.5",
+                "danog/php-rtc-mixin": "^1.1.6 || ^2.0",
+                "php-64bit": "^8.2"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2"
+            },
+            "suggest": {
+                "ext-ffi": "Install the FFI extension and libavcodec/libavformat/libavfilter to transcode media; not required to mux or packetize already-encoded media"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\AVCodec\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "FFmpeg/libav FFI bindings for PHP media processing. MadelineProto's PHP 8.2+ fork uses lazy, optional FFI, strict ABI checks, and the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-av",
+            "keywords": [
+                "WebRTC",
+                "avcodec",
+                "avfilter",
+                "avformat",
+                "codec",
+                "ffmpeg",
+                "libavcodec",
+                "libavfilter",
+                "libavformat",
+                "libswscale",
+                "swscale"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-av/issues",
+                "source": "https://github.com/danog/php-rtc-av/tree/1.1.11"
+            },
+            "time": "2026-10-06T15:43:53+00:00"
+        },
+        {
+            "name": "danog/php-rtc-codecs",
+            "version": "1.1.19",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-codecs.git",
+                "reference": "00836382276949099077e19659ff6648b823284f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-codecs/zipball/00836382276949099077e19659ff6648b823284f",
+                "reference": "00836382276949099077e19659ff6648b823284f",
+                "shasum": ""
+            },
+            "require": {
+                "danog/php-rtc-av": "^1.1.3",
+                "danog/php-rtc-exception": "^1.1.5",
+                "danog/php-rtc-rtp-parameter": "^1.1.4",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2"
+            },
+            "suggest": {
+                "ext-ffi": "Install the FFI extension and libopus/libvpx/libavcodec to transcode media; not required to packetize already-encoded media"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\Codecs\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "WebRTC audio/video codec and RTP packetization utilities. MadelineProto's PHP 8.2+ fork adds optional transcoding FFI, VP9 packetization, and the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-codecs",
+            "keywords": [
+                "WebRTC",
+                "codecs",
+                "h264",
+                "opus",
+                "pcma",
+                "pcmu",
+                "vp8"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-codecs/issues",
+                "source": "https://github.com/danog/php-rtc-codecs/tree/1.1.19"
+            },
+            "time": "2026-10-16T23:52:08+00:00"
+        },
+        {
+            "name": "danog/php-rtc-datachannel",
+            "version": "1.1.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-datachannel.git",
+                "reference": "3a5ad6f76326514f41a9e1847b41d503e157c459"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-datachannel/zipball/3a5ad6f76326514f41a9e1847b41d503e157c459",
+                "reference": "3a5ad6f76326514f41a9e1847b41d503e157c459",
+                "shasum": ""
+            },
+            "require": {
+                "danog/php-rtc-exception": "^1.1.5",
+                "danog/php-rtc-mixin": "^2.0",
+                "php": "^8.2",
+                "psr/log": "^3.0.2"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\DataChannel\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "A PHP implementation of WebRTC's RTCDataChannel interface. MadelineProto's PHP 8.2+ fork is a Composer-compatible component of the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-datachannel",
+            "keywords": [
+                "WebRTC",
+                "datachannel"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-datachannel/issues",
+                "source": "https://github.com/danog/php-rtc-datachannel/tree/1.1.10"
+            },
+            "time": "2026-09-16T11:03:48+00:00"
+        },
+        {
+            "name": "danog/php-rtc-dtls",
+            "version": "2.0.20",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-dtls.git",
+                "reference": "794180b0c3cf54842df44b7bcb44f8fb50f199c8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-dtls/zipball/794180b0c3cf54842df44b7bcb44f8fb50f199c8",
+                "reference": "794180b0c3cf54842df44b7bcb44f8fb50f199c8",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^3.1.3",
+                "danog/php-rtc-exception": "^1.1.5",
+                "danog/php-rtc-ice": "^1.1.18 || ^2.0",
+                "danog/php-rtc-mixin": "^2.0",
+                "danog/php-rtc-rtp": "^2.0.23",
+                "danog/php-rtc-sctp": "^1.1.5 || ^2.0",
+                "danog/php-rtc-sdp": "^1.1.6",
+                "danog/php-rtc-srtp": "^1.1.16",
+                "danog/php-rtc-stats": "^1.1.3",
+                "php-64bit": "^8.2",
+                "phpseclib/phpseclib": "^4.0",
+                "symfony/polyfill-php84": "*"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "dg/bypass-finals": "dev-master",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\DTLS\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "Pure-PHP DTLS 1.2 for WebRTC, powered by phpseclib and Amp v3.",
+            "homepage": "https://github.com/danog/php-rtc-dtls",
+            "keywords": [
+                "certificate",
+                "crypto",
+                "dtls",
+                "openssl",
+                "privateKey",
+                "rtp",
+                "ssl",
+                "x509"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-dtls/issues",
+                "source": "https://github.com/danog/php-rtc-dtls/tree/2.0.20"
+            },
+            "time": "2026-10-17T20:02:59+00:00"
+        },
+        {
+            "name": "danog/php-rtc-exception",
+            "version": "1.1.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-exception.git",
+                "reference": "f9347a5376bb6b7b2fb008e06a8fd9fb6d9febd7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-exception/zipball/f9347a5376bb6b7b2fb008e06a8fd9fb6d9febd7",
+                "reference": "f9347a5376bb6b7b2fb008e06a8fd9fb6d9febd7",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\Exception\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "Lightweight exceptions shared by the WebRTC components. MadelineProto's PHP 8.2+ fork is a Composer-compatible foundation of the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-exception",
+            "keywords": [
+                "WebRTC"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-exception/issues",
+                "source": "https://github.com/danog/php-rtc-exception/tree/1.1.10"
+            },
+            "time": "2026-09-16T11:03:57+00:00"
+        },
+        {
+            "name": "danog/php-rtc-ice",
+            "version": "2.0.18",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-ice.git",
+                "reference": "91c53e982f334cf3bfe64a9e298d874bba51a3f1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-ice/zipball/91c53e982f334cf3bfe64a9e298d874bba51a3f1",
+                "reference": "91c53e982f334cf3bfe64a9e298d874bba51a3f1",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^3.1.3",
+                "amphp/dns": "^2.4.1",
+                "amphp/socket": "^2.4.1",
+                "danog/php-rtc-exception": "^1.1.5",
+                "danog/php-rtc-mdns": "^1.1.7",
+                "danog/php-rtc-mixin": "^2.0.9",
+                "danog/php-rtc-stun": "^2.0.17",
+                "danog/php-rtc-turn": "^2.0.9",
+                "php-64bit": "^8.2",
+                "psr/log": "^3.0.2",
+                "symfony/polyfill-php84": "*"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "mockery/mockery": "^1.6.15",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\ICE\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "WebRTC ICE connectivity in PHP, ported to Amp v3 fibers and sockets. MadelineProto's PHP 8.2+ fork integrates the modular danog/php-rtc STUN, TURN, and mDNS stack.",
+            "homepage": "https://github.com/danog/php-rtc-ice",
+            "keywords": [
+                "WebRTC",
+                "ice",
+                "stun",
+                "turn"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-ice/issues",
+                "source": "https://github.com/danog/php-rtc-ice/tree/2.0.18"
+            },
+            "time": "2026-10-16T21:18:22+00:00"
+        },
+        {
+            "name": "danog/php-rtc-mdns",
+            "version": "1.1.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-mdns.git",
+                "reference": "ff3f4315339ddcdd4d71bd4e02156903261ef57a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-mdns/zipball/ff3f4315339ddcdd4d71bd4e02156903261ef57a",
+                "reference": "ff3f4315339ddcdd4d71bd4e02156903261ef57a",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^3.1.3",
+                "amphp/socket": "^2.4.1",
+                "danog/php-rtc-exception": "^1.1.5",
+                "daverandom/libdns": "^2.1.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\MDNS\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "An Amp v3 Multicast DNS resolver for WebRTC. MadelineProto's PHP 8.2+ fork is a Composer-compatible component of the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-mdns",
+            "keywords": [
+                "mDNS",
+                "multicastdns"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-mdns/issues",
+                "source": "https://github.com/danog/php-rtc-mdns/tree/1.1.12"
+            },
+            "time": "2026-09-16T11:04:05+00:00"
+        },
+        {
+            "name": "danog/php-rtc-mixin",
+            "version": "2.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-mixin.git",
+                "reference": "e7a086a7fe01875f52e1f08301195db05e7ff9a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-mixin/zipball/e7a086a7fe01875f52e1f08301195db05e7ff9a5",
+                "reference": "e7a086a7fe01875f52e1f08301195db05e7ff9a5",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": ">=1.9.1"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\Mixin\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "Common PHP classes and traits for WebRTC components. MadelineProto's PHP 8.2+ fork is a Composer-compatible foundation of the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-mixin",
+            "keywords": [
+                "WebRTC"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-mixin/issues",
+                "source": "https://github.com/danog/php-rtc-mixin/tree/2.0.9"
+            },
+            "time": "2026-10-06T12:36:35+00:00"
+        },
+        {
+            "name": "danog/php-rtc-ntp",
+            "version": "1.1.15",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-ntp.git",
+                "reference": "d70dc01410dba146cb808b9c2bf3c28ed1199d20"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-ntp/zipball/d70dc01410dba146cb808b9c2bf3c28ed1199d20",
+                "reference": "d70dc01410dba146cb808b9c2bf3c28ed1199d20",
+                "shasum": ""
+            },
+            "require": {
+                "php-64bit": "^8.2",
+                "symfony/polyfill-php83": "*"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2",
+                "symfony/phpunit-bridge": "7.3.x-dev"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\NTP\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "Pure-PHP NTP timestamp conversion for WebRTC. MadelineProto's PHP 8.2+ fork fixes unsigned 64-bit handling and integrates with the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-ntp",
+            "keywords": [
+                "multicastdns",
+                "ntp"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-ntp/issues",
+                "source": "https://github.com/danog/php-rtc-ntp/tree/1.1.15"
+            },
+            "time": "2026-10-16T23:17:01+00:00"
+        },
+        {
+            "name": "danog/php-rtc-rtcp",
+            "version": "1.1.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-rtcp.git",
+                "reference": "f2e7c76d040fb0c4b2e4b62a611d13c6352af145"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-rtcp/zipball/f2e7c76d040fb0c4b2e4b62a611d13c6352af145",
+                "reference": "f2e7c76d040fb0c4b2e4b62a611d13c6352af145",
+                "shasum": ""
+            },
+            "require": {
+                "danog/php-rtc-exception": "^1.1.5",
+                "php-64bit": "^8.2"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\RTCP\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "Pure-PHP RTCP packet parsing and generation. MadelineProto's PHP 8.2+ fork fixes unsigned NTP handling and integrates with the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-rtcp",
+            "keywords": [
+                "rtcp",
+                "rtp"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-rtcp/issues",
+                "source": "https://github.com/danog/php-rtc-rtcp/tree/1.1.11"
+            },
+            "time": "2026-10-16T23:52:08+00:00"
+        },
+        {
+            "name": "danog/php-rtc-rtp",
+            "version": "2.0.23",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-rtp.git",
+                "reference": "e9bee7a5aae91f6abec1fe9a599eefbce219d967"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-rtp/zipball/e9bee7a5aae91f6abec1fe9a599eefbce219d967",
+                "reference": "e9bee7a5aae91f6abec1fe9a599eefbce219d967",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^3.1.3",
+                "amphp/pipeline": "^1.2.7",
+                "danog/php-rtc-codecs": "^1.1.18",
+                "danog/php-rtc-exception": "^1.1.5",
+                "danog/php-rtc-mixin": "^2.0",
+                "danog/php-rtc-ntp": "^1.1.14",
+                "danog/php-rtc-rtcp": "^1.1.4",
+                "danog/php-rtc-rtp-parameter": "^1.1.4",
+                "danog/php-rtc-sdp": "^1.1.6",
+                "danog/php-rtc-stats": "^1.1.3",
+                "php-64bit": "^8.2",
+                "ramsey/uuid": "^4.9.3",
+                "symfony/polyfill-php83": "*"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "dg/bypass-finals": "dev-master",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2",
+                "symfony/phpunit-bridge": "7.3.x-dev"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\RTP\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "RTP packet and media transport handling for PHP, ported to Amp v3. MadelineProto's PHP 8.2+ fork supports optional media FFI in the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-rtp",
+            "keywords": [
+                "WebRTC",
+                "real-time-transport-protocol",
+                "rtp"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-rtp/issues",
+                "source": "https://github.com/danog/php-rtc-rtp/tree/2.0.23"
+            },
+            "time": "2026-10-16T23:52:08+00:00"
+        },
+        {
+            "name": "danog/php-rtc-rtp-parameter",
+            "version": "1.1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-rtp-parameter.git",
+                "reference": "cd1e34df768ddae43fc50c1306c2332cf99f07eb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-rtp-parameter/zipball/cd1e34df768ddae43fc50c1306c2332cf99f07eb",
+                "reference": "cd1e34df768ddae43fc50c1306c2332cf99f07eb",
+                "shasum": ""
+            },
+            "require": {
+                "danog/php-rtc-mixin": "^1.1.6 || ^2.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": ">=1.9.1"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\RTPParameter\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "RTP codec, payload, SSRC, header-extension, and RTCP parameter objects. MadelineProto's PHP 8.2+ fork supports the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-rtp-parameter",
+            "keywords": [
+                "WebRTC",
+                "rtp",
+                "rtp-parameter"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-rtp-parameter/issues",
+                "source": "https://github.com/danog/php-rtc-rtp-parameter/tree/1.1.8"
+            },
+            "time": "2026-09-16T11:04:26+00:00"
+        },
+        {
+            "name": "danog/php-rtc-sctp",
+            "version": "2.0.14",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-sctp.git",
+                "reference": "741697e355abd7eb8e8134b115fab775bb5ccd06"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-sctp/zipball/741697e355abd7eb8e8134b115fab775bb5ccd06",
+                "reference": "741697e355abd7eb8e8134b115fab775bb5ccd06",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^3.1.3",
+                "danog/php-rtc-datachannel": "^1.1.4",
+                "danog/php-rtc-exception": "^1.1.5",
+                "danog/php-rtc-ice": "^1.1.18 || ^2.0",
+                "danog/php-rtc-mixin": "^2.0",
+                "danog/php-rtc-sdp": "^1.1.6",
+                "danog/php-rtc-stats": "^1.1.3",
+                "php-64bit": "^8.2",
+                "symfony/polyfill-mbstring": "*"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "dg/bypass-finals": "dev-master",
+                "mockery/mockery": "^1.6.15",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2",
+                "symfony/phpunit-bridge": "7.3.x-dev"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\SCTP\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "SCTP for PHP WebRTC data channels, ported to Amp v3 fibers and timers. MadelineProto's PHP 8.2+ fork is part of the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-sctp",
+            "keywords": [
+                "WebRTC",
+                "datachannel",
+                "sctp"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-sctp/issues",
+                "source": "https://github.com/danog/php-rtc-sctp/tree/2.0.14"
+            },
+            "time": "2026-10-06T15:18:53+00:00"
+        },
+        {
+            "name": "danog/php-rtc-sdp",
+            "version": "1.1.12",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-sdp.git",
+                "reference": "315b9cbaff71625351864c292de0b6ac3b3a39fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-sdp/zipball/315b9cbaff71625351864c292de0b6ac3b3a39fc",
+                "reference": "315b9cbaff71625351864c292de0b6ac3b3a39fc",
+                "shasum": ""
+            },
+            "require": {
+                "danog/php-rtc-exception": "^1.1.5",
+                "danog/php-rtc-ice": "^1.1.18 || ^2.0",
+                "danog/php-rtc-rtp-parameter": "^1.1.4",
+                "php": "^8.2",
+                "symfony/polyfill-php84": "*"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\SDP\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "SDP parsing and generation for PHP WebRTC. MadelineProto's PHP 8.2+ fork is a Composer-compatible component of the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-sdp",
+            "keywords": [
+                "SDP",
+                "rtp"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-sdp/issues",
+                "source": "https://github.com/danog/php-rtc-sdp/tree/1.1.12"
+            },
+            "time": "2026-09-16T11:04:35+00:00"
+        },
+        {
+            "name": "danog/php-rtc-srtp",
+            "version": "1.1.16",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-srtp.git",
+                "reference": "b19959292663d8933a0a48cd1fda05788fb5c542"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-srtp/zipball/b19959292663d8933a0a48cd1fda05788fb5c542",
+                "reference": "b19959292663d8933a0a48cd1fda05788fb5c542",
+                "shasum": ""
+            },
+            "require": {
+                "danog/php-rtc-exception": "^1.1.5",
+                "danog/php-rtc-mixin": "^1.1.6 || ^2.0",
+                "php-64bit": "^8.2",
+                "phpseclib/phpseclib": "^4.0"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\Srtp\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "Pure-PHP SRTP and SRTCP encryption using phpseclib, with AES-CM and AES-GCM profiles. MadelineProto's PHP 8.2+ fork removes the libsrtp/FFI dependency.",
+            "homepage": "https://github.com/danog/php-rtc-srtp",
+            "keywords": [
+                "srtp"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-srtp/issues",
+                "source": "https://github.com/danog/php-rtc-srtp/tree/1.1.16"
+            },
+            "time": "2026-10-16T22:00:35+00:00"
+        },
+        {
+            "name": "danog/php-rtc-stats",
+            "version": "1.1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-stats.git",
+                "reference": "137934d7d57e97184d5b6b2fb58e571e0d3f9fbd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-stats/zipball/137934d7d57e97184d5b6b2fb58e571e0d3f9fbd",
+                "reference": "137934d7d57e97184d5b6b2fb58e571e0d3f9fbd",
+                "shasum": ""
+            },
+            "require": {
+                "danog/php-rtc-ice": "^1.1.18 || ^2.0",
+                "danog/php-rtc-mixin": "^1.1.6 || ^2.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": ">=1.9.1"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\Stats\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "WebRTC statistics objects for RTP, DTLS, ICE, and media metrics. MadelineProto's PHP 8.2+ fork supports the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-stats",
+            "keywords": [
+                "WebRTC",
+                "stats"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-stats/issues",
+                "source": "https://github.com/danog/php-rtc-stats/tree/1.1.7"
+            },
+            "time": "2026-09-16T11:04:43+00:00"
+        },
+        {
+            "name": "danog/php-rtc-stun",
+            "version": "2.0.18",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-stun.git",
+                "reference": "7f1b48a736e6d7a9ad174e7dc58b794168befed4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-stun/zipball/7f1b48a736e6d7a9ad174e7dc58b794168befed4",
+                "reference": "7f1b48a736e6d7a9ad174e7dc58b794168befed4",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^3.1.3",
+                "amphp/socket": "^2.4.1",
+                "danog/php-rtc-exception": "^1.1.5",
+                "danog/php-rtc-mixin": "^2.0",
+                "php-64bit": "^8.2",
+                "psr/log": "^3.0.2",
+                "ramsey/uuid": "^4.9.3"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "dg/bypass-finals": "dev-master",
+                "mockery/mockery": "^1.6.15",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\STUN\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "STUN transactions and NAT discovery for PHP, ported to Amp v3 sockets and fibers. MadelineProto's PHP 8.2+ fork supports the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-stun",
+            "keywords": [
+                "SessionTraversalUtilitiesForNAT",
+                "WebRTC",
+                "stun"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-stun/issues",
+                "source": "https://github.com/danog/php-rtc-stun/tree/2.0.18"
+            },
+            "time": "2026-10-06T15:41:42+00:00"
+        },
+        {
+            "name": "danog/php-rtc-turn",
+            "version": "2.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-turn.git",
+                "reference": "5789c0d4b23c6097c72812fa8f9e9930ac288bc6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-turn/zipball/5789c0d4b23c6097c72812fa8f9e9930ac288bc6",
+                "reference": "5789c0d4b23c6097c72812fa8f9e9930ac288bc6",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^3.1.3",
+                "amphp/socket": "^2.4.1",
+                "danog/php-rtc-exception": "^1.1.5",
+                "danog/php-rtc-mixin": "^2.0",
+                "danog/php-rtc-stun": "^2.0.17",
+                "php": "^8.2",
+                "psr/log": "^3.0.2"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "mockery/mockery": "^1.6.15",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\TURN\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "TURN relay transport for PHP WebRTC, ported to Amp v3 TCP, UDP, and fibers. MadelineProto's PHP 8.2+ fork supports the modular danog/php-rtc stack.",
+            "homepage": "https://github.com/danog/php-rtc-turn",
+            "keywords": [
+                "WebRTC",
+                "traversal-using-relays-around-nat",
+                "turn"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-turn/issues",
+                "source": "https://github.com/danog/php-rtc-turn/tree/2.0.9"
+            },
+            "time": "2026-10-06T13:18:16+00:00"
+        },
+        {
+            "name": "danog/php-rtc-webrtc",
+            "version": "2.0.20",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danog/php-rtc-webrtc.git",
+                "reference": "58f8a24180cd1e137127214f9bfba3b0a7eff97b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danog/php-rtc-webrtc/zipball/58f8a24180cd1e137127214f9bfba3b0a7eff97b",
+                "reference": "58f8a24180cd1e137127214f9bfba3b0a7eff97b",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^3.1.3",
+                "danog/php-rtc-dtls": "^1.1.9 || ^2.0",
+                "danog/php-rtc-exception": "^1.1.5",
+                "danog/php-rtc-ice": "^2.0.17",
+                "danog/php-rtc-mixin": "^2.0",
+                "danog/php-rtc-ntp": "^1.1.6",
+                "danog/php-rtc-rtp": "^2.0.23",
+                "danog/php-rtc-sctp": "^2.0.14",
+                "danog/php-rtc-sdp": "^1.1.6",
+                "danog/php-rtc-stats": "^1.1.3",
+                "php": "^8.2",
+                "symfony/polyfill-php84": "*"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.9.1",
+                "phpunit/phpunit": "^11.5 || ^12.0 || ^13.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "bamarni-bin": {
+                    "bin-links": true,
+                    "forward-command": true
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webrtc\\Webrtc\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Amin Yazdanpanah",
+                    "email": "github@aminyazdanpanah.com"
+                },
+                {
+                    "name": "Sana Moniri",
+                    "email": "s.mo@quasarstream.com"
+                },
+                {
+                    "name": "Quasar Stream Community"
+                },
+                {
+                    "name": "Daniil Gentili",
+                    "email": "daniil@daniil.it"
+                }
+            ],
+            "description": "A modular PHP WebRTC stack for PHP 8.2+, ported to Amp v3 with pure-PHP DTLS/SRTP and optional media FFI. Maintained by danog for MadelineProto.",
+            "homepage": "https://github.com/danog/php-rtc-webrtc",
+            "keywords": [
+                "WebRTC",
+                "rtp"
+            ],
+            "support": {
+                "issues": "https://github.com/danog/php-rtc-webrtc/issues",
+                "source": "https://github.com/danog/php-rtc-webrtc/tree/2.0.20"
+            },
+            "time": "2026-10-16T23:52:08+00:00"
         },
         {
             "name": "danog/primemodule",
@@ -2524,29 +3990,28 @@
         },
         {
             "name": "danog/telegram-entities",
-            "version": "1.0.5",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/telegram-entities.git",
-                "reference": "19ab8a48bc4b9519c4493e2c62eb171fba8b58b4"
+                "reference": "92ca7621594b7a6c4a820c3b557e66ee1d439273"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/telegram-entities/zipball/19ab8a48bc4b9519c4493e2c62eb171fba8b58b4",
-                "reference": "19ab8a48bc4b9519c4493e2c62eb171fba8b58b4",
+                "url": "https://api.github.com/repos/danog/telegram-entities/zipball/92ca7621594b7a6c4a820c3b557e66ee1d439273",
+                "reference": "92ca7621594b7a6c4a820c3b557e66ee1d439273",
                 "shasum": ""
             },
             "require": {
                 "php-64bit": ">=8.2.4",
                 "symfony/polyfill-mbstring": "*",
-                "webmozart/assert": "^1.11"
+                "webmozart/assert": "^2"
             },
             "require-dev": {
                 "amphp/http-client": "^5.0",
                 "amphp/php-cs-fixer-config": "^2.0.1",
                 "danog/phpdoc": "^0.1.22",
                 "friendsofphp/php-cs-fixer": "^3.52.1",
-                "infection/infection": "^0.28.1",
                 "phpunit/phpunit": "^11.0.9",
                 "vimeo/psalm": "dev-master"
             },
@@ -2569,7 +4034,7 @@
             "description": "A library to work with Telegram UTF-16 styled text entities.",
             "support": {
                 "issues": "https://github.com/danog/telegram-entities/issues",
-                "source": "https://github.com/danog/telegram-entities/tree/1.0.5"
+                "source": "https://github.com/danog/telegram-entities/tree/1.1.0"
             },
             "funding": [
                 {
@@ -2577,7 +4042,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-06-22T12:27:39+00:00"
+            "time": "2026-10-18T15:46:15+00:00"
         },
         {
             "name": "danog/tg-dialog-id",
@@ -2849,20 +4314,21 @@
         },
         {
             "name": "league/uri",
-            "version": "7.8.1",
+            "version": "7.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/uri.git",
-                "reference": "08cf38e3924d4f56238125547b5720496fac8fd4"
+                "reference": "fcc872a3d872aa13f935e0cd1887b9abb06da07f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/uri/zipball/08cf38e3924d4f56238125547b5720496fac8fd4",
-                "reference": "08cf38e3924d4f56238125547b5720496fac8fd4",
+                "url": "https://api.github.com/repos/thephpleague/uri/zipball/fcc872a3d872aa13f935e0cd1887b9abb06da07f",
+                "reference": "fcc872a3d872aa13f935e0cd1887b9abb06da07f",
                 "shasum": ""
             },
             "require": {
-                "league/uri-interfaces": "^7.8.1",
+                "ext-mbstring": "*",
+                "league/uri-interfaces": "^7.9.0",
                 "php": "^8.1",
                 "psr/http-factory": "^1"
             },
@@ -2935,7 +4401,7 @@
                 "docs": "https://uri.thephpleague.com",
                 "forum": "https://thephpleague.slack.com",
                 "issues": "https://github.com/thephpleague/uri-src/issues",
-                "source": "https://github.com/thephpleague/uri/tree/7.8.1"
+                "source": "https://github.com/thephpleague/uri/tree/7.9.0"
             },
             "funding": [
                 {
@@ -2943,24 +4409,24 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-15T20:22:25+00:00"
+            "time": "2026-10-16T15:19:33+00:00"
         },
         {
             "name": "league/uri-components",
-            "version": "7.8.1",
+            "version": "7.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/uri-components.git",
-                "reference": "848ff9db2f0be06229d6034b7c2e33d41b4fd675"
+                "reference": "4e37c1663f7d0daebbab6b3d947631b0835b3943"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/uri-components/zipball/848ff9db2f0be06229d6034b7c2e33d41b4fd675",
-                "reference": "848ff9db2f0be06229d6034b7c2e33d41b4fd675",
+                "url": "https://api.github.com/repos/thephpleague/uri-components/zipball/4e37c1663f7d0daebbab6b3d947631b0835b3943",
+                "reference": "4e37c1663f7d0daebbab6b3d947631b0835b3943",
                 "shasum": ""
             },
             "require": {
-                "league/uri": "^7.8.1",
+                "league/uri": "^7.9.0",
                 "php": "^8.1"
             },
             "suggest": {
@@ -3019,7 +4485,7 @@
                 "docs": "https://uri.thephpleague.com",
                 "forum": "https://thephpleague.slack.com",
                 "issues": "https://github.com/thephpleague/uri-src/issues",
-                "source": "https://github.com/thephpleague/uri-components/tree/7.8.1"
+                "source": "https://github.com/thephpleague/uri-components/tree/7.9.0"
             },
             "funding": [
                 {
@@ -3027,20 +4493,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-15T20:22:25+00:00"
+            "time": "2026-10-16T15:19:33+00:00"
         },
         {
             "name": "league/uri-interfaces",
-            "version": "7.8.1",
+            "version": "7.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/uri-interfaces.git",
-                "reference": "85d5c77c5d6d3af6c54db4a78246364908f3c928"
+                "reference": "eb5f6d24e6a4fe0a8e9c78ded4eb1dfff1404f58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/uri-interfaces/zipball/85d5c77c5d6d3af6c54db4a78246364908f3c928",
-                "reference": "85d5c77c5d6d3af6c54db4a78246364908f3c928",
+                "url": "https://api.github.com/repos/thephpleague/uri-interfaces/zipball/eb5f6d24e6a4fe0a8e9c78ded4eb1dfff1404f58",
+                "reference": "eb5f6d24e6a4fe0a8e9c78ded4eb1dfff1404f58",
                 "shasum": ""
             },
             "require": {
@@ -3103,7 +4569,7 @@
                 "docs": "https://uri.thephpleague.com",
                 "forum": "https://thephpleague.slack.com",
                 "issues": "https://github.com/thephpleague/uri-src/issues",
-                "source": "https://github.com/thephpleague/uri-interfaces/tree/7.8.1"
+                "source": "https://github.com/thephpleague/uri-interfaces/tree/7.9.0"
             },
             "funding": [
                 {
@@ -3111,20 +4577,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-08T20:05:35+00:00"
+            "time": "2026-10-16T15:19:33+00:00"
         },
         {
             "name": "monolog/monolog",
-            "version": "3.12.0",
+            "version": "3.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "72c534fc0ab181ef52d92a68382318631e301608"
+                "reference": "d7059e4c691d05ea1222b5124bed0f961be46e15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/72c534fc0ab181ef52d92a68382318631e301608",
-                "reference": "72c534fc0ab181ef52d92a68382318631e301608",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/d7059e4c691d05ea1222b5124bed0f961be46e15",
+                "reference": "d7059e4c691d05ea1222b5124bed0f961be46e15",
                 "shasum": ""
             },
             "require": {
@@ -3204,7 +4670,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/monolog/issues",
-                "source": "https://github.com/Seldaek/monolog/tree/3.12.0"
+                "source": "https://github.com/Seldaek/monolog/tree/3.12.1"
             },
             "funding": [
                 {
@@ -3216,7 +4682,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-09T08:34:20+00:00"
+            "time": "2026-09-29T19:21:12+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -3345,82 +4811,36 @@
             "time": "2025-09-24T15:06:41+00:00"
         },
         {
-            "name": "paragonie/random_compat",
-            "version": "v9.99.100",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "996434e5492cb4c3edcb9168db6fbb1359ef965a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/996434e5492cb4c3edcb9168db6fbb1359ef965a",
-                "reference": "996434e5492cb4c3edcb9168db6fbb1359ef965a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">= 7"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.*|5.*",
-                "vimeo/psalm": "^1"
-            },
-            "suggest": {
-                "ext-libsodium": "Provides a modern crypto API that can be used to generate random bytes."
-            },
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Paragon Initiative Enterprises",
-                    "email": "security@paragonie.com",
-                    "homepage": "https://paragonie.com"
-                }
-            ],
-            "description": "PHP 5.x polyfill for random_bytes() and random_int() from PHP 7",
-            "keywords": [
-                "csprng",
-                "polyfill",
-                "pseudorandom",
-                "random"
-            ],
-            "support": {
-                "email": "info@paragonie.com",
-                "issues": "https://github.com/paragonie/random_compat/issues",
-                "source": "https://github.com/paragonie/random_compat"
-            },
-            "time": "2020-10-15T08:29:30+00:00"
-        },
-        {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.57",
+            "version": "4.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "d17e0ddaeaf6f22f7e007cbb437d78792fe2a0e4"
+                "reference": "1fe20b9acb08ce810cec24d8a9d02e7c13426e4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d17e0ddaeaf6f22f7e007cbb437d78792fe2a0e4",
-                "reference": "d17e0ddaeaf6f22f7e007cbb437d78792fe2a0e4",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/1fe20b9acb08ce810cec24d8a9d02e7c13426e4c",
+                "reference": "1fe20b9acb08ce810cec24d8a9d02e7c13426e4c",
                 "shasum": ""
             },
             "require": {
-                "paragonie/constant_time_encoding": "^1|^2|^3",
-                "paragonie/random_compat": "^1.4|^2.0|^9.99.99",
-                "php": ">=5.6.1"
+                "paragonie/constant_time_encoding": "^2|^3",
+                "php": ">=8.1",
+                "symfony/polyfill-php82": "^1.26"
             },
             "require-dev": {
-                "phpunit/phpunit": "*"
+                "brianium/paratest": "^7.22",
+                "ext-xml": "*",
+                "php-parallel-lint/php-parallel-lint": "^1.3",
+                "phpunit/phpunit": "^13",
+                "squizlabs/php_codesniffer": "^3.7",
+                "vimeo/psalm": "*"
             },
             "suggest": {
                 "ext-dom": "Install the DOM extension to load XML formatted public keys.",
                 "ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.",
                 "ext-libsodium": "SSH2/SFTP can make use of some algorithms provided by the libsodium-php extension.",
-                "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
                 "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations."
             },
             "type": "library",
@@ -3429,7 +4849,7 @@
                     "phpseclib/bootstrap.php"
                 ],
                 "psr-4": {
-                    "phpseclib3\\": "phpseclib/"
+                    "phpseclib4\\": "phpseclib/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3461,10 +4881,16 @@
                     "name": "Graham Campbell",
                     "email": "graham@alt-three.com",
                     "role": "Developer"
+                },
+                {
+                    "name": "Jack Worman",
+                    "email": "jack.worman@gmail.com",
+                    "homepage": "https://jackworman.com",
+                    "role": "Developer"
                 }
             ],
             "description": "PHP Secure Communications Library - Pure-PHP implementations of RSA, AES, SSH2, SFTP, X.509 etc.",
-            "homepage": "http://phpseclib.sourceforge.net",
+            "homepage": "https://phpseclib.com/",
             "keywords": [
                 "BigInteger",
                 "aes",
@@ -3486,7 +4912,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.57"
+                "source": "https://github.com/phpseclib/phpseclib/tree/4.0.2"
             },
             "funding": [
                 {
@@ -3502,7 +4928,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-26T12:13:21+00:00"
+            "time": "2026-10-07T19:55:38+00:00"
         },
         {
             "name": "promphp/prometheus_client_php",
@@ -3784,6 +5210,160 @@
                 "source": "https://github.com/php-fig/log/tree/3.0.2"
             },
             "time": "2024-09-11T13:17:53+00:00"
+        },
+        {
+            "name": "ramsey/collection",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ramsey/collection.git",
+                "reference": "344572933ad0181accbf4ba763e85a0306a8c5e2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ramsey/collection/zipball/344572933ad0181accbf4ba763e85a0306a8c5e2",
+                "reference": "344572933ad0181accbf4ba763e85a0306a8c5e2",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "captainhook/plugin-composer": "^5.3",
+                "ergebnis/composer-normalize": "^2.45",
+                "fakerphp/faker": "^1.24",
+                "hamcrest/hamcrest-php": "^2.0",
+                "jangregor/phpstan-prophecy": "^2.1",
+                "mockery/mockery": "^1.6",
+                "php-parallel-lint/php-console-highlighter": "^1.0",
+                "php-parallel-lint/php-parallel-lint": "^1.4",
+                "phpspec/prophecy-phpunit": "^2.3",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-mockery": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpunit/phpunit": "^10.5",
+                "ramsey/coding-standard": "^2.3",
+                "ramsey/conventional-commits": "^1.6",
+                "roave/security-advisories": "dev-latest"
+            },
+            "type": "library",
+            "extra": {
+                "captainhook": {
+                    "force-install": true
+                },
+                "ramsey/conventional-commits": {
+                    "configFile": "conventional-commits.json"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ramsey\\Collection\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ben Ramsey",
+                    "email": "ben@benramsey.com",
+                    "homepage": "https://benramsey.com"
+                }
+            ],
+            "description": "A PHP library for representing and manipulating collections.",
+            "keywords": [
+                "array",
+                "collection",
+                "hash",
+                "map",
+                "queue",
+                "set"
+            ],
+            "support": {
+                "issues": "https://github.com/ramsey/collection/issues",
+                "source": "https://github.com/ramsey/collection/tree/2.1.1"
+            },
+            "time": "2025-03-22T05:38:12+00:00"
+        },
+        {
+            "name": "ramsey/uuid",
+            "version": "4.9.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ramsey/uuid.git",
+                "reference": "75d73f48d02797c2c285a7e9f348fadc0102ffe2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/75d73f48d02797c2c285a7e9f348fadc0102ffe2",
+                "reference": "75d73f48d02797c2c285a7e9f348fadc0102ffe2",
+                "shasum": ""
+            },
+            "require": {
+                "brick/math": "^0.8.16 || ^0.9 || ^0.10 || ^0.11 || ^0.12 || ^0.13 || ^0.14 || ^0.15 || ^0.16 || ^0.17 || ^0.18 || ^0.19 || ^0.20 || ^1.0",
+                "php": "^8.0",
+                "ramsey/collection": "^1.2 || ^2.0"
+            },
+            "replace": {
+                "rhumsaa/uuid": "self.version"
+            },
+            "require-dev": {
+                "captainhook/captainhook": "^5.25",
+                "captainhook/plugin-composer": "^5.3",
+                "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+                "ergebnis/composer-normalize": "^2.47",
+                "mockery/mockery": "^1.6",
+                "paragonie/random-lib": "^2",
+                "php-mock/php-mock": "^2.6",
+                "php-mock/php-mock-mockery": "^1.5",
+                "php-parallel-lint/php-parallel-lint": "^1.4.0",
+                "phpbench/phpbench": "^1.2.14",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-mockery": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpunit/phpunit": "^9.6",
+                "slevomat/coding-standard": "^8.18",
+                "squizlabs/php_codesniffer": "^3.13"
+            },
+            "suggest": {
+                "ext-bcmath": "Enables faster math with arbitrary-precision integers using BCMath.",
+                "ext-gmp": "Enables faster math with arbitrary-precision integers using GMP.",
+                "ext-uuid": "Enables the use of PeclUuidTimeGenerator and PeclUuidRandomGenerator.",
+                "paragonie/random-lib": "Provides RandomLib for use with the RandomLibAdapter",
+                "ramsey/uuid-doctrine": "Allows the use of Ramsey\\Uuid\\Uuid as Doctrine field type."
+            },
+            "type": "library",
+            "extra": {
+                "captainhook": {
+                    "force-install": true
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "Ramsey\\Uuid\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A PHP library for generating and working with universally unique identifiers (UUIDs).",
+            "keywords": [
+                "guid",
+                "identifier",
+                "uuid"
+            ],
+            "support": {
+                "issues": "https://github.com/ramsey/uuid/issues",
+                "source": "https://github.com/ramsey/uuid/tree/4.9.4"
+            },
+            "time": "2026-09-16T11:39:30+00:00"
         },
         {
             "name": "revolt/event-loop",
@@ -4110,6 +5690,90 @@
             "time": "2026-04-10T16:19:22+00:00"
         },
         {
+            "name": "symfony/polyfill-iconv",
+            "version": "v1.43.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-iconv.git",
+                "reference": "254724d95fe01b679cd97d88786e9623ee00bfb7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-iconv/zipball/254724d95fe01b679cd97d88786e9623ee00bfb7",
+                "reference": "254724d95fe01b679cd97d88786e9623ee00bfb7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "provide": {
+                "ext-iconv": "*"
+            },
+            "suggest": {
+                "ext-iconv": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Iconv\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for the Iconv extension",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "iconv",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-iconv/tree/v1.43.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-09-29T06:25:14+00:00"
+        },
+        {
             "name": "symfony/polyfill-intl-grapheme",
             "version": "v1.41.0",
             "source": {
@@ -4278,16 +5942,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.38.2",
+            "version": "v1.43.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "d3d318bad5e7a1bfbd026009c8bfb8d8f99ae6b6"
+                "reference": "4d5d331bf731e0aedbc6b2f5e61135b7b7996a72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/d3d318bad5e7a1bfbd026009c8bfb8d8f99ae6b6",
-                "reference": "d3d318bad5e7a1bfbd026009c8bfb8d8f99ae6b6",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/4d5d331bf731e0aedbc6b2f5e61135b7b7996a72",
+                "reference": "4d5d331bf731e0aedbc6b2f5e61135b7b7996a72",
                 "shasum": ""
             },
             "require": {
@@ -4339,7 +6003,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.38.2"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.43.0"
             },
             "funding": [
                 {
@@ -4359,20 +6023,100 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-27T06:59:30+00:00"
+            "time": "2026-09-24T15:19:04+00:00"
         },
         {
-            "name": "symfony/polyfill-php83",
-            "version": "v1.41.0",
+            "name": "symfony/polyfill-php82",
+            "version": "v1.43.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/polyfill-php83.git",
-                "reference": "5ea99087fb99c273a9b9236ed4c31e78b16103c6"
+                "url": "https://github.com/symfony/polyfill-php82.git",
+                "reference": "843bbe8b2a7934307b749751eede0f111f5d1cfc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php83/zipball/5ea99087fb99c273a9b9236ed4c31e78b16103c6",
-                "reference": "5ea99087fb99c273a9b9236ed4c31e78b16103c6",
+                "url": "https://api.github.com/repos/symfony/polyfill-php82/zipball/843bbe8b2a7934307b749751eede0f111f5d1cfc",
+                "reference": "843bbe8b2a7934307b749751eede0f111f5d1cfc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php82\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.2+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php82/tree/v1.43.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-09-25T15:50:05+00:00"
+        },
+        {
+            "name": "symfony/polyfill-php83",
+            "version": "v1.43.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php83.git",
+                "reference": "80ccff923a8d61f73ebe9da0aa94e25232f004ce"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php83/zipball/80ccff923a8d61f73ebe9da0aa94e25232f004ce",
+                "reference": "80ccff923a8d61f73ebe9da0aa94e25232f004ce",
                 "shasum": ""
             },
             "require": {
@@ -4419,7 +6163,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php83/tree/v1.41.0"
+                "source": "https://github.com/symfony/polyfill-php83/tree/v1.43.0"
             },
             "funding": [
                 {
@@ -4439,7 +6183,247 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-01T12:47:55+00:00"
+            "time": "2026-09-25T15:50:05+00:00"
+        },
+        {
+            "name": "symfony/polyfill-php84",
+            "version": "v1.43.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php84.git",
+                "reference": "22c6548499cbe5c5bb072fc0c42312dff062a015"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php84/zipball/22c6548499cbe5c5bb072fc0c42312dff062a015",
+                "reference": "22c6548499cbe5c5bb072fc0c42312dff062a015",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php84\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.4+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php84/tree/v1.43.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-09-23T22:01:09+00:00"
+        },
+        {
+            "name": "symfony/polyfill-php85",
+            "version": "v1.43.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php85.git",
+                "reference": "86a42cbcc07adc331481a5ab310a4024bfc227f6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php85/zipball/86a42cbcc07adc331481a5ab310a4024bfc227f6",
+                "reference": "86a42cbcc07adc331481a5ab310a4024bfc227f6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php85\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.5+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php85/tree/v1.43.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-09-25T15:46:47+00:00"
+        },
+        {
+            "name": "symfony/polyfill-php86",
+            "version": "v1.43.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php86.git",
+                "reference": "8840df45b24f33a49dc419fa18dc0057231ae1d8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php86/zipball/8840df45b24f33a49dc419fa18dc0057231ae1d8",
+                "reference": "8840df45b24f33a49dc419fa18dc0057231ae1d8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php86\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.6+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php86/tree/v1.43.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-09-25T15:46:47+00:00"
         },
         {
             "name": "symfony/service-contracts",
@@ -4621,23 +6605,23 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "1.12.1",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68"
+                "reference": "8a163706bbcac613733dba03f51e13b5eb1bb819"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/9be6926d8b485f55b9229203f962b51ed377ba68",
-                "reference": "9be6926d8b485f55b9229203f962b51ed377ba68",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/8a163706bbcac613733dba03f51e13b5eb1bb819",
+                "reference": "8a163706bbcac613733dba03f51e13b5eb1bb819",
                 "shasum": ""
             },
             "require": {
                 "ext-ctype": "*",
                 "ext-date": "*",
                 "ext-filter": "*",
-                "php": "^7.2 || ^8.0"
+                "php": "^8.2"
             },
             "suggest": {
                 "ext-intl": "",
@@ -4646,8 +6630,12 @@
             },
             "type": "library",
             "extra": {
+                "psalm": {
+                    "pluginClass": "Webmozart\\Assert\\PsalmPlugin"
+                },
                 "branch-alias": {
-                    "dev-master": "1.10-dev"
+                    "dev-master": "2.0-dev",
+                    "dev-feature/2-0": "2.0-dev"
                 }
             },
             "autoload": {
@@ -4663,6 +6651,10 @@
                 {
                     "name": "Bernhard Schussek",
                     "email": "bschussek@gmail.com"
+                },
+                {
+                    "name": "Woody Gilk",
+                    "email": "woody.gilk@gmail.com"
                 }
             ],
             "description": "Assertions to validate method input/output with nice error messages.",
@@ -4673,9 +6665,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/1.12.1"
+                "source": "https://github.com/webmozarts/assert/tree/2.5.0"
             },
-            "time": "2025-10-29T15:56:20+00:00"
+            "time": "2026-10-05T23:14:19+00:00"
         }
     ],
     "packages-dev": [],
