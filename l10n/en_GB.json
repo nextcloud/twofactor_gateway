@@ -26,6 +26,8 @@
     "Invalid phone number for WhatsApp Business." : "Invalid phone number for WhatsApp Business.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}.",
     "Template language code is required for WhatsApp Business." : "Template language code is required for WhatsApp Business.",
+    "Authentication template requires a numeric OTP code." : "Authentication template requires a numeric OTP code.",
+    "Meta rejected the WhatsApp template message." : "Meta rejected the WhatsApp template message.",
     "Failed to send message through WhatsApp Business." : "Failed to send message through WhatsApp Business.",
     "XMPP verification" : "XMPP verification",
     "Authenticate via XMPP" : "Authenticate via XMPP",
