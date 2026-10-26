@@ -28,6 +28,8 @@ OC.L10N.register(
     "Invalid phone number for WhatsApp Business." : "WhatsApp Business 電話號碼無效。",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "WhatsApp Business 必須提供範本名稱。請設定一個已獲批准並包含內文變數 {{1}} 的範本。",
     "Template language code is required for WhatsApp Business." : "WhatsApp Business 必須提供範本語言代碼。",
+    "Authentication template requires a numeric OTP code." : "驗證範本需要輸入數字格式的一次性密碼（OTP）。",
+    "Meta rejected the WhatsApp template message." : "Meta 已拒絕該 WhatsApp 訊息範本。",
     "Failed to send message through WhatsApp Business." : "無法透過 WhatsApp Business 發送訊息。",
     "XMPP verification" : "XMPP 驗證",
     "Authenticate via XMPP" : "透過 XMPP 驗證",
