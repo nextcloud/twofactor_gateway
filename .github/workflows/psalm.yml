@@ -53,7 +53,12 @@ jobs:
           composer i
 
       - name: Check for vulnerable PHP dependencies
-        run: composer require --dev roave/security-advisories:dev-latest
+        run: |
+          # Audit against the patched PHP actually installed on the runner.
+          # composer.json pins 8.3 for compatibility resolution, which otherwise
+          # makes advisories targeting older 8.3 patch releases fail this check.
+          composer config --unset platform.php
+          composer require --dev roave/security-advisories:dev-latest
 
       - name: Install nextcloud/ocp
         run: composer require --dev nextcloud/ocp:dev-${{ steps.versions.outputs.branches-max }} --ignore-platform-reqs --with-dependencies
