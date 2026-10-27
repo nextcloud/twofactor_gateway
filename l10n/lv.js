@@ -10,6 +10,7 @@ OC.L10N.register(
     "Save" : "Saglabāt",
     "Provider" : "Nodrošinātājs",
     "Label" : "Iezīme",
+    "optional" : "neobligāts",
     "Cancel" : "Atcelt",
     "Collapse" : "Sakļaut",
     "Close" : "Aizvērt",
