@@ -21,6 +21,7 @@ OC.L10N.register(
     "Save" : "Gorde",
     "Provider" : "Hornitzailea",
     "Label" : "Etiketa",
+    "optional" : "aukerakoa",
     "Cancel" : "Cancel",
     "Instance" : "Instantzia",
     "Reference" : "Erreferentzia",

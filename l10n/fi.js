@@ -17,6 +17,7 @@ OC.L10N.register(
     "Save" : "Tallenna",
     "Provider" : "Tarjoaja",
     "Label" : "Nimike",
+    "optional" : "valinnainen",
     "Cancel" : "Peruuta",
     "Collapse" : "Kutista näkymää",
     "Expand" : "Laajenna",

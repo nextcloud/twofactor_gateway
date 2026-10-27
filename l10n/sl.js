@@ -20,6 +20,7 @@ OC.L10N.register(
     "Saving …" : "Poteka shranjevanje …",
     "Save" : "Shrani",
     "Provider" : "Ponudnik",
+    "optional" : "izbirno",
     "Cancel" : "Prekliči",
     "Reference" : "Sklic",
     "Collapse" : "Skrči",

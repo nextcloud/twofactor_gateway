@@ -7,6 +7,7 @@ OC.L10N.register(
     "Delete" : "Obriši",
     "Groups" : "Grupe",
     "Save" : "Spremi",
+    "optional" : "opcionalno",
     "Cancel" : "Cancel",
     "Collapse" : "Proširi",
     "Close" : "Zatvori",

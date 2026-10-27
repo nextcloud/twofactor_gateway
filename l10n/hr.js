@@ -20,6 +20,7 @@ OC.L10N.register(
     "Save" : "Spremi",
     "Provider" : "Davatelj usluge",
     "Label" : "Oznaka",
+    "optional" : "neobavezno",
     "Cancel" : "Otkaži",
     "Reference" : "Upućivanje",
     "Deleting …" : "Brisanje …",
