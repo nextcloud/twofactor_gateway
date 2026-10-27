@@ -45,6 +45,14 @@ class GatewayDirectIntegrationServiceTest extends TestCase {
 		$this->assertTrue($this->service->isGatewayComplete('signal'));
 	}
 
+	public function testSendPreservesStructuredOptions(): void {
+		$options = ['body_parameters' => ['Synthetic document', 'https://example.invalid/sign']];
+		$gateway = $this->createMock(IGateway::class);
+		$gateway->expects($this->once())->method('send')->with('5511999990000', 'Notification', $options);
+		$this->gatewayRuntimeAvailabilityService->method('getGateway')->with('whatsappbusiness')->willReturn($gateway);
+		$this->service->send('whatsappbusiness', '5511999990000', 'Notification', $options);
+	}
+
 	public function testSendDelegatesToResolvedGateway(): void {
 		$gateway = $this->createMock(IGateway::class);
 		$gateway->expects($this->once())

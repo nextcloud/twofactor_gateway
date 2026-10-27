@@ -22,14 +22,17 @@ final class TemplateSelectionPolicy {
 		if ($components->hasUnsupportedComponent) {
 			return 'Template contains unsupported components.';
 		}
-		if (!$components->hasSingleBodyVariable()) {
-			return 'Template must contain exactly one body variable {{1}}.';
+		if (!$components->hasSequentialBodyVariables()) {
+			return 'Template body variables must be sequential and start at {{1}}.';
 		}
 		if ($components->hasDynamicHeader || $components->hasDynamicButton) {
 			return 'Template requires header or button parameters this gateway cannot send.';
 		}
 
 		if ($category === 'AUTHENTICATION') {
+			if (!$components->hasSingleBodyVariable()) {
+				return 'Authentication template requires exactly one body variable {{1}}.';
+			}
 			if (!$components->hasCopyCodeButtonAtIndexZero() || $components->hasUnsupportedOtpButton) {
 				return 'Only one Copy Code OTP button at index zero is supported.';
 			}
