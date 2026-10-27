@@ -120,7 +120,14 @@ After selecting a phone number, the wizard displays available templates in the l
 - Have status `PENDING` (template is awaiting review; templates usually approve within 24 hours)
 - Have status `DRAFT` (template not submitted; submit for review in WhatsApp Manager)
 
-Templates must have exactly one body variable placeholder `{{1}}`. For Two Factor Gateway, this variable receives the verification code at send time.
+Supported template parameters:
+- AUTHENTICATION templates require exactly one body variable `{{1}}` for the OTP code and a supported Copy Code button.
+- UTILITY and MARKETING templates may have consecutive body variables `{{1}}`, `{{2}}`, etc. Only static headers and buttons are supported.
+- The caller passes `extra.body_parameters` as an ordered list of non-empty strings. The first value fills `{{1}}`, the next fills `{{2}}`, and so on. The gateway does not interpret their meaning.
+- Parameter values cannot contain newlines, tabs, carriage returns, excessive whitespace, or invalid UTF-8. The gateway rejects invalid values before contacting Meta; it never silently substitutes or rewrites them.
+- Calls without `body_parameters` retain the legacy single-value message/OTP behavior.
+- The configuration wizard records the selected template's number of body variables and enforces that count before sending. For templates configured manually, provide the optional template body parameter count to enable this validation. The caller can also supply `expected_body_parameter_count`.
+- Dynamic headers and dynamic buttons other than supported OTP Copy Code buttons are not sent by this gateway. Choose a compatible approved template.
 
 ##### Finalizing the setup
 
@@ -169,7 +176,7 @@ Example WABA ID: `1262137285897957`
 - Templates must be **created and submitted for approval** in **WhatsApp Manager → Message Templates** before they appear in the wizard.
 - Meta usually approves template requests within 24 hours. Monitor your email for approval/rejection notifications.
 - To modify a rejected template, create a new version (e.g., rename from `template_v1` to `template_v2`) and resubmit.
-- The template body must include exactly one variable placeholder: `{{1}}`
+- AUTHENTICATION templates require one body placeholder; compatible UTILITY/MARKETING templates may have sequential `{{1}}`, `{{2}}`, and further numbered placeholders.
 
 ##### For long-term reliability
 

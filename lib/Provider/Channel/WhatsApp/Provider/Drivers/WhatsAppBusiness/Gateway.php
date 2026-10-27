@@ -45,6 +45,8 @@ use Symfony\Component\Console\Question\Question;
  * @method static setTemplateLanguage(string $templateLanguage)
  * @method string getTemplateCategory()
  * @method static setTemplateCategory(string $templateCategory)
+ * @method string getTemplateBodyParameterCount()
+ * @method static setTemplateBodyParameterCount(string $templateBodyParameterCount)
  */
 class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInteractiveSetupGateway, IDefaultInstanceAwareGateway, ITestResultEnricher, ITestMessageProvider {
 	public function __construct(
@@ -90,7 +92,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 				new FieldDefinition(
 					field: 'template_name',
 					prompt: 'Template name:',
-					helper: 'If set, outbound messages are sent using this approved template. For Two Factor Gateway, keep one body variable {{1}} to receive the verification token/message.',
+					helper: 'Use an approved template. AUTHENTICATION needs one OTP variable; other categories support ordered body variables {{1}}, {{2}}, etc.',
 					exposure: FieldExposure::DELEGATED,
 				),
 				new FieldDefinition(
@@ -103,6 +105,13 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 					field: 'template_category',
 					prompt: 'Template category (optional):',
 					helper: 'Detected by the wizard. Use AUTHENTICATION for an approved Copy Code OTP template.',
+					optional: true,
+					exposure: FieldExposure::DELEGATED,
+				),
+				new FieldDefinition(
+					field: 'template_body_parameter_count',
+					prompt: 'Number of template body parameters (optional):',
+					helper: 'Detected from the approved template by the wizard. Configure manually to validate the count before sending.',
 					optional: true,
 					exposure: FieldExposure::DELEGATED,
 				),
@@ -133,49 +142,16 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 		}
 
 		$category = $this->resolveTemplateCategory($extra);
-		$code = trim((string)($extra['code'] ?? ''));
-		if ($category === 'AUTHENTICATION' && preg_match('/^[0-9]{4,15}$/D', $code) !== 1) {
-			throw new MessageTransmissionException($this->l10n->t('Authentication template requires a numeric OTP code.'));
-		}
-
-		// The template is always selected from this instance's configuration.
-		// In 2FA flows only the OTP goes into the body parameter, not the
-		// free-form message used by other gateways.
-		$bodyParameter = $code !== '' ? $code : $message;
-		$bodyParameters = array_key_exists('body_parameters', $extra)
-			? $extra['body_parameters']
-			: [$bodyParameter];
-		if (!is_array($bodyParameters) || !array_is_list($bodyParameters) || $bodyParameters === []) {
-			throw new MessageTransmissionException($this->l10n->t('Template body parameters must be a non-empty ordered list.'));
-		}
-		if ($category === 'AUTHENTICATION' && (count($bodyParameters) !== 1 || $bodyParameters[0] !== $code)) {
-			throw new MessageTransmissionException($this->l10n->t('Authentication template requires its OTP as the only body parameter.'));
-		}
-		$parameters = [];
-		foreach ($bodyParameters as $parameter) {
-			if (!is_string($parameter) || trim($parameter) === '') {
-				throw new MessageTransmissionException($this->l10n->t('Template body parameters must be non-empty strings.'));
-			}
-			$parameters[] = ['type' => 'text', 'text' => $parameter];
-		}
-		$expectedCount = $extra['expected_body_parameter_count'] ?? null;
-		if ($expectedCount !== null && (!is_int($expectedCount) || $expectedCount < 1 || $expectedCount !== count($parameters))) {
-			throw new MessageTransmissionException($this->l10n->t('Template body parameter count does not match the configured template.'));
-		}
-		$components = [
-			[
-				'type' => 'body',
-				'parameters' => $parameters,
-			],
-		];
-		if ($category === 'AUTHENTICATION') {
-			// Copy Code buttons use a URL-type parameter at index zero.
-			$components[] = [
-				'type' => 'button',
-				'sub_type' => 'url',
-				'index' => '0',
-				'parameters' => [['type' => 'text', 'text' => $code]],
-			];
+		try {
+			$components = (new TemplateMessageBuilder())->build(
+				$message,
+				$extra,
+				$category,
+				$this->resolveTemplateBodyParameterCount($extra),
+			);
+		} catch (\InvalidArgumentException $e) {
+			// Builder errors are fixed, content-free messages.
+			throw new MessageTransmissionException($this->l10n->t($e->getMessage()));
 		}
 
 		$url = sprintf('https://graph.facebook.com/%s/%s/messages', trim($this->resolveApiVersion()), trim($this->getPhoneNumberId()));
@@ -504,6 +480,9 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			'template_name' => $templateName,
 			'template_language' => $templateLanguage,
 			'template_category' => $templateCategory,
+			'template_body_parameter_count' => is_array($selectedTemplate)
+				? (string)($selectedTemplate['body_parameter_count'] ?? '')
+				: '',
 		];
 
 		$this->appConfig->setValueString(
@@ -866,6 +845,23 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			}
 		}
 		return $metadata;
+	}
+
+	/** Determine the trusted count only when the selected template matches. */
+	private function resolveTemplateBodyParameterCount(array $extra): ?int {
+		if (($extra['template_name'] ?? $this->resolveTemplateName([])) !== $this->resolveTemplateName([])
+			|| ($extra['template_language'] ?? $this->resolveTemplateLanguage([])) !== $this->resolveTemplateLanguage([])) {
+			return null;
+		}
+		try {
+			$value = trim($this->getTemplateBodyParameterCount());
+		} catch (\Throwable) {
+			return null; // Configurations created before the count was recorded.
+		}
+		if (!ctype_digit($value) || (int)$value < 1) {
+			throw new MessageTransmissionException($this->l10n->t('Invalid configured template body parameter count.'));
+		}
+		return (int)$value;
 	}
 
 	private function resolveTemplateCategory(array $extra): string {

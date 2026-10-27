@@ -62,6 +62,7 @@ class GatewayTest extends AppTestCase {
 		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_name']->getExposure());
 		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_language']->getExposure());
 		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_category']->getExposure());
+		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_body_parameter_count']->getExposure());
 	}
 
 	public function testSendUsesTemplateAndDefaultApiVersionWhenNotConfigured(): void {
@@ -111,38 +112,6 @@ class GatewayTest extends AppTestCase {
 		]);
 	}
 
-	public function testMissingUtilityParametersPreventHttpRequest(): void {
-		$this->gateway->setPhoneNumberId('synthetic-phone-id');
-		$this->gateway->setTemplateName('synthetic_utility');
-		$this->gateway->setTemplateLanguage('pt_BR');
-		$this->client->expects($this->never())->method('post');
-		$this->expectException(MessageTransmissionException::class);
-		$this->gateway->send('5511999990000', 'Fallback', [
-			'body_parameters' => ['Only one'],
-			'expected_body_parameter_count' => 2,
-		]);
-	}
-
-	public function testUnorderedUtilityParametersPreventHttpRequest(): void {
-		$this->gateway->setPhoneNumberId('synthetic-phone-id');
-		$this->gateway->setTemplateName('synthetic_utility');
-		$this->gateway->setTemplateLanguage('pt_BR');
-		$this->client->expects($this->never())->method('post');
-		$this->expectException(MessageTransmissionException::class);
-		$this->gateway->send('5511999990000', 'Fallback', [
-			'body_parameters' => [1 => 'Second', 0 => 'First'],
-		]);
-	}
-
-	public function testNullBodyParametersDoNotFallBackToMessage(): void {
-		$this->gateway->setPhoneNumberId('synthetic-phone-id');
-		$this->gateway->setTemplateName('synthetic_utility');
-		$this->gateway->setTemplateLanguage('pt_BR');
-		$this->client->expects($this->never())->method('post');
-		$this->expectException(MessageTransmissionException::class);
-		$this->gateway->send('5511999990000', 'Fallback', ['body_parameters' => null]);
-	}
-
 	public function testMetaParameterMismatchDoesNotExposePayloadOrCredentialsInLogs(): void {
 		$this->gateway->setPhoneNumberId('synthetic-phone-id');
 		$this->gateway->setAccessToken('synthetic-credential-private');
@@ -170,17 +139,14 @@ class GatewayTest extends AppTestCase {
 		]);
 	}
 
-	public function testAuthenticationRejectsMultipleBodyParameters(): void {
+	public function testSavedTemplateCountRejectsIncompletePayloadBeforeHttp(): void {
 		$this->gateway->setPhoneNumberId('synthetic-phone-id');
-		$this->gateway->setTemplateName('synthetic_auth');
+		$this->gateway->setTemplateName('synthetic_utility');
 		$this->gateway->setTemplateLanguage('pt_BR');
-		$this->gateway->setTemplateCategory('AUTHENTICATION');
+		$this->gateway->setTemplateBodyParameterCount('2');
 		$this->client->expects($this->never())->method('post');
 		$this->expectException(MessageTransmissionException::class);
-		$this->gateway->send('5511999990000', '123456', [
-			'code' => '123456',
-			'body_parameters' => ['123456', 'extra'],
-		]);
+		$this->gateway->send('5511999990000', 'Single legacy message');
 	}
 
 	public function testSendThrowsWhenTemplateNameIsMissing(): void {
@@ -245,6 +211,45 @@ class GatewayTest extends AppTestCase {
 		$this->expectExceptionMessage('Meta rejected the WhatsApp template message.');
 
 		$this->gateway->send('+55 (11) 99999-0000', 'Two Factor Gateway test message');
+	}
+
+	public function testHttp400ParameterMismatchOnlyLogsSafeMetadata(): void {
+		$this->gateway->setPhoneNumberId('synthetic-phone-id');
+		$this->gateway->setAccessToken('synthetic-bearer-value');
+		$this->gateway->setTemplateName('synthetic_utility');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$stream = $this->createStub(StreamInterface::class);
+		$stream->method('__toString')->willReturn((string)json_encode([
+			'error' => ['code' => 132000, 'message' => 'Synthetic private message'],
+		]));
+		$response = $this->createStub(IResponse::class);
+		$response->method('getStatusCode')->willReturn(400);
+		$response->method('getBody')->willReturn($stream);
+		$failure = new class($response) extends \RuntimeException {
+			public function __construct(
+				private IResponse $response,
+			) {
+				parent::__construct('Bearer synthetic-bearer-value and Synthetic private message');
+			}
+			public function getResponse(): IResponse {
+				return $this->response;
+			}
+		};
+		$this->client->expects($this->once())->method('post')->willThrowException($failure);
+		$this->logger->expects($this->once())->method('warning')->with(
+			'WhatsApp Business send failed.',
+			$this->callback(static function (array $context): bool {
+				$encoded = json_encode($context, JSON_THROW_ON_ERROR);
+				return ($context['httpStatus'] ?? null) === 400
+					&& ($context['metaErrorCode'] ?? null) === 132000
+					&& !str_contains($encoded, 'synthetic-bearer-value')
+					&& !str_contains($encoded, 'Synthetic private message')
+					&& !isset($context['exception']);
+			}),
+		);
+		$this->expectException(MessageTransmissionException::class);
+		$this->expectExceptionMessage('Failed to send message through WhatsApp Business.');
+		$this->gateway->send('5511999990000', 'Notification', ['body_parameters' => ['A', 'B']]);
 	}
 
 	public function testSendWrapsUnexpectedClientException(): void {
@@ -444,6 +449,7 @@ class GatewayTest extends AppTestCase {
 		]);
 		$this->assertSame('complete', $finished['step']);
 		$this->assertSame('AUTHENTICATION', $finished['result']['template_category']);
+		$this->assertSame('1', $finished['result']['template_body_parameter_count']);
 		$this->assertSame('configured_auth_code', $finished['result']['template_name']);
 		$this->assertSame(
 			'missing',
