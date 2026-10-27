@@ -91,6 +91,98 @@ class GatewayTest extends AppTestCase {
 		$this->gateway->send('+55 (11) 99999-0000', 'Two Factor Gateway test message');
 	}
 
+	public function testUtilityTemplatePreservesOrderedBodyParameters(): void {
+		$this->gateway->setPhoneNumberId('synthetic-phone-id');
+		$this->gateway->setAccessToken('synthetic-token');
+		$this->gateway->setTemplateName('synthetic_utility');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->gateway->setTemplateCategory('UTILITY');
+		$this->client->expects($this->once())->method('post')
+			->with($this->anything(), $this->callback(static fn (array $options): bool
+				=> ($options['json']['template']['components'][0]['parameters'] ?? null) === [
+					['type' => 'text', 'text' => 'First'],
+					['type' => 'text', 'text' => 'Second'],
+					['type' => 'text', 'text' => 'Third'],
+				]
+			))->willReturn($this->createJsonResponse(['messages' => [['id' => 'synthetic-id']]]));
+		$this->gateway->send('5511999990000', 'Fallback', [
+			'body_parameters' => ['First', 'Second', 'Third'],
+			'expected_body_parameter_count' => 3,
+		]);
+	}
+
+	public function testMissingUtilityParametersPreventHttpRequest(): void {
+		$this->gateway->setPhoneNumberId('synthetic-phone-id');
+		$this->gateway->setTemplateName('synthetic_utility');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->client->expects($this->never())->method('post');
+		$this->expectException(MessageTransmissionException::class);
+		$this->gateway->send('5511999990000', 'Fallback', [
+			'body_parameters' => ['Only one'],
+			'expected_body_parameter_count' => 2,
+		]);
+	}
+
+	public function testUnorderedUtilityParametersPreventHttpRequest(): void {
+		$this->gateway->setPhoneNumberId('synthetic-phone-id');
+		$this->gateway->setTemplateName('synthetic_utility');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->client->expects($this->never())->method('post');
+		$this->expectException(MessageTransmissionException::class);
+		$this->gateway->send('5511999990000', 'Fallback', [
+			'body_parameters' => [1 => 'Second', 0 => 'First'],
+		]);
+	}
+
+	public function testNullBodyParametersDoNotFallBackToMessage(): void {
+		$this->gateway->setPhoneNumberId('synthetic-phone-id');
+		$this->gateway->setTemplateName('synthetic_utility');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->client->expects($this->never())->method('post');
+		$this->expectException(MessageTransmissionException::class);
+		$this->gateway->send('5511999990000', 'Fallback', ['body_parameters' => null]);
+	}
+
+	public function testMetaParameterMismatchDoesNotExposePayloadOrCredentialsInLogs(): void {
+		$this->gateway->setPhoneNumberId('synthetic-phone-id');
+		$this->gateway->setAccessToken('synthetic-credential-private');
+		$this->gateway->setTemplateName('synthetic_utility');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->logger->expects($this->once())->method('warning')->with(
+			'WhatsApp Business send failed.',
+			$this->callback(static function (array $context): bool {
+				$serialized = json_encode($context, JSON_THROW_ON_ERROR);
+				return !str_contains($serialized, 'synthetic-credential-private')
+					&& !str_contains($serialized, 'Synthetic private variable')
+					&& !str_contains($serialized, '5511999990000')
+					&& !isset($context['exception']);
+			}),
+		);
+		$this->client->expects($this->once())->method('post')->willReturn(
+			$this->createJsonResponse(['error' => [
+				'code' => 132000,
+				'message' => 'Synthetic private variable',
+			]]),
+		);
+		$this->expectException(MessageTransmissionException::class);
+		$this->gateway->send('5511999990000', 'Fallback', [
+			'body_parameters' => ['Synthetic private variable'],
+		]);
+	}
+
+	public function testAuthenticationRejectsMultipleBodyParameters(): void {
+		$this->gateway->setPhoneNumberId('synthetic-phone-id');
+		$this->gateway->setTemplateName('synthetic_auth');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->gateway->setTemplateCategory('AUTHENTICATION');
+		$this->client->expects($this->never())->method('post');
+		$this->expectException(MessageTransmissionException::class);
+		$this->gateway->send('5511999990000', '123456', [
+			'code' => '123456',
+			'body_parameters' => ['123456', 'extra'],
+		]);
+	}
+
 	public function testSendThrowsWhenTemplateNameIsMissing(): void {
 		$this->gateway->setPhoneNumberId('test_9999999999999');
 		$this->gateway->setAccessToken('token-123');

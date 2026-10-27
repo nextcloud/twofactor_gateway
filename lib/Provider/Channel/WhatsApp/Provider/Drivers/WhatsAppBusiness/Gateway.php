@@ -142,10 +142,30 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 		// In 2FA flows only the OTP goes into the body parameter, not the
 		// free-form message used by other gateways.
 		$bodyParameter = $code !== '' ? $code : $message;
+		$bodyParameters = array_key_exists('body_parameters', $extra)
+			? $extra['body_parameters']
+			: [$bodyParameter];
+		if (!is_array($bodyParameters) || !array_is_list($bodyParameters) || $bodyParameters === []) {
+			throw new MessageTransmissionException($this->l10n->t('Template body parameters must be a non-empty ordered list.'));
+		}
+		if ($category === 'AUTHENTICATION' && (count($bodyParameters) !== 1 || $bodyParameters[0] !== $code)) {
+			throw new MessageTransmissionException($this->l10n->t('Authentication template requires its OTP as the only body parameter.'));
+		}
+		$parameters = [];
+		foreach ($bodyParameters as $parameter) {
+			if (!is_string($parameter) || trim($parameter) === '') {
+				throw new MessageTransmissionException($this->l10n->t('Template body parameters must be non-empty strings.'));
+			}
+			$parameters[] = ['type' => 'text', 'text' => $parameter];
+		}
+		$expectedCount = $extra['expected_body_parameter_count'] ?? null;
+		if ($expectedCount !== null && (!is_int($expectedCount) || $expectedCount < 1 || $expectedCount !== count($parameters))) {
+			throw new MessageTransmissionException($this->l10n->t('Template body parameter count does not match the configured template.'));
+		}
 		$components = [
 			[
 				'type' => 'body',
-				'parameters' => [['type' => 'text', 'text' => $bodyParameter]],
+				'parameters' => $parameters,
 			],
 		];
 		if ($category === 'AUTHENTICATION') {
