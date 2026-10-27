@@ -12,6 +12,7 @@ OC.L10N.register(
     "Groups" : "Групы",
     "Saving …" : "Захаванне …",
     "Save" : "Захаваць",
+    "optional" : "неабавязкова",
     "Cancel" : "Скасаваць",
     "Deleting …" : "Выдаленне …",
     "Collapse" : "Згарнуць",

@@ -10,6 +10,7 @@ OC.L10N.register(
     "Saving …" : "Зачувува  …",
     "Save" : "Сними",
     "Label" : "Ознака",
+    "optional" : "опционално",
     "Cancel" : "Откажи",
     "Reference" : "Референца",
     "Collapse" : "Собери",

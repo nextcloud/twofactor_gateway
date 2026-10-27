@@ -20,6 +20,7 @@ OC.L10N.register(
     "Save" : "Vista",
     "Provider" : "Þjónustuveita",
     "Label" : "Skýring",
+    "optional" : "valfrjálst",
     "Cancel" : "Cancel",
     "Deleting …" : "Eyði …",
     "Collapse" : "Fella saman",

@@ -17,6 +17,7 @@ OC.L10N.register(
     "Groups" : "Grupos",
     "Save" : "Guardar",
     "Label" : "Etiqueta",
+    "optional" : "opcional",
     "Cancel" : "Cancel",
     "Collapse" : "Colapsar",
     "Close" : "Cerrar",

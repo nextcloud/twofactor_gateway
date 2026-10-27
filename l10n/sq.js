@@ -9,6 +9,7 @@ OC.L10N.register(
     "Groups" : "Grupet",
     "Save" : "Ruaje",
     "Label" : "Etiketë",
+    "optional" : "opsionale",
     "Cancel" : "Cancel",
     "Collapse" : "Tkurre",
     "Close" : "Mbylleni",

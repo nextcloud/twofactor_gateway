@@ -1,6 +1,7 @@
 OC.L10N.register(
     "twofactor_gateway",
     {
+    "Enabled" : "Yoqilgan",
     "Edit" : "Tahrirlash",
     "Delete" : "Oʻchirish",
     "Groups" : "Groups",
