@@ -11,8 +11,8 @@ namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsA
 
 /**
  * A transport-independent description of the parameters a Meta template needs.
- * Non-authentication templates may have sequential positional body variables.
- * Authentication templates have one OTP body variable and a Copy Code button.
+ * This gateway supplies one body parameter and, for AUTHENTICATION, a Copy Code
+ * button at index zero.
  */
 final readonly class TemplateComponentSummary {
 	/**
@@ -115,19 +115,6 @@ final readonly class TemplateComponentSummary {
 
 	public function hasSingleBodyVariable(): bool {
 		return $this->bodyVariables === ['1'];
-	}
-
-	public function hasSequentialBodyVariables(): bool {
-		if ($this->bodyVariables === []) {
-			return false;
-		}
-		$indexes = array_map('intval', $this->bodyVariables);
-		sort($indexes, SORT_NUMERIC);
-		return $indexes === range(1, count($indexes));
-	}
-
-	public function bodyParameterCount(): int {
-		return count($this->bodyVariables);
 	}
 
 	public function hasCopyCodeButtonAtIndexZero(): bool {

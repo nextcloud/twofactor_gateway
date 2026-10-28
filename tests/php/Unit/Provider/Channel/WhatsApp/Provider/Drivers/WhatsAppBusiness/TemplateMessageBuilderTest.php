@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 final class TemplateMessageBuilderTest extends TestCase {
 	#[DataProvider('validUtilityCases')]
-	public function testPreservesOrderedValues(array $extra, ?int $count, array $expected): void {
-		$result = (new TemplateMessageBuilder())->build('Legacy message', $extra, 'UTILITY', $count);
+	public function testPreservesOrderedValues(array $extra, array $expected): void {
+		$result = (new TemplateMessageBuilder())->build('Legacy message', $extra, 'UTILITY');
 		$this->assertSame([[
 			'type' => 'body',
 			'parameters' => array_map(static fn (string $text): array => ['type' => 'text', 'text' => $text], $expected),
@@ -25,45 +25,45 @@ final class TemplateMessageBuilderTest extends TestCase {
 
 	public static function validUtilityCases(): array {
 		return [
-			'legacy' => [[], null, ['Legacy message']],
-			'one' => [['body_parameters' => ['Name']], 1, ['Name']],
-			'two' => [['body_parameters' => ['Name', 'https://example.invalid/sign']], 2, ['Name', 'https://example.invalid/sign']],
-			'three and order' => [['body_parameters' => ['First', 'Third', 'Second']], 3, ['First', 'Third', 'Second']],
-			'explicit count' => [['body_parameters' => ['First', 'Second'], 'expected_body_parameter_count' => 2], null, ['First', 'Second']],
-			'legacy code' => [['code' => '482931'], null, ['482931']],
+			'legacy' => [[], ['Legacy message']],
+			'one' => [['body_parameters' => ['Name']], ['Name']],
+			'two' => [['body_parameters' => ['Name', 'https://example.invalid/sign']], ['Name', 'https://example.invalid/sign']],
+			'three and order' => [['body_parameters' => ['First', 'Third', 'Second']], ['First', 'Third', 'Second']],
+			'explicit count' => [['body_parameters' => ['First', 'Second'], 'expected_body_parameter_count' => 2], ['First', 'Second']],
+			'legacy code' => [['code' => '482931'], ['482931']],
 		];
 	}
 
 	#[DataProvider('invalidUtilityCases')]
-	public function testRejectsIncompleteOrInvalidValues(array $extra, ?int $count): void {
+	public function testRejectsIncompleteOrInvalidValues(array $extra): void {
 		$this->expectException(\InvalidArgumentException::class);
-		(new TemplateMessageBuilder())->build('Legacy message', $extra, 'UTILITY', $count);
+		(new TemplateMessageBuilder())->build('Legacy message', $extra, 'UTILITY');
 	}
 
 	public static function invalidUtilityCases(): array {
 		return [
-			'null' => [['body_parameters' => null], null],
-			'empty' => [['body_parameters' => []], null],
-			'nonsequential keys' => [['body_parameters' => [1 => 'Second', 0 => 'First']], null],
-			'associative' => [['body_parameters' => ['name' => 'First']], null],
-			'missing' => [['body_parameters' => ['First']], 2],
-			'extra' => [['body_parameters' => ['First', 'Second']], 1],
-			'wrong expected' => [['body_parameters' => ['First'], 'expected_body_parameter_count' => 2], null],
-			'string count' => [['body_parameters' => ['First'], 'expected_body_parameter_count' => '1'], null],
-			'null entry' => [['body_parameters' => ['First', null]], null],
-			'number entry' => [['body_parameters' => ['First', 42]], null],
-			'empty entry' => [['body_parameters' => ['First', '']], null],
-			'blank entry' => [['body_parameters' => ['First', '  ']], null],
-			'line break' => [['body_parameters' => ["First\nSecond"]], null],
-			'tab' => [['body_parameters' => ["First\tSecond"]], null],
-			'carriage return' => [['body_parameters' => ["First\rSecond"]], null],
-			'excessive spaces' => [['body_parameters' => ['First     Second']], null],
-			'oversized text' => [['body_parameters' => [str_repeat('A', 1025)]], null],
+			'null' => [['body_parameters' => null]],
+			'empty' => [['body_parameters' => []]],
+			'nonsequential keys' => [['body_parameters' => [1 => 'Second', 0 => 'First']]],
+			'associative' => [['body_parameters' => ['name' => 'First']]],
+			'missing' => [['body_parameters' => ['First'], 'expected_body_parameter_count' => 2]],
+			'extra' => [['body_parameters' => ['First', 'Second'], 'expected_body_parameter_count' => 1]],
+			'wrong expected' => [['body_parameters' => ['First'], 'expected_body_parameter_count' => 2]],
+			'string count' => [['body_parameters' => ['First'], 'expected_body_parameter_count' => '1']],
+			'null entry' => [['body_parameters' => ['First', null]]],
+			'number entry' => [['body_parameters' => ['First', 42]]],
+			'empty entry' => [['body_parameters' => ['First', '']]],
+			'blank entry' => [['body_parameters' => ['First', '  ']]],
+			'line break' => [['body_parameters' => ["First\nSecond"]]],
+			'tab' => [['body_parameters' => ["First\tSecond"]]],
+			'carriage return' => [['body_parameters' => ["First\rSecond"]]],
+			'excessive spaces' => [['body_parameters' => ['First     Second']]],
+			'oversized text' => [['body_parameters' => [str_repeat('A', 1025)]]],
 		];
 	}
 
 	public function testAuthenticationCopiesOtpToBodyAndButton(): void {
-		$actual = (new TemplateMessageBuilder())->build('Login', ['code' => '482931'], 'AUTHENTICATION', 1);
+		$actual = (new TemplateMessageBuilder())->build('Login', ['code' => '482931'], 'AUTHENTICATION');
 		$this->assertSame([
 			['type' => 'body', 'parameters' => [['type' => 'text', 'text' => '482931']]],
 			['type' => 'button', 'sub_type' => 'url', 'index' => '0', 'parameters' => [['type' => 'text', 'text' => '482931']]],
@@ -73,7 +73,7 @@ final class TemplateMessageBuilderTest extends TestCase {
 	#[DataProvider('invalidOtpCases')]
 	public function testInvalidOtpDoesNotProduceComponents(array $extra): void {
 		$this->expectException(\InvalidArgumentException::class);
-		(new TemplateMessageBuilder())->build('Login', $extra, 'AUTHENTICATION', 1);
+		(new TemplateMessageBuilder())->build('Login', $extra, 'AUTHENTICATION');
 	}
 
 	public static function invalidOtpCases(): array {

@@ -62,7 +62,6 @@ class GatewayTest extends AppTestCase {
 		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_name']->getExposure());
 		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_language']->getExposure());
 		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_category']->getExposure());
-		$this->assertSame(FieldExposure::DELEGATED->value, $fieldByName['template_body_parameter_count']->getExposure());
 	}
 
 	public function testSendUsesTemplateAndDefaultApiVersionWhenNotConfigured(): void {
@@ -112,6 +111,35 @@ class GatewayTest extends AppTestCase {
 		]);
 	}
 
+	public function testDirectCallerCanOverrideOtpTemplateWithoutChangingAdminSettings(): void {
+		$this->gateway->setPhoneNumberId('synthetic-id');
+		$this->gateway->setAccessToken('synthetic-token');
+		$this->gateway->setTemplateName('configured_auth');
+		$this->gateway->setTemplateLanguage('en_US');
+		$this->gateway->setTemplateCategory('AUTHENTICATION');
+		$this->client->expects($this->once())->method('post')->with(
+			$this->anything(),
+			$this->callback(static fn (array $options): bool
+				=> $options['json']['template'] === [
+					'name' => 'utility_notification',
+					'language' => ['code' => 'pt_BR'],
+					'components' => [['type' => 'body', 'parameters' => [
+						['type' => 'text', 'text' => 'Synthetic document'],
+						['type' => 'text', 'text' => 'https://example.invalid/sign'],
+					]]],
+				],
+			))->willReturn($this->createJsonResponse(['messages' => [['id' => 'synthetic-id']]]));
+		$this->gateway->send('5511999990000', 'Fallback', [
+			'template_name' => 'utility_notification',
+			'template_language' => 'pt_BR',
+			'template_category' => 'UTILITY',
+			'body_parameters' => ['Synthetic document', 'https://example.invalid/sign'],
+			'expected_body_parameter_count' => 2,
+		]);
+		$this->assertSame('configured_auth', $this->gateway->getTemplateName());
+		$this->assertSame('AUTHENTICATION', $this->gateway->getTemplateCategory());
+	}
+
 	public function testMetaParameterMismatchDoesNotExposePayloadOrCredentialsInLogs(): void {
 		$this->gateway->setPhoneNumberId('synthetic-phone-id');
 		$this->gateway->setAccessToken('synthetic-credential-private');
@@ -139,14 +167,30 @@ class GatewayTest extends AppTestCase {
 		]);
 	}
 
-	public function testSavedTemplateCountRejectsIncompletePayloadBeforeHttp(): void {
+	public function testCallerDeclaredCountRejectsIncompletePayloadBeforeHttp(): void {
 		$this->gateway->setPhoneNumberId('synthetic-phone-id');
 		$this->gateway->setTemplateName('synthetic_utility');
 		$this->gateway->setTemplateLanguage('pt_BR');
-		$this->gateway->setTemplateBodyParameterCount('2');
 		$this->client->expects($this->never())->method('post');
 		$this->expectException(MessageTransmissionException::class);
-		$this->gateway->send('5511999990000', 'Single legacy message');
+		$this->gateway->send('5511999990000', 'Legacy message', [
+			'body_parameters' => ['First'], 'expected_body_parameter_count' => 2,
+		]);
+	}
+
+	public function testLegacyOneBodyVariableRemainsUnchanged(): void {
+		$this->gateway->setPhoneNumberId('synthetic-phone-id');
+		$this->gateway->setAccessToken('synthetic-token');
+		$this->gateway->setTemplateName('synthetic_utility');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$this->client->expects($this->once())->method('post')->with(
+			$this->anything(),
+			$this->callback(static fn (array $options): bool
+				=> ($options['json']['template']['components'][0]['parameters'] ?? null) === [
+					['type' => 'text', 'text' => 'Legacy single value'],
+				]),
+		)->willReturn($this->createJsonResponse(['messages' => [['id' => 'synthetic-id']]]));
+		$this->gateway->send('5511999990000', 'Legacy single value');
 	}
 
 	public function testSendThrowsWhenTemplateNameIsMissing(): void {
@@ -449,7 +493,6 @@ class GatewayTest extends AppTestCase {
 		]);
 		$this->assertSame('complete', $finished['step']);
 		$this->assertSame('AUTHENTICATION', $finished['result']['template_category']);
-		$this->assertSame('1', $finished['result']['template_body_parameter_count']);
 		$this->assertSame('configured_auth_code', $finished['result']['template_name']);
 		$this->assertSame(
 			'missing',
