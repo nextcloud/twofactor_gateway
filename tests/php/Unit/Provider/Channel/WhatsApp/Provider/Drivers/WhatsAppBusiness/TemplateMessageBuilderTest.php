@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 final class TemplateMessageBuilderTest extends TestCase {
 	#[DataProvider('validUtilityCases')]
 	public function testPreservesOrderedValues(array $extra, array $expected): void {
-		$result = (new TemplateMessageBuilder())->build('Legacy message', $extra, 'UTILITY');
+		$result = (new TemplateMessageBuilder())->build('Default message', $extra, 'UTILITY');
 		$this->assertSame([[
 			'type' => 'body',
 			'parameters' => array_map(static fn (string $text): array => ['type' => 'text', 'text' => $text], $expected),
@@ -25,19 +25,19 @@ final class TemplateMessageBuilderTest extends TestCase {
 
 	public static function validUtilityCases(): array {
 		return [
-			'legacy' => [[], ['Legacy message']],
+			'default single message' => [[], ['Default message']],
 			'one' => [['body_parameters' => ['Name']], ['Name']],
 			'two' => [['body_parameters' => ['Name', 'https://example.invalid/sign']], ['Name', 'https://example.invalid/sign']],
 			'three and order' => [['body_parameters' => ['First', 'Third', 'Second']], ['First', 'Third', 'Second']],
 			'explicit count' => [['body_parameters' => ['First', 'Second'], 'expected_body_parameter_count' => 2], ['First', 'Second']],
-			'legacy code' => [['code' => '482931'], ['482931']],
+			'code supplied as one message' => [['code' => '482931'], ['482931']],
 		];
 	}
 
 	#[DataProvider('invalidUtilityCases')]
 	public function testRejectsIncompleteOrInvalidValues(array $extra): void {
 		$this->expectException(\InvalidArgumentException::class);
-		(new TemplateMessageBuilder())->build('Legacy message', $extra, 'UTILITY');
+		(new TemplateMessageBuilder())->build('Default message', $extra, 'UTILITY');
 	}
 
 	public static function invalidUtilityCases(): array {
@@ -59,7 +59,17 @@ final class TemplateMessageBuilderTest extends TestCase {
 			'carriage return' => [['body_parameters' => ["First\rSecond"]]],
 			'excessive spaces' => [['body_parameters' => ['First     Second']]],
 			'oversized text' => [['body_parameters' => [str_repeat('A', 1025)]]],
+			'explicit null count' => [['body_parameters' => ['First'], 'expected_body_parameter_count' => null]],
+			'zero count' => [['body_parameters' => ['First'], 'expected_body_parameter_count' => 0]],
+			'negative count' => [['body_parameters' => ['First'], 'expected_body_parameter_count' => -1]],
+			'unknown category token' => [['code' => null]],
+			'embedded control character' => [['body_parameters' => ["First\0Second"]]],
 		];
+	}
+
+	public function testRejectsUnknownTemplateCategoryInsteadOfDroppingOtpRules(): void {
+		$this->expectException(\InvalidArgumentException::class);
+		(new TemplateMessageBuilder())->build('Notification', ['code' => '482931'], 'AUTHENTICATION_CHANGED');
 	}
 
 	public function testAuthenticationCopiesOtpToBodyAndButton(): void {

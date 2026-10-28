@@ -11,7 +11,6 @@ namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsA
 
 use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
-use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
 use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Provider\FieldType;
@@ -122,7 +121,6 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 		if ($to === '') {
 			throw new MessageTransmissionException($this->l10n->t('Invalid phone number for WhatsApp Business.'));
 		}
-		$maskedIdentifier = PhoneNumberMask::maskIdentifier($identifier);
 
 		$templateName = $this->resolveTemplateName($extra);
 		if ($templateName === '') {
@@ -168,17 +166,13 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 				throw new MessageTransmissionException($this->l10n->t('Meta rejected the WhatsApp template message.'));
 			}
 		} catch (MessageTransmissionException $e) {
-			$this->logger->warning('WhatsApp Business send failed.', [
-				'identifier' => $maskedIdentifier,
-				'errorClass' => $e::class,
-			]);
+			$this->logger->warning('WhatsApp Business send failed.', ['reason' => 'meta_rejected']);
 			throw $e;
 		} catch (\Throwable $e) {
-			// Guzzle exceptions retain the original request including the
-			// Authorization header. Neither the exception nor its message
-			// may be included in a logging context.
+			// HTTP exceptions can retain recipients, signed URLs and Authorization headers.
+			// Log only fixed reasons and bounded numeric provider error codes.
 			$this->logger->warning('WhatsApp Business send failed.', [
-				'identifier' => $maskedIdentifier,
+				'reason' => 'transport_failure',
 				...$this->safeMetaErrorMetadata($e),
 			]);
 			throw new MessageTransmissionException($this->l10n->t('Failed to send message through WhatsApp Business.'));
@@ -809,30 +803,43 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 	}
 
 	/**
-	 * Never include raw HTTP exceptions, request objects or response bodies
-	 * in logs. They can contain Bearer credentials and personal information.
+	 * Extract bounded numeric Meta diagnostics only. Exception messages and
+	 * response bodies may contain credentials, recipients or document data.
 	 *
-	 * @return array<string, string|int>
+	 * @return array<string, int>
 	 */
-	private function safeMetaErrorMetadata(\Throwable $e): array {
-		$metadata = ['errorClass' => $e::class];
-		if (!method_exists($e, 'getResponse')) {
-			return $metadata;
-		}
-		$response = $e->getResponse();
-		if ($response === null) {
-			return $metadata;
-		}
-		$metadata['httpStatus'] = (int)$response->getStatusCode();
-		$decoded = json_decode((string)$response->getBody(), true);
-		if (is_array($decoded) && isset($decoded['error']) && is_array($decoded['error'])) {
-			foreach (['code' => 'metaErrorCode', 'error_subcode' => 'metaErrorSubcode'] as $key => $name) {
-				if (isset($decoded['error'][$key]) && is_numeric($decoded['error'][$key])) {
-					$metadata[$name] = (int)$decoded['error'][$key];
+	private function safeMetaErrorMetadata(\Throwable $error): array {
+		try {
+			if (!method_exists($error, 'getResponse')) {
+				return [];
+			}
+			$response = $error->getResponse();
+			if (!is_object($response) || !method_exists($response, 'getStatusCode')
+				|| !method_exists($response, 'getBody')) {
+				return [];
+			}
+			$status = $response->getStatusCode();
+			if (!is_int($status) || $status < 100 || $status > 599) {
+				return [];
+			}
+			$metadata = ['httpStatus' => $status];
+			$raw = (string)$response->getBody();
+			if (strlen($raw) > 8192) {
+				return $metadata;
+			}
+			$decoded = json_decode($raw, true, 8);
+			if (is_array($decoded) && is_array($decoded['error'] ?? null)) {
+				foreach (['code' => 'metaErrorCode', 'error_subcode' => 'metaErrorSubcode'] as $key => $name) {
+					$value = $decoded['error'][$key] ?? null;
+					if (is_int($value) && $value >= 0) {
+						$metadata[$name] = $value;
+					}
 				}
 			}
+			return $metadata;
+		} catch (\Throwable) {
+			return [];
 		}
-		return $metadata;
 	}
 
 	private function resolveTemplateCategory(array $extra): string {

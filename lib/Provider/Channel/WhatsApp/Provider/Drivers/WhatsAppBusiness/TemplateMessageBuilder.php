@@ -19,6 +19,9 @@ final class TemplateMessageBuilder {
 	 * @return list<array<string, mixed>>
 	 */
 	public function build(string $message, array $extra, string $category): array {
+		if (!in_array($category, ['', 'UTILITY', 'MARKETING', 'AUTHENTICATION'], true)) {
+			throw new \InvalidArgumentException('Unsupported WhatsApp Business template category.');
+		}
 		$code = $this->code($extra, $category);
 		$values = $this->values($message, $extra, $code);
 		$this->validateCount($extra, $values);
@@ -33,14 +36,14 @@ final class TemplateMessageBuilder {
 
 	/** @param array<string, mixed> $extra */
 	private function code(array $extra, string $category): string {
-		$candidate = $extra['code'] ?? '';
-		if ($category === 'AUTHENTICATION') {
-			if (!is_string($candidate) || preg_match('/^[0-9]{4,15}$/D', $candidate) !== 1) {
-				throw new \InvalidArgumentException('Authentication template requires a numeric OTP code.');
-			}
-			return $candidate;
+		$candidate = array_key_exists('code', $extra) ? $extra['code'] : '';
+		if (!is_string($candidate)) {
+			throw new \InvalidArgumentException('Invalid authentication code type.');
 		}
-		return is_scalar($candidate) ? trim((string)$candidate) : '';
+		if ($category === 'AUTHENTICATION' && preg_match('/^[0-9]{4,15}$/D', $candidate) !== 1) {
+			throw new \InvalidArgumentException('Authentication template requires a numeric OTP code.');
+		}
+		return $category === 'AUTHENTICATION' ? $candidate : trim($candidate);
 	}
 
 	/**
@@ -48,7 +51,7 @@ final class TemplateMessageBuilder {
 	 * @return list<mixed>
 	 */
 	private function values(string $message, array $extra, string $code): array {
-		// An absent option preserves legacy single-variable delivery.
+		// An absent option uses the current single-parameter message contract.
 		// Explicitly invalid values must never fall back to $message.
 		$values = array_key_exists('body_parameters', $extra)
 			? $extra['body_parameters']
@@ -64,12 +67,12 @@ final class TemplateMessageBuilder {
 	 * @param list<mixed> $values
 	 */
 	private function validateCount(array $extra, array $values): void {
-		$expected = $extra['expected_body_parameter_count'] ?? null;
-		if ($expected !== null && (!is_int($expected) || $expected < 1)) {
-			throw new \InvalidArgumentException('Invalid expected template body parameter count.');
+		if (!array_key_exists('expected_body_parameter_count', $extra)) {
+			return;
 		}
-		if ($expected !== null && $expected !== count($values)) {
-			throw new \InvalidArgumentException('Template body parameter count does not match the configured template.');
+		$expected = $extra['expected_body_parameter_count'];
+		if (!is_int($expected) || $expected < 1 || $expected !== count($values)) {
+			throw new \InvalidArgumentException('Invalid expected template body parameter count.');
 		}
 	}
 
@@ -85,7 +88,7 @@ final class TemplateMessageBuilder {
 		if (!is_string($value) || trim($value) === '' || !mb_check_encoding($value, 'UTF-8')) {
 			throw new \InvalidArgumentException('Template body parameters must be non-empty strings.');
 		}
-		if (preg_match('/[\r\n\t]| {5}/', $value) === 1) {
+		if (preg_match('/[\x00-\x1F\x7F]| {5}/', $value) === 1) {
 			throw new \InvalidArgumentException('Template body parameters cannot contain line breaks, tabs or excessive spaces.');
 		}
 		if (mb_strlen($value, 'UTF-8') > 1024) {
