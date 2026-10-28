@@ -18,10 +18,10 @@ final class TemplateMessageBuilder {
 	 * @param array<string, mixed> $extra
 	 * @return list<array<string, mixed>>
 	 */
-	public function build(string $message, array $extra, string $category, ?int $configuredCount = null): array {
+	public function build(string $message, array $extra, string $category): array {
 		$code = $this->code($extra, $category);
 		$values = $this->values($message, $extra, $code);
-		$this->validateCount($extra, $values, $configuredCount);
+		$this->validateCount($extra, $values);
 		$this->validateAuthenticationBody($category, $values, $code);
 
 		$components = [['type' => 'body', 'parameters' => array_map($this->textParameter(...), $values)]];
@@ -63,13 +63,12 @@ final class TemplateMessageBuilder {
 	 * @param array<string, mixed> $extra
 	 * @param list<mixed> $values
 	 */
-	private function validateCount(array $extra, array $values, ?int $configuredCount): void {
+	private function validateCount(array $extra, array $values): void {
 		$expected = $extra['expected_body_parameter_count'] ?? null;
 		if ($expected !== null && (!is_int($expected) || $expected < 1)) {
 			throw new \InvalidArgumentException('Invalid expected template body parameter count.');
 		}
-		if (($expected !== null && $expected !== count($values))
-			|| ($configuredCount !== null && $configuredCount !== count($values))) {
+		if ($expected !== null && $expected !== count($values)) {
 			throw new \InvalidArgumentException('Template body parameter count does not match the configured template.');
 		}
 	}

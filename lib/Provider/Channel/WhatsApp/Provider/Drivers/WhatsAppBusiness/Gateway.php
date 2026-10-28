@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsAppBusiness;
 
+use OCA\TwoFactorGateway\Exception\ConfigurationException;
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
 use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\FieldDefinition;
@@ -45,8 +46,6 @@ use Symfony\Component\Console\Question\Question;
  * @method static setTemplateLanguage(string $templateLanguage)
  * @method string getTemplateCategory()
  * @method static setTemplateCategory(string $templateCategory)
- * @method string getTemplateBodyParameterCount()
- * @method static setTemplateBodyParameterCount(string $templateBodyParameterCount)
  */
 class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInteractiveSetupGateway, IDefaultInstanceAwareGateway, ITestResultEnricher, ITestMessageProvider {
 	public function __construct(
@@ -92,7 +91,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 				new FieldDefinition(
 					field: 'template_name',
 					prompt: 'Template name:',
-					helper: 'Use an approved template. AUTHENTICATION needs one OTP variable; other categories support ordered body variables {{1}}, {{2}}, etc.',
+					helper: 'If set, outbound messages are sent using this approved template. For Two Factor Gateway, keep one body variable {{1}} to receive the verification token/message.',
 					exposure: FieldExposure::DELEGATED,
 				),
 				new FieldDefinition(
@@ -105,13 +104,6 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 					field: 'template_category',
 					prompt: 'Template category (optional):',
 					helper: 'Detected by the wizard. Use AUTHENTICATION for an approved Copy Code OTP template.',
-					optional: true,
-					exposure: FieldExposure::DELEGATED,
-				),
-				new FieldDefinition(
-					field: 'template_body_parameter_count',
-					prompt: 'Number of template body parameters (optional):',
-					helper: 'Detected from the approved template by the wizard. Configure manually to validate the count before sending.',
 					optional: true,
 					exposure: FieldExposure::DELEGATED,
 				),
@@ -147,7 +139,6 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 				$message,
 				$extra,
 				$category,
-				$this->resolveTemplateBodyParameterCount($extra),
 			);
 		} catch (\InvalidArgumentException $e) {
 			// Builder errors are fixed, content-free messages.
@@ -480,9 +471,6 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 			'template_name' => $templateName,
 			'template_language' => $templateLanguage,
 			'template_category' => $templateCategory,
-			'template_body_parameter_count' => is_array($selectedTemplate)
-				? (string)($selectedTemplate['body_parameter_count'] ?? '')
-				: '',
 		];
 
 		$this->appConfig->setValueString(
@@ -847,23 +835,6 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 		return $metadata;
 	}
 
-	/** Determine the trusted count only when the selected template matches. */
-	private function resolveTemplateBodyParameterCount(array $extra): ?int {
-		if (($extra['template_name'] ?? $this->resolveTemplateName([])) !== $this->resolveTemplateName([])
-			|| ($extra['template_language'] ?? $this->resolveTemplateLanguage([])) !== $this->resolveTemplateLanguage([])) {
-			return null;
-		}
-		try {
-			$value = trim($this->getTemplateBodyParameterCount());
-		} catch (\Throwable) {
-			return null; // Configurations created before the count was recorded.
-		}
-		if (!ctype_digit($value) || (int)$value < 1) {
-			throw new MessageTransmissionException($this->l10n->t('Invalid configured template body parameter count.'));
-		}
-		return (int)$value;
-	}
-
 	private function resolveTemplateCategory(array $extra): string {
 		$override = strtoupper(trim((string)($extra['template_category'] ?? '')));
 		if ($override !== '') {
@@ -871,7 +842,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 		}
 		try {
 			return strtoupper(trim($this->getTemplateCategory()));
-		} catch (\Throwable) {
+		} catch (ConfigurationException) {
 			// Older instances do not persist a category.
 			return '';
 		}
@@ -885,7 +856,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 
 		try {
 			return trim($this->getTemplateName());
-		} catch (\Throwable) {
+		} catch (ConfigurationException) {
 			return '';
 		}
 	}
@@ -898,7 +869,7 @@ class Gateway extends AGateway implements IConfigurationChangeAwareGateway, IInt
 
 		try {
 			return trim($this->getTemplateLanguage());
-		} catch (\Throwable) {
+		} catch (ConfigurationException) {
 			return '';
 		}
 	}

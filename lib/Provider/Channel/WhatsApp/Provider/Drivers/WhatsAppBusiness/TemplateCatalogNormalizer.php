@@ -13,7 +13,7 @@ namespace OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsA
 final class TemplateCatalogNormalizer {
 	/**
 	 * @param array<mixed> $rawTemplates
-	 * @return list<array<string, string|bool|int>>
+	 * @return list<array<string, string|bool>>
 	 */
 	public function normalize(array $rawTemplates): array {
 		$templates = [];
@@ -38,7 +38,6 @@ final class TemplateCatalogNormalizer {
 				'language' => $language,
 				'status' => $status,
 				'category' => $category,
-				'body_parameter_count' => $components->bodyParameterCount(),
 				'body' => $components->body,
 				'header' => $components->header,
 				'footer' => $components->footer,

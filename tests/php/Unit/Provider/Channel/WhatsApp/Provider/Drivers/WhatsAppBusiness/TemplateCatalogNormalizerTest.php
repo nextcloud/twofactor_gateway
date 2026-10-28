@@ -50,8 +50,7 @@ class TemplateCatalogNormalizerTest extends TestCase {
 		]];
 		$notApproved = 'Template is not approved.';
 		$badComponent = 'Template contains unsupported components.';
-		$badBody = 'Template body variables must be sequential and start at {{1}}.';
-		$badAuthBody = 'Authentication template requires exactly one body variable {{1}}.';
+		$badBody = 'Template must contain exactly one body variable {{1}}.';
 		$dynamic = 'Template requires header or button parameters this gateway cannot send.';
 		$badCopy = 'Only one Copy Code OTP button at index zero is supported.';
 		$badNonAuth = 'OTP buttons require a supported authentication template.';
@@ -77,19 +76,7 @@ class TemplateCatalogNormalizerTest extends TestCase {
 			'utility without body parameter' => ['APPROVED', 'UTILITY', [$bodyWithoutVariable], false, $badBody],
 			'utility two body variables' => ['APPROVED', 'UTILITY', [
 				['type' => 'BODY', 'text' => '{{1}} and {{2}}'],
-			], true, ''],
-			'utility three body variables' => ['APPROVED', 'UTILITY', [
-				['type' => 'BODY', 'text' => '{{1}} then {{2}} then {{3}}'],
-			], true, ''],
-			'utility gap in numbering' => ['APPROVED', 'UTILITY', [
-				['type' => 'BODY', 'text' => '{{1}} then {{3}}'],
 			], false, $badBody],
-			'utility placeholders may appear out of order' => ['APPROVED', 'UTILITY', [
-				['type' => 'BODY', 'text' => '{{2}} then {{1}}'],
-			], true, ''],
-			'auth multiple body variables' => ['APPROVED', 'AUTHENTICATION', [
-				['type' => 'BODY', 'text' => '{{1}} and {{2}}'], $copyButtons,
-			], false, $badAuthBody],
 			'duplicate first body variable' => ['APPROVED', 'UTILITY', [
 				['type' => 'BODY', 'text' => '{{1}} and again {{1}}'],
 			], false, $badBody],
@@ -144,7 +131,6 @@ class TemplateCatalogNormalizerTest extends TestCase {
 			'language' => 'pt_BR',
 			'status' => 'APPROVED',
 			'category' => 'UTILITY',
-			'body_parameter_count' => 1,
 			'body' => 'Use {{ 1 }} to login',
 			'header' => 'Static header',
 			'footer' => 'Static footer',
