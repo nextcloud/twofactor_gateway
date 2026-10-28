@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace OCA\TwoFactorGateway\Tests\Unit\Provider\Channel\WhatsApp\Provider\Drivers\WhatsAppBusiness;
 
 use OCA\TwoFactorGateway\Exception\MessageTransmissionException;
-use OCA\TwoFactorGateway\PhoneNumberMask;
 use OCA\TwoFactorGateway\Provider\Channel\WhatsApp\Provider\Drivers\WhatsAppBusiness\Gateway;
 use OCA\TwoFactorGateway\Provider\FieldExposure;
 use OCA\TwoFactorGateway\Tests\Unit\AppTestCase;
@@ -18,6 +17,7 @@ use OCP\Http\Client\IClient;
 use OCP\Http\Client\IClientService;
 use OCP\Http\Client\IResponse;
 use OCP\IL10N;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\StreamInterface;
 use Psr\Log\LoggerInterface;
@@ -152,7 +152,8 @@ class GatewayTest extends AppTestCase {
 				return !str_contains($serialized, 'synthetic-credential-private')
 					&& !str_contains($serialized, 'Synthetic private variable')
 					&& !str_contains($serialized, '5511999990000')
-					&& !isset($context['exception']);
+					&& ($context['reason'] ?? null) === 'meta_rejected'
+					&& !isset($context['exception'], $context['identifier'], $context['errorClass']);
 			}),
 		);
 		$this->client->expects($this->once())->method('post')->willReturn(
@@ -173,12 +174,12 @@ class GatewayTest extends AppTestCase {
 		$this->gateway->setTemplateLanguage('pt_BR');
 		$this->client->expects($this->never())->method('post');
 		$this->expectException(MessageTransmissionException::class);
-		$this->gateway->send('5511999990000', 'Legacy message', [
+		$this->gateway->send('5511999990000', 'Default message', [
 			'body_parameters' => ['First'], 'expected_body_parameter_count' => 2,
 		]);
 	}
 
-	public function testLegacyOneBodyVariableRemainsUnchanged(): void {
+	public function testDefaultSingleBodyVariableRemainsUnchanged(): void {
 		$this->gateway->setPhoneNumberId('synthetic-phone-id');
 		$this->gateway->setAccessToken('synthetic-token');
 		$this->gateway->setTemplateName('synthetic_utility');
@@ -187,10 +188,10 @@ class GatewayTest extends AppTestCase {
 			$this->anything(),
 			$this->callback(static fn (array $options): bool
 				=> ($options['json']['template']['components'][0]['parameters'] ?? null) === [
-					['type' => 'text', 'text' => 'Legacy single value'],
+					['type' => 'text', 'text' => 'Default single value'],
 				]),
 		)->willReturn($this->createJsonResponse(['messages' => [['id' => 'synthetic-id']]]));
-		$this->gateway->send('5511999990000', 'Legacy single value');
+		$this->gateway->send('5511999990000', 'Default single value');
 	}
 
 	public function testSendThrowsWhenTemplateNameIsMissing(): void {
@@ -231,16 +232,13 @@ class GatewayTest extends AppTestCase {
 		$this->gateway->setAccessToken('token-123');
 		$this->gateway->setTemplateName('test_twofactor_token');
 		$this->gateway->setTemplateLanguage('pt_BR');
-		$maskedIdentifier = PhoneNumberMask::maskIdentifier('+55 (11) 99999-0000');
 
 		$this->logger->expects($this->once())
 			->method('warning')
 			->with(
 				'WhatsApp Business send failed.',
-				$this->callback(static function (array $context) use ($maskedIdentifier): bool {
-					return ($context['identifier'] ?? null) === $maskedIdentifier
-						&& ($context['errorClass'] ?? null) === MessageTransmissionException::class;
-				}),
+				$this->callback(static fn (array $context): bool
+					=> $context === ['reason' => 'meta_rejected']),
 			);
 
 		$this->client->expects($this->once())
@@ -288,12 +286,53 @@ class GatewayTest extends AppTestCase {
 					&& ($context['metaErrorCode'] ?? null) === 132000
 					&& !str_contains($encoded, 'synthetic-bearer-value')
 					&& !str_contains($encoded, 'Synthetic private message')
-					&& !isset($context['exception']);
+					&& ($context['reason'] ?? null) === 'transport_failure'
+					&& !isset($context['exception'], $context['identifier'], $context['errorClass']);
 			}),
 		);
 		$this->expectException(MessageTransmissionException::class);
 		$this->expectExceptionMessage('Failed to send message through WhatsApp Business.');
 		$this->gateway->send('5511999990000', 'Notification', ['body_parameters' => ['A', 'B']]);
+	}
+
+	#[DataProvider('untrustedProviderErrorBodies')]
+	public function testProviderErrorDetailsAreExcludedFromPublicErrorsAndLogs(string $untrustedResponse): void {
+		$this->gateway->setPhoneNumberId('synthetic-phone-id');
+		$this->gateway->setAccessToken('synthetic-secret');
+		$this->gateway->setTemplateName('synthetic_utility');
+		$this->gateway->setTemplateLanguage('pt_BR');
+		$stream = $this->createStub(StreamInterface::class);
+		$stream->method('__toString')->willReturn($untrustedResponse);
+		$response = $this->createStub(IResponse::class);
+		$response->method('getStatusCode')->willReturn(400);
+		$response->method('getBody')->willReturn($stream);
+		$error = new class($response) extends \RuntimeException {
+			public function __construct(
+				private IResponse $response,
+			) {
+				parent::__construct('synthetic-redaction-marker');
+			}
+			public function getResponse(): IResponse {
+				return $this->response;
+			}
+		};
+		$this->client->expects($this->once())->method('post')->willThrowException($error);
+		$this->logger->expects($this->once())->method('warning')->with(
+			'WhatsApp Business send failed.',
+			['reason' => 'transport_failure', 'httpStatus' => 400],
+		);
+		$this->expectException(MessageTransmissionException::class);
+		$this->expectExceptionMessage('Failed to send message through WhatsApp Business.');
+		$this->gateway->send('0000000000', 'Synthetic message');
+	}
+
+	public static function untrustedProviderErrorBodies(): array {
+		return [
+			'invalid JSON with sensitive text' => ['not-json synthetic-redaction-marker'],
+			'string provider code' => ['{"error":{"code":"132000","message":"synthetic-redaction-marker"}}'],
+			'oversized private response' => [str_repeat('synthetic-redaction-marker ', 500)],
+			'deeply nested response' => ['{"error":{"nested":{"nested":{"nested":{"nested":{"nested":{"nested":{"nested":{"nested":{"code":132000}}}}}}}}}}'],
+		];
 	}
 
 	public function testSendWrapsUnexpectedClientException(): void {
@@ -302,16 +341,13 @@ class GatewayTest extends AppTestCase {
 		$this->gateway->setAccessToken('token-123');
 		$this->gateway->setTemplateName('test_twofactor_token');
 		$this->gateway->setTemplateLanguage('pt_BR');
-		$maskedIdentifier = PhoneNumberMask::maskIdentifier('+55 (11) 99999-0000');
 
 		$this->logger->expects($this->once())
 			->method('warning')
 			->with(
 				'WhatsApp Business send failed.',
-				$this->callback(static function (array $context) use ($maskedIdentifier): bool {
-					return ($context['identifier'] ?? null) === $maskedIdentifier
-						&& ($context['errorClass'] ?? null) === \RuntimeException::class;
-				}),
+				$this->callback(static fn (array $context): bool
+					=> $context === ['reason' => 'transport_failure']),
 			);
 
 		$this->client->expects($this->once())
