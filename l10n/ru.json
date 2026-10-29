@@ -26,7 +26,6 @@
     "Invalid phone number for WhatsApp Business." : "Неверный номер телефона для WhatsApp Business.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "Для WhatsApp Business требуется имя шаблона. Настройте утверждённый шаблон с переменной тела {{1}}.",
     "Template language code is required for WhatsApp Business." : "Для WhatsApp Business требуется код языка шаблона.",
-    "Authentication template requires a numeric OTP code." : "Для шаблона аутентификации требуется числовой код OTP.",
     "Meta rejected the WhatsApp template message." : "Meta отклонила сообщение шаблона WhatsApp.",
     "Failed to send message through WhatsApp Business." : "Не удалось отправить сообщение через WhatsApp Business.",
     "XMPP verification" : "XMPP",
@@ -205,6 +204,7 @@
     "An access code has been sent to %s" : "Код доступа отправлен на %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Не удалось отправить сообщение. Повторите попытку позже или обратитесь к администратору.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Номер телефона был изменён и не прошёл повторную проверку. Используйте другой способ двухфакторной аутентификации или обратитесь к администратору.",
+    "Authentication template requires a numeric OTP code." : "Для шаблона аутентификации требуется числовой код OTP.",
     "Starting guided setup ..." : "Запуск пошаговой настройки…"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }

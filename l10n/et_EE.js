@@ -28,7 +28,6 @@ OC.L10N.register(
     "Invalid phone number for WhatsApp Business." : "WhatsAppi Businessi vigane telefoninumber.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "WhatsAppi Business eeldab malli nime olemasolu. Lisa heakskiidetud malli sisusse muutuja ({1}).",
     "Template language code is required for WhatsApp Business." : "WhatsAppi Business eeldab malli keelekoodi olemasolu.",
-    "Authentication template requires a numeric OTP code." : "Autentimismall eeldab numbrilise ühekordse salasõna kasutamist.",
     "Meta rejected the WhatsApp template message." : "Meta keeldus WhatsAppi malli sõnumi vastuvõtmisest",
     "Failed to send message through WhatsApp Business." : "WhatsAppi Businessi abil sõnumi saatmine ei õnnestunud.",
     "XMPP verification" : "Verifitseerimine XMPP-ga",
@@ -207,6 +206,7 @@ OC.L10N.register(
     "An access code has been sent to %s" : "Autentimiskood saadeti %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Viga sõnumi saatmisel. Palun proovi hiljem uuesti või võta ühendust peakasutajaga.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Sinu telefoninumber on muutunud ja pole uuesti verifitseeritud. Kasuta mõnda muud kaheastmelise autentimise meetodit või võta ühendust oma peakasutajaga.",
+    "Authentication template requires a numeric OTP code." : "Autentimismall eeldab numbrilise ühekordse salasõna kasutamist.",
     "Starting guided setup ..." : "Käivitan juhitud seadistust..."
 },
 "nplurals=2; plural=(n != 1);");

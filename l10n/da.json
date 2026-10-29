@@ -26,7 +26,6 @@
     "Invalid phone number for WhatsApp Business." : "Ugyldigt telefonnummer til WhatsApp Business.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "WhatsApp Business kræver et skabelonnavn. Konfigurer en godkendt skabelon med indholdsvariablen {{1}}.",
     "Template language code is required for WhatsApp Business." : "WhatsApp Business kræver en sprogkode til skabelonen.",
-    "Authentication template requires a numeric OTP code." : "Godkendelsesskabelonen kræver en numerisk OTP-kode.",
     "Meta rejected the WhatsApp template message." : "Meta afviste WhatsApp-skabelonbeskeden.",
     "Failed to send message through WhatsApp Business." : "Beskeden kunne ikke sendes via WhatsApp Business.",
     "XMPP verification" : "Bekræftelse via XMPP",
@@ -205,6 +204,7 @@
     "An access code has been sent to %s" : "En adgangskode er blevet sendt til %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Fejl ved afsendelse af beskeden. Prøv igen senere, eller kontakt administratoren.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Dit telefonnummer er ændret og er ikke blevet bekræftet igen. Brug en anden metode til to-faktor-godkendelse, eller kontakt din administrator.",
+    "Authentication template requires a numeric OTP code." : "Godkendelsesskabelonen kræver en numerisk OTP-kode.",
     "Starting guided setup ..." : "Starter guidet opsætning …"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
