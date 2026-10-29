@@ -26,7 +26,6 @@
     "Invalid phone number for WhatsApp Business." : "Număr de telefon nevalid pentru WhatsApp Business.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "Pentru WhatsApp Business este necesar numele șablonului. Configurează un șablon aprobat cu variabila {{1}} în corp.",
     "Template language code is required for WhatsApp Business." : "Pentru WhatsApp Business este necesar codul de limbă al șablonului.",
-    "Authentication template requires a numeric OTP code." : "Șablonul de autentificare necesită un cod OTP numeric.",
     "Meta rejected the WhatsApp template message." : "Meta a respins mesajul pe bază de șablon WhatsApp.",
     "Failed to send message through WhatsApp Business." : "Mesajul nu a putut fi trimis prin WhatsApp Business.",
     "XMPP verification" : "Verificare prin XMPP",
@@ -205,6 +204,7 @@
     "An access code has been sent to %s" : "Un cod de acces a fost trimis la %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Eroare la trimiterea mesajului. Încearcă din nou mai târziu sau contactează administratorul.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Numărul tău de telefon s-a schimbat și nu a fost verificat din nou. Folosește altă metodă de autentificare în doi pași sau contactează administratorul.",
+    "Authentication template requires a numeric OTP code." : "Șablonul de autentificare necesită un cod OTP numeric.",
     "Starting guided setup ..." : "Se pornește configurarea ghidată…"
 },"pluralForm" :"nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));"
 }

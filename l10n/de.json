@@ -26,7 +26,6 @@
     "Invalid phone number for WhatsApp Business." : "Ungültige Telefonnummer für WhatsApp Business.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "Für WhatsApp Business ist ein Vorlagenname erforderlich. Bitte eine genehmigte Vorlage mit der Body-Variablen {{1}} einrichten.",
     "Template language code is required for WhatsApp Business." : "Für WhatsApp Business ist ein Vorlagensprachencode erforderlich.",
-    "Authentication template requires a numeric OTP code." : "Die Anmeldevorlage erfordert einen numerischen OTP-Code.",
     "Meta rejected the WhatsApp template message." : "Meta hat die WhatsApp-Vorlagenmeldung abgelehnt.",
     "Failed to send message through WhatsApp Business." : "Nachricht konnte nicht über WhatsApp Business gesendet werden.",
     "XMPP verification" : "XMPP-Überprüfung",
@@ -205,6 +204,7 @@
     "An access code has been sent to %s" : "Ein Zugriffscode wurde an %s gesendet",
     "Error while sending the Message. Please try again later or contact the administrator." : "Fehler beim Senden der Nachricht. Bitte es noch einmal versuchen oder die Administration kontaktieren.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Deine Telefonnummer hat sich geändert und wurde nicht erneut verifiziert. Nutze einen anderen Zwei-Faktor-Mechanismus oder wende dich an die Administration.",
+    "Authentication template requires a numeric OTP code." : "Die Anmeldevorlage erfordert einen numerischen OTP-Code.",
     "Starting guided setup ..." : "Starte geführte Einrichtung …"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
