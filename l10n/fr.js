@@ -28,7 +28,6 @@ OC.L10N.register(
     "Invalid phone number for WhatsApp Business." : "Numéro de téléphone non valide pour WhatsApp Business.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "Un nom de modèle est requis pour WhatsApp Business. Configurez un modèle approuvé avec la variable {{1}} du corps de texte.",
     "Template language code is required for WhatsApp Business." : "Le code de langue du modèle est requis pour WhatsApp Business.",
-    "Authentication template requires a numeric OTP code." : "Le modèle d'authentification nécessite un code OTP numérique.",
     "Meta rejected the WhatsApp template message." : "Meta a rejeté le message du modèle WhatsApp.",
     "Failed to send message through WhatsApp Business." : "Échec de l'envoi de message via WhatsApp Business.",
     "XMPP verification" : "Vérification XMPP",
@@ -207,6 +206,7 @@ OC.L10N.register(
     "An access code has been sent to %s" : "Un code d'accès a été envoyé à %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Erreur lors de l'envoi du message. Veuillez réessayer plus tard ou contacter l'administrateur.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Votre numéro de téléphone a changé et n'a pas été revérifié. Utilisez un autre mécanisme à deux facteurs ou contactez votre administrateur.",
+    "Authentication template requires a numeric OTP code." : "Le modèle d'authentification nécessite un code OTP numérique.",
     "Starting guided setup ..." : "Démarrage de la configuration guidée…"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

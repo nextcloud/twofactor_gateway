@@ -26,7 +26,6 @@
     "Invalid phone number for WhatsApp Business." : "Neplatné telefónne číslo pre WhatsApp Business.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "Pre WhatsApp Business je potrebný názov šablóny. Nakonfigurujte schválenú šablónu s premennou tela {{1}}.",
     "Template language code is required for WhatsApp Business." : "Pre WhatsApp Business je potrebný kód jazyka šablóny.",
-    "Authentication template requires a numeric OTP code." : "Overovacia šablóna vyžaduje číselný kód OTP.",
     "Meta rejected the WhatsApp template message." : "Meta odmietla šablónu správy WhatsApp.",
     "Failed to send message through WhatsApp Business." : "Odoslanie správy prostredníctvom WhatsApp Business zlyhalo.",
     "XMPP verification" : "Overenie XMPP",
@@ -205,6 +204,7 @@
     "An access code has been sent to %s" : "Prístupový kód bol odoslaný na %s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Chyba počas odosielania správy. Skúste to znovu alebo kontaktujte správcu.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Prešli ste na iné telefónne číslo a znovu ho neoverili. Použite prosím iný mechanizmus dvojfaktorového overovania alebo sa obráťte na správcu systému.",
+    "Authentication template requires a numeric OTP code." : "Overovacia šablóna vyžaduje číselný kód OTP.",
     "Starting guided setup ..." : "Spúšťa sa sprievodca nastavením ..."
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }
