@@ -28,7 +28,6 @@ OC.L10N.register(
     "Invalid phone number for WhatsApp Business." : "Недійсний номер для WhatsApp Business.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "Назва шаблону є обов'язковою для WhatsApp Business. Налаштувати схвалений шаблон зі зміннимиттіла ({1}).",
     "Template language code is required for WhatsApp Business." : "Код мови шаблону є обов'якзковим для WhatsApp Buinesss.",
-    "Authentication template requires a numeric OTP code." : "Шаблон автентифікації вимагає цифровий одноразовий код.",
     "Meta rejected the WhatsApp template message." : "Meta відхилила шаблон повідомлення WhatsApp.",
     "Failed to send message through WhatsApp Business." : "Не вадлося надіслати повідомлення за допомогою WhatsApp Business.",
     "XMPP verification" : "Підтвердження через XMPP",
@@ -207,6 +206,7 @@ OC.L10N.register(
     "An access code has been sent to %s" : "Зазначте одноразовий код доступу, який було надіслано на номер %s.",
     "Error while sending the Message. Please try again later or contact the administrator." : "Помилка надсилання сповіщення. Будь ласка, спробуйте пізніше або зверніться до адміністратора.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Ваш номер телефон було змінено, проте новий номер ще не пройшов перевірку. Скористайтеся інший типом двофакторної автентифікації або зверніться до адміністратора.",
+    "Authentication template requires a numeric OTP code." : "Шаблон автентифікації вимагає цифровий одноразовий код.",
     "Starting guided setup ..." : "Запуск майстра налаштувань ..."
 },
 "nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);");

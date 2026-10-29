@@ -26,7 +26,6 @@
     "Invalid phone number for WhatsApp Business." : "Uimhir theileafóin neamhbhailí do WhatsApp Business.",
     "Template name is required for WhatsApp Business. Configure an approved template with body variable {{1}}." : "Tá ainm teimpléid ag teastáil do WhatsApp Business. Cumraigh teimpléad ceadaithe leis an athróg choirp {{1}}.",
     "Template language code is required for WhatsApp Business." : "Tá cód teanga teimpléid ag teastáil le haghaidh WhatsApp Business.",
-    "Authentication template requires a numeric OTP code." : "Teastaíonn cód OTP uimhriúil ón teimpléad fíordheimhnithe.",
     "Meta rejected the WhatsApp template message." : "Dhiúltaigh Meta don teachtaireacht teimpléid WhatsApp.",
     "Failed to send message through WhatsApp Business." : "Theip ar theachtaireacht a sheoladh trí WhatsApp Business.",
     "XMPP verification" : "Fíorú XMPP",
@@ -205,6 +204,7 @@
     "An access code has been sent to %s" : "Tá cód rochtana seolta chuig%s",
     "Error while sending the Message. Please try again later or contact the administrator." : "Earráid agus an Teachtaireacht á seoladh. Bain triail eile as ar ball le do thoil nó déan teagmháil leis an riarthóir.",
     "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Athraíodh d'uimhir theileafóin agus níor athfhíoraíodh í. Bain úsáid as meicníocht dhifriúil dhá fhachtóir nó déan teagmháil le do riarthóir.",
+    "Authentication template requires a numeric OTP code." : "Teastaíonn cód OTP uimhriúil ón teimpléad fíordheimhnithe.",
     "Starting guided setup ..." : "Ag tosú ar an socrú treoraithe..."
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }
