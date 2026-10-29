@@ -15,6 +15,21 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 5.0.4 - 2026-10-28
+### Added
+- [stable35] support ordered WhatsApp Business template body parameters [#1284](https://github.com/nextcloud/twofactor_gateway/pull/1284)
+
+### Changed
+- Updated translations from Transifex
+
+## 4.0.4 - 2026-10-28
+### Changed
+- Updated translations from Transifex
+
+## 3.4.4 - 2026-10-28
+### Changed
+- Updated translations from Transifex
+
 ## 5.0.3 - 2026-10-12
 ### Fixed
 - [stable35] fix: skip legacy catalog drivers in gateway instance routing [#1260](https://github.com/nextcloud/twofactor_gateway/pull/1260)
