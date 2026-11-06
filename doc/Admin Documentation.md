@@ -578,6 +578,21 @@ Interactive admin configuration:
 occ twofactorauth:gateway:configure sms
 ```
 
+### kwtSMS
+URL: https://www.kwtsms.com
+Stability: Experimental
+
+Use the JSON API of kwtSMS (Kuwait and the Gulf) for sending SMS. You need the API username and password of your
+kwtSMS account (not your mobile number) and, optionally, a registered Sender ID (default `KWT-SMS`). Users enter
+their phone number in international format, for example `+965XXXXXXXX`.
+Answer yes to "Send in test mode" to try the setup: test messages are queued on kwtSMS but not delivered, and
+their credits are held until you delete them from the Sending Queue in your kwtSMS account.
+
+Interactive admin configuration:
+```bash
+occ twofactorauth:gateway:configure sms
+```
+
 ### SerwerSMS.pl
 URL: https://serwersms.pl
 Stability: Experimental
