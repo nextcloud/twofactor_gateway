@@ -267,6 +267,60 @@ class DeviceStateFetcherTest extends AppTestCase {
 		$this->fetcher->fetch('http://custom.host:3000');
 	}
 
+	public function testUsesBasicAuthOnStatusAndFallbackDevicesRequests(): void {
+		$this->configureDeviceId('device-A');
+		$this->appConfig->setValueString('twofactor_gateway', 'gowhatsapp_username', 'api-user');
+		$this->appConfig->setValueString('twofactor_gateway', 'gowhatsapp_password', 'api-pass');
+
+		$requests = [];
+		$this->httpClient->expects($this->exactly(2))
+			->method('get')
+			->willReturnCallback(function (string $url, array $options) use (&$requests): IResponse {
+				$requests[] = ['url' => $url, 'options' => $options];
+				if (str_ends_with($url, '/status')) {
+					return $this->buildStatusResponseStub(false, false);
+				}
+
+				return $this->buildDevicesResponseStub([['id' => 'device-A', 'state' => 'connected']]);
+			});
+
+		$this->assertSame('connected', $this->fetcher->fetch('http://gowa.local'));
+		$this->assertSame([
+			[
+				'url' => 'http://gowa.local/devices/device-A/status',
+				'options' => ['timeout' => 5, 'auth' => ['api-user', 'api-pass']],
+			],
+			[
+				'url' => 'http://gowa.local/devices',
+				'options' => [
+					'timeout' => 5,
+					'auth' => ['api-user', 'api-pass'],
+					'headers' => ['X-Device-Id' => 'device-A'],
+				],
+			],
+		], $requests);
+	}
+
+	public function testOmitsBasicAuthWhenCredentialsAreNotConfigured(): void {
+		$this->httpClient->expects($this->once())
+			->method('get')
+			->with('http://gowa.local/devices', ['timeout' => 5])
+			->willReturn($this->buildDevicesResponseStub([]));
+
+		$this->assertSame('disconnected', $this->fetcher->fetch('http://gowa.local'));
+	}
+
+	public function testPreservesPasswordOnlyBasicAuthConfiguration(): void {
+		$this->appConfig->setValueString('twofactor_gateway', 'gowhatsapp_password', 'api-pass');
+
+		$this->httpClient->expects($this->once())
+			->method('get')
+			->with('http://gowa.local/devices', ['timeout' => 5, 'auth' => ['', 'api-pass']])
+			->willReturn($this->buildDevicesResponseStub([]));
+
+		$this->assertSame('disconnected', $this->fetcher->fetch('http://gowa.local'));
+	}
+
 	// -------------------------------------------------------------------------
 	// Helpers
 	// -------------------------------------------------------------------------

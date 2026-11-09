@@ -72,7 +72,7 @@ class DeviceStateFetcher {
 			$client = $this->clientService->newClient();
 			$response = $client->get(
 				$baseUrl . self::DEVICES_ENDPOINT . '/' . rawurlencode($deviceId) . '/status',
-				['timeout' => 5],
+				['timeout' => 5] + $this->authOptions(),
 			);
 			$body = (string)$response->getBody();
 			$data = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
@@ -105,11 +105,18 @@ class DeviceStateFetcher {
 		}
 	}
 
+	private function authOptions(): array {
+		$username = $this->appConfig->getValueString(Application::APP_ID, 'gowhatsapp_username', '');
+		$password = $this->appConfig->getValueString(Application::APP_ID, 'gowhatsapp_password', '');
+
+		return $username !== '' || $password !== '' ? ['auth' => [$username, $password]] : [];
+	}
+
 	private function fetchFromDevicesEndpoint(string $baseUrl, string $deviceId): string {
 
 		try {
 			$client = $this->clientService->newClient();
-			$options = ['timeout' => 5];
+			$options = ['timeout' => 5] + $this->authOptions();
 			if ($deviceId !== '') {
 				$options['headers'] = ['X-Device-Id' => $deviceId];
 			}
