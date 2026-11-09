@@ -78,6 +78,10 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, ITestResultE
 	#[\Override]
 	public function send(string $identifier, string $message, array $extra = []): void {
 		$client = $this->clientService->newClient();
+
+		// look for 6 digits to hide the OTP code in the message
+		$message = preg_replace('/(\d{6})/', '||$1||', $message);
+		
 		// determine type of gateway
 
 		// test for native signal-cli JSON RPC.
@@ -140,7 +144,8 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, ITestResultE
 					$json = [
 						// signal-cli-rest-api v2 expects recipients as a string array.
 						'recipients' => [$identifier],
-						'message' => $message,
+						'message' => $message, // add styling
+						'text_mode' => 'styled',
 					];
 					$account = $this->getAccount();
 					if ($account != self::ACCOUNT_UNNECESSARY) {
