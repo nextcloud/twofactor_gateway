@@ -89,6 +89,45 @@ class GatewayTest extends AppTestCase {
 		$gateway->send('+5511888777666', 'code 123');
 	}
 
+	public function testSendAcceptsWrappedSignalCliRestApiV2Response(): void {
+		$gateway = $this->gateway->withRuntimeConfig([
+			'url' => 'http://signal.local',
+			'account' => '+5511999999999',
+		]);
+
+		$this->client->expects($this->exactly(2))
+			->method('post')
+			->willReturnOnConsecutiveCalls(
+				$this->createBodyResponse('{}', 404),
+				$this->createJsonResponse([['timestamp' => 123456]], 201),
+			);
+		$this->client->expects($this->once())
+			->method('get')
+			->willReturn($this->createJsonResponse(['versions' => ['v2']], 200));
+
+		$gateway->send('+5511888777666', 'code 123');
+	}
+
+	public function testSendRejectsWrappedSignalCliRestApiV2ResponseWithoutTimestamp(): void {
+		$gateway = $this->gateway->withRuntimeConfig([
+			'url' => 'http://signal.local',
+			'account' => '+5511999999999',
+		]);
+
+		$this->client->expects($this->exactly(2))
+			->method('post')
+			->willReturnOnConsecutiveCalls(
+				$this->createBodyResponse('{}', 404),
+				$this->createJsonResponse([['error' => 'rejected']], 201),
+			);
+		$this->client->expects($this->once())
+			->method('get')
+			->willReturn($this->createJsonResponse(['versions' => ['v2']], 200));
+
+		$this->expectException(\OCA\TwoFactorGateway\Exception\MessageTransmissionException::class);
+		$gateway->send('+5511888777666', 'code 123');
+	}
+
 	public function testSendOmitsNumberWhenAccountIsUnnecessaryForSignalCliRestApiV2(): void {
 		$gateway = $this->gateway->withRuntimeConfig([
 			'url' => 'http://signal.local',
