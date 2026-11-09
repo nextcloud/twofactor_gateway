@@ -35,10 +35,11 @@ jobs:
       - name: Check enforcement of minimum PHP version ${{ steps.versions.outputs.php-min }} in psalm.xml
         run: grep 'phpVersion="${{ steps.versions.outputs.php-min }}' psalm.xml
 
-      - name: Set up php${{ steps.versions.outputs.php-available }}
+      - name: Set up PHP 8.3 for static analysis
         uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # v2.37.0
         with:
-          php-version: ${{ steps.versions.outputs.php-available }}
+          # Psalm targets PHP 8.2; advisories require a patched runtime.
+          php-version: '8.3'
           extensions: bz2, ctype, curl, dom, fileinfo, gd, iconv, intl, json, libxml, mbstring, openssl, pcntl, posix, session, simplexml, xmlreader, xmlwriter, zip, zlib, sqlite, pdo_sqlite
           coverage: none
           ini-file: development
@@ -53,7 +54,9 @@ jobs:
           composer i
 
       - name: Check for vulnerable PHP dependencies
-        run: composer require --dev roave/security-advisories:dev-latest
+        run: |
+          composer config platform.php "$(php -r 'echo PHP_VERSION;')"
+          composer update roave/security-advisories --no-scripts --no-interaction
 
       - name: Install nextcloud/ocp
         run: composer require --dev nextcloud/ocp:dev-${{ steps.versions.outputs.branches-max }} --ignore-platform-reqs --with-dependencies
