@@ -165,6 +165,9 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, ITestResultE
 				$body = (string)$response->getBody();
 				$json = json_decode($body, true);
 				$status = $response->getStatusCode();
+				if (is_array($json) && array_is_list($json) && count($json) === 1 && is_array($json[0])) {
+					$json = $json[0];
+				}
 				if ($status !== 201 || is_null($json) || !is_array($json) || !isset($json['timestamp'])) {
 					throw new MessageTransmissionException("error reported by Signal gateway, status=$status, body=$body}");
 				}
