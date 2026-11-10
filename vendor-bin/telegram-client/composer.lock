@@ -2215,30 +2215,30 @@
         },
         {
             "name": "danog/ipc",
-            "version": "1.1.1",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/ipc.git",
-                "reference": "1c5226ce863d6e6b436cb7fbbb4c01f4337171cb"
+                "reference": "dc44b12276c08fb6c1403b72e3289f069f68331a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/ipc/zipball/1c5226ce863d6e6b436cb7fbbb4c01f4337171cb",
-                "reference": "1c5226ce863d6e6b436cb7fbbb4c01f4337171cb",
+                "url": "https://api.github.com/repos/danog/ipc/zipball/dc44b12276c08fb6c1403b72e3289f069f68331a",
+                "reference": "dc44b12276c08fb6c1403b72e3289f069f68331a",
                 "shasum": ""
             },
             "require": {
                 "amphp/byte-stream": "^2.1.2",
                 "amphp/parallel": "^2.3.1",
                 "amphp/parser": "^1.1.1",
-                "php": ">=8.1"
+                "php": ">=8.2"
             },
             "require-dev": {
                 "amphp/amp": "v3.x-dev",
                 "amphp/php-cs-fixer-config": "v2.x-dev",
                 "amphp/phpunit-util": "v3.x-dev",
                 "phpunit/phpunit": "^9.6.22",
-                "psalm/phar": "^5.26.1"
+                "psalm/phar": "^7"
             },
             "suggest": {
                 "ext-sockets": "Required for UNIX socket support on Windows (TCP is used otherwise)"
@@ -2281,9 +2281,9 @@
             ],
             "support": {
                 "issues": "https://github.com/danog/ipc/issues",
-                "source": "https://github.com/danog/ipc/tree/1.1.1"
+                "source": "https://github.com/danog/ipc/tree/1.2.0"
             },
-            "time": "2026-11-06T17:38:31+00:00"
+            "time": "2026-11-09T16:41:45+00:00"
         },
         {
             "name": "danog/libdns-json",
@@ -2409,16 +2409,16 @@
         },
         {
             "name": "danog/madelineproto",
-            "version": "8.20.0",
+            "version": "8.20.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/MadelineProto.git",
-                "reference": "8513108da932f19fbea41b3647c92e98365ed649"
+                "reference": "185d6af8caf9501ce4824c8add922d649b6cfd7d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/8513108da932f19fbea41b3647c92e98365ed649",
-                "reference": "8513108da932f19fbea41b3647c92e98365ed649",
+                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/185d6af8caf9501ce4824c8add922d649b6cfd7d",
+                "reference": "185d6af8caf9501ce4824c8add922d649b6cfd7d",
                 "shasum": ""
             },
             "require": {
@@ -2441,7 +2441,7 @@
                 "danog/async-orm": "^1.1.10",
                 "danog/better-prometheus": "^0.1.1",
                 "danog/dns-over-https": "^1.0.1",
-                "danog/ipc": "^1.1.0",
+                "danog/ipc": "^1.1.1",
                 "danog/loop": "^1.1.1",
                 "danog/php-rtc-av": "^1.1.11",
                 "danog/php-rtc-codecs": "^1.1.20",
@@ -2552,7 +2552,7 @@
             ],
             "support": {
                 "issues": "https://github.com/danog/MadelineProto/issues",
-                "source": "https://github.com/danog/MadelineProto/tree/8.20.0"
+                "source": "https://github.com/danog/MadelineProto/tree/8.20.1"
             },
             "funding": [
                 {
@@ -2560,7 +2560,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-05T20:30:34+00:00"
+            "time": "2026-11-06T17:42:26+00:00"
         },
         {
             "name": "danog/php-rtc-av",
