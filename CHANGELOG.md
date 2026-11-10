@@ -15,6 +15,17 @@ Types of changes:
 - *Fixed* for any bug fixes.
 - *Security* in case of vulnerabilities. 
 
+## 3.5.0 - 2026-11-09
+### Added
+- Add kwtSMS SMS provider [#1321](https://github.com/nextcloud/twofactor_gateway/pull/1321)
+
+### Changed
+- Updated translations from Transifex
+
+### Fixed
+- Signal: accept list-wrapped send receipts from signal-cli-rest-api (issue #1311)
+- GoWhatsApp: authenticate session health checks to avoid false instability warnings (issue #1312)
+
 ## 3.4.4 - 2026-10-28
 ### Changed
 - Updated translations from Transifex
