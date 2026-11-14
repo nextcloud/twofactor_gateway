@@ -541,16 +541,16 @@
         },
         {
             "name": "amphp/http-client",
-            "version": "v5.3.7",
+            "version": "v5.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/http-client.git",
-                "reference": "fd6be2212d34b81289521ecd1a5a88c4f7600040"
+                "reference": "be5bf6a84e7b02bcf763020358833824f414c3bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http-client/zipball/fd6be2212d34b81289521ecd1a5a88c4f7600040",
-                "reference": "fd6be2212d34b81289521ecd1a5a88c4f7600040",
+                "url": "https://api.github.com/repos/amphp/http-client/zipball/be5bf6a84e7b02bcf763020358833824f414c3bb",
+                "reference": "be5bf6a84e7b02bcf763020358833824f414c3bb",
                 "shasum": ""
             },
             "require": {
@@ -626,7 +626,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/http-client/issues",
-                "source": "https://github.com/amphp/http-client/tree/v5.3.7"
+                "source": "https://github.com/amphp/http-client/tree/v5.3.8"
             },
             "funding": [
                 {
@@ -634,7 +634,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-01T16:48:44+00:00"
+            "time": "2026-11-11T03:22:40+00:00"
         },
         {
             "name": "amphp/http-client-cookies",
@@ -1457,16 +1457,16 @@
         },
         {
             "name": "amphp/socket",
-            "version": "v2.4.1",
+            "version": "v2.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/socket.git",
-                "reference": "b347be5aff6b2cc025208bb4d896607eb470c018"
+                "reference": "6e881835c73b75a0a4251a7f58441bc90b9f6c8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/socket/zipball/b347be5aff6b2cc025208bb4d896607eb470c018",
-                "reference": "b347be5aff6b2cc025208bb4d896607eb470c018",
+                "url": "https://api.github.com/repos/amphp/socket/zipball/6e881835c73b75a0a4251a7f58441bc90b9f6c8a",
+                "reference": "6e881835c73b75a0a4251a7f58441bc90b9f6c8a",
                 "shasum": ""
             },
             "require": {
@@ -1529,7 +1529,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/socket/issues",
-                "source": "https://github.com/amphp/socket/tree/v2.4.1"
+                "source": "https://github.com/amphp/socket/tree/v2.4.2"
             },
             "funding": [
                 {
@@ -1537,7 +1537,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-22T18:13:20+00:00"
+            "time": "2026-11-11T03:42:20+00:00"
         },
         {
             "name": "amphp/sql",
@@ -2215,30 +2215,30 @@
         },
         {
             "name": "danog/ipc",
-            "version": "1.1.1",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/ipc.git",
-                "reference": "1c5226ce863d6e6b436cb7fbbb4c01f4337171cb"
+                "reference": "dc44b12276c08fb6c1403b72e3289f069f68331a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/ipc/zipball/1c5226ce863d6e6b436cb7fbbb4c01f4337171cb",
-                "reference": "1c5226ce863d6e6b436cb7fbbb4c01f4337171cb",
+                "url": "https://api.github.com/repos/danog/ipc/zipball/dc44b12276c08fb6c1403b72e3289f069f68331a",
+                "reference": "dc44b12276c08fb6c1403b72e3289f069f68331a",
                 "shasum": ""
             },
             "require": {
                 "amphp/byte-stream": "^2.1.2",
                 "amphp/parallel": "^2.3.1",
                 "amphp/parser": "^1.1.1",
-                "php": ">=8.1"
+                "php": ">=8.2"
             },
             "require-dev": {
                 "amphp/amp": "v3.x-dev",
                 "amphp/php-cs-fixer-config": "v2.x-dev",
                 "amphp/phpunit-util": "v3.x-dev",
                 "phpunit/phpunit": "^9.6.22",
-                "psalm/phar": "^5.26.1"
+                "psalm/phar": "^7"
             },
             "suggest": {
                 "ext-sockets": "Required for UNIX socket support on Windows (TCP is used otherwise)"
@@ -2281,9 +2281,9 @@
             ],
             "support": {
                 "issues": "https://github.com/danog/ipc/issues",
-                "source": "https://github.com/danog/ipc/tree/1.1.1"
+                "source": "https://github.com/danog/ipc/tree/1.2.0"
             },
-            "time": "2026-11-06T17:38:31+00:00"
+            "time": "2026-11-09T16:41:45+00:00"
         },
         {
             "name": "danog/libdns-json",
@@ -2409,16 +2409,16 @@
         },
         {
             "name": "danog/madelineproto",
-            "version": "8.20.0",
+            "version": "8.21.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/danog/MadelineProto.git",
-                "reference": "8513108da932f19fbea41b3647c92e98365ed649"
+                "reference": "8b24332f9ea3a064121f26be40f3e29850f45c22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/8513108da932f19fbea41b3647c92e98365ed649",
-                "reference": "8513108da932f19fbea41b3647c92e98365ed649",
+                "url": "https://api.github.com/repos/danog/MadelineProto/zipball/8b24332f9ea3a064121f26be40f3e29850f45c22",
+                "reference": "8b24332f9ea3a064121f26be40f3e29850f45c22",
                 "shasum": ""
             },
             "require": {
@@ -2438,10 +2438,10 @@
                 "amphp/socket": "^2.4.1",
                 "amphp/websocket-client": "^2.0.2",
                 "bacon/bacon-qr-code": "^3.1.1",
-                "danog/async-orm": "^1.1.10",
+                "danog/async-orm": "^1.2.1",
                 "danog/better-prometheus": "^0.1.1",
                 "danog/dns-over-https": "^1.0.1",
-                "danog/ipc": "^1.1.0",
+                "danog/ipc": "^1.1.1",
                 "danog/loop": "^1.1.1",
                 "danog/php-rtc-av": "^1.1.11",
                 "danog/php-rtc-codecs": "^1.1.20",
@@ -2552,7 +2552,7 @@
             ],
             "support": {
                 "issues": "https://github.com/danog/MadelineProto/issues",
-                "source": "https://github.com/danog/MadelineProto/tree/8.20.0"
+                "source": "https://github.com/danog/MadelineProto/tree/8.21.1"
             },
             "funding": [
                 {
@@ -2560,7 +2560,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-05T20:30:34+00:00"
+            "time": "2026-11-08T17:39:56+00:00"
         },
         {
             "name": "danog/php-rtc-av",
