@@ -64,7 +64,7 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, ITestResultE
 				new FieldDefinition(
 					field: 'url',
 					prompt: 'Please enter the URL of the Signal gateway (leave blank to use default):',
-					default: 'http://localhost:5000',
+					default: 'http://localhost:9922',
 				),
 				new FieldDefinition(
 					field: 'account',
@@ -78,8 +78,9 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, ITestResultE
 	#[\Override]
 	public function send(string $identifier, string $message, array $extra = []): void {
 		$client = $this->clientService->newClient();
+		// look for 6 digits to hide the OTP code in the message
+		$message = preg_replace('/(\d{6})/', '||$1||', $message);
 		// determine type of gateway
-
 		// test for native signal-cli JSON RPC.
 		$response = $client->post(
 			$this->getUrl() . '/api/v1/rpc',
@@ -141,6 +142,7 @@ class Gateway extends AGateway implements IInteractiveSetupGateway, ITestResultE
 						// signal-cli-rest-api v2 expects recipients as a string array.
 						'recipients' => [$identifier],
 						'message' => $message,
+						'text_mode' => 'styled', // add styling
 					];
 					$account = $this->getAccount();
 					if ($account != self::ACCOUNT_UNNECESSARY) {
