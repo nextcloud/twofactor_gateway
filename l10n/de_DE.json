@@ -49,7 +49,7 @@
     "Groups" : "Gruppen",
     "Created: {date}" : "Erstellt: {date}",
     "Edit provider configuration" : "Anbietereinstellung bearbeiten",
-    "Add provider configuration" : "Anbietereinstellung hinzugefügen",
+    "Add provider configuration" : "Anbietereinstellung hinzufügen",
     "Channel/Provider" : "Kanal/Anbieter",
     "Saving …" : "Speichere …",
     "Save" : "Speichern",
@@ -173,7 +173,7 @@
     "Header" : "Kopfbereich",
     "Body" : "Inhalt",
     "The verification code will be inserted at" : "Der Überprüfungscode wird eingefügt ab",
-    "Footer" : "Fusszeile",
+    "Footer" : "Fußzeile",
     "Template name:" : "Vorlagenname:",
     "Template language code:" : "Sprachcode der Vorlage:",
     "e.g. pt_BR" : "z. B. pt_BR",
@@ -203,7 +203,7 @@
     "Submit" : "Übermitteln",
     "An access code has been sent to %s" : "Ein Zugriffscode wurde an %s versendet",
     "Error while sending the Message. Please try again later or contact the administrator." : "Fehler beim Versenden der Nachricht. Bitte erneut versuchen oder kontaktieren Sie Ihre Administration.",
-    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Ihre Telefonnumer hat sich geändert und wurde nicht erneut verifiziert. Nutzen Sie einen anderen Zwei-Faktor-Mechanismus oder wenden Sie sich an Ihre Administration.",
+    "Your phone number has changed and had not been re-verified. Use a different two-factor mechanism or contact your admin." : "Ihre Telefonnummer hat sich geändert und wurde nicht erneut verifiziert. Nutzen Sie einen anderen Zwei-Faktor-Mechanismus oder wenden Sie sich an die Administration.",
     "Authentication template requires a numeric OTP code." : "Die Anmeldevorlage erfordert einen numerischen OTP-Code.",
     "Starting guided setup ..." : "Starte geführte Einrichtung …"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
