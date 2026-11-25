@@ -26,7 +26,9 @@ use OCP\Authentication\TwoFactorAuth\IPersonalProviderSettings;
 use OCP\Authentication\TwoFactorAuth\IProvider;
 use OCP\Authentication\TwoFactorAuth\IProvidesIcons;
 use OCP\Authentication\TwoFactorAuth\IProvidesPersonalSettings;
+use OCP\Defaults;
 use OCP\IL10N;
+use OCP\IRequest;
 use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -92,9 +94,19 @@ abstract class AProvider implements IProvider, IProvidesIcons, IDeactivatableByA
 		try {
 			$identifier = $this->stateStorage->get($user, $this->getGatewayName())->getIdentifier() ?? '';
 
-			$message = $this->gateway->getSettings()->allow_markdown ?? false
-				? $this->l10n->t('`%s` is your Nextcloud authentication code', [$secret])
-				: $this->l10n->t('%s is your Nextcloud authentication code', [$secret]);
+			$name = Server::get(Defaults::class)->getName();
+			// Strip the port: the origin-bound line expects a bare host
+			$host = preg_replace('/:\d+$/', '', Server::get(IRequest::class)->getServerHost());
+
+			if ($this->gateway->getSettings()->allow_markdown ?? false) {
+				// Unbalanced markdown in the instance name makes Telegram reject the message
+				$name = addcslashes($name, '_*`[');
+				$message = $this->l10n->t('`%1$s` is your Nextcloud authentication code for %2$s', [$secret, $name]);
+			} else {
+				$message = $this->l10n->t('%1$s is your Nextcloud authentication code for %2$s', [$secret, $name]);
+			}
+			// Origin-bound one-time code line, see https://wicg.github.io/sms-one-time-codes/
+			$message .= "\n\n@" . $host . ' #' . $secret;
 
 			$this->gatewayDispatchService->sendForUser(
 				$user,
